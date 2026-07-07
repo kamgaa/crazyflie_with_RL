@@ -167,7 +167,7 @@ class CrazyflieResidualEnv(gym.Env):
                  xml_path,
                  policy_hz=100.0,
                  episode_sec=8.0,
-                 residual_scale=(0.004, 0.004, 0.0001, 0.3),  # [tau_x,tau_y,tau_z,Fz] 권한 x3 bigger then 4th
+                 residual_scale=(0.006, 0.006, 0.0001, 0.3),  # [tau_x,tau_y,tau_z,Fz] 권한 x3 bigger then 4th
                  #residual_scale=(0.004, 0.004, 0.003, 0.05),  # [tau_x,tau_y,tau_z,Fz] 권한
                  #  ^ 검증된 값: tau ~20% of max_tau, Fz ~12% of hover thrust.
                  #    이보다 크면 미숙련 정책이 PID floor 를 파괴함(실측 확인).
@@ -273,7 +273,7 @@ class CrazyflieResidualEnv(gym.Env):
         #    self._set_com_bias(self.com_bias_mass, self.com_bias_offset)
 
         if self.com_bias_randomize:
-            R = 1.3 * ARM
+            R = 2.3 * ARM
             m_c, m_e = 0.03, 0.029
             theta = self._rng.uniform(0, 2*np.pi)
             r = R * np.sqrt(self._rng.uniform(0, 1))
@@ -324,7 +324,7 @@ class CrazyflieResidualEnv(gym.Env):
                 #+ 0.5 * d_pos # ← 추가: 1차 항 (작은 오차에서 gradient 유지)
                 + 0.1 * vel @ vel
                 + 3.0 * e_tilt
-                + 0.06 * omega_B @ omega_B
+                + 0.001 * omega_B @ omega_B
                 + 0.001 * (action @ action)
                 + self.w_dact * (d_action @ d_action))   # ← 추가: 부드러운 제어 보상
         reward = -cost

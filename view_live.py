@@ -14,22 +14,30 @@ from crazyflie_residual_env import CrazyflieResidualEnv
 XML   = "/home/mrl_6534/ros2_ws/src/mujoco_crazyflie/plant/data/cf21B_500.xml"
 MODEL = "/home/mrl_6534/gwpark/crazyflie_RL/model/ppo_best"
 
-RESIDUAL_SCALE = (0.004, 0.004, 0.0001, 0.3)   # ← train_ppo.py 와 동일하게!
+RESIDUAL_SCALE = (0.006, 0.006, 0.0001, 0.3)   # ← train_ppo.py 와 동일하게!
 SEED  = 42
 OUTDIR = "/home/mrl_6534/gwpark/crazyflie_RL"
 LW = 3.0                                   # 선 굵기 (MATLAB 기준 ~3)
 
 
 ARM = 0.035355
-R = 1.3 * ARM
+R = 2.3 * ARM
 #m_c, m_e = 0.0293, 0.0117
 m_c, m_e = 0.03, 0.029
 
 # 3개 대표 조건: (반지름 비율, 각도) — 결정론적 지정
+#TEST_CONDITIONS = [
+#    ("center-heavy", 0.15*R, 0.0),           # 중심 근방: 고무게, 저토크 (z 지배)
+#    ("mid",          0.55*R, np.pi/2),        # 중간: 무게-토크 균형
+#    ("edge-light",   0.95*R, np.pi),          # 가장자리: 저무게, 고토크 (rotational 지배)
+#]
+
+
 TEST_CONDITIONS = [
-    ("center-heavy", 0.15*R, 0.0),           # 중심 근방: 고무게, 저토크 (z 지배)
-    ("mid",          0.55*R, np.pi/2),        # 중간: 무게-토크 균형
-    ("edge-light",   0.95*R, np.pi),          # 가장자리: 저무게, 고토크 (rotational 지배)
+    #  이름            r (거리)        theta        m_w (무게, kg)
+    ("my-case-1",    0.030,          0.0,         0.030),   # 30mm, roll축, 20g
+    ("my-case-2",    0.060,          np.pi/2,     0.035),   # 40mm, pitch축, 15g
+    ("my-case-3",    0.090,          np.pi,       0.029),   # 20mm, -roll축, 29g
 ]
 
 def quat_to_euler_deg(q):
@@ -84,7 +92,7 @@ def view(policy, tag, r_bias, theta, png_name):
     mujoco.mj_forward(env.model, env.data)
     print(f"\n>>> [{tag}] 시작")
     with mujoco.viewer.launch_passive(env.model, env.data) as v:
-        v.cam.distance = 5.0
+        v.cam.distance = 3.7
         done = False; k = 0
         while v.is_running() and not done:
             t0 = time.time()
@@ -105,7 +113,7 @@ def view(policy, tag, r_bias, theta, png_name):
 
 if __name__ == "__main__":
     model = PPO.load(MODEL)
-    for name, r, theta in TEST_CONDITIONS:
+    for name, r, theta , m_w in TEST_CONDITIONS:
         # 동일 조건에서 floor / residual 쌍 비교
         view(None,  f"{name} | floor (PID)",    r, theta, f"traj_{name}_floor.png")
         view(model, f"{name} | residual (PID+RL)", r, theta, f"traj_{name}_residual.png")

@@ -77,6 +77,6 @@ floor = eval_policy(None)               # PID-only, 10 seed 평균
 #print(f"[floor]  PID-only = {floor:.4f} m")
 print(f"[floor]  PID-only (randomized disk, n=10 avg) = {floor:.4f} m")
 #model.learn(total_timesteps=500_000, callback=EvalCB(every=20_000, floor=floor, save_path="/home/mrl_6534/gwpark/crazyflie_RL/model/ppo_best"))
-model.learn(total_timesteps=500_000,callback=EvalCB(every=20_000, save_path="/home/mrl_6534/gwpark/crazyflie_RL/model/ppo_best"))
+model.learn(total_timesteps=1_000_000,callback=EvalCB(every=20_000, save_path="/home/mrl_6534/gwpark/crazyflie_RL/model/ppo_best"))
 model.save("/home/mrl_6534/gwpark/crazyflie_RL/model/ppo_residual_cf")
 print("done.")
