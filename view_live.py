@@ -35,9 +35,9 @@ m_c, m_e = 0.03, 0.029
 
 TEST_CONDITIONS = [
     #  이름            r (거리)        theta        m_w (무게, kg)
-    ("my-case-1",    0.030,          0.0,         0.030),   # 30mm, roll축, 20g
-    ("my-case-2",    0.060,          np.pi/2,     0.035),   # 40mm, pitch축, 15g
-    ("my-case-3",    0.090,          np.pi,       0.029),   # 20mm, -roll축, 29g
+    ("my-case-1",    0.03,          0.0,         0.030),   # 30mm, roll축, 20g
+    #("my-case-2",    0.060,          np.pi/2,     0.035),   # 40mm, pitch축, 15g
+    #("my-case-3",    0.090,          np.pi,       0.029),   # 20mm, -roll축, 29g
 ]
 
 def quat_to_euler_deg(q):
