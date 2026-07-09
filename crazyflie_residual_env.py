@@ -172,8 +172,8 @@ class CrazyflieResidualEnv(gym.Env):
                  #  ^ 검증된 값: tau ~20% of max_tau, Fz ~12% of hover thrust.
                  #    이보다 크면 미숙련 정책이 PID floor 를 파괴함(실측 확인).
                  mode="residual",          # "residual" | "absolute"
-                 com_bias_mass=0.010,       # kg (10g)
-                 com_bias_offset=(0.035, 0.0),  # (x,y) m, 추 위치
+                 com_bias_mass=0.0,         # kg — default 무바이어스 (bias 는 randomize 또는 명시 지정으로만)
+                 com_bias_offset=(0.0, 0.0),  # (x,y) m, 추 위치
                  com_bias_randomize=False,  # 에피소드 간 랜덤화 여부
                  pos_perturb=0.15,          # reset 시 위치 섭동 [m]
                  seed=None):
@@ -206,6 +206,8 @@ class CrazyflieResidualEnv(gym.Env):
         self.pos_des = np.array([0.0, 0.0, 1.0])     # 목표 hover 위치
         self.yaw_des = 0.0
         self.dist_torque_body = np.zeros(3)
+        self._com_off3 = np.zeros(3)   # 편심 payload offset (body frame), reset 에서 갱신
+        self._com_mw = 0.0             # 편심 payload 질량, reset 에서 갱신
 
 
         self.action_space = spaces.Box(-1.0, 1.0, shape=(4,), dtype=np.float32)
@@ -219,10 +221,16 @@ class CrazyflieResidualEnv(gym.Env):
     # ---------- CoM bias 주입 (body_ipos/body_mass 편집) ----------
     def _set_com_bias(self, m_w, off_xy):
         r_w = np.array([off_xy[0], off_xy[1], 0.0])
+        self._com_off3 = r_w.copy()       # xfrc 중력토크 주입용 (body-frame offset)
+        self._com_mw = float(m_w)         # randomize 시 매 reset 값 보존
         M = self._m0 + m_w
         new_ipos = (self._m0 * self._ipos0 + m_w * r_w) / M
         self.model.body_mass[self.drone_bid] = M
         self.model.body_ipos[self.drone_bid] = new_ipos
+        # 주의: MuJoCo 에서 body_ipos 편집만으론 중력-추력 couple(=편심 토크)이 안 생긴다.
+        #   (중력은 CoM self-torque=0, site force 의 회전 기여는 CoM 이 아니라 joint 원점 기준.)
+        #   -> 여기서는 질량 증가(z-sag)와 관성 증가만 반영하고,
+        #      편심 중력토크는 step() 에서 xfrc_applied 로 명시 주입한다.
          # 관성 갱신 (환산질량 mu 로 편심 기여, 대각 근사)
         mu = (self._m0 * m_w) / M
         x, y = r_w[0], r_w[1]
@@ -309,7 +317,11 @@ class CrazyflieResidualEnv(gym.Env):
                 u = residual + np.array([0, 0, 0, MASS * GRAV])
             self._apply_control(u)
             R = rotmat_from_quat_wxyz(quat)
-            self.data.xfrc_applied[self.drone_bid, 3:6] = R @ self.dist_torque_body
+            # 편심 payload 의 중력토크(world)를 명시 주입: body_ipos 편집만으론 안 생기므로.
+            #   tau = (R r_w) x (0,0,-m_w g)   [world]
+            tau_com_world = np.cross(R @ self._com_off3,
+                                     np.array([0.0, 0.0, -self._com_mw * GRAV]))
+            self.data.xfrc_applied[self.drone_bid, 3:6] = R @ self.dist_torque_body + tau_com_world
             mujoco.mj_step(self.model, self.data)
 
         pos, quat, vel, omega_B = self._read_state()
@@ -356,4 +368,3 @@ if __name__ == "__main__":
             break
     errs = np.array(errs)
     print(f"PID-only hover: pos_err  start={errs[0]:.3f}  end={errs[-1]:.4f}  min={errs.min():.4f}")
-
