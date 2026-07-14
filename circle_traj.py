@@ -58,7 +58,7 @@ CIRCLE_PRESETS = {
 TEST_CONDITIONS = [
     #("my-case-1",  0.03,        0.0,          0.030),   # |tau|=8.8mNm(44%), r=33%R : in-dist, 안전
     #("my-case-2", 0.060,       np.pi/2,      0.035),   # |tau|=20.6mNm(>max_tau) : 경계
-    ("my-case-3", 0.120,       np.pi,        0.010),   # r≈r_crit(98%) & OOD(>81mm) : 발산 예상
+    ("my-case-3", 0.06,       np.pi,        0.005),   # r≈r_crit(98%) & OOD(>81mm) : 발산 예상
 ]
 
 

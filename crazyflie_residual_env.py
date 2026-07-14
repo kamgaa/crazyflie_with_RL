@@ -33,6 +33,10 @@ THRUST_MAX = 0.20                    # N per motor
 J_DIAG = np.array([2.3951e-5, 2.3951e-5, 3.2347e-5])   # MJCF diaginertia
 PHYSICS_HZ = 500.0
 
+# hover collective 유지 하에 낼 수 있는 최대 roll/pitch 토크 [N·m]
+#   tau = ARM*(2*(2*THRUST_MAX) - MASS*GRAV)  ≈ 13.24 mN·m
+TAU_MAX_RP = ARM * (2 * (2 * THRUST_MAX) - MASS * GRAV)
+
 
 def _build_B():
     """plant.py __init__ 의 allocation B 와 동일하게 구성."""
@@ -167,7 +171,7 @@ class CrazyflieResidualEnv(gym.Env):
                  xml_path,
                  policy_hz=100.0,
                  episode_sec=8.0,
-                 residual_scale=(0.006, 0.006, 0.0001, 0.3),  # [tau_x,tau_y,tau_z,Fz] 권한 x3 bigger then 4th
+                 residual_scale=(0.022, 0.022, 0.0001, 0.3),  # [tau_x,tau_y,tau_z,Fz] 권한 x3 bigger then 4th
                  #residual_scale=(0.004, 0.004, 0.003, 0.05),  # [tau_x,tau_y,tau_z,Fz] 권한
                  #  ^ 검증된 값: tau ~20% of max_tau, Fz ~12% of hover thrust.
                  #    이보다 크면 미숙련 정책이 PID floor 를 파괴함(실측 확인).
@@ -176,6 +180,7 @@ class CrazyflieResidualEnv(gym.Env):
                  com_bias_offset=(0.0, 0.0),  # (x,y) m, 추 위치
                  com_bias_randomize=False,  # 에피소드 간 랜덤화 여부
                  pos_perturb=0.15,          # reset 시 위치 섭동 [m]
+                 att_perturb_deg=5.0,      # ← 추가: 초기 자세 섭동 상한 [deg]
                  seed=None):
         super().__init__()
         self.model = mujoco.MjModel.from_xml_path(xml_path)
@@ -203,6 +208,7 @@ class CrazyflieResidualEnv(gym.Env):
         self.com_bias_offset = np.array(com_bias_offset)
         self.com_bias_randomize = com_bias_randomize
         self.pos_perturb = pos_perturb
+        self.att_perturb_deg = att_perturb_deg      # ← 추가- 
         self.pos_des = np.array([0.0, 0.0, 1.0])     # 목표 hover 위치
         self.yaw_des = 0.0
         self.dist_torque_body = np.zeros(3)
@@ -281,19 +287,31 @@ class CrazyflieResidualEnv(gym.Env):
         #    self._set_com_bias(self.com_bias_mass, self.com_bias_offset)
 
         if self.com_bias_randomize:
-            R = 2.3 * ARM
-            m_c, m_e = 0.03, 0.029
-            theta = self._rng.uniform(0, 2*np.pi)
-            r = R * np.sqrt(self._rng.uniform(0, 1))
-            m_w = m_c - (m_c - m_e) * (r / R)
-            off = np.array([r*np.cos(theta), r*np.sin(theta)])
+            # 토크 중심 파라미터화: 허용토크 이하로 목표토크를 균일 샘플 -> (r, m_w) 역산.
+            #   |τ_g| ≤ κ·τ_max 가 구조적으로 보장됨 (feasibility 를 매번 손으로 안 맞춰도 됨).
+            #   작은 r 에서 m_w 발산은 M_W_MAX 로 clip -> 짧은 arm 은 자동으로 작은 토크만.
+            R_MIN, R_MAX = 0.02, 0.10      # moment arm 범위 (2cm ~ 30cm=edge)
+            KAPPA        = 0.5             # 허용 토크 비율 (기동 여유 10%)
+            M_W_MAX      = 0.015           # payload 질량 상한 (z-sag 제약)
+            tau_cap = KAPPA * TAU_MAX_RP
+            theta = self._rng.uniform(0, 2 * np.pi)
+            r     = self._rng.uniform(R_MIN, R_MAX)
+            tau_g = self._rng.uniform(0.0, tau_cap)              # 목표 토크 (허용치 이하 균일)
+            m_w   = min(tau_g / (r * GRAV), M_W_MAX)             # 역산 + z-sag 상한
+            off   = np.array([r * np.cos(theta), r * np.sin(theta)])
             self._set_com_bias(m_w, off)
         else:
             self._set_com_bias(self.com_bias_mass, self.com_bias_offset)
 
         # 초기 상태: 목표 근방 + 위치 섭동, level, 정지
         self.data.qpos[0:3] = self.pos_des + self._rng.uniform(-self.pos_perturb, self.pos_perturb, 3)
-        self.data.qpos[3:7] = np.array([1.0, 0.0, 0.0, 0.0])
+        #self.data.qpos[3:7] = np.array([1.0, 0.0, 0.0, 0.0])
+        ang = np.radians(self.att_perturb_deg) * self._rng.uniform(0.0, 1.0)   # 기울기 크기 [rad]
+        axis = self._rng.normal(size=3)
+        axis[2] = 0.0                                    # yaw 제외: roll/pitch 방향으로만 기울임
+        axis /= (np.linalg.norm(axis) + 1e-9)
+        half = 0.5 * ang
+        self.data.qpos[3:7] = np.array([np.cos(half),np.sin(half) * axis[0],np.sin(half) * axis[1],np.sin(half) * axis[2]])
         self.data.qvel[:] = 0.0
         mujoco.mj_forward(self.model, self.data)
 
@@ -334,7 +352,7 @@ class CrazyflieResidualEnv(gym.Env):
         d_action = action - self._prev_action          # ← action 변화율
         cost = (3.0 * e_pos @ e_pos
                 #+ 0.5 * d_pos # ← 추가: 1차 항 (작은 오차에서 gradient 유지)
-                + 0.1 * vel @ vel
+                + 0.01 * vel @ vel
                 + 3.0 * e_tilt
                 + 0.001 * omega_B @ omega_B
                 + 0.001 * (action @ action)
