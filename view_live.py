@@ -2,24 +2,55 @@ import os
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 import time, math
+from datetime import datetime, timezone
+from pathlib import Path
+import re
 import numpy as np
 import mujoco, mujoco.viewer
 import matplotlib
 matplotlib.use("Agg")                     # headless 저장 (VNC/SSH 무관하게 PNG 생성)
 import matplotlib.pyplot as plt
-from stable_baselines3 import PPO
 from crazyflie_residual_env import CrazyflieResidualEnv
+from crazyflie_rl.config import load_config
+from crazyflie_rl.model_compat import load_and_validate_policy
 
 # ===== 학습과 *동일하게* 맞출 것 =====
-XML   = "/home/mrl_6534/ros2_ws/src/mujoco_crazyflie/plant/data/cf21B_500.xml"
-#MODEL = "/home/mrl_6534/gwpark/crazyflie_RL/model/ppo_residual_cf"
-MODEL = "/home/mrl_6534/gwpark/crazyflie_RL/model/ppo_best"
-
-#RESIDUAL_SCALE = (0.006, 0.006, 0.0001, 0.3)   # ← train_ppo.py 와 동일하게!
-RESIDUAL_SCALE = (0.022, 0.022, 0.0001, 0.3)   # ← train_ppo.py 와 동일하게!
-SEED  = 42
-OUTDIR = "/home/mrl_6534/gwpark/crazyflie_RL"
+PROJECT_ROOT = Path(__file__).resolve().parent
+CONFIG = load_config(PROJECT_ROOT / "configs" / "e2e_train.yaml")
+MODE = CONFIG.control_mode
+RESOURCE_ROOT = CONFIG.resolve_path("resource_root")
+XML = CONFIG.resolve_path("mujoco_xml")
+PRETRAINED_MODEL_ROOT = CONFIG.resolve_path("pretrained_model_root")
+ARTIFACT_ROOT = CONFIG.resolve_path("artifact_root")
+MODEL = PRETRAINED_MODEL_ROOT / MODE / "ppo_best.zip"
+RESIDUAL_SCALE = CONFIG.residual_scale
+SEED = 42  # Preserve the diagnostic rollout seed used before refactoring.
+SEED_TAG = f"{SEED:04d}"
+CONDITION = CONFIG.condition
+UTC_DATE = datetime.now(timezone.utc).strftime("%Y%m%d")
+OUTDIR = ARTIFACT_ROOT / "runs" / "diagnostics" / "plots"
 LW = 3.0                                   # 선 굵기 (MATLAB 기준 ~3)
+
+
+def _artifact_plot_path(filename):
+    source = Path(filename)
+    stem = re.sub(r"[^A-Za-z0-9._-]+", "-", source.stem).strip("-._") or "plot"
+    condition = re.sub(r"[^A-Za-z0-9._-]+", "-", CONDITION).strip("-._") or "unspecified"
+    suffix = source.suffix or ".png"
+    OUTDIR.mkdir(parents=True, exist_ok=True)
+    return OUTDIR / (
+        f"{stem}__mode-{MODE}__condition-{condition}"
+        f"__seed-{SEED_TAG}__date-{UTC_DATE}{suffix}"
+    )
+
+
+def _configured_model_path():
+    if not MODEL.is_file():
+        raise FileNotFoundError(
+            "Configured pretrained model is missing; no legacy model fallback is allowed: "
+            f"{MODEL} (profile={CONFIG.profile_name})"
+        )
+    return MODEL
 
 # NOTE: 아래 선형-law 상수(m_c/m_e/R)는 이제 사용하지 않는다.
 #   payload 는 TEST_CONDITIONS 의 m_w 를 그대로 쓴다 (view() 로 전달).
@@ -71,13 +102,18 @@ def save_plot(tag, t, pos, rpy, png_path):
     plt.close(fig)
     print(f"    saved: {png_path}")
 
-def view(policy, tag, r_bias, theta, m_w, png_name):
+def view(model_path, tag, r_bias, theta, m_w, png_name):
     T, P_hist, RPY_hist = [], [], []                 # 자료구조: 명확한 접미사
-    env = CrazyflieResidualEnv(XML, mode="e2e",
+    CONFIG.require_runtime_resources()
+    env = CrazyflieResidualEnv(str(XML), mode=MODE,
                                com_bias_randomize=False,
                                residual_scale=RESIDUAL_SCALE,
                                pos_perturb=0.0,
                                att_perturb_deg=0.0)      # ← 초기 위치를 1m 로 고정 (던지는 느낌 제거)
+    policy = (
+        load_and_validate_policy(model_path, env, CONFIG)
+        if model_path is not None else None
+    )
     env.dist_torque_body = np.zeros(3)
     dt = env.dt_phys * env.substeps
     off = np.array([r_bias*np.cos(theta), r_bias*np.sin(theta)])   # r_bias=0 이면 offset 0
@@ -108,12 +144,12 @@ def view(policy, tag, r_bias, theta, m_w, png_name):
     print(f"<<< [{tag}] 정착 오차(후반30%) = {ss_err:.4f} m")
     print("env residual_scale:", env.residual_scale)
     save_plot(tag, np.array(T), np.array(P_hist), np.array(RPY_hist),
-              os.path.join(OUTDIR, png_name))
+              _artifact_plot_path(png_name))
 
 if __name__ == "__main__":
-    model = PPO.load(MODEL)
+    model_path = _configured_model_path()
     for name, r, theta, m_w in TEST_CONDITIONS:
         # 동일 조건에서 floor / residual 쌍 비교
         view(None,  f"{name} | floor (PID)",       r, theta, m_w, f"traj_{name}_floor.png")
-        view(model, f"{name} | residual (PID+RL)", r, theta, m_w, f"traj_{name}_residual.png")
+        view(model_path, f"{name} | residual (PID+RL)", r, theta, m_w, f"traj_{name}_residual.png")
     print("완료: 조건 × 2정책 궤적 저장")

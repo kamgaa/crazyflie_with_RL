@@ -1,0 +1,7 @@
+extends: base.yaml
+
+experiment:
+  control_mode: e2e
+  observation_schema: e2e_v1
+  observation_dim: 15
+  action_dim: 4

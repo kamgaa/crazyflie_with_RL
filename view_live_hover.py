@@ -2,22 +2,69 @@ import os
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 import time, math, sys
+from datetime import datetime, timezone
+from pathlib import Path
+import re
 import numpy as np
 import mujoco, mujoco.viewer
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from stable_baselines3 import PPO
 from crazyflie_residual_env import CrazyflieResidualEnv
+from crazyflie_rl.config import load_config
+from crazyflie_rl.model_compat import load_and_validate_policy
 
 # ================= 학습과 *동일하게* =================
-XML   = "/home/mrl_6534/ros2_ws/src/mujoco_crazyflie/plant/data/cf21B_500.xml"
-MODEL = "/home/mrl_6534/gwpark/crazyflie_RL/model/ppo_best"
-
-RESIDUAL_SCALE = (0.006, 0.006, 0.0001, 0.3)   # ← train_ppo.py 와 동일하게!
-SEED   = 42
-OUTDIR = "/home/mrl_6534/gwpark/crazyflie_RL"
+PROJECT_ROOT = Path(__file__).resolve().parent
+CONFIG = load_config(PROJECT_ROOT / "configs" / "residual_train.yaml")
+MODE = CONFIG.control_mode
+RESOURCE_ROOT = CONFIG.resolve_path("resource_root")
+XML = CONFIG.resolve_path("mujoco_xml")
+PRETRAINED_MODEL_ROOT = CONFIG.resolve_path("pretrained_model_root")
+ARTIFACT_ROOT = CONFIG.resolve_path("artifact_root")
+MODEL = PRETRAINED_MODEL_ROOT / MODE / "ppo_best.zip"
+RESIDUAL_SCALE = CONFIG.residual_scale
+SEED = 42  # Preserve the diagnostic rollout seed used before refactoring.
+SEED_TAG = f"{SEED:04d}"
+CONDITION = CONFIG.condition
+UTC_DATE = datetime.now(timezone.utc).strftime("%Y%m%d")
+OUTDIR = ARTIFACT_ROOT / "runs" / "diagnostics" / "plots"
 LW     = 3.0
+
+
+def _artifact_plot_path(filename):
+    source = Path(filename)
+    stem = re.sub(r"[^A-Za-z0-9._-]+", "-", source.stem).strip("-._") or "plot"
+    condition = re.sub(r"[^A-Za-z0-9._-]+", "-", CONDITION).strip("-._") or "unspecified"
+    suffix = source.suffix or ".png"
+    OUTDIR.mkdir(parents=True, exist_ok=True)
+    return OUTDIR / (
+        f"{stem}__mode-{MODE}__condition-{condition}"
+        f"__seed-{SEED_TAG}__date-{UTC_DATE}{suffix}"
+    )
+
+
+def _load_configured_policy():
+    if not MODEL.is_file():
+        raise FileNotFoundError(
+            "Configured pretrained model is missing; no legacy model fallback is allowed: "
+            f"{MODEL} (profile={CONFIG.profile_name})"
+        )
+    CONFIG.require_runtime_resources()
+    environment = CONFIG["environment"]
+    validation_env = CrazyflieResidualEnv(
+        str(XML),
+        mode=MODE,
+        residual_scale=RESIDUAL_SCALE,
+        policy_hz=float(environment["policy_hz"]),
+        episode_sec=float(environment["episode_sec"]),
+        com_bias_randomize=bool(environment["com_bias_randomize"]),
+        com_bias_mass=float(environment["com_bias_mass"]),
+        com_bias_offset=tuple(environment["com_bias_offset"]),
+        att_perturb_deg=float(environment["att_perturb_deg"]),
+        pos_perturb=float(environment["pos_perturb"]),
+    )
+    return load_and_validate_policy(MODEL, validation_env, CONFIG)
 
 CAM_TRACK = True        # 카메라가 드론 추종. 'nocam' 인자로 끄면 원인 격리 테스트.
 
@@ -186,7 +233,8 @@ def run_headless(policy, tag, rho, period, png_name):
     - |e| 가 0.15(학습분포), 1.5(env guard) 를 언제 처음 넘는지 명시적으로 잡음
     → "뷰어 탓 vs 물리 발산 탓" 을 완전히 분리한다.
     """
-    env = CrazyflieResidualEnv(XML, mode="residual",
+    CONFIG.require_runtime_resources()
+    env = CrazyflieResidualEnv(str(XML), mode=MODE,
                                com_bias_randomize=False,
                                com_bias_mass=0.0,
                                residual_scale=RESIDUAL_SCALE)
@@ -265,7 +313,7 @@ def run_headless(policy, tag, rho, period, png_name):
 
     if len(P_hist) >= 5:
         save_plot(tag, np.array(T), np.array(P_hist), np.array(RPY_hist),
-                  np.array(REF_hist), os.path.join(OUTDIR, png_name), err=ERR)
+                  np.array(REF_hist), _artifact_plot_path(png_name), err=ERR)
 
 
 def run(policy, tag, rho, period, png_name, realtime=True):
@@ -285,9 +333,10 @@ def run(policy, tag, rho, period, png_name, realtime=True):
    # ref, T_TOTAL = build_reference(rho, period)
     ref, T_TOTAL = build_reference(rho, period)
 
+    CONFIG.require_runtime_resources()
     env = CrazyflieResidualEnv(
-        XML,
-        mode="residual",
+        str(XML),
+        mode=MODE,
         com_bias_randomize=False,
         com_bias_mass=0.0,
         residual_scale=RESIDUAL_SCALE,
@@ -413,7 +462,7 @@ def run(policy, tag, rho, period, png_name, realtime=True):
         print(f"      [env guard 미발동 — 전 구간 hover 가정 내 유지]")
 
     save_plot(tag, np.array(T), np.array(P_hist), np.array(RPY_hist),
-              np.array(REF_hist), os.path.join(OUTDIR, png_name), err=ERR)
+              np.array(REF_hist), _artifact_plot_path(png_name), err=ERR)
 
 
 def choose_mode():
@@ -462,7 +511,7 @@ if __name__ == "__main__":
         go(None, f"{tagbase} | floor (PID)", f"{tagbase}_floor.png")
 
     if which in ("residual", "both"):
-        model = PPO.load(MODEL)
+        model = _load_configured_policy()
         go(model, f"{tagbase} | residual (PID+RL)", f"{tagbase}_residual.png")
 
     print(f"\n완료: mode {mode} ({which}, headless={headless}, realtime={realtime})")

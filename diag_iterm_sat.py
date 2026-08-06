@@ -19,19 +19,53 @@ import os
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 import math
+from datetime import datetime, timezone
+from pathlib import Path
+import re
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from stable_baselines3 import PPO
 from crazyflie_residual_env import CrazyflieResidualEnv
+from crazyflie_rl.config import load_config
+from crazyflie_rl.model_compat import load_and_validate_policy
 
 # ===== 학습/데모와 동일 =====
-XML    = "/home/mrl_6534/ros2_ws/src/mujoco_crazyflie/plant/data/cf21B_500.xml"
-MODEL  = "/home/mrl_6534/gwpark/crazyflie_RL/model/ppo_best"
-RESIDUAL_SCALE = (0.006, 0.006, 0.0001, 0.3)
-SEED   = 42
-OUTDIR = "/home/mrl_6534/gwpark/crazyflie_RL"
+PROJECT_ROOT = Path(__file__).resolve().parent
+CONFIG = load_config(PROJECT_ROOT / "configs" / "residual_train.yaml")
+MODE = CONFIG.control_mode
+RESOURCE_ROOT = CONFIG.resolve_path("resource_root")
+XML = CONFIG.resolve_path("mujoco_xml")
+PRETRAINED_MODEL_ROOT = CONFIG.resolve_path("pretrained_model_root")
+ARTIFACT_ROOT = CONFIG.resolve_path("artifact_root")
+MODEL = PRETRAINED_MODEL_ROOT / MODE / "ppo_best.zip"
+RESIDUAL_SCALE = CONFIG.residual_scale
+SEED = 42  # Preserve the diagnostic rollout seed used before refactoring.
+SEED_TAG = f"{SEED:04d}"
+CONDITION = CONFIG.condition
+UTC_DATE = datetime.now(timezone.utc).strftime("%Y%m%d")
+OUTDIR = ARTIFACT_ROOT / "runs" / "diagnostics" / "plots"
+
+
+def _artifact_plot_path(filename):
+    source = Path(filename)
+    stem = re.sub(r"[^A-Za-z0-9._-]+", "-", source.stem).strip("-._") or "plot"
+    condition = re.sub(r"[^A-Za-z0-9._-]+", "-", CONDITION).strip("-._") or "unspecified"
+    suffix = source.suffix or ".png"
+    OUTDIR.mkdir(parents=True, exist_ok=True)
+    return OUTDIR / (
+        f"{stem}__mode-{MODE}__condition-{condition}"
+        f"__seed-{SEED_TAG}__date-{UTC_DATE}{suffix}"
+    )
+
+
+def _configured_model_path():
+    if not MODEL.is_file():
+        raise FileNotFoundError(
+            "Configured pretrained model is missing; no legacy model fallback is allowed: "
+            f"{MODEL} (profile={CONFIG.profile_name})"
+        )
+    return MODEL
 
 # ===== 테스트 조건: case-1 (in-distribution) =====
 M_W, R, THETA = 0.030, 0.03, 0.0
@@ -50,14 +84,19 @@ def rpy_deg(q):
     return roll, pitch
 
 
-def rollout(policy, label):
+def rollout(model_path, label):
+    CONFIG.require_runtime_resources()
     env = CrazyflieResidualEnv(
-        XML, mode="residual",
+        str(XML), mode=MODE,
         com_bias_randomize=False,
         com_bias_mass=M_W, com_bias_offset=OFF,
         residual_scale=RESIDUAL_SCALE,
         episode_sec=T_SEC + 1.0,
         pos_perturb=0.0,             # 초기 위치 섭동 제거 -> 순수 payload 응답만
+    )
+    policy = (
+        load_and_validate_policy(model_path, env, CONFIG)
+        if model_path is not None else None
     )
     obs, _ = env.reset(seed=SEED)
     env.pos_des = HOVER.copy()
@@ -97,8 +136,10 @@ def summarize(A, label):
     print(f"  i_vel 포화율(전구간) x/y/z = {sat(ivx):.0f}% / {sat(ivy):.0f}% / {sat(ivz):.0f}%")
     print(f"  action[x,y,z,Fz] = [{a[ss,0].mean():+.3f}, {a[ss,1].mean():+.3f}, "
           f"{a[ss,2].mean():+.3f}, {a[ss,3].mean():+.3f}]")
-    print(f"    -> δτ=[{0.006*a[ss,0].mean():+.4f},{0.006*a[ss,1].mean():+.4f},"
-          f"{0.0001*a[ss,2].mean():+.5f}] N·m,  δFz={0.3*a[ss,3].mean():+.4f} N "
+    print(f"    -> δτ=[{RESIDUAL_SCALE[0]*a[ss,0].mean():+.4f},"
+          f"{RESIDUAL_SCALE[1]*a[ss,1].mean():+.4f},"
+          f"{RESIDUAL_SCALE[2]*a[ss,2].mean():+.5f}] N·m,  "
+          f"δFz={RESIDUAL_SCALE[3]*a[ss,3].mean():+.4f} N "
           f"(payload 무게 {M_W*9.81:.4f} N)")
 
 
@@ -123,14 +164,14 @@ def make_plot(F, Rd):
     ax[2].set_ylabel("i_vel_z"); ax[2].set_title("velocity I-term (z) vs anti-windup clip")
     ax[2].legend(); ax[2].grid(alpha=0.3)
 
-    ax[3].plot(Rd[:, 0], 0.3 * Rd[:, 10], lw=2.5, c="tab:green", label="residual δFz [N]")
+    ax[3].plot(Rd[:, 0], RESIDUAL_SCALE[3] * Rd[:, 10], lw=2.5, c="tab:green", label="residual δFz [N]")
     ax[3].axhline(M_W * 9.81, ls="--", c="k", lw=1.2, label=f"payload weight {M_W*9.81:.3f} N")
     ax[3].set_ylabel("δFz [N]"); ax[3].set_xlabel("time [s]")
     ax[3].set_title("residual δFz vs payload weight")
     ax[3].legend(); ax[3].grid(alpha=0.3)
 
     fig.tight_layout()
-    png = os.path.join(OUTDIR, "diag_iterm_sat_case1.png")
+    png = _artifact_plot_path("diag_iterm_sat_case1.png")
     fig.savefig(png, dpi=130); plt.close(fig)
     print(f"\nsaved: {png}")
 
@@ -142,8 +183,8 @@ if __name__ == "__main__":
     F = rollout(None, "floor")
     summarize(F, "floor")
 
-    model = PPO.load(MODEL)
-    Rd = rollout(model, "residual")
+    model_path = _configured_model_path()
+    Rd = rollout(model_path, "residual")
     summarize(Rd, "residual")
 
     make_plot(F, Rd)

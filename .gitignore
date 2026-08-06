@@ -1,0 +1,10 @@
+# New runtime artifacts. Existing tracked model/, tb/, and root PNG files stay untouched.
+artifacts/runs/*
+!artifacts/runs/.gitkeep
+
+# Python and test/tool caches.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/

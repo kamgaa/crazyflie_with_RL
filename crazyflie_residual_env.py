@@ -11,9 +11,8 @@ SEOSUK/mujoco_crazyflie (just_flight) 의 plant.py MuJoCo 코어를 ROS2에서 �
   - 물리/allocation 은 plant.py 와 *비트 동일* (같은 B, 같은 timestep, 같은 apply_control)
   - CoM bias 는 body_ipos/body_mass 를 런타임 편집해 물리적으로 주입
 
-주의: xml_path 는 본인 레포의 plant/data/cf21B_500.xml 절대경로로 지정.
+주의: xml_path 는 호출자가 CLI 또는 설정에서 전달한다.
 """
-import os
 import numpy as np
 import mujoco
 import gymnasium as gym
@@ -32,6 +31,15 @@ THRUST_MIN = 0.0
 THRUST_MAX = 0.20                    # N per motor
 J_DIAG = np.array([2.3951e-5, 2.3951e-5, 3.2347e-5])   # MJCF diaginertia
 PHYSICS_HZ = 500.0
+DEFAULT_RESIDUAL_SCALE = (0.022, 0.022, 0.0001, 0.3)
+OBSERVATION_SCHEMA = {
+    "residual": "residual_v1",
+    "e2e": "e2e_v1",
+}
+OBSERVATION_DIM = {
+    "residual": 13,
+    "e2e": 15,
+}
 
 # hover collective 유지 하에 낼 수 있는 최대 roll/pitch 토크 [N·m]
 #   tau = ARM*(2*(2*THRUST_MAX) - MASS*GRAV)  ≈ 13.24 mN·m
@@ -171,11 +179,8 @@ class CrazyflieResidualEnv(gym.Env):
                  xml_path,
                  policy_hz=100.0,
                  episode_sec=8.0,
-                 residual_scale=(0.022, 0.022, 0.0001, 0.3),  # [tau_x,tau_y,tau_z,Fz] 권한 x3 bigger then 4th
-                 #residual_scale=(0.004, 0.004, 0.003, 0.05),  # [tau_x,tau_y,tau_z,Fz] 권한
-                 #  ^ 검증된 값: tau ~20% of max_tau, Fz ~12% of hover thrust.
-                 #    이보다 크면 미숙련 정책이 PID floor 를 파괴함(실측 확인).
-                 mode="residual",          # "residual" | "absolute"
+                 residual_scale=DEFAULT_RESIDUAL_SCALE,
+                 mode="residual",          # "residual" | "e2e"
                  com_bias_mass=0.0,         # kg — default 무바이어스 (bias 는 randomize 또는 명시 지정으로만)
                  com_bias_offset=(0.0, 0.0),  # (x,y) m, 추 위치
                  com_bias_randomize=False,  # 에피소드 간 랜덤화 여부
@@ -183,6 +188,27 @@ class CrazyflieResidualEnv(gym.Env):
                  att_perturb_deg=5.0,      # ← 추가: 초기 자세 섭동 상한 [deg]
                  seed=None):
         super().__init__()
+        if mode not in OBSERVATION_DIM:
+            allowed = ", ".join(OBSERVATION_DIM)
+            raise ValueError(f"mode must be one of {{{allowed}}}, got {mode!r}")
+
+        try:
+            residual_scale_array = np.asarray(residual_scale, dtype=float)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(
+                "residual_scale must be a 4-dimensional numeric vector "
+                "ordered as [tau_x, tau_y, tau_z, F_z]"
+            ) from exc
+        if residual_scale_array.shape != (4,):
+            raise ValueError(
+                "residual_scale must have shape (4,) ordered as "
+                f"[tau_x, tau_y, tau_z, F_z], got {residual_scale_array.shape}"
+            )
+        if not np.all(np.isfinite(residual_scale_array)):
+            raise ValueError("residual_scale values must all be finite")
+        if np.any(residual_scale_array <= 0.0):
+            raise ValueError("residual_scale values must all be positive")
+
         self.model = mujoco.MjModel.from_xml_path(xml_path)
         self.data = mujoco.MjData(self.model)
         self.model.opt.timestep = 1.0 / PHYSICS_HZ
@@ -203,7 +229,9 @@ class CrazyflieResidualEnv(gym.Env):
 
         self.pid = CascadePID(self.dt_phys)
         self.mode = mode
-        self.residual_scale = np.array(residual_scale)
+        self.observation_schema = OBSERVATION_SCHEMA[mode]
+        self.observation_dim = OBSERVATION_DIM[mode]
+        self.residual_scale = residual_scale_array.copy()
         self.com_bias_mass = com_bias_mass
         self.com_bias_offset = np.array(com_bias_offset)
         self.com_bias_randomize = com_bias_randomize
@@ -217,7 +245,7 @@ class CrazyflieResidualEnv(gym.Env):
 
 
         self.action_space = spaces.Box(-1.0, 1.0, shape=(4,), dtype=np.float32)
-        high = np.full(15, np.inf, dtype=np.float32)
+        high = np.full(self.observation_dim, np.inf, dtype=np.float32)
         self.observation_space = spaces.Box(-high, high, dtype=np.float32)
         self._rng = np.random.default_rng(seed)
         self._step = 0
@@ -272,14 +300,11 @@ class CrazyflieResidualEnv(gym.Env):
         return np.arctan2(np.sin(psi - self.yaw_des), np.cos(psi - self.yaw_des))
 
     def _obs(self, pos, quat, vel, omega_B):
-        psi   = np.arctan2(2*(quat[0]*quat[3] + quat[1]*quat[2]),
-                           1 - 2*(quat[2]**2 + quat[3]**2))   # 현재 yaw
-        e_psi = np.arctan2(np.sin(psi - self.yaw_des),
-                           np.cos(psi - self.yaw_des))         # 래핑된 목표 상대 오차
-        return np.concatenate([
-            pos - self.pos_des, vel, quat, omega_B,
-            [np.sin(e_psi), np.cos(e_psi)]                     # ← yaw 오차 (연속)
-        ]).astype(np.float32)
+        components = [pos - self.pos_des, vel, quat, omega_B]
+        if self.mode == "e2e":
+            e_psi = self._yaw_err(quat)
+            components.append([np.sin(e_psi), np.cos(e_psi)])
+        return np.concatenate(components).astype(np.float32)
 
         # ---------- gym API ----------
     def reset(self, *, seed=None, options=None):
@@ -396,9 +421,16 @@ class CrazyflieResidualEnv(gym.Env):
 
 
 if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Run the Crazyflie residual-mode PID-only hover smoke test."
+    )
+    parser.add_argument("xml_path", help="Path to the Crazyflie MuJoCo XML model")
+    args = parser.parse_args()
+
     # ---- 자체 검증: PID-only(residual=0) 로 hover 수렴하는지 ----
-    xml = "/home/mrl_6534/ros2_ws/src/mujoco_crazyflie/plant/data/cf21B_500.xml"
-    env = CrazyflieResidualEnv(xml, mode="residual", com_bias_mass=0.0)  # bias 없이 floor 확인
+    env = CrazyflieResidualEnv(args.xml_path, mode="residual", com_bias_mass=0.0)  # bias 없이 floor 확인
     obs, _ = env.reset(seed=0)
     print(f"obs dim = {obs.shape}, substeps = {env.substeps}, max_steps = {env.max_steps}")
     errs = []

@@ -1,0 +1,8 @@
+numpy
+PyYAML
+gymnasium
+mujoco
+stable-baselines3==2.9.0
+matplotlib
+tensorboard
+pytest
