@@ -1,0 +1,15 @@
+{
+  "action_dim": 4,
+  "compatibility": "e2e_only",
+  "control_mode": "e2e",
+  "generation_date_utc": "2026-08-06",
+  "legacy": true,
+  "legacy_filename_noncompliant": true,
+  "model_file": "ppo_residual_cf.zip",
+  "num_timesteps": 1001472,
+  "observation_dim": 15,
+  "observation_schema": "e2e_v1",
+  "provenance": "inferred from SB3 archive metadata and the active e2e train_ppo_02.py source at creation",
+  "sha256": "9e1601eca3179ae6a1e3a904a3fd94ecb8a7a8bfb5e0fd94240a31d17ee0cc01",
+  "stable_baselines3_version": "2.9.0"
+}

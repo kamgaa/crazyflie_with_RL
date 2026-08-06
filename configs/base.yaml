@@ -1,0 +1,55 @@
+version: 1
+
+paths:
+  resource_root: resources
+  mujoco_xml: resources/mujoco/cf21B_500.xml
+  pretrained_model_root: resources/pretrained_models
+  artifact_root: artifacts
+
+experiment:
+  control_mode: e2e
+  observation_schema: e2e_v1
+  observation_dim: 15
+  action_dim: 4
+  seed: null  # Preserve the original train_ppo_02.py behavior (SB3 seed was unset).
+  condition: nominal
+
+environment:
+  residual_scale: [0.022, 0.022, 0.0001, 0.3]
+  policy_hz: 100.0
+  episode_sec: 8.0
+  com_bias_randomize: false
+  com_bias_mass: 0.0
+  com_bias_offset: [0.0, 0.0]
+  att_perturb_deg: 0.0
+  pos_perturb: 0.05
+
+training:
+  total_timesteps: 1000000
+  ppo:
+    policy: MlpPolicy
+    verbose: 0
+    device: cpu
+    n_steps: 2048
+    batch_size: 256
+    learning_rate: 0.0003
+    gamma: 0.99
+    gae_lambda: 0.95
+    n_epochs: 10
+    ent_coef: 0.003
+    vf_coef: 0.5
+    max_grad_norm: 0.5
+    normalize_advantage: true
+    clip_range: 0.1
+    target_kl: 0.03
+    policy_kwargs:
+      log_std_init: -1.5
+      net_arch: [64, 64]
+
+evaluation:
+  n_episodes: 30
+  seed_start: 1000
+  tail_fraction: 0.3
+  tilt_limit_deg: 30.0
+  every_steps: 20000
+  deterministic: true

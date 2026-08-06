@@ -1,0 +1,7 @@
+extends: base.yaml
+
+experiment:
+  control_mode: residual
+  observation_schema: residual_v1
+  observation_dim: 13
+  action_dim: 4
