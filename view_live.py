@@ -26,7 +26,7 @@ LW = 3.0                                   # 선 굵기 (MATLAB 기준 ~3)
 
 TEST_CONDITIONS = [
     #  이름            r (거리)        theta        m_w (무게, kg)
-    ("my-case-1",    0.20,          0.0,         0.004),   # 무게 0, 중심
+    ("my-case-1",    0.000,          0.0,         0.000),   # 무게 0, 중심
     #("my-case-2",    0.060,          np.pi/2,     0.035),
     #("my-case-3",    0.090,          np.pi,       0.029),
 ]
@@ -52,6 +52,7 @@ def save_plot(tag, t, pos, rpy, png_path):
     ax1.axhline(0.0, ls="--", color="gray", lw=1.5)   # x,y setpoint
     ax1.axhline(1.0, ls=":",  color="gray", lw=1.5)   # z setpoint (hover 1.0m)
     ax1.set_ylabel("position [m]")
+    ax1.set_ylim(-1.0, 1.0)
     ax1.set_title(f"{tag} — position (x,y,z)")
     ax1.legend(loc="best"); ax1.grid(alpha=0.3)
 
@@ -61,6 +62,7 @@ def save_plot(tag, t, pos, rpy, png_path):
     ax2.plot(t, rpy[:, 2], lw=LW, label="yaw")
     ax2.axhline(0.0, ls="--", color="gray", lw=1.5)
     ax2.set_ylabel("attitude [deg]"); ax2.set_xlabel("time [s]")
+    ax2.set_ylim(-20, 20)
     ax2.set_title(f"{tag} — attitude (roll,pitch,yaw)")
     ax2.legend(loc="best"); ax2.grid(alpha=0.3)
 
@@ -71,7 +73,7 @@ def save_plot(tag, t, pos, rpy, png_path):
 
 def view(policy, tag, r_bias, theta, m_w, png_name):
     T, P_hist, RPY_hist = [], [], []                 # 자료구조: 명확한 접미사
-    env = CrazyflieResidualEnv(XML, mode="residual",
+    env = CrazyflieResidualEnv(XML, mode="e2e",
                                com_bias_randomize=False,
                                residual_scale=RESIDUAL_SCALE,
                                pos_perturb=0.0,
@@ -80,7 +82,7 @@ def view(policy, tag, r_bias, theta, m_w, png_name):
     dt = env.dt_phys * env.substeps
     off = np.array([r_bias*np.cos(theta), r_bias*np.sin(theta)])   # r_bias=0 이면 offset 0
     obs, _ = env.reset(seed=SEED)
-    env._set_com_bias(m_w, off)
+    #env._set_com_bias(m_w, off)
     mujoco.mj_forward(env.model, env.data)
     q = env.data.qpos[3:7]
     print(f"init quat = {q},  att_perturb_deg = {env.att_perturb_deg}")

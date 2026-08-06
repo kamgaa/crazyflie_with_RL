@@ -217,12 +217,12 @@ class CrazyflieResidualEnv(gym.Env):
 
 
         self.action_space = spaces.Box(-1.0, 1.0, shape=(4,), dtype=np.float32)
-        high = np.full(13, np.inf, dtype=np.float32)
+        high = np.full(15, np.inf, dtype=np.float32)
         self.observation_space = spaces.Box(-high, high, dtype=np.float32)
         self._rng = np.random.default_rng(seed)
         self._step = 0
         self._prev_action = np.zeros(4)        # ← 추가: action 변화율용
-        self.w_dact = 0.02                     # ← 추가: 변화율 페널티 가중치 (시작값)
+        self.w_dact = 0                     # ← 추가: 변화율 페널티 가중치 (시작값)
 
     # ---------- CoM bias 주입 (body_ipos/body_mass 편집) ----------
     def _set_com_bias(self, m_w, off_xy):
@@ -266,10 +266,22 @@ class CrazyflieResidualEnv(gym.Env):
             self.model.sensor_adr[self.gyro_sid] + 3].copy()   # body gyro (PID 가 쓰는 신호)
         return pos, quat, vel, omega_B
 
-    def _obs(self, pos, quat, vel, omega_B):
-        return np.concatenate([pos - self.pos_des, vel, quat, omega_B]).astype(np.float32)
+    def _yaw_err(self, quat):
+        psi = np.arctan2(2*(quat[0]*quat[3] + quat[1]*quat[2]),
+                         1 - 2*(quat[2]**2 + quat[3]**2))
+        return np.arctan2(np.sin(psi - self.yaw_des), np.cos(psi - self.yaw_des))
 
-    # ---------- gym API ----------
+    def _obs(self, pos, quat, vel, omega_B):
+        psi   = np.arctan2(2*(quat[0]*quat[3] + quat[1]*quat[2]),
+                           1 - 2*(quat[2]**2 + quat[3]**2))   # 현재 yaw
+        e_psi = np.arctan2(np.sin(psi - self.yaw_des),
+                           np.cos(psi - self.yaw_des))         # 래핑된 목표 상대 오차
+        return np.concatenate([
+            pos - self.pos_des, vel, quat, omega_B,
+            [np.sin(e_psi), np.cos(e_psi)]                     # ← yaw 오차 (연속)
+        ]).astype(np.float32)
+
+        # ---------- gym API ----------
     def reset(self, *, seed=None, options=None):
         if seed is not None:
             self._rng = np.random.default_rng(seed)
@@ -331,8 +343,12 @@ class CrazyflieResidualEnv(gym.Env):
             if self.mode == "residual":
                 u_pid = self.pid(pos, quat, vel, omega_B, self.pos_des, self.yaw_des)
                 u = u_pid + residual
-            else:  # absolute: 중력보상 bias 만 깔고 정책이 전체 산출
+           # else:  # absolute: 중력보상 bias 만 깔고 정책이 전체 산출
+            #    u = residual + np.array([0, 0, 0, MASS * GRAV])
+            elif self.mode == "e2e":   # 중력보상 bias 만 깔고 정책이 wrench 전체 산출
                 u = residual + np.array([0, 0, 0, MASS * GRAV])
+            else:
+                raise ValueError(f"unknown mode: {self.mode}")
             self._apply_control(u)
             R = rotmat_from_quat_wxyz(quat)
             # 편심 payload 의 중력토크(world)를 명시 주입: body_ipos 편집만으론 안 생기므로.
@@ -349,15 +365,23 @@ class CrazyflieResidualEnv(gym.Env):
         e_pos = pos - self.pos_des
         d_pos = np.linalg.norm(e_pos)               # added
         e_tilt = 2.0 * (quat[1]**2 + quat[2]**2)      # = 1 - cos(theta), q=[w,x,y,z]
+        psi   = np.arctan2(2*(quat[0]*quat[3] + quat[1]*quat[2]),1 - 2*(quat[2]**2 + quat[3]**2))
+        e_psi = np.arctan2(np.sin(psi - self.yaw_des), np.cos(psi - self.yaw_des))
+        e_yaw = e_psi**2                                    # ← 목표 상대 yaw 오차
+
         d_action = action - self._prev_action          # ← action 변화율
+        act_pen = 0.0 if self.mode == "e2e" else 0.001
+        dact_w  = 0.0 if self.mode == "e2e" else self.w_dact
+
         cost = (3.0 * e_pos @ e_pos
-                #+ 0.5 * d_pos # ← 추가: 1차 항 (작은 오차에서 gradient 유지)
                 + 0.01 * vel @ vel
                 + 3.0 * e_tilt
                 + 0.001 * omega_B @ omega_B
-                + 0.001 * (action @ action)
-                + self.w_dact * (d_action @ d_action))   # ← 추가: 부드러운 제어 보상
+                + 1 * e_yaw
+                + act_pen * (action @ action)          # ← 0.001 → act_pen
+                + dact_w * (d_action @ d_action))       # ← self.w_dact → dact_w
         reward = -cost
+        
         self._prev_action = action.copy()              # ← prev 갱신 (reward 계산 후)
 
         self._step += 1

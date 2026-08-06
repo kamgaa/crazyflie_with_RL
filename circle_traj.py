@@ -14,7 +14,7 @@ from crazyflie_residual_env import CrazyflieResidualEnv
 XML   = "/home/mrl_6534/ros2_ws/src/mujoco_crazyflie/plant/data/cf21B_500.xml"
 MODEL = "/home/mrl_6534/gwpark/crazyflie_RL/model/ppo_best"
 
-RESIDUAL_SCALE = (0.006, 0.006, 0.0001, 0.3)   # ← train_ppo.py 와 동일하게!
+RESIDUAL_SCALE = (0.022, 0.022, 0.0001, 0.3)   # ← train_ppo.py 와 동일하게!
 SEED   = 42
 OUTDIR = "/home/mrl_6534/gwpark/crazyflie_RL"
 LW     = 3.0
