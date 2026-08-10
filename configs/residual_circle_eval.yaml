@@ -1,0 +1,25 @@
+extends: residual_train.yaml
+
+environment:
+  # Headless legacy rollouts kept the 8 s environment limit but deliberately
+  # ignored truncation while completing the longer OOD mission. The viewer
+  # runner extends this at construction time, exactly as the legacy viewer did.
+  episode_sec: 8.0
+  residual_scale: [0.022, 0.022, 0.0001, 0.3]
+  payload:
+    randomize: false
+    mass: 0.005
+    offset: [-0.100, 0.0]
+
+evaluation:
+  episode_count: 1
+  seed_start: 42
+  evaluation_interval: 0
+
+mission:
+  type: circle
+  force_floor_start: true
+
+experiment:
+  condition: rho0p5-T10-m5g-r100mm-th180deg-fixed
+  description: Legacy circle_traj.py active my-case-3 condition

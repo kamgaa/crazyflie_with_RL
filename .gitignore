@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# New run-scoped outputs. Legacy model/, tb/, and root PNG files are tracked
+# separately and are intentionally not moved or deleted by this refactor.
+artifacts/runs/*
+!artifacts/runs/.gitkeep

@@ -1,67 +1,119 @@
-"""
-diag_entropy_kl.py
+"""Plot PPO entropy/KL diagnostics without import-time file creation."""
 
-330k 붕괴가 PPO 탐색-수렴 동역학 때문인지 확인:
-  train/entropy_loss, train/approx_kl, train/std, train/clip_fraction 을
-  residual 붕괴 시점(~330k)과 같은 x축에 겹쳐 본다.
+from __future__ import annotations
 
-전제: train_ppo_02.py 에서 PPO(..., tensorboard_log=LOGDIR, verbose=1) 로 학습했어야 함.
-  -> TB 로그가 없으면 아래 [대안] 참고 (330k 만 재현하며 콜백으로 수집).
-"""
-import os, glob
-import numpy as np
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
-
-# ===== 채울 것: train_ppo_02.py 의 tensorboard_log 경로 (PPO_1 등 하위 폴더까지) =====
-LOGDIR = "/home/mrl_6534/gwpark/crazyflie_RL/tb"     # <-- 실제 경로로 수정
-#COLLAPSE = 330000
-OUT = "/home/mrl_6534/gwpark/crazyflie_RL/diag_entropy_kl.png"
+import argparse
+from pathlib import Path
+import sys
+from typing import Sequence
 
 
-def find_run(root):
-    """PPO_* 하위에 event 파일이 있으면 그 폴더를, 없으면 root 자체를 반환."""
-    if glob.glob(os.path.join(root, "events.out.*")):
-        return root
-    subs = sorted(glob.glob(os.path.join(root, "*")))
-    for s in subs:
-        if glob.glob(os.path.join(s, "events.out.*")):
-            return s
-    return root
+PROJECT_ROOT = Path(__file__).resolve().parent
+DEFAULT_CONFIG = PROJECT_ROOT / "configs" / "residual_train.yaml"
+SCALAR_TAGS = (
+    "train/entropy_loss",
+    "train/approx_kl",
+    "train/std",
+    "train/clip_fraction",
+)
+SOURCE_PROVENANCE = "legacy-tensorboard-control-mode-condition-seed-unverified"
 
 
-def main():
-    run = find_run(LOGDIR)
-    print("event dir:", run)
-    ea = EventAccumulator(run, size_guidance={"scalars": 0})
-    ea.Reload()
-    avail = ea.Tags()["scalars"]
-    print("available scalar tags:")
-    for t in avail:
-        print("   ", t)
+def find_event_dir(root: str | Path) -> Path:
+    """Preserve the legacy direct/first-child TensorBoard run selection."""
 
-    def series(tag):
-        if tag not in avail:
-            return None, None
-        ev = ea.Scalars(tag)
-        return np.array([e.step for e in ev]), np.array([e.value for e in ev])
+    directory = Path(root)
+    if any(directory.glob("events.out.*")):
+        return directory
+    for child in sorted(directory.glob("*")):
+        if child.is_dir() and any(child.glob("events.out.*")):
+            return child
+    raise FileNotFoundError(f"no TensorBoard event file found in {directory}")
 
-    tags = ["train/entropy_loss", "train/approx_kl", "train/std", "train/clip_fraction"]
-    fig, axes = plt.subplots(len(tags), 1, figsize=(10, 12), sharex=True)
-    for ax, tag in zip(axes, tags):
-        s, v = series(tag)
-        #ax.axvline(COLLAPSE, ls="--", c="r", lw=1.8, label="collapse ~330k")
-        if s is None:
-            ax.set_title(f"{tag}  (태그 없음 — verbose/tb 설정 확인)")
-            ax.legend(); continue
-        ax.plot(s, v, lw=2.0)
-        ax.set_title(tag); ax.grid(alpha=0.3); ax.legend(loc="best")
-    axes[-1].set_xlabel("timesteps")
-    fig.tight_layout(); fig.savefig(OUT, dpi=130)
-    print("saved:", OUT)
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Plot PPO entropy/KL diagnostics.")
+    parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
+    parser.add_argument(
+        "--logdir",
+        type=Path,
+        default=None,
+        help="event directory/root (default: config paths.legacy_tensorboard_root)",
+    )
+    return parser
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+
+    import numpy as np
+    from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
+
+    from crazyflie_rl.artifacts import ArtifactManager
+    from crazyflie_rl.config import load_config
+    from crazyflie_rl.plotting import save_entropy_diagnostic
+
+    config = load_config(args.config)
+    event_dir = find_event_dir(
+        config.paths.legacy_tensorboard_root if args.logdir is None else args.logdir
+    )
+    accumulator = EventAccumulator(str(event_dir), size_guidance={"scalars": 0})
+    accumulator.Reload()
+    available = set(accumulator.Tags().get("scalars", ()))
+    series: dict[str, tuple[np.ndarray, np.ndarray] | None] = {}
+    for tag in SCALAR_TAGS:
+        if tag not in available:
+            series[tag] = None
+            continue
+        events = accumulator.Scalars(tag)
+        series[tag] = (
+            np.asarray([event.step for event in events], dtype=int),
+            np.asarray([event.value for event in events], dtype=float),
+        )
+
+    artifacts = ArtifactManager.create(
+        config,
+        command=list(sys.argv if argv is None else argv),
+        condition="entropy-kl-source-unverified",
+        mission="diagnostic",
+    )
+    try:
+        plot_path = save_entropy_diagnostic(
+            artifacts.path("plots", "entropy-kl", ".png"), series
+        )
+        metrics_path = artifacts.write_metrics(
+            "entropy-kl",
+            {
+                "event_dir": str(event_dir.resolve()),
+                "source_provenance": SOURCE_PROVENANCE,
+                "source_control_mode": None,
+                "source_condition": None,
+                "source_seed": None,
+                "diagnostic_config_profile": config.profile_name,
+                "available_scalar_tags": sorted(available),
+                "requested_scalar_tags": list(SCALAR_TAGS),
+                "plot": plot_path.relative_to(artifacts.run_dir).as_posix(),
+            },
+        )
+        artifacts.finalize(
+            "completed",
+            input_tensorboard={
+                "event_dir": str(event_dir.resolve()),
+                "provenance": SOURCE_PROVENANCE,
+                "control_mode": None,
+                "condition": None,
+                "seed": None,
+            },
+        )
+        print(f"event dir: {event_dir}")
+        print("source provenance: legacy control mode/condition/seed unverified")
+        print(f"saved: {plot_path}")
+        print(f"metrics: {metrics_path}")
+        return 0
+    except Exception as exc:
+        artifacts.finalize("failed", error=f"{type(exc).__name__}: {exc}")
+        raise
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

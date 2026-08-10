@@ -1,0 +1,11 @@
+extends: residual_circle_eval.yaml
+
+environment:
+  residual_scale: [0.006, 0.006, 0.0001, 0.3]
+  payload:
+    mass: 0.0
+    offset: [0.0, 0.0]
+
+experiment:
+  condition: rho0p5-T10-m0g-legacy-scale006
+  description: Legacy view_live_hover.py nominal circle condition

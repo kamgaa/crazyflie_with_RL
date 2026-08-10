@@ -1,0 +1,14 @@
+extends: e2e_train.yaml
+
+environment:
+  position_perturbation: 0.0
+  attitude_perturbation_deg: 0.0
+
+evaluation:
+  episode_count: 1
+  seed_start: 42
+  evaluation_interval: 0
+
+experiment:
+  condition: nominal
+  description: Legacy view_live.py E2E hover behavior

@@ -1,153 +1,173 @@
-"""
-diag_iterm_sat.py
+"""PID velocity-integrator saturation diagnostic, exposed as a safe CLI."""
 
-가설 검정용 계측:  "residual 은 PID velocity I-term 이 anti-windup clip(±2) 에
-포화해 손대지 못하는 영역을 대신 메운다" 를 채널 단위로 가른다.
+from __future__ import annotations
 
-방법:
-  - case-1 payload(m_w=30g, offset=+x 30mm) 를 건 상태에서 hover 고정.
-  - 초기 섭동 제거(pos_perturb=0) -> 순수 payload transient + steady state.
-  - floor(policy=None, residual=0) 와 residual(PPO) 를 *같은 seed* 로 rollout.
-  - 지표:  z sag,  roll/pitch,  i_vel(3축) + 포화율,  action(4채널; 특히 δFz=0.3*a[3]).
-
-model-based 예측(반증 기준):
-  floor    -> i_vel_z 포화율 ~100%,  z sag ~299mm(z≈0.70m)
-  residual -> a[3] ≈ +0.98(δFz≈+0.29N),  i_vel_z 포화 해소,  z sag ~0
-  가설이 z 채널에 국한되는지 attitude(x/y)까지 걸치는지는 i_vel_x/y 포화율로 판정.
-"""
-import os
-os.environ["CUDA_VISIBLE_DEVICES"] = ""
-
-import math
-import numpy as np
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from stable_baselines3 import PPO
-from crazyflie_residual_env import CrazyflieResidualEnv
-
-# ===== 학습/데모와 동일 =====
-XML    = "/home/mrl_6534/ros2_ws/src/mujoco_crazyflie/plant/data/cf21B_500.xml"
-MODEL  = "/home/mrl_6534/gwpark/crazyflie_RL/model/ppo_best"
-RESIDUAL_SCALE = (0.006, 0.006, 0.0001, 0.3)
-SEED   = 42
-OUTDIR = "/home/mrl_6534/gwpark/crazyflie_RL"
-
-# ===== 테스트 조건: case-1 (in-distribution) =====
-M_W, R, THETA = 0.030, 0.03, 0.0
-OFF   = (R * math.cos(THETA), R * math.sin(THETA))   # (x,y)[m]
-HOVER = np.array([0.0, 0.0, 1.0])
-T_SEC = 8.0
-ICLIP = 2.0        # CascadePID 의 _i_vel anti-windup clip
-SAT_EPS = 0.02     # |i_vel| > ICLIP - SAT_EPS 이면 '포화'로 계수
+import argparse
+from pathlib import Path
+import sys
+from typing import Any, Sequence
 
 
-def rpy_deg(q):
-    w, x, y, z = q
-    roll  = math.degrees(math.atan2(2 * (w * x + y * z), 1 - 2 * (x * x + y * y)))
-    sp = max(-1.0, min(1.0, 2 * (w * y - z * x)))
-    pitch = math.degrees(math.asin(sp))
-    return roll, pitch
+PROJECT_ROOT = Path(__file__).resolve().parent
+DEFAULT_CONFIG = PROJECT_ROOT / "configs" / "residual_hover_eval.yaml"
+SATURATION_EPSILON = 0.02
 
 
-def rollout(policy, label):
-    env = CrazyflieResidualEnv(
-        XML, mode="residual",
-        com_bias_randomize=False,
-        com_bias_mass=M_W, com_bias_offset=OFF,
-        residual_scale=RESIDUAL_SCALE,
-        episode_sec=T_SEC + 1.0,
-        pos_perturb=0.0,             # 초기 위치 섭동 제거 -> 순수 payload 응답만
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Compare PID floor and residual PPO I-term saturation."
     )
-    obs, _ = env.reset(seed=SEED)
-    env.pos_des = HOVER.copy()
-
-    m_now = float(env.model.body_mass[env.drone_bid])
-    print(f"[{label}] payload check: mass={m_now:.5f}kg "
-          f"(nominal {env._m0:.5f}, Δ={m_now - env._m0:+.5f})  "
-          f"ipos={np.round(env.model.body_ipos[env.drone_bid], 4)}")
-
-    dt = env.dt_phys * env.substeps
-    n = int(round(T_SEC / dt))
-    rows = []
-    for k in range(n):
-        act = policy.predict(obs, deterministic=True)[0] if policy else np.zeros(4)
-        obs, _, term, trunc, _ = env.step(act)   # term/trunc 무시하고 끝까지 기록
-        pos = obs[0:3] + env.pos_des
-        roll, pitch = rpy_deg(obs[6:10])
-        ivx, ivy, ivz = env.pid._i_vel           # step() 내부 마지막 substep 값
-        rows.append([k * dt, pos[2], roll, pitch, ivx, ivy, ivz, *act])
-    return np.array(rows)
+    parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
+    parser.add_argument(
+        "--model",
+        type=Path,
+        default=None,
+        help="PPO archive (default: <legacy_model_root>/ppo_best.zip)",
+    )
+    return parser
 
 
-def summarize(A, label):
-    t = A[:, 0]
-    ss = t >= (T_SEC - 2.0)                       # 마지막 2s = 정상상태 창
-    z, roll, pitch = A[:, 1], A[:, 2], A[:, 3]
-    ivx, ivy, ivz = A[:, 4], A[:, 5], A[:, 6]
-    a = A[:, 7:11]
+def _rollout(config: Any, factory: Any, policy: Any | None, label: str):
+    import numpy as np
+    from crazyflie_rl.plotting import quaternion_to_euler_deg
 
-    def sat(v):
-        return 100.0 * float(np.mean(np.abs(v) > ICLIP - SAT_EPS))
+    env = factory.make(episode_sec=config.environment.episode_sec + 1.0)
+    try:
+        observation, _ = env.reset(seed=config.evaluation.seed_start)
+        # This assignment is deliberately retained from the legacy script,
+        # even though the configured target already has the same value.
+        env.pos_des = np.asarray(config.environment.position_target, dtype=float).copy()
+        current_mass = float(env.model.body_mass[env.drone_bid])
+        print(
+            f"[{label}] mass={current_mass:.5f}kg "
+            f"(nominal {env._m0:.5f}, delta={current_mass - env._m0:+.5f})"
+        )
+        dt = float(env.dt_phys * env.substeps)
+        sample_count = int(round(config.environment.episode_sec / dt))
+        rows: list[list[float]] = []
+        for index in range(sample_count):
+            action = (
+                policy.predict(
+                    observation,
+                    deterministic=config.evaluation.deterministic,
+                )[0]
+                if policy is not None
+                else np.zeros(4)
+            )
+            observation, _reward, _terminated, _truncated, _ = env.step(action)
+            position = observation[0:3] + env.pos_des
+            roll, pitch, _yaw = quaternion_to_euler_deg(observation[6:10])
+            i_vel_x, i_vel_y, i_vel_z = env.pid._i_vel
+            rows.append(
+                [
+                    index * dt,
+                    float(position[2]),
+                    float(roll),
+                    float(pitch),
+                    float(i_vel_x),
+                    float(i_vel_y),
+                    float(i_vel_z),
+                    *np.asarray(action, dtype=float).tolist(),
+                ]
+            )
+        return np.asarray(rows, dtype=float)
+    finally:
+        env.close()
 
-    print(f"\n=== [{label}] 정상상태(마지막 2s) 요약 ===")
-    print(f"  z            = {z[ss].mean():.4f} m   (sag {1.0 - z[ss].mean():+.4f} m)")
-    print(f"  roll / pitch = {roll[ss].mean():+.2f} / {pitch[ss].mean():+.2f} deg")
-    print(f"  i_vel[x,y,z] = [{ivx[ss].mean():+.3f}, {ivy[ss].mean():+.3f}, {ivz[ss].mean():+.3f}]")
-    print(f"  i_vel 포화율(전구간) x/y/z = {sat(ivx):.0f}% / {sat(ivy):.0f}% / {sat(ivz):.0f}%")
-    print(f"  action[x,y,z,Fz] = [{a[ss,0].mean():+.3f}, {a[ss,1].mean():+.3f}, "
-          f"{a[ss,2].mean():+.3f}, {a[ss,3].mean():+.3f}]")
-    print(f"    -> δτ=[{0.006*a[ss,0].mean():+.4f},{0.006*a[ss,1].mean():+.4f},"
-          f"{0.0001*a[ss,2].mean():+.5f}] N·m,  δFz={0.3*a[ss,3].mean():+.4f} N "
-          f"(payload 무게 {M_W*9.81:.4f} N)")
+
+def _summary(config: Any, rows, label: str) -> dict[str, Any]:
+    import numpy as np
+
+    time_sec = rows[:, 0]
+    window_sec = config.environment.episode_sec * config.evaluation.tail_fraction
+    steady = time_sec >= (config.environment.episode_sec - window_sec)
+    limit = config.controller.pid.integrator_limit
+    threshold = limit - SATURATION_EPSILON
+    integrator = rows[:, 4:7]
+    action = rows[:, 7:11]
+
+    def saturation(values) -> float:
+        return 100.0 * float(np.mean(np.abs(values) > threshold))
+
+    result = {
+        "label": label,
+        "sample_count": int(rows.shape[0]),
+        "steady_state_window_sec": float(window_sec),
+        "z_mean": float(np.mean(rows[steady, 1])),
+        "z_sag": float(
+            config.environment.position_target[2] - np.mean(rows[steady, 1])
+        ),
+        "roll_mean_deg": float(np.mean(rows[steady, 2])),
+        "pitch_mean_deg": float(np.mean(rows[steady, 3])),
+        "i_vel_mean": np.mean(integrator[steady], axis=0).tolist(),
+        "i_vel_saturation_percent": [
+            saturation(integrator[:, index]) for index in range(3)
+        ],
+        "action_mean": np.mean(action[steady], axis=0).tolist(),
+    }
+    print(f"\n=== [{label}] steady-state summary ===")
+    print(
+        f"  z={result['z_mean']:.4f}m sag={result['z_sag']:+.4f}m, "
+        f"roll/pitch={result['roll_mean_deg']:+.2f}/{result['pitch_mean_deg']:+.2f}deg"
+    )
+    print(f"  I-term saturation x/y/z={result['i_vel_saturation_percent']}")
+    return result
 
 
-def make_plot(F, Rd):
-    fig, ax = plt.subplots(4, 1, figsize=(10, 12), sharex=True)
-    ax[0].axhline(1.0, ls=":", c="k", lw=1.2, label="ref z=1.0")
-    ax[0].plot(F[:, 0], F[:, 1], lw=2.5, label="floor")
-    ax[0].plot(Rd[:, 0], Rd[:, 1], lw=2.5, label="residual")
-    ax[0].set_ylabel("z [m]"); ax[0].set_title("z position (payload sag)")
-    ax[0].legend(); ax[0].grid(alpha=0.3)
+def main(argv: Sequence[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
 
-    ax[1].plot(F[:, 0], F[:, 3], lw=2.5, label="floor")
-    ax[1].plot(Rd[:, 0], Rd[:, 3], lw=2.5, label="residual")
-    ax[1].axhline(0, ls="--", c="gray", lw=1)
-    ax[1].set_ylabel("pitch [deg]"); ax[1].set_title("pitch (case-1 = pitch 외란)")
-    ax[1].legend(); ax[1].grid(alpha=0.3)
+    from crazyflie_rl.artifacts import ArtifactManager
+    from crazyflie_rl.config import load_config
+    from crazyflie_rl.eval_cli import _load_policy, _model_path
+    from crazyflie_rl.factories import EnvironmentFactory
+    from crazyflie_rl.plotting import save_iterm_diagnostic
 
-    ax[2].axhline(+ICLIP, ls=":", c="r", lw=1.5, label="clip ±2")
-    ax[2].axhline(-ICLIP, ls=":", c="r", lw=1.5)
-    ax[2].plot(F[:, 0], F[:, 6], lw=2.5, label="floor  i_vel_z")
-    ax[2].plot(Rd[:, 0], Rd[:, 6], lw=2.5, label="residual i_vel_z")
-    ax[2].set_ylabel("i_vel_z"); ax[2].set_title("velocity I-term (z) vs anti-windup clip")
-    ax[2].legend(); ax[2].grid(alpha=0.3)
-
-    ax[3].plot(Rd[:, 0], 0.3 * Rd[:, 10], lw=2.5, c="tab:green", label="residual δFz [N]")
-    ax[3].axhline(M_W * 9.81, ls="--", c="k", lw=1.2, label=f"payload weight {M_W*9.81:.3f} N")
-    ax[3].set_ylabel("δFz [N]"); ax[3].set_xlabel("time [s]")
-    ax[3].set_title("residual δFz vs payload weight")
-    ax[3].legend(); ax[3].grid(alpha=0.3)
-
-    fig.tight_layout()
-    png = os.path.join(OUTDIR, "diag_iterm_sat_case1.png")
-    fig.savefig(png, dpi=130); plt.close(fig)
-    print(f"\nsaved: {png}")
+    config = load_config(args.config)
+    config.require_runtime_resources()
+    model_path = _model_path(args.model, config)
+    model = _load_policy(model_path, config)
+    factory = EnvironmentFactory(config)
+    artifacts = ArtifactManager.create(
+        config,
+        command=list(sys.argv if argv is None else argv),
+        condition=config.experiment.condition,
+        mission="iterm-saturation-diagnostic",
+        seed=config.evaluation.seed_start,
+    )
+    try:
+        floor = _rollout(config, factory, None, "floor")
+        residual = _rollout(config, factory, model, "residual")
+        floor_summary = _summary(config, floor, "floor")
+        residual_summary = _summary(config, residual, "residual")
+        plot_path = save_iterm_diagnostic(
+            artifacts.path("plots", "iterm-saturation", ".png"),
+            floor=floor,
+            policy=residual,
+            integrator_limit=config.controller.pid.integrator_limit,
+            force_scale=config.environment.residual_scale[3],
+            payload_mass=config.environment.payload.mass,
+            gravity=config.vehicle.gravity,
+            hover_altitude=config.environment.position_target[2],
+        )
+        metrics_path = artifacts.write_metrics(
+            "iterm-saturation",
+            {
+                "model": str(model_path),
+                "seed": config.evaluation.seed_start,
+                "floor": floor_summary,
+                "residual": residual_summary,
+                "plot": plot_path.relative_to(artifacts.run_dir).as_posix(),
+            },
+        )
+        artifacts.finalize("completed", input_model=str(model_path))
+        print(f"saved: {plot_path}")
+        print(f"metrics: {metrics_path}")
+        return 0
+    except Exception as exc:
+        artifacts.finalize("failed", error=f"{type(exc).__name__}: {exc}")
+        raise
 
 
 if __name__ == "__main__":
-    print(f"case-1: m_w={M_W*1000:.0f}g  off=({OFF[0]*1000:+.0f},{OFF[1]*1000:+.0f})mm  "
-          f"|τ_g|={R*M_W*9.81*1e3:.2f} mN·m")
-
-    F = rollout(None, "floor")
-    summarize(F, "floor")
-
-    model = PPO.load(MODEL)
-    Rd = rollout(model, "residual")
-    summarize(Rd, "residual")
-
-    make_plot(F, Rd)
-    print("\n[해석 가이드]")
-    print("  floor i_vel_z 포화율 ~100% & z sag 크면  -> I-term 포화 확인")
-    print("  residual δFz ≈ payload weight & i_vel_z 포화 해소 & sag↓  -> 가설(z채널) 지지")
-    print("  i_vel_x/y 포화율까지 높고 residual δτ_x/y 가 이를 상쇄하면 -> 가설이 attitude 로도 확장")
+    raise SystemExit(main())

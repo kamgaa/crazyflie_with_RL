@@ -1,0 +1,11 @@
+numpy>=1.26,<3
+PyYAML>=5.4,<7
+gymnasium>=1.0,<2
+mujoco>=3.1,<4
+# Legacy checkpoints were produced by 2.9.0; pin reload/training semantics.
+stable-baselines3==2.9.0
+torch>=2.2
+matplotlib>=3.5
+tensorboard>=2.10
+tzdata>=2024.1; platform_system == "Windows"
+pytest>=6.2

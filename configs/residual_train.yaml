@@ -1,0 +1,34 @@
+extends: base.yaml
+
+environment:
+  control_mode: residual
+  position_perturbation: 0.15
+  attitude_perturbation_deg: 5.0
+  payload:
+    randomize: false
+    mass: 0.010
+    offset: [0.0, 0.0]
+  reward:
+    action_weight: 0.001
+    action_rate_weight: 0.0
+
+training:
+  total_timesteps: 30000
+  ppo:
+    verbose: 1
+    ent_coef: 0.0
+    clip_range: 0.2
+    target_kl: null
+    log_std_init: -2.0
+
+evaluation:
+  episode_count: 5
+  seed_start: 100
+  tail_fraction: 0.3
+  # train_ppo.py had no tilt disqualification; 180 preserves that behavior.
+  tilt_limit_deg: 180.0
+  evaluation_interval: 0
+
+experiment:
+  condition: m10g-r0mm-fixed
+  description: Residual 30k smoke profile matching train_ppo.py

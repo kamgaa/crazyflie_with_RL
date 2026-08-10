@@ -1,0 +1,17 @@
+extends: base.yaml
+
+environment:
+  control_mode: e2e
+  position_perturbation: 0.05
+  attitude_perturbation_deg: 0.0
+  payload:
+    randomize: false
+    mass: 0.0
+    offset: [0.0, 0.0]
+  reward:
+    action_weight: 0.0
+    action_rate_weight: 0.0
+
+experiment:
+  condition: nominal
+  description: E2E PPO training profile matching active train_ppo_02.py

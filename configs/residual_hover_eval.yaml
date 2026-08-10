@@ -1,0 +1,20 @@
+extends: residual_train.yaml
+
+environment:
+  residual_scale: [0.006, 0.006, 0.0001, 0.3]
+  position_perturbation: 0.0
+  attitude_perturbation_deg: 5.0
+  payload:
+    randomize: false
+    mass: 0.030
+    offset: [0.030, 0.0]
+
+evaluation:
+  episode_count: 1
+  seed_start: 42
+  tail_fraction: 0.25
+  evaluation_interval: 0
+
+experiment:
+  condition: m30g-r30mm-th0deg-fixed
+  description: Residual hover and integrator-saturation diagnostic condition
