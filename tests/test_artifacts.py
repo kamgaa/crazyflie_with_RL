@@ -121,3 +121,32 @@ def test_run_and_repeated_best_use_collision_suffixes(tmp_path: Path) -> None:
     manifest = json.loads(first.manifest_path.read_text(encoding="utf-8"))
     assert len(manifest["model_history"]) == 2
     assert manifest["models"]["best"]["timestep"] == 40_000
+
+
+def test_runtime_resolved_config_uses_run_timestamp_and_updates_manifest(
+    tmp_path: Path,
+) -> None:
+    run = ArtifactManager.create(
+        _config(tmp_path),
+        now=datetime(2026, 8, 7, 15, 30, 12, tzinfo=ZoneInfo("Asia/Seoul")),
+    )
+    runtime = {
+        "mode": "lissajous",
+        "center_xy": (0.0, 0.0),
+        "model": Path("model/ppo_best.zip"),
+        "headless": True,
+    }
+
+    path = run.write_runtime_config(runtime)
+
+    assert path.name.endswith("_runtime-resolved_20260807-153012.yaml")
+    text = path.read_text(encoding="utf-8")
+    assert "mode: lissajous" in text
+    assert "model: model\\ppo_best.zip" in text or "model: model/ppo_best.zip" in text
+    manifest = json.loads(run.manifest_path.read_text(encoding="utf-8"))
+    assert manifest["runtime_config"]["path"] == path.relative_to(
+        run.run_dir
+    ).as_posix()
+    assert manifest["runtime_config"]["parameters"]["center_xy"] == [0.0, 0.0]
+    with pytest.raises(FileExistsError, match="refusing to overwrite"):
+        run.write_runtime_config(runtime)

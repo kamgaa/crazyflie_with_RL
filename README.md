@@ -29,7 +29,7 @@ crazyflie_rl/
   factories.py              train/eval 환경 생성
   evaluation.py             고정-seed policy 평가
   training.py               PPO 생성, callback, best/final 저장
-  missions.py               기존 circle phase/reference
+  missions.py               Hover/Circle/Lissajous reference와 legacy circle
   eval_cli.py               viewer/headless 공통 rollout lifecycle
   plotting.py               artifact 경로에만 저장하는 plot helper
 artifacts/runs/              새 실행의 격리된 산출물
@@ -68,6 +68,9 @@ MuJoCo XML 기본값은 의도적으로 다음 서버 절대경로다.
 | `residual_hover_eval.yaml` | residual 30 g / 30 mm integrator diagnostic, scale 0.006 |
 | `residual_circle_eval.yaml` | 기존 `circle_traj.py`: 5 g / 100 mm / 180°, scale 0.022 |
 | `residual_circle_legacy006_eval.yaml` | 기존 `view_live_hover.py`: nominal circle, scale 0.006 |
+| `view_live_hover_eval.yaml` | 통합 `view_live.py` hover 기본값 |
+| `view_live_circle_eval.yaml` | center (0.5, 0), radius 0.5 m, period 10 s, 2 laps |
+| `view_live_lissajous_eval.yaml` | amplitude (0.5, 0.5), ratio 1:2, phase 90°, 2 cycles |
 
 Profile은 같은 디렉터리의 부모 파일을 `extends: base.yaml`처럼 상속한다. Mapping은 재귀 merge되고 list는 전체 교체된다. 알 수 없는 key, 빠진 필수 key, 잘못된 mode, 4차원이 아닌 scale, 0/음수 frequency와 episode는 runtime 객체를 만들기 전에 오류가 난다.
 
@@ -115,6 +118,51 @@ E2E best 조건은 기존과 동일하게 fixed-seed tail position error의 stri
 
 ## 평가
 
+`view_live.py`는 Hover, Circle, Lissajous를 제공하는 통합 비행 테스트 진입점이다. 인자 없이 TTY에서 실행하면 mode와 각 설정값을 순서대로 묻고, Enter만 누르면 선택한 profile의 기본값을 사용한다.
+
+```bash
+python view_live.py
+```
+
+```text
+=== Crazyflie trajectory test ===
+[1] Hover
+[2] Circle trajectory
+[3] Lissajous trajectory
+Select mode [1-3]:
+```
+
+스크립트나 CI처럼 stdin이 TTY가 아닐 때는 `--mode`를 지정한다. 숫자 `1|2|3`과 이름 `hover|circle|lissajous`를 모두 허용한다.
+
+```bash
+python view_live.py --mode hover \
+  --hover-target 0 0 1 --yaw-deg 0 --duration 10 \
+  --policy both --headless
+
+python view_live.py --mode circle \
+  --center 0.5 0 --radius 0.5 --circle-period 10 --laps 2 \
+  --altitude 1 --ramp-sec 2 --start-angle-deg 0 --direction ccw \
+  --policy both --headless
+
+python view_live.py --mode lissajous \
+  --center 0 0 --amplitude-x 0.8 --amplitude-y 0.4 \
+  --frequency-x 1 --frequency-y 2 --phase-deg 90 \
+  --base-period 10 --cycles 2 --altitude 1 --ramp-sec 2 \
+  --policy both --headless
+```
+
+Lissajous의 XY reference는 다음 식을 사용하며 `theta(t)`에는 Circle과 동일한 half-cosine 속도 ramp를 적용한다.
+
+```text
+x(t) = center_x + amplitude_x * sin(a * theta(t) + phase)
+y(t) = center_y + amplitude_y * sin(b * theta(t))
+z(t) = altitude
+```
+
+Circle/Lissajous의 GOTO endpoint는 실제 첫 reference에서 계산된다. 새 mission의 HOLD는 실제 마지막 reference를 유지하지만, 기존 `circle_traj.py`/`view_live_hover.py` profile은 호환성을 위해 기존 CIRCLE→HOLD jump를 보존한다. 공통 override에는 `--seed`, 초기 position/attitude perturbation, `--viewer|--headless`, `--realtime|--no-realtime`, `--camera|--no-camera`, `--force-floor-start|--no-force-floor-start`가 있다.
+
+기존 명시적 hover 명령과 legacy circle wrapper도 계속 동작한다.
+
 ```bash
 python view_live.py --config configs/e2e_hover_eval.yaml \
   --model model/ppo_best.zip --policy both
@@ -126,7 +174,7 @@ python circle_traj.py --config configs/residual_circle_eval.yaml \
   --preset 1 --policy both --headless
 ```
 
-공통 선택지는 `--model`, `--headless`, `--policy floor|residual|both`, `--preset`, `--no-realtime`, `--no-camera`다. `view_live.py`의 E2E floor는 PID가 아니라 zero action + gravity compensation이다.
+공통 선택지는 `--model`, `--headless`, `--policy floor|residual|both`, `--no-realtime`, `--no-camera`다. `--preset`은 기존 `circle_traj.py`/`view_live_hover.py`의 legacy circle 전용이며, 통합 `view_live.py`의 circle은 YAML/CLI의 명시적 center·radius·period 값을 사용한다. `view_live.py`의 E2E floor는 PID가 아니라 zero action + gravity compensation이다.
 
 Legacy model은 자동으로 이름을 바꾸지 않는다. 기본 model은 `model/ppo_best.zip`이며 다른 checkpoint는 항상 `--model`로 명시한다. Shape `(15,) -> (4,)`만으로 residual/E2E provenance를 알 수 없으므로 사용자가 실제 학습 mode와 profile을 확인해야 한다. Legacy inventory와 hash는 [docs/LEGACY_ARTIFACTS.md](docs/LEGACY_ARTIFACTS.md)에 있다.
 
@@ -164,11 +212,13 @@ ppo_residual_hover_m10g-r30mm-th0deg-fixed_seed42_final_20260807-153012.zip
 ppo_residual_circle_rho0p5-T10-m5g-r100mm-th180deg-fixed_seed42_trajectory-residual_20260807-153012.png
 ppo_e2e_hover_nominal_seed42_manifest_20260807-153012.json
 ppo_e2e_hover_nominal_seed42_resolved-config_20260807-153012.yaml
+ppo_e2e_circle_cx0p5-cy0-r0p5-T10-laps2-z1-sa0-ccw-ramp2-to4-set2-goto4-hold2-floorReq1-p0-a0_seed42_trajectory-residual_20260807-153012.png
+ppo_e2e_lissajous_cx0-cy0-Ax0p8-Ay0p4-a1-b2-ph90-T10-cycles2-z1-ramp2-to4-set2-goto4-hold2-floorReq1-p0-a0_seed42_runtime-resolved_20260807-153012.yaml
 ```
 
 같은 초에 같은 run이 생기거나 best가 여러 번 개선되면 `-01`, `-02` suffix로 이전 파일을 보존한다. `.zip.zip`은 만들지 않는다.
 
-Run manifest에는 condition/timestamp/timezone, Git SHA/branch/dirty state, 실행 명령, mode와 observation/action shape, scale, payload, seed, PPO 값, 고정 XML 경로, resolved config, best/final 경로, Python/NumPy/MuJoCo/Gymnasium/SB3/PyTorch 버전이 들어간다. 새 model은 이 manifest와 함께 해석해야 한다.
+Run manifest에는 condition/timestamp/timezone, Git SHA/branch/dirty state, 실행 명령, mode와 observation/action shape, scale, payload, seed, PPO 값, 고정 XML 경로, resolved config, best/final 경로, Python/NumPy/MuJoCo/Gymnasium/SB3/PyTorch 버전이 들어간다. 비행 테스트는 실제 CLI·대화형 override와 policy/viewer/model 선택을 같은 timestamp의 `runtime-resolved.yaml`, manifest, metrics에 기록한다. condition의 `floorReq0|1`은 floor-start 요청값이며, 실제 적용 여부와 실패 이유는 policy별 metrics와 manifest outcome에 남고 plot title에도 적용 결과가 표시된다. condition과 plot title에는 실제 trajectory·phase timing·초기 perturbation 조건도 들어간다. 새 model은 이 manifest와 함께 해석해야 한다.
 
 ## 기존 명령 대응
 
@@ -176,7 +226,8 @@ Run manifest에는 condition/timestamp/timezone, Git SHA/branch/dirty state, 실
 |---|---|
 | `python train_ppo.py` | `python train_ppo.py --config configs/residual_train.yaml` |
 | `python train_ppo_02.py` | `python train_ppo_02.py --config configs/e2e_train.yaml` |
-| `python view_live.py` | `python view_live.py --config configs/e2e_hover_eval.yaml --model model/ppo_best.zip` |
+| `python view_live.py` | TTY 대화형 메뉴 또는 `python view_live.py --mode hover` |
+| 기존 명시적 hover | `python view_live.py --config configs/e2e_hover_eval.yaml --model model/ppo_best.zip` |
 | `python view_live_hover.py 1 both headless` | `python view_live_hover.py --config configs/residual_circle_legacy006_eval.yaml --preset 1 --policy both --headless` |
 | `python circle_traj.py 1 both headless` | `python circle_traj.py --config configs/residual_circle_eval.yaml --preset 1 --policy both --headless` |
 
@@ -195,4 +246,10 @@ test -f /home/mrl_6534/ros2_ws/src/mujoco_crazyflie/plant/data/cf21B_500.xml
 python train_ppo_02.py --config configs/e2e_train.yaml --total-timesteps 4096
 python circle_traj.py --config configs/residual_circle_eval.yaml \
   --preset 1 --policy both --headless
+python view_live.py --mode hover --hover-target 0 0 1 --duration 8 --headless
+python view_live.py --mode circle --center 0.5 0 --radius 0.5 \
+  --circle-period 10 --laps 1 --headless
+python view_live.py --mode lissajous --center 0 0 \
+  --amplitude-x 0.5 --amplitude-y 0.5 --frequency-x 1 \
+  --frequency-y 2 --phase-deg 90 --base-period 10 --cycles 1 --headless
 ```

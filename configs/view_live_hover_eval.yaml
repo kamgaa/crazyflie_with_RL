@@ -1,0 +1,12 @@
+extends: e2e_hover_eval.yaml
+
+mission:
+  type: hover
+  hover:
+    target: [0.0, 0.0, 1.0]
+    yaw_deg: 0.0
+    duration: 8.0
+
+experiment:
+  condition: x0-y0-z1-dur8
+  description: Unified view_live.py hover defaults preserving legacy E2E behavior

@@ -1,0 +1,20 @@
+extends: e2e_hover_eval.yaml
+
+mission:
+  type: circle
+  hover_altitude: 1.0
+  force_floor_start: true
+  # The legacy GOTO endpoint equals the explicit circle's first point.
+  goto_xy: [1.0, 0.0]
+  circle:
+    center_xy: [0.5, 0.0]
+    radius: 0.5
+    period: 10.0
+    laps: 2.0
+    start_angle_deg: 0.0
+    direction: ccw
+    ramp_sec: 2.0
+
+experiment:
+  condition: cx0p5-cy0-r0p5-T10-laps2
+  description: Unified view_live.py E2E circle preset-1 defaults

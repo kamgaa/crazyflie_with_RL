@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 from pathlib import Path
-from typing import Mapping
+from typing import Any, Mapping, Sequence
 
 import numpy as np
 
@@ -45,14 +45,16 @@ def save_hover_trace(
     position: np.ndarray,
     attitude_deg: np.ndarray,
     hover_altitude: float,
+    reference_position: np.ndarray | None = None,
+    position_error: np.ndarray | None = None,
     line_width: float = 3.0,
 ) -> Path:
-    """Save the legacy two-panel hover trajectory plot."""
+    """Save hover position, attitude, and tracking-error panels."""
 
     target = _new_path(path)
     plt = _pyplot()
-    fig, (position_axis, attitude_axis) = plt.subplots(
-        2, 1, figsize=(10, 8), sharex=True
+    fig, (position_axis, attitude_axis, error_axis) = plt.subplots(
+        3, 1, figsize=(10, 10), sharex=True
     )
 
     for index, label in enumerate(("x", "y", "z")):
@@ -60,7 +62,6 @@ def save_hover_trace(
     position_axis.axhline(0.0, ls="--", color="gray", lw=1.5)
     position_axis.axhline(hover_altitude, ls=":", color="gray", lw=1.5)
     position_axis.set_ylabel("position [m]")
-    position_axis.set_ylim(-1.0, 1.0)
     position_axis.set_title(f"{tag} — position (x,y,z)")
     position_axis.legend(loc="best")
     position_axis.grid(alpha=0.3)
@@ -72,10 +73,40 @@ def save_hover_trace(
     attitude_axis.axhline(0.0, ls="--", color="gray", lw=1.5)
     attitude_axis.set_ylabel("attitude [deg]")
     attitude_axis.set_xlabel("time [s]")
-    attitude_axis.set_ylim(-20.0, 20.0)
     attitude_axis.set_title(f"{tag} — attitude (roll,pitch,yaw)")
     attitude_axis.legend(loc="best")
     attitude_axis.grid(alpha=0.3)
+
+    if reference_position is not None:
+        reference = np.asarray(reference_position, dtype=float)
+        for index, color in enumerate(("tab:blue", "tab:orange", "tab:green")):
+            position_axis.plot(
+                time_sec,
+                reference[:, index],
+                ls=":",
+                lw=1.5,
+                color=color,
+                alpha=0.7,
+            )
+    errors = (
+        np.linalg.norm(
+            np.asarray(position, dtype=float)
+            - np.asarray(reference_position, dtype=float),
+            axis=1,
+        )
+        if position_error is None and reference_position is not None
+        else np.asarray(position_error, dtype=float)
+        if position_error is not None
+        else np.zeros_like(np.asarray(time_sec, dtype=float))
+    )
+    error_axis.plot(time_sec, errors, lw=line_width, color="tab:red")
+    error_axis.axhline(0.15, ls="--", color="black", lw=1.2, label="0.15 m")
+    error_axis.axhline(1.5, ls=":", color="gray", lw=1.2, label="1.5 m")
+    error_axis.set_ylabel("|pos_err| [m]")
+    error_axis.set_xlabel("time [s]")
+    error_axis.set_title(f"{tag} — position error")
+    error_axis.legend(loc="best")
+    error_axis.grid(alpha=0.3)
 
     fig.tight_layout()
     fig.savefig(target, dpi=130)
@@ -83,7 +114,7 @@ def save_hover_trace(
     return target
 
 
-def save_circle_trace(
+def save_tracking_trace(
     path: str | Path,
     *,
     tag: str,
@@ -92,9 +123,12 @@ def save_circle_trace(
     attitude_deg: np.ndarray,
     reference_position: np.ndarray,
     position_error: np.ndarray,
+    mission_name: str = "trajectory",
+    mission_parameters: Mapping[str, Any] | None = None,
+    phases: Sequence[str] = (),
     line_width: float = 3.0,
 ) -> Path:
-    """Save the legacy position, attitude, OOD, and XY circle panels."""
+    """Save common circle/Lissajous tracking and XY-path panels."""
 
     target = _new_path(path)
     plt = _pyplot()
@@ -118,7 +152,9 @@ def save_circle_trace(
             alpha=0.7,
         )
     position_axis.set_ylabel("position [m]")
-    position_axis.set_title(f"{tag} — position (solid=actual, dotted=ref)")
+    position_axis.set_title(
+        f"{tag} — {mission_name} position (solid=actual, dotted=ref)"
+    )
     position_axis.legend(loc="best")
     position_axis.grid(alpha=0.3)
 
@@ -165,15 +201,78 @@ def save_circle_trace(
     )
     xy_axis.set_xlabel("x [m]")
     xy_axis.set_ylabel("y [m]")
-    xy_axis.set_title(f"{tag} — XY path")
+    xy_axis.set_title(f"{tag} — {mission_name} XY path")
     xy_axis.axis("equal")
     xy_axis.legend(loc="best")
     xy_axis.grid(alpha=0.3)
+
+    parameters = dict(mission_parameters or {})
+    center = parameters.get("center_xy")
+    if center is not None:
+        center_xy = np.asarray(center, dtype=float)
+        if center_xy.shape == (2,):
+            xy_axis.scatter(
+                [center_xy[0]],
+                [center_xy[1]],
+                marker="+",
+                s=100,
+                color="tab:red",
+                label="center",
+                zorder=5,
+            )
+            xy_axis.legend(loc="best")
+
+    if phases and len(phases) == len(time_sec):
+        previous = phases[0] if phases else None
+        for index, phase in enumerate(phases[1:], start=1):
+            if phase == previous:
+                continue
+            boundary = float(time_sec[index])
+            for axis in (position_axis, attitude_axis, error_axis):
+                axis.axvline(boundary, color="gray", lw=0.8, alpha=0.35)
+            error_axis.annotate(
+                phase,
+                xy=(boundary, 1.0),
+                xycoords=("data", "axes fraction"),
+                xytext=(2, -2),
+                textcoords="offset points",
+                rotation=90,
+                va="top",
+                fontsize=7,
+                color="dimgray",
+            )
+            previous = phase
 
     fig.tight_layout()
     fig.savefig(target, dpi=130)
     plt.close(fig)
     return target
+
+
+def save_circle_trace(
+    path: str | Path,
+    *,
+    tag: str,
+    time_sec: np.ndarray,
+    position: np.ndarray,
+    attitude_deg: np.ndarray,
+    reference_position: np.ndarray,
+    position_error: np.ndarray,
+    line_width: float = 3.0,
+) -> Path:
+    """Compatibility wrapper for callers using the legacy circle API."""
+
+    return save_tracking_trace(
+        path,
+        tag=tag,
+        time_sec=time_sec,
+        position=position,
+        attitude_deg=attitude_deg,
+        reference_position=reference_position,
+        position_error=position_error,
+        mission_name="circle",
+        line_width=line_width,
+    )
 
 
 def save_entropy_diagnostic(
@@ -320,4 +419,5 @@ __all__ = [
     "save_hover_trace",
     "save_iterm_diagnostic",
     "save_learning_curve",
+    "save_tracking_trace",
 ]

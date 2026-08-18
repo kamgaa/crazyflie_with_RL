@@ -1,4 +1,4 @@
-"""Legacy E2E hover viewer, now a config-driven import-safe CLI wrapper."""
+"""Unified, import-safe Hover/Circle/Lissajous flight-test wrapper."""
 
 from __future__ import annotations
 
@@ -7,6 +7,11 @@ from typing import Sequence
 
 
 DEFAULT_CONFIG = Path(__file__).resolve().parent / "configs" / "e2e_hover_eval.yaml"
+MODE_CONFIGS = {
+    "hover": DEFAULT_CONFIG.parent / "view_live_hover_eval.yaml",
+    "circle": DEFAULT_CONFIG.parent / "view_live_circle_eval.yaml",
+    "lissajous": DEFAULT_CONFIG.parent / "view_live_lissajous_eval.yaml",
+}
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -15,10 +20,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     return run_evaluation_cli(
         default_config=DEFAULT_CONFIG,
         description=(
-            "Evaluate the legacy E2E hover policy. Its floor is zero policy "
-            "action plus gravity compensation, not cascade PID."
+            "Run an interactive or scripted Crazyflie Hover, Circle, or "
+            "Lissajous flight test. The E2E floor remains zero policy action "
+            "plus gravity compensation, not cascade PID."
         ),
         argv=argv,
+        unified=True,
+        mode_profiles=MODE_CONFIGS,
     )
 
 

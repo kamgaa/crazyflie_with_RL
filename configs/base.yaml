@@ -109,6 +109,26 @@ mission:
   number_of_laps: 2.0
   post_hold_sec: 2.0
   force_floor_start: false
+  hover:
+    target: [0.0, 0.0, 1.0]
+    yaw_deg: 0.0
+    duration: 8.0
+  circle:
+    center_xy: [0.5, 0.0]
+    radius: 0.5
+    period: 10.0
+    laps: 2.0
+    start_angle_deg: 0.0
+    direction: ccw
+    ramp_sec: 2.0
+  lissajous:
+    center_xy: [0.0, 0.0]
+    amplitude_xy: [0.5, 0.5]
+    frequency_ratio: [1, 2]
+    phase_deg: 90.0
+    base_period: 10.0
+    cycles: 2.0
+    ramp_sec: 2.0
   circle_presets:
     - key: "1"
       description: radius 0.5m, period 10s (slow/safe)

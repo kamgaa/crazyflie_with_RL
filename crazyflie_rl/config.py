@@ -162,6 +162,47 @@ class CirclePresetConfig:
 
 
 @dataclass(frozen=True)
+class HoverParameters:
+    """Immutable parameters for one fixed-position reference mission."""
+
+    target: tuple[float, float, float]
+    yaw_deg: float
+    duration: float
+
+
+@dataclass(frozen=True)
+class CircleParameters:
+    """Immutable parameters for an explicitly configured circle mission."""
+
+    center_xy: tuple[float, float]
+    radius: float
+    period: float
+    laps: float
+    start_angle_deg: float
+    direction: str
+    ramp_sec: float
+
+    @property
+    def clockwise(self) -> bool:
+        """Return the boolean form expected by trajectory calculations."""
+
+        return self.direction == "cw"
+
+
+@dataclass(frozen=True)
+class LissajousParameters:
+    """Immutable parameters for a planar Lissajous reference mission."""
+
+    center_xy: tuple[float, float]
+    amplitude_xy: tuple[float, float]
+    frequency_ratio: tuple[int, int]
+    phase_deg: float
+    base_period: float
+    cycles: float
+    ramp_sec: float
+
+
+@dataclass(frozen=True)
 class MissionConfig:
     type: str
     hover_altitude: float
@@ -174,6 +215,9 @@ class MissionConfig:
     post_hold_sec: float
     force_floor_start: bool
     circle_presets: tuple[CirclePresetConfig, ...]
+    hover: HoverParameters
+    circle: CircleParameters
+    lissajous: LissajousParameters
 
     def circle_preset(self, key: str) -> CirclePresetConfig:
         for preset in self.circle_presets:
@@ -356,6 +400,15 @@ def _numbers(value: Any, length: int, field: str, *, positive: bool = False) -> 
     if isinstance(value, (str, bytes)) or not isinstance(value, Sequence) or len(value) != length:
         raise ConfigError(f"{field} must contain exactly {length} values")
     return tuple(_number(item, f"{field}[{index}]", positive=positive) for index, item in enumerate(value))
+
+
+def _integers(value: Any, length: int, field: str, *, minimum: int = 0) -> tuple[int, ...]:
+    if isinstance(value, (str, bytes)) or not isinstance(value, Sequence) or len(value) != length:
+        raise ConfigError(f"{field} must contain exactly {length} values")
+    return tuple(
+        _integer(item, f"{field}[{index}]", minimum=minimum)
+        for index, item in enumerate(value)
+    )
 
 
 def _foreign_posix_absolute(
@@ -563,7 +616,12 @@ def _build_config(data: Mapping[str, Any], source_path: Path) -> ExperimentConfi
         raise ConfigError("evaluation.tail_fraction must not exceed 1.0")
 
     raw_mission = _mapping(data["mission"], "mission")
-    mission_keys = {"type", "hover_altitude", "goto_xy", "takeoff_sec", "settle_sec", "goto_sec", "circle_ramp_sec", "number_of_laps", "post_hold_sec", "force_floor_start", "circle_presets"}
+    legacy_mission_keys = {
+        "type", "hover_altitude", "goto_xy", "takeoff_sec", "settle_sec",
+        "goto_sec", "circle_ramp_sec", "number_of_laps", "post_hold_sec",
+        "force_floor_start", "circle_presets",
+    }
+    mission_keys = legacy_mission_keys | {"hover", "circle", "lissajous"}
     _keys(raw_mission, mission_keys, "mission")
     raw_presets = raw_mission["circle_presets"]
     if isinstance(raw_presets, (str, bytes)) or not isinstance(raw_presets, Sequence):
@@ -580,18 +638,95 @@ def _build_config(data: Mapping[str, Any], source_path: Path) -> ExperimentConfi
         ))
     if len({preset.key for preset in presets}) != len(presets):
         raise ConfigError("mission.circle_presets keys must be unique")
+
+    raw_hover = _mapping(raw_mission["hover"], "mission.hover")
+    _keys(raw_hover, {"target", "yaw_deg", "duration"}, "mission.hover")
+    hover = HoverParameters(
+        target=_numbers(raw_hover["target"], 3, "mission.hover.target"),  # type: ignore[arg-type]
+        yaw_deg=_number(raw_hover["yaw_deg"], "mission.hover.yaw_deg"),
+        duration=_number(raw_hover["duration"], "mission.hover.duration", positive=True),
+    )
+    if hover.target[2] < 0.0:
+        raise ConfigError("mission.hover.target altitude must be non-negative")
+
+    raw_circle = _mapping(raw_mission["circle"], "mission.circle")
+    circle_keys = {
+        "center_xy", "radius", "period", "laps", "start_angle_deg",
+        "direction", "ramp_sec",
+    }
+    _keys(raw_circle, circle_keys, "mission.circle")
+    circle = CircleParameters(
+        center_xy=_numbers(raw_circle["center_xy"], 2, "mission.circle.center_xy"),  # type: ignore[arg-type]
+        radius=_number(raw_circle["radius"], "mission.circle.radius", positive=True),
+        period=_number(raw_circle["period"], "mission.circle.period", positive=True),
+        laps=_number(raw_circle["laps"], "mission.circle.laps", positive=True),
+        start_angle_deg=_number(
+            raw_circle["start_angle_deg"], "mission.circle.start_angle_deg"
+        ),
+        direction=_text(
+            raw_circle["direction"], "mission.circle.direction", choices={"cw", "ccw"}
+        ),
+        ramp_sec=_number(raw_circle["ramp_sec"], "mission.circle.ramp_sec", minimum=0.0),
+    )
+
+    raw_lissajous = _mapping(raw_mission["lissajous"], "mission.lissajous")
+    lissajous_keys = {
+        "center_xy", "amplitude_xy", "frequency_ratio", "phase_deg",
+        "base_period", "cycles", "ramp_sec",
+    }
+    _keys(raw_lissajous, lissajous_keys, "mission.lissajous")
+    amplitude_xy = _numbers(
+        raw_lissajous["amplitude_xy"],
+        2,
+        "mission.lissajous.amplitude_xy",
+    )
+    if any(amplitude < 0.0 for amplitude in amplitude_xy):
+        raise ConfigError("mission.lissajous.amplitude_xy values must be non-negative")
+    if amplitude_xy == (0.0, 0.0):
+        raise ConfigError("mission.lissajous.amplitude_xy values must not both be zero")
+    lissajous = LissajousParameters(
+        center_xy=_numbers(
+            raw_lissajous["center_xy"], 2, "mission.lissajous.center_xy"
+        ),  # type: ignore[arg-type]
+        amplitude_xy=amplitude_xy,  # type: ignore[arg-type]
+        frequency_ratio=_integers(
+            raw_lissajous["frequency_ratio"],
+            2,
+            "mission.lissajous.frequency_ratio",
+            minimum=1,
+        ),  # type: ignore[arg-type]
+        phase_deg=_number(raw_lissajous["phase_deg"], "mission.lissajous.phase_deg"),
+        base_period=_number(
+            raw_lissajous["base_period"], "mission.lissajous.base_period", positive=True
+        ),
+        cycles=_number(raw_lissajous["cycles"], "mission.lissajous.cycles", positive=True),
+        ramp_sec=_number(
+            raw_lissajous["ramp_sec"], "mission.lissajous.ramp_sec", minimum=0.0
+        ),
+    )
     mission = MissionConfig(
-        type=_text(raw_mission["type"], "mission.type", choices={"hover", "circle"}),
+        type=_text(
+            raw_mission["type"],
+            "mission.type",
+            choices={"hover", "circle", "lissajous"},
+        ),
         hover_altitude=_number(raw_mission["hover_altitude"], "mission.hover_altitude", minimum=0.0),
         goto_xy=_numbers(raw_mission["goto_xy"], 2, "mission.goto_xy"),  # type: ignore[arg-type]
         takeoff_sec=_number(raw_mission["takeoff_sec"], "mission.takeoff_sec", positive=True),
         settle_sec=_number(raw_mission["settle_sec"], "mission.settle_sec", minimum=0.0),
         goto_sec=_number(raw_mission["goto_sec"], "mission.goto_sec", positive=True),
-        circle_ramp_sec=_number(raw_mission["circle_ramp_sec"], "mission.circle_ramp_sec", positive=True),
+        circle_ramp_sec=_number(
+            raw_mission["circle_ramp_sec"],
+            "mission.circle_ramp_sec",
+            minimum=0.0,
+        ),
         number_of_laps=_number(raw_mission["number_of_laps"], "mission.number_of_laps", positive=True),
         post_hold_sec=_number(raw_mission["post_hold_sec"], "mission.post_hold_sec", minimum=0.0),
         force_floor_start=_boolean(raw_mission["force_floor_start"], "mission.force_floor_start"),
         circle_presets=tuple(presets),
+        hover=hover,
+        circle=circle,
+        lissajous=lissajous,
     )
 
     raw_experiment = _mapping(data["experiment"], "experiment")

@@ -1,0 +1,20 @@
+extends: e2e_hover_eval.yaml
+
+mission:
+  type: lissajous
+  hover_altitude: 1.0
+  force_floor_start: true
+  # phase=90 deg makes the first Lissajous reference (0.5, 0.0).
+  goto_xy: [0.5, 0.0]
+  lissajous:
+    center_xy: [0.0, 0.0]
+    amplitude_xy: [0.5, 0.5]
+    frequency_ratio: [1, 2]
+    phase_deg: 90.0
+    base_period: 10.0
+    cycles: 2.0
+    ramp_sec: 2.0
+
+experiment:
+  condition: cx0-cy0-Ax0p5-Ay0p5-a1-b2-ph90-T10-cycles2
+  description: Unified view_live.py default E2E Lissajous trajectory

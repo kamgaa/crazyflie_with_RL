@@ -95,6 +95,18 @@ def runtime_versions() -> dict[str, str | None]:
     }
 
 
+def _artifact_value(value: Any) -> Any:
+    """Convert runtime parameters to safe YAML/JSON built-in values."""
+
+    if isinstance(value, Path):
+        return str(value)
+    if isinstance(value, Mapping):
+        return {str(key): _artifact_value(item) for key, item in value.items()}
+    if isinstance(value, (tuple, list)):
+        return [_artifact_value(item) for item in value]
+    return value
+
+
 def _write_json_new(path: Path, payload: Mapping[str, Any]) -> None:
     if path.exists():
         raise FileExistsError(f"refusing to overwrite artifact: {path}")
@@ -273,6 +285,36 @@ class ArtifactManager:
         path = self.ensure_available(self.path("metrics", kind, ".json"))
         _write_json_new(path, dict(payload))
         self.manifest["metrics"][kind] = path.relative_to(self.run_dir).as_posix()
+        self._write_manifest()
+        return path
+
+    def write_runtime_config(self, payload: Mapping[str, Any]) -> Path:
+        """Persist the effective CLI/runtime values for this invocation.
+
+        The profile-derived resolved config is written during ``create``.
+        This companion file records values that only exist at invocation time,
+        such as policy selection, viewer pacing, model path, and interactive
+        mission overrides.  It uses the same run timestamp and refuses to
+        replace an existing artifact.
+        """
+
+        try:
+            import yaml
+        except ImportError as exc:  # pragma: no cover - installation dependent
+            raise RuntimeError("PyYAML is required to write runtime config") from exc
+
+        values = _artifact_value(payload)
+        path = self.ensure_available(
+            self.path("config", "runtime-resolved", ".yaml")
+        )
+        path.write_text(
+            yaml.safe_dump(values, sort_keys=False, allow_unicode=True),
+            encoding="utf-8",
+        )
+        self.manifest["runtime_config"] = {
+            "path": path.relative_to(self.run_dir).as_posix(),
+            "parameters": values,
+        }
         self._write_manifest()
         return path
 
