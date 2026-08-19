@@ -1,0 +1,12 @@
+extends: view_live_circle_eval.yaml
+
+# Preset key: circle/wide. Geometry stays fixed; period and laps are runtime inputs.
+mission:
+  goto_xy: [0.8, 0.0]
+  circle:
+    center_xy: [0.0, 0.0]
+    radius: 0.8
+
+experiment:
+  condition: circle-wide
+  description: Unified view_live.py wide circular path

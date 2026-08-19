@@ -22,6 +22,7 @@ from crazyflie_rl.eval_cli import (
     normalize_direction,
     normalize_mode,
     prompt_runtime_options,
+    resolve_path_preset,
     run_evaluation_cli,
     trace_metrics,
 )
@@ -30,6 +31,16 @@ from crazyflie_rl.missions import mission_from_experiment
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIGS = ROOT / "configs"
+PATH_PROFILES = {
+    "circle": {
+        "small": CONFIGS / "view_live_circle_eval.yaml",
+        "wide": CONFIGS / "view_live_circle_wide_eval.yaml",
+    },
+    "lissajous": {
+        "figure8": CONFIGS / "view_live_lissajous_eval.yaml",
+        "clover": CONFIGS / "view_live_lissajous_clover_eval.yaml",
+    },
+}
 
 
 def test_view_live_help_needs_no_runtime_dependency_imports() -> None:
@@ -69,6 +80,8 @@ else:
     )
     assert completed.returncode == 0, completed.stderr
     assert "--mode" in completed.stdout
+    assert "--path-preset" in completed.stdout
+    assert "--period" in completed.stdout
     assert "--amplitude-x" in completed.stdout
 
 
@@ -126,6 +139,8 @@ def test_parser_exposes_all_runtime_override_groups() -> None:
     destinations = {action.dest for action in parser._actions}
     assert {
         "mode",
+        "path_preset",
+        "period",
         "hover_target",
         "yaw_deg",
         "duration",
@@ -283,6 +298,160 @@ def test_lissajous_runtime_override_validation_and_condition() -> None:
         apply_runtime_overrides(config, invalid, "lissajous")
 
 
+@pytest.mark.parametrize(
+    ("mode", "selector", "key", "profile"),
+    [
+        ("circle", "1", "small", "view_live_circle_eval.yaml"),
+        ("circle", "circle-wide", "wide", "view_live_circle_wide_eval.yaml"),
+        (
+            "lissajous",
+            "1",
+            "figure8",
+            "view_live_lissajous_eval.yaml",
+        ),
+        (
+            "lissajous",
+            "clover",
+            "clover",
+            "view_live_lissajous_clover_eval.yaml",
+        ),
+    ],
+)
+def test_path_presets_accept_numeric_and_named_keys(
+    mode: str, selector: str, key: str, profile: str
+) -> None:
+    resolved = resolve_path_preset(mode, selector, PATH_PROFILES)
+    assert resolved is not None
+    assert resolved[0] == key
+    assert resolved[1].name == profile
+
+
+def test_predefined_profiles_keep_geometry_out_of_the_basic_cli() -> None:
+    small = load_config(CONFIGS / "view_live_circle_eval.yaml")
+    wide = load_config(CONFIGS / "view_live_circle_wide_eval.yaml")
+    figure8 = load_config(CONFIGS / "view_live_lissajous_eval.yaml")
+    clover = load_config(CONFIGS / "view_live_lissajous_clover_eval.yaml")
+
+    assert small.mission.circle.radius == 0.5
+    assert wide.mission.circle.radius == 0.8
+    assert wide.mission.circle.center_xy == pytest.approx((0.0, 0.0))
+    assert figure8.mission.lissajous.frequency_ratio == (1, 2)
+    assert clover.mission.lissajous.frequency_ratio == (3, 2)
+    assert clover.mission.lissajous.amplitude_xy == pytest.approx((0.55, 0.4))
+
+
+@pytest.mark.parametrize(
+    ("answers", "expected_mode", "expected_key", "expected_prompts"),
+    [
+        (
+            ["1", "5"],
+            "hover",
+            None,
+            ["Select mode [1-3]: ", "Hover duration [8.0 s]: "],
+        ),
+        (
+            ["2", "2", "7", "3"],
+            "circle",
+            "wide",
+            [
+                "Select mode [1-3]: ",
+                "Select path preset [small]: ",
+                "Seconds per lap [10.0 s]: ",
+                "Number of laps [2.0]: ",
+            ],
+        ),
+        (
+            ["3", "2", "8", "4"],
+            "lissajous",
+            "clover",
+            [
+                "Select mode [1-3]: ",
+                "Select path preset [figure8]: ",
+                "Seconds per cycle [10.0 s]: ",
+                "Number of cycles [2.0]: ",
+            ],
+        ),
+    ],
+)
+def test_interactive_flow_only_asks_mode_path_speed_and_repetitions(
+    answers: list[str],
+    expected_mode: str,
+    expected_key: str | None,
+    expected_prompts: list[str],
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    remaining = iter(answers)
+    prompts: list[str] = []
+
+    def answer(prompt: str) -> str:
+        prompts.append(prompt)
+        return next(remaining)
+
+    mode = eval_cli._interactive_mode(answer)
+    key = eval_cli._interactive_path_preset(mode, PATH_PROFILES, answer)
+    profile = (
+        CONFIGS / "view_live_hover_eval.yaml"
+        if key is None
+        else resolve_path_preset(mode, key, PATH_PROFILES)[1]
+    )
+    config = load_config(profile)
+    args = build_parser(profile, "test").parse_args([])
+    args.path_preset = key
+    prompted = prompt_runtime_options(args, config, mode, input_fn=answer)
+
+    assert mode == expected_mode
+    assert key == expected_key
+    assert prompts == expected_prompts
+    assert next(remaining, None) is None
+    assert prompted.policy == "both"
+    capsys.readouterr()
+
+
+def test_explicit_path_preset_is_the_tty_default_after_mode_selection(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    args = build_parser(CONFIGS / "view_live_hover_eval.yaml", "test").parse_args(
+        ["--path-preset", "wide"]
+    )
+    answers = iter(("2", ""))
+    prompts: list[str] = []
+
+    def answer(prompt: str) -> str:
+        prompts.append(prompt)
+        return next(answers)
+
+    mode = eval_cli._interactive_mode(answer)
+    selected = eval_cli._interactive_path_preset(
+        mode,
+        PATH_PROFILES,
+        answer,
+        default=args.path_preset,
+    )
+
+    assert mode == "circle"
+    assert selected == "wide"
+    assert prompts == [
+        "Select mode [1-3]: ",
+        "Select path preset [wide]: ",
+    ]
+    capsys.readouterr()
+
+
+def test_compact_condition_only_contains_path_speed_and_repetitions() -> None:
+    config = load_config(CONFIGS / "view_live_circle_wide_eval.yaml")
+    parser = build_parser(config.source_path, "test")
+    args = parser.parse_args(
+        ["--period", "7.5", "--laps", "3", "--altitude", "1.7"]
+    )
+    effective = apply_runtime_overrides(config, args, "circle")
+    mission = mission_from_experiment(effective, mission_type="circle")
+
+    assert (
+        mission_condition(effective, mission, path_preset="wide")
+        == "c-wide-T7p5-L3"
+    )
+
+
 def test_runtime_seed_and_hover_altitude_must_be_nonnegative() -> None:
     config = load_config(CONFIGS / "view_live_hover_eval.yaml")
     parser = build_parser(config.source_path, "test")
@@ -370,17 +539,37 @@ def test_interactive_hover_blank_answers_use_profile_defaults() -> None:
     assert prompted.policy == "both"
     assert prompted.headless is False
     assert prompted.no_realtime is False
-    assert "Hover altitude [1.0 m]: " in prompts
+    assert prompts == ["Hover duration [8.0 s]: "]
 
 
-def test_interactive_hover_accepts_user_values_and_common_options() -> None:
+def test_interactive_hover_only_asks_duration_and_keeps_advanced_cli_values() -> None:
     config = load_config(CONFIGS / "view_live_hover_eval.yaml")
-    args = build_parser(config.source_path, "test").parse_args([])
-    answers = iter(
-        ("0.3", "", "1.2", "45", "5", "9", "0.1", "2", "floor", "y", "n")
+    args = build_parser(config.source_path, "test").parse_args(
+        [
+            "--hover-target",
+            "0.3",
+            "0",
+            "1.2",
+            "--yaw-deg",
+            "45",
+            "--seed",
+            "9",
+            "--position-perturbation",
+            "0.1",
+            "--attitude-perturbation-deg",
+            "2",
+            "--policy",
+            "floor",
+            "--headless",
+            "--no-realtime",
+        ]
     )
+    prompts: list[str] = []
     prompted = prompt_runtime_options(
-        args, config, "hover", input_fn=lambda _prompt: next(answers)
+        args,
+        config,
+        "hover",
+        input_fn=lambda prompt: prompts.append(prompt) or "5",
     )
     effective = apply_runtime_overrides(config, prompted, "hover")
 
@@ -393,6 +582,7 @@ def test_interactive_hover_accepts_user_values_and_common_options() -> None:
     assert prompted.policy == "floor"
     assert prompted.headless is True
     assert prompted.no_realtime is True
+    assert prompts == ["Hover duration [8.0 s]: "]
 
 
 def test_interactive_circle_cli_values_survive_mode_selection_and_enter() -> None:
@@ -460,10 +650,7 @@ def test_interactive_circle_cli_values_survive_mode_selection_and_enter() -> Non
     assert effective.evaluation.seed_start == 17
     assert effective.environment.position_perturbation == 0.07
     assert effective.environment.attitude_perturbation_deg == 4.0
-    assert "Circle radius [0.8 m]: " in prompts
-    assert "Seed [17]: " in prompts
-    assert "Initial position perturbation [0.07 m]: " in prompts
-    assert "Force floor start [y/N]: " in prompts
+    assert prompts == ["Seconds per lap [7.0 s]: ", "Number of laps [1.5]: "]
 
 
 @pytest.mark.parametrize(
@@ -573,6 +760,7 @@ class _FakeEnvironment:
         self.references: list[np.ndarray] = []
         self.steps = 0
         self.closed = False
+        self._last_f = np.full(4, 0.01)
 
     @staticmethod
     def observation() -> np.ndarray:
@@ -627,6 +815,8 @@ def test_runner_uses_generic_mission_and_passes_each_reference(mode: str) -> Non
     assert trace.truncated_at == (pytest.approx(0.2) if mode != "hover" else None)
     assert len(env.references) == expected_steps
     np.testing.assert_allclose(env.references[0], [0.0, 0.0, 1.0])
+    np.testing.assert_allclose(trace.control_input, np.zeros((expected_steps, 4)))
+    np.testing.assert_allclose(trace.motor_thrust, np.full((expected_steps, 4), 0.01))
     assert env.closed is True
 
 
@@ -772,6 +962,12 @@ def test_trace_metrics_include_rmse_phase_and_boundary_contract() -> None:
         terminated_at=None,
         truncated_at=0.2,
         diverged_at=None,
+        control_input=np.array(
+            [[0.0, -0.2, 0.4, -0.6], [0.1, -0.3, 0.2, -0.7], [0.2, 0.1, -0.5, 0.8]]
+        ),
+        motor_thrust=np.array(
+            [[0.01, 0.02, np.nan, 0.04], [0.02, 0.03, np.nan, 0.05], [0.03, 0.04, np.nan, 0.06]]
+        ),
     )
     metrics = trace_metrics(trace, 0.3)
 
@@ -784,6 +980,12 @@ def test_trace_metrics_include_rmse_phase_and_boundary_contract() -> None:
     assert metrics["phases"]["LISSAJOUS"]["count"] == 2
     assert metrics["training_boundary_crossed_at"] == 0.1
     assert metrics["truncated_at"] == 0.2
+    assert metrics["control_input_abs_max"] == pytest.approx([0.2, 0.3, 0.5, 0.8])
+    assert metrics["motor_thrust_n_min"] == [0.01, 0.02, None, 0.04]
+    assert metrics["motor_thrust_n_max"] == [0.03, 0.04, None, 0.06]
+    assert metrics["motor_thrust_n_mean"][0:2] == pytest.approx([0.02, 0.03])
+    assert metrics["motor_thrust_n_mean"][2] is None
+    assert metrics["motor_thrust_n_mean"][3] == pytest.approx(0.05)
 
 
 @pytest.mark.parametrize("explicit_config", [True, False])
@@ -889,6 +1091,133 @@ def test_unified_fake_rollout_saves_plot_metrics_runtime_config_and_manifest(
             "force_floor_start_applied"
         ]
         is False
+    )
+
+
+def test_simplified_unified_run_selects_profile_forces_both_and_saves_one_plot(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    source = load_config(CONFIGS / "view_live_circle_wide_eval.yaml")
+    xml = tmp_path / "model.xml"
+    xml.write_text("<mujoco/>", encoding="utf-8")
+    model = tmp_path / "policy.zip"
+    model.write_bytes(b"fake-model")
+    config = replace(
+        source,
+        paths=replace(
+            source.paths,
+            mujoco_xml=xml,
+            artifact_root=tmp_path / "artifacts",
+        ),
+        mission=replace(
+            source.mission,
+            takeoff_sec=0.1,
+            settle_sec=0.0,
+            goto_sec=0.1,
+            post_hold_sec=0.0,
+            circle=replace(
+                source.mission.circle,
+                period=0.1,
+                laps=1.0,
+                ramp_sec=0.0,
+            ),
+        ),
+    )
+
+    class SignalEnvironment(_FakeEnvironment):
+        def step(self, action):
+            action = np.clip(np.asarray(action, dtype=float), -1.0, 1.0)
+            self._last_f = 0.01 + 0.002 * action
+            self.references.append(self.pos_des.copy())
+            self.steps += 1
+            return self.observation(), 0.0, False, self.steps == 3, {}
+
+    class FreshFactory:
+        @staticmethod
+        def make(**overrides):
+            assert overrides == {}
+            return SignalEnvironment()
+
+    class FakePolicy:
+        @staticmethod
+        def predict(_observation, deterministic=True):
+            assert deterministic is True
+            return np.array([2.0, -2.0, 0.5, 0.0]), None
+
+    eval_cli._ensure_runtime_imports()
+    loaded_profiles: list[Path] = []
+
+    def fake_load_config(path):
+        loaded_profiles.append(Path(path))
+        return config
+
+    monkeypatch.setattr(eval_cli, "load_config", fake_load_config)
+    original_runner = eval_cli.EvaluationRunner
+    monkeypatch.setattr(
+        eval_cli,
+        "EvaluationRunner",
+        lambda *args, **kwargs: original_runner(
+            *args, **kwargs, environment_factory=FreshFactory()
+        ),
+    )
+    monkeypatch.setattr(eval_cli, "_load_policy", lambda _path, _config: FakePolicy())
+    plotted: list[object] = []
+
+    def fake_comparison_plot(path, **kwargs):
+        traces_by_policy = kwargs["rollouts"]
+        assert list(traces_by_policy) == ["floor", "residual"]
+        traces = list(traces_by_policy.values())
+        assert [trace.policy for trace in traces] == ["floor", "residual"]
+        np.testing.assert_allclose(traces[0].control_input, 0.0)
+        np.testing.assert_allclose(
+            traces[1].control_input[0], [1.0, -1.0, 0.5, 0.0]
+        )
+        assert kwargs["motor_unit"] == "N"
+        plotted.append(traces)
+        path.write_bytes(b"comparison-png")
+        return path
+
+    monkeypatch.setattr(eval_cli, "save_policy_comparison_trace", fake_comparison_plot)
+
+    assert run_evaluation_cli(
+        default_config=CONFIGS / "view_live_hover_eval.yaml",
+        description="test",
+        argv=[
+            "--mode",
+            "circle",
+            "--path-preset",
+            "2",
+            "--period",
+            "0.1",
+            "--laps",
+            "1",
+            "--policy",
+            "floor",
+            "--model",
+            str(model),
+            "--headless",
+            "--no-realtime",
+        ],
+        unified=True,
+        mode_profiles={"circle": CONFIGS / "view_live_circle_eval.yaml"},
+        path_profiles=PATH_PROFILES,
+        always_compare=True,
+    ) == 0
+
+    assert loaded_profiles[0].name == "view_live_circle_wide_eval.yaml"
+    assert len(plotted) == 1
+    run_dir = next((tmp_path / "artifacts" / "runs").iterdir())
+    assert len(list((run_dir / "plots").glob("*.png"))) == 1
+    metrics = json.loads(
+        next((run_dir / "metrics").glob("*.json")).read_text(encoding="utf-8")
+    )
+    assert metrics["effective_condition"] == "c-wide-T0p1-L1"
+    assert metrics["selected_policy"] == "both"
+    assert metrics["path_preset"] == "wide"
+    assert set(metrics["policies"]) == {"floor", "residual"}
+    assert (
+        metrics["policies"]["floor"]["plot"]
+        == metrics["policies"]["residual"]["plot"]
     )
 
 

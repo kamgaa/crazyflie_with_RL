@@ -1,0 +1,14 @@
+extends: view_live_lissajous_eval.yaml
+
+# Preset key: lissajous/clover. Geometry stays fixed; period and cycles are inputs.
+mission:
+  goto_xy: [0.55, 0.0]
+  lissajous:
+    center_xy: [0.0, 0.0]
+    amplitude_xy: [0.55, 0.4]
+    frequency_ratio: [3, 2]
+    phase_deg: 90.0
+
+experiment:
+  condition: liss-clover
+  description: Unified view_live.py compact 3-by-2 Lissajous clover path

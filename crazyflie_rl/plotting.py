@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
@@ -34,6 +35,411 @@ def _new_path(path: str | Path) -> Path:
     if target.exists():
         raise FileExistsError(f"refusing to overwrite plot artifact: {target}")
     target.parent.mkdir(parents=True, exist_ok=True)
+    return target
+
+
+@dataclass(frozen=True)
+class _ComparisonRollout:
+    """Validated view of one rollout used by the comparison plot."""
+
+    key: str
+    label: str
+    time_sec: np.ndarray
+    position: np.ndarray
+    reference_position: np.ndarray
+    attitude_deg: np.ndarray
+    position_error: np.ndarray
+    control_input: np.ndarray
+    motor_thrust: np.ndarray
+    phases: tuple[str, ...]
+
+
+_MISSING = object()
+
+
+def _rollout_value(
+    source: Mapping[str, Any] | Any,
+    *names: str,
+    default: Any = _MISSING,
+) -> Any:
+    """Read a rollout field from either a mapping or an attribute object."""
+
+    for name in names:
+        if isinstance(source, Mapping) and name in source:
+            return source[name]
+        if not isinstance(source, Mapping) and hasattr(source, name):
+            return getattr(source, name)
+    if default is not _MISSING:
+        return default
+    choices = ", ".join(names)
+    raise ValueError(f"comparison rollout is missing required field ({choices})")
+
+
+def _comparison_array(
+    value: Any,
+    *,
+    field: str,
+    samples: int,
+    columns: int | None,
+) -> np.ndarray:
+    array = np.asarray(value, dtype=float)
+    expected = (samples,) if columns is None else (samples, columns)
+    if array.shape != expected:
+        raise ValueError(
+            f"comparison rollout {field} must have shape {expected}, got {array.shape}"
+        )
+    return array
+
+
+def _normalize_comparison_rollouts(
+    rollouts: Mapping[str, Mapping[str, Any] | Any],
+) -> tuple[_ComparisonRollout, ...]:
+    """Validate and normalize the two policy traces accepted by the plot API."""
+
+    if len(rollouts) != 2:
+        raise ValueError(
+            "policy comparison requires exactly two rollouts (floor and PPO)"
+        )
+
+    normalized: list[_ComparisonRollout] = []
+    for raw_key, source in rollouts.items():
+        key = str(raw_key)
+        label = str(_rollout_value(source, "label", default=key))
+        time_sec = np.asarray(
+            _rollout_value(source, "time_sec", "time"), dtype=float
+        )
+        if time_sec.ndim != 1 or time_sec.size < 1:
+            raise ValueError(
+                "comparison rollout time_sec must be a non-empty one-dimensional array"
+            )
+        if not np.all(np.isfinite(time_sec)):
+            raise ValueError("comparison rollout time_sec must contain finite values")
+        if np.any(np.diff(time_sec) < 0.0):
+            raise ValueError("comparison rollout time_sec must be nondecreasing")
+        samples = int(time_sec.size)
+
+        position = _comparison_array(
+            _rollout_value(source, "position", "actual_position"),
+            field="position",
+            samples=samples,
+            columns=3,
+        )
+        reference = _comparison_array(
+            _rollout_value(source, "reference_position", "reference"),
+            field="reference_position",
+            samples=samples,
+            columns=3,
+        )
+        attitude = _comparison_array(
+            _rollout_value(source, "attitude_deg", "attitude"),
+            field="attitude_deg",
+            samples=samples,
+            columns=3,
+        )
+        raw_error = np.asarray(
+            _rollout_value(source, "position_error", "error"), dtype=float
+        )
+        if raw_error.shape == (samples, 3):
+            position_error = np.linalg.norm(raw_error, axis=1)
+        else:
+            position_error = _comparison_array(
+                raw_error,
+                field="position_error",
+                samples=samples,
+                columns=None,
+            )
+        control_input = _comparison_array(
+            _rollout_value(source, "control_input", "control_u", "action"),
+            field="control_input",
+            samples=samples,
+            columns=4,
+        )
+        motor_thrust = _comparison_array(
+            _rollout_value(
+                source,
+                "motor_thrust",
+                "motor_output",
+                "motor_force",
+            ),
+            field="motor_thrust",
+            samples=samples,
+            columns=4,
+        )
+        phases = tuple(
+            str(value) for value in _rollout_value(source, "phases", "phase")
+        )
+        if len(phases) != samples:
+            raise ValueError(
+                "comparison rollout phases must have one value per time sample"
+            )
+        for field, array in (
+            ("position", position),
+            ("reference_position", reference),
+            ("attitude_deg", attitude),
+            ("position_error", position_error),
+            ("control_input", control_input),
+            ("motor_thrust", motor_thrust),
+        ):
+            if not np.all(np.isfinite(array)):
+                raise ValueError(f"comparison rollout {field} must contain finite values")
+
+        normalized.append(
+            _ComparisonRollout(
+                key=key,
+                label=label,
+                time_sec=time_sec,
+                position=position,
+                reference_position=reference,
+                attitude_deg=attitude,
+                position_error=position_error,
+                control_input=control_input,
+                motor_thrust=motor_thrust,
+                phases=phases,
+            )
+        )
+    return tuple(normalized)
+
+
+def _comparison_phase_boundaries(
+    traces: Sequence[_ComparisonRollout],
+) -> tuple[tuple[float, str], ...]:
+    """Return the ordered union of phase transitions from both rollouts."""
+
+    unique: dict[tuple[float, str], tuple[float, str]] = {}
+    for trace in traces:
+        previous = trace.phases[0]
+        for index, phase in enumerate(trace.phases[1:], start=1):
+            if phase == previous:
+                continue
+            boundary = float(trace.time_sec[index])
+            unique.setdefault((round(boundary, 9), phase), (boundary, phase))
+            previous = phase
+    return tuple(sorted(unique.values(), key=lambda item: (item[0], item[1])))
+
+
+def _comparison_parameter_text(
+    mission_name: str,
+    mission_parameters: Mapping[str, Any] | None,
+) -> str:
+    values = dict(mission_parameters or {})
+    center = values.pop("center_xy", None)
+    parts = [f"mission={mission_name}"]
+    if center is not None:
+        center_values = np.asarray(center, dtype=float)
+        if center_values.shape == (2,):
+            parts.append(f"center=({center_values[0]:g}, {center_values[1]:g}) m")
+    for key, value in values.items():
+        if isinstance(value, (str, int, float, bool, np.number)):
+            parts.append(f"{key}={value}")
+        if len(" | ".join(parts)) > 180:
+            parts[-1] = "..."
+            break
+    return " | ".join(parts)
+
+
+def save_policy_comparison_trace(
+    path: str | Path,
+    *,
+    tag: str,
+    rollouts: Mapping[str, Mapping[str, Any] | Any],
+    mission_name: str = "trajectory",
+    mission_parameters: Mapping[str, Any] | None = None,
+    motor_unit: str = "N",
+    line_width: float = 1.8,
+) -> Path:
+    """Save one 16:9 figure comparing PID-floor and PPO rollouts.
+
+    ``rollouts`` must contain exactly two entries. Each value can be a mapping or
+    an attribute object and provides ``time_sec``, ``position``,
+    ``reference_position``, ``attitude_deg``, ``position_error``,
+    ``control_input`` (four channels), ``motor_thrust`` (four channels), and
+    ``phases``. A human-readable ``label`` is optional. Common concise aliases
+    such as ``time``, ``actual_position``, ``control_u``, and ``action`` are also
+    accepted so the plotting layer remains independent of the runner dataclass.
+    """
+
+    unit = str(motor_unit).strip()
+    if not unit:
+        raise ValueError("motor_unit must be a non-empty label")
+    traces = _normalize_comparison_rollouts(rollouts)
+    target = _new_path(path)
+    plt = _pyplot()
+    fig = plt.figure(figsize=(16, 9))
+    grid = fig.add_gridspec(
+        3,
+        4,
+        height_ratios=(1.15, 1.0, 1.1),
+        hspace=0.42,
+        wspace=0.34,
+    )
+    position_axis = fig.add_subplot(grid[0, :3])
+    xy_axis = fig.add_subplot(grid[0, 3])
+    error_axis = fig.add_subplot(grid[1, 0], sharex=position_axis)
+    attitude_axis = fig.add_subplot(grid[1, 1:], sharex=position_axis)
+    control_axis = fig.add_subplot(grid[2, :2], sharex=position_axis)
+    motor_axis = fig.add_subplot(grid[2, 2:], sharex=position_axis)
+    time_axes = (
+        position_axis,
+        error_axis,
+        attitude_axis,
+        control_axis,
+        motor_axis,
+    )
+
+    policy_colors = ("tab:blue", "tab:orange", "tab:green", "tab:purple")
+    xyz_styles = ("-", "--", ":")
+    channel_styles = ("-", "--", "-.", ":")
+    for trace, color in zip(traces, policy_colors):
+        for index, (coordinate, style) in enumerate(zip("xyz", xyz_styles)):
+            position_axis.plot(
+                trace.time_sec,
+                trace.position[:, index],
+                color=color,
+                ls=style,
+                lw=line_width,
+                label=f"{trace.label} {coordinate}",
+            )
+        xy_axis.plot(
+            trace.position[:, 0],
+            trace.position[:, 1],
+            color=color,
+            lw=line_width,
+            label=trace.label,
+        )
+        error_axis.plot(
+            trace.time_sec,
+            trace.position_error,
+            color=color,
+            lw=line_width,
+            label=trace.label,
+        )
+        for index, (name, style) in enumerate(
+            zip(("roll", "pitch", "yaw"), xyz_styles)
+        ):
+            attitude_axis.plot(
+                trace.time_sec,
+                trace.attitude_deg[:, index],
+                color=color,
+                ls=style,
+                lw=line_width,
+                label=f"{trace.label} {name}",
+            )
+        for index, style in enumerate(channel_styles):
+            control_axis.plot(
+                trace.time_sec,
+                trace.control_input[:, index],
+                color=color,
+                ls=style,
+                lw=line_width,
+                label=f"{trace.label} u{index + 1}",
+            )
+            motor_axis.plot(
+                trace.time_sec,
+                trace.motor_thrust[:, index],
+                color=color,
+                ls=style,
+                lw=line_width,
+                label=f"{trace.label} M{index + 1}",
+            )
+
+    # The longest trace best represents the full common mission reference.
+    reference_trace = max(traces, key=lambda trace: trace.time_sec.size)
+    reference_colors = ("0.15", "0.4", "0.65")
+    for index, (coordinate, color) in enumerate(zip("xyz", reference_colors)):
+        position_axis.plot(
+            reference_trace.time_sec,
+            reference_trace.reference_position[:, index],
+            color=color,
+            ls=":",
+            lw=1.3,
+            alpha=0.85,
+            label=f"ref {coordinate}",
+        )
+    xy_axis.plot(
+        reference_trace.reference_position[:, 0],
+        reference_trace.reference_position[:, 1],
+        color="black",
+        ls=":",
+        lw=1.5,
+        label="reference",
+    )
+
+    center = dict(mission_parameters or {}).get("center_xy")
+    if center is not None:
+        center_xy = np.asarray(center, dtype=float)
+        if center_xy.shape == (2,):
+            xy_axis.scatter(
+                [center_xy[0]],
+                [center_xy[1]],
+                marker="+",
+                s=90,
+                color="tab:red",
+                label="center",
+                zorder=5,
+            )
+
+    position_axis.set_ylabel("position [m]")
+    position_axis.set_title("XYZ tracking (policy color; coordinate line style)")
+    error_axis.set_ylabel("|position error| [m]")
+    error_axis.set_title("Position error")
+    error_axis.set_xlabel("time [s]")
+    attitude_axis.set_ylabel("attitude [deg]")
+    attitude_axis.set_title("Attitude (roll / pitch / yaw)")
+    attitude_axis.set_xlabel("time [s]")
+    control_axis.set_ylabel("control input u")
+    control_axis.set_title("Control input u (u1-u4)")
+    control_axis.set_xlabel("time [s]")
+    motor_axis.set_ylabel(f"motor thrust [{unit}]")
+    motor_axis.set_title(f"Motor thrust (M1-M4) [{unit}]")
+    motor_axis.set_xlabel("time [s]")
+    xy_axis.set_xlabel("x [m]")
+    xy_axis.set_ylabel("y [m]")
+    xy_axis.set_title(f"{mission_name} XY path")
+    xy_axis.axis("equal")
+
+    error_axis.axhline(0.15, ls="--", color="black", lw=0.9, alpha=0.7)
+    attitude_axis.axhline(0.0, ls=":", color="gray", lw=0.8)
+    control_axis.axhline(0.0, ls=":", color="gray", lw=0.8)
+    motor_axis.axhline(0.0, ls=":", color="gray", lw=0.8)
+
+    for boundary, phase in _comparison_phase_boundaries(traces):
+        for axis in time_axes:
+            axis.axvline(boundary, color="gray", lw=0.7, alpha=0.35)
+        position_axis.annotate(
+            phase,
+            xy=(boundary, 1.0),
+            xycoords=("data", "axes fraction"),
+            xytext=(2, -2),
+            textcoords="offset points",
+            rotation=90,
+            va="top",
+            fontsize=6.5,
+            color="dimgray",
+        )
+
+    for axis in time_axes:
+        axis.grid(alpha=0.25)
+    xy_axis.grid(alpha=0.25)
+    position_axis.legend(loc="best", ncol=3, fontsize=6.5)
+    xy_axis.legend(loc="best", fontsize=7)
+    error_axis.legend(loc="best", fontsize=7)
+    attitude_axis.legend(loc="best", ncol=3, fontsize=6.5)
+    control_axis.legend(loc="best", ncol=4, fontsize=6)
+    motor_axis.legend(loc="best", ncol=4, fontsize=6)
+
+    fig.suptitle(f"{tag} - floor vs PPO", fontsize=14)
+    fig.text(
+        0.01,
+        0.008,
+        _comparison_parameter_text(mission_name, mission_parameters),
+        ha="left",
+        va="bottom",
+        fontsize=7,
+        color="dimgray",
+    )
+    fig.tight_layout(rect=(0.0, 0.025, 1.0, 0.955))
+    fig.savefig(target, dpi=140)
+    plt.close(fig)
     return target
 
 
@@ -419,5 +825,6 @@ __all__ = [
     "save_hover_trace",
     "save_iterm_diagnostic",
     "save_learning_curve",
+    "save_policy_comparison_trace",
     "save_tracking_trace",
 ]

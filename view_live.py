@@ -13,6 +13,19 @@ MODE_CONFIGS = {
     "lissajous": DEFAULT_CONFIG.parent / "view_live_lissajous_eval.yaml",
 }
 
+# Geometry is deliberately kept in versioned YAML profiles.  Operators choose
+# a recognizable path and only tune its traversal time/repetitions at runtime.
+PATH_PROFILES = {
+    "circle": {
+        "small": DEFAULT_CONFIG.parent / "view_live_circle_eval.yaml",
+        "wide": DEFAULT_CONFIG.parent / "view_live_circle_wide_eval.yaml",
+    },
+    "lissajous": {
+        "figure8": DEFAULT_CONFIG.parent / "view_live_lissajous_eval.yaml",
+        "clover": DEFAULT_CONFIG.parent / "view_live_lissajous_clover_eval.yaml",
+    },
+}
+
 
 def main(argv: Sequence[str] | None = None) -> int:
     from crazyflie_rl.eval_cli import run_evaluation_cli
@@ -27,6 +40,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         argv=argv,
         unified=True,
         mode_profiles=MODE_CONFIGS,
+        path_profiles=PATH_PROFILES,
+        always_compare=True,
     )
 
 

@@ -52,6 +52,7 @@ def _ensure_runtime_imports() -> None:
     from .plotting import (
         quaternion_to_euler_deg as quaternion_converter,
         save_hover_trace as hover_plotter,
+        save_policy_comparison_trace as comparison_plotter,
         save_tracking_trace as tracking_plotter,
     )
 
@@ -65,6 +66,7 @@ def _ensure_runtime_imports() -> None:
         mission_from_experiment=mission_factory,
         quaternion_to_euler_deg=quaternion_converter,
         save_hover_trace=hover_plotter,
+        save_policy_comparison_trace=comparison_plotter,
         save_tracking_trace=tracking_plotter,
     )
 
@@ -112,6 +114,8 @@ class RolloutTrace:
     force_floor_start_applied: bool = False
     force_floor_start_error: str | None = None
     error: str | None = None
+    control_input: np.ndarray | None = None
+    motor_thrust: np.ndarray | None = None
 
     @property
     def sample_count(self) -> int:
@@ -283,10 +287,14 @@ def apply_runtime_overrides(
             if args.radius is None
             else _positive(args.radius, "circle radius")
         )
+        common_period = getattr(args, "period", None)
+        period_override = (
+            common_period if common_period is not None else args.circle_period
+        )
         period = (
             circle.period
-            if args.circle_period is None
-            else _positive(args.circle_period, "circle period")
+            if period_override is None
+            else _positive(period_override, "circle period")
         )
         laps = (
             circle.laps
@@ -358,10 +366,14 @@ def apply_runtime_overrides(
             if args.phase_deg is None
             else _finite(args.phase_deg, "Lissajous phase")
         )
+        common_period = getattr(args, "period", None)
+        period_override = (
+            common_period if common_period is not None else args.base_period
+        )
         base_period = (
             lissajous.base_period
-            if args.base_period is None
-            else _positive(args.base_period, "Lissajous base period")
+            if period_override is None
+            else _positive(period_override, "Lissajous base period")
         )
         cycles = (
             lissajous.cycles
@@ -428,6 +440,7 @@ def mission_condition(
     mission: ReferenceMission,
     *,
     legacy_circle_preset: bool = False,
+    path_preset: str | None = None,
 ) -> str:
     """Build an artifact-safe description of the effective reference path."""
 
@@ -435,6 +448,32 @@ def mission_condition(
 
     if legacy_circle_preset and isinstance(mission, CircleMission):
         return _legacy_circle_condition(config, mission)
+    if path_preset is not None:
+        key = "".join(
+            character
+            for character in path_preset.strip().lower().replace("_", "-")
+            if character.isalnum() or character == "-"
+        ).strip("-")
+        key = key or "custom"
+        if mission.name == "hover":
+            return f"h-T{stable_float(config.mission.hover.duration)}"
+        if mission.name == "circle":
+            circle = config.mission.circle
+            return "-".join(
+                (
+                    f"c-{key}",
+                    f"T{stable_float(circle.period)}",
+                    f"L{stable_float(circle.laps)}",
+                )
+            )
+        lissajous = config.mission.lissajous
+        return "-".join(
+            (
+                f"l-{key}",
+                f"T{stable_float(lissajous.base_period)}",
+                f"C{stable_float(lissajous.cycles)}",
+            )
+        )
     if mission.name == "hover":
         hover = config.mission.hover
         x, y, z = hover.target
@@ -589,6 +628,8 @@ class EvaluationRunner:
         references: list[np.ndarray] = []
         errors: list[float] = []
         phases: list[str] = []
+        control_inputs: list[np.ndarray] = []
+        motor_thrusts: list[np.ndarray] = []
         terminated_at: float | None = None
         truncated_at: float | None = None
         diverged_at: float | None = None
@@ -643,7 +684,18 @@ class EvaluationRunner:
                         if policy is not None
                         else np.zeros(4)
                     )
-                    observation, _reward, terminated, truncated, _ = env.step(action)
+                    applied_action = np.clip(
+                        np.asarray(action, dtype=float).reshape(4), -1.0, 1.0
+                    )
+                    # Keep the environment's preserved dtype/clipping behavior;
+                    # ``applied_action`` is the equivalent normalized signal
+                    # recorded for diagnostics.
+                    observation, _reward, terminated, truncated, _ = env.step(
+                        action
+                    )
+                    thrust = np.asarray(
+                        getattr(env, "_last_f", np.full(4, np.nan)), dtype=float
+                    ).reshape(4)
                 except Exception as exc:
                     rollout_error = f"{type(exc).__name__}: {exc}"
                     print(
@@ -685,6 +737,8 @@ class EvaluationRunner:
                 references.append(np.asarray(env.pos_des, dtype=float).copy())
                 errors.append(error_norm)
                 phases.append(phase)
+                control_inputs.append(applied_action.copy())
+                motor_thrusts.append(thrust.copy())
                 step_index += 1
 
                 if terminated and terminated_at is None:
@@ -722,6 +776,8 @@ class EvaluationRunner:
             force_floor_start_applied=force_floor_start_applied,
             force_floor_start_error=force_floor_start_error,
             error=rollout_error,
+            control_input=np.asarray(control_inputs, dtype=float).reshape((-1, 4)),
+            motor_thrust=np.asarray(motor_thrusts, dtype=float).reshape((-1, 4)),
         )
 
     def _viewer_context(self, env: Any):
@@ -836,6 +892,32 @@ def trace_metrics(trace: RolloutTrace, tail_fraction: float) -> dict[str, Any]:
         "force_floor_start_error": trace.force_floor_start_error,
         "error": trace.error,
     }
+    control = (
+        np.asarray(trace.control_input, dtype=float).reshape((-1, 4))
+        if trace.control_input is not None
+        else np.empty((0, 4), dtype=float)
+    )
+    thrust = (
+        np.asarray(trace.motor_thrust, dtype=float).reshape((-1, 4))
+        if trace.motor_thrust is not None
+        else np.empty((0, 4), dtype=float)
+    )
+
+    def finite_column_summary(
+        values: np.ndarray, reducer: Callable[[np.ndarray], float]
+    ) -> list[float | None]:
+        summary: list[float | None] = []
+        for column in range(4):
+            finite = values[:, column][np.isfinite(values[:, column])]
+            summary.append(float(reducer(finite)) if finite.size else None)
+        return summary
+
+    result["control_input_abs_max"] = finite_column_summary(
+        np.abs(control), np.max
+    )
+    result["motor_thrust_n_min"] = finite_column_summary(thrust, np.min)
+    result["motor_thrust_n_max"] = finite_column_summary(thrust, np.max)
+    result["motor_thrust_n_mean"] = finite_column_summary(thrust, np.mean)
     if not trace.sample_count:
         result.update(
             position_rmse=None,
@@ -935,6 +1017,29 @@ def _save_trace(
     )
 
 
+def _save_comparison_traces(
+    artifacts: ArtifactManager,
+    traces: Sequence[RolloutTrace],
+    mission: ReferenceMission,
+    *,
+    title_condition: str,
+) -> Path:
+    """Save the unified floor-versus-PPO report as one 16:9 image."""
+
+    _ensure_runtime_imports()
+    if len(traces) != 2 or any(trace.sample_count < 1 for trace in traces):
+        raise RuntimeError("comparison plot requires two non-empty rollouts")
+    output = artifacts.path("plots", "comparison", ".png")
+    return save_policy_comparison_trace(
+        output,
+        tag=title_condition,
+        rollouts={trace.policy: trace for trace in traces},
+        mission_name=mission.name,
+        mission_parameters=mission.effective_parameters(),
+        motor_unit="N",
+    )
+
+
 def build_parser(default_config: str | Path, description: str) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument(
@@ -948,6 +1053,15 @@ def build_parser(default_config: str | Path, description: str) -> argparse.Argum
         help="flight-test mission (unified view_live.py)",
     )
     parser.add_argument(
+        "--path-preset",
+        default=None,
+        metavar="KEY",
+        help=(
+            "predefined trajectory geometry (for example: small, wide, "
+            "figure8, or clover)"
+        ),
+    )
+    parser.add_argument(
         "--model",
         type=Path,
         default=None,
@@ -957,7 +1071,7 @@ def build_parser(default_config: str | Path, description: str) -> argparse.Argum
         "--policy",
         choices=("floor", "residual", "both"),
         default="both",
-        help="policy comparison to run",
+        help="policy comparison (unified view_live.py always runs both)",
     )
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--position-perturbation", type=float, default=None)
@@ -996,6 +1110,12 @@ def build_parser(default_config: str | Path, description: str) -> argparse.Argum
     parser.add_argument("--center", nargs=2, type=float, metavar=("X", "Y"))
     parser.add_argument("--radius", type=float, default=None)
     parser.add_argument("--circle-period", type=float, default=None)
+    parser.add_argument(
+        "--period",
+        type=float,
+        default=None,
+        help="seconds per circle lap or Lissajous base cycle",
+    )
     parser.add_argument("--laps", type=float, default=None)
     parser.add_argument("--altitude", type=float, default=None)
     parser.add_argument("--ramp-sec", type=float, default=None)
@@ -1077,28 +1197,11 @@ def prompt_runtime_options(
     *,
     input_fn: Callable[[str], str] = input,
 ) -> argparse.Namespace:
-    """Prompt for mission and common values, displaying profile defaults."""
+    """Prompt only for the few choices an operator normally changes."""
 
     if mode == "hover":
-        target = _cli_or_config_default(
-            args, "hover_target", config.mission.hover.target
-        )
-        args.hover_target = (
-            _prompt("Target x", target[0], float, input_fn, "m"),
-            _prompt("Target y", target[1], float, input_fn, "m"),
-            _prompt("Hover altitude", target[2], float, input_fn, "m"),
-        )
-        args.yaw_deg = _prompt(
-            "Yaw setpoint",
-            _cli_or_config_default(
-                args, "yaw_deg", config.mission.hover.yaw_deg
-            ),
-            float,
-            input_fn,
-            "deg",
-        )
         args.duration = _prompt(
-            "Simulation duration",
+            "Hover duration",
             _cli_or_config_default(
                 args, "duration", config.mission.hover.duration
             ),
@@ -1107,115 +1210,34 @@ def prompt_runtime_options(
             "s",
         )
     elif mode == "circle":
-        circle = config.mission.circle
-        center = _cli_or_config_default(args, "center", circle.center_xy)
-        args.center = (
-            _prompt("Circle center x", center[0], float, input_fn, "m"),
-            _prompt("Circle center y", center[1], float, input_fn, "m"),
-        )
-        args.radius = _prompt(
-            "Circle radius",
-            _cli_or_config_default(args, "radius", circle.radius),
-            float,
-            input_fn,
-            "m",
-        )
-        args.circle_period = _prompt(
-            "Circle period",
-            _cli_or_config_default(args, "circle_period", circle.period),
+        args.period = _prompt(
+            "Seconds per lap",
+            _cli_or_config_default(
+                args,
+                "period",
+                _cli_or_config_default(
+                    args, "circle_period", config.mission.circle.period
+                ),
+            ),
             float,
             input_fn,
             "s",
         )
         args.laps = _prompt(
             "Number of laps",
-            _cli_or_config_default(args, "laps", circle.laps),
+            _cli_or_config_default(args, "laps", config.mission.circle.laps),
             float,
-            input_fn,
-        )
-        args.altitude = _prompt(
-            "Hover altitude",
-            _cli_or_config_default(
-                args, "altitude", config.mission.hover_altitude
-            ),
-            float,
-            input_fn,
-            "m",
-        )
-        args.ramp_sec = _prompt(
-            "Ramp duration",
-            _cli_or_config_default(args, "ramp_sec", circle.ramp_sec),
-            float,
-            input_fn,
-            "s",
-        )
-        args.start_angle_deg = _prompt(
-            "Start angle",
-            _cli_or_config_default(
-                args, "start_angle_deg", circle.start_angle_deg
-            ),
-            float,
-            input_fn,
-            "deg",
-        )
-        args.direction = _prompt(
-            "Direction (cw/ccw)",
-            _cli_or_config_default(args, "direction", circle.direction),
-            normalize_direction,
             input_fn,
         )
     else:
-        lissajous = config.mission.lissajous
-        center = _cli_or_config_default(args, "center", lissajous.center_xy)
-        args.center = (
-            _prompt("Center x", center[0], float, input_fn, "m"),
-            _prompt("Center y", center[1], float, input_fn, "m"),
-        )
-        args.amplitude_x = _prompt(
-            "Amplitude x",
+        args.period = _prompt(
+            "Seconds per cycle",
             _cli_or_config_default(
-                args, "amplitude_x", lissajous.amplitude_xy[0]
-            ),
-            float,
-            input_fn,
-            "m",
-        )
-        args.amplitude_y = _prompt(
-            "Amplitude y",
-            _cli_or_config_default(
-                args, "amplitude_y", lissajous.amplitude_xy[1]
-            ),
-            float,
-            input_fn,
-            "m",
-        )
-        args.frequency_x = _prompt(
-            "Frequency multiplier x",
-            _cli_or_config_default(
-                args, "frequency_x", lissajous.frequency_ratio[0]
-            ),
-            int,
-            input_fn,
-        )
-        args.frequency_y = _prompt(
-            "Frequency multiplier y",
-            _cli_or_config_default(
-                args, "frequency_y", lissajous.frequency_ratio[1]
-            ),
-            int,
-            input_fn,
-        )
-        args.phase_deg = _prompt(
-            "Phase difference",
-            _cli_or_config_default(args, "phase_deg", lissajous.phase_deg),
-            float,
-            input_fn,
-            "deg",
-        )
-        args.base_period = _prompt(
-            "Base period",
-            _cli_or_config_default(
-                args, "base_period", lissajous.base_period
+                args,
+                "period",
+                _cli_or_config_default(
+                    args, "base_period", config.mission.lissajous.base_period
+                ),
             ),
             float,
             input_fn,
@@ -1223,117 +1245,67 @@ def prompt_runtime_options(
         )
         args.cycles = _prompt(
             "Number of cycles",
-            _cli_or_config_default(args, "cycles", lissajous.cycles),
-            float,
-            input_fn,
-        )
-        args.altitude = _prompt(
-            "Hover altitude",
             _cli_or_config_default(
-                args, "altitude", config.mission.hover_altitude
+                args, "cycles", config.mission.lissajous.cycles
             ),
             float,
             input_fn,
-            "m",
-        )
-        args.ramp_sec = _prompt(
-            "Ramp duration",
-            _cli_or_config_default(args, "ramp_sec", lissajous.ramp_sec),
-            float,
-            input_fn,
-            "s",
-        )
-
-    if mode != "hover":
-        args.takeoff_sec = _prompt(
-            "Takeoff duration",
-            _cli_or_config_default(
-                args, "takeoff_sec", config.mission.takeoff_sec
-            ),
-            float,
-            input_fn,
-            "s",
-        )
-        args.settle_sec = _prompt(
-            "Settle duration",
-            _cli_or_config_default(args, "settle_sec", config.mission.settle_sec),
-            float,
-            input_fn,
-            "s",
-        )
-        args.goto_sec = _prompt(
-            "GOTO duration",
-            _cli_or_config_default(args, "goto_sec", config.mission.goto_sec),
-            float,
-            input_fn,
-            "s",
-        )
-        args.post_hold_sec = _prompt(
-            "Post-HOLD duration",
-            _cli_or_config_default(
-                args, "post_hold_sec", config.mission.post_hold_sec
-            ),
-            float,
-            input_fn,
-            "s",
-        )
-        args.force_floor_start = _prompt_bool(
-            "Force floor start",
-            _cli_or_config_default(
-                args, "force_floor_start", config.mission.force_floor_start
-            ),
-            input_fn,
-        )
-
-    args.seed = _prompt(
-        "Seed",
-        _cli_or_config_default(args, "seed", config.evaluation.seed_start),
-        int,
-        input_fn,
-    )
-    args.position_perturbation = _prompt(
-        "Initial position perturbation",
-        _cli_or_config_default(
-            args,
-            "position_perturbation",
-            config.environment.position_perturbation,
-        ),
-        float,
-        input_fn,
-        "m",
-    )
-    args.attitude_perturbation_deg = _prompt(
-        "Initial attitude perturbation",
-        _cli_or_config_default(
-            args,
-            "attitude_perturbation_deg",
-            config.environment.attitude_perturbation_deg,
-        ),
-        float,
-        input_fn,
-        "deg",
-    )
-    args.policy = _prompt(
-        "Policy (floor/residual/both)",
-        args.policy,
-        lambda value: value
-        if value in {"floor", "residual", "both"}
-        else (_ for _ in ()).throw(ValueError("choose floor, residual, or both")),
-        input_fn,
-    )
-    args.headless = _prompt_bool("Headless", args.headless, input_fn)
-    args.no_realtime = not _prompt_bool(
-        "Realtime pacing", not args.no_realtime, input_fn
-    )
-    if mode != "hover":
-        args.no_camera = not _prompt_bool(
-            "Camera tracking", not args.no_camera, input_fn
         )
     return args
 
 
 def _has_option(argv: Sequence[str], option: str) -> bool:
     return any(value == option or value.startswith(f"{option}=") for value in argv)
+
+
+def resolve_path_preset(
+    mode: str,
+    value: str | None,
+    path_profiles: Mapping[str, Mapping[str, str | Path]],
+) -> tuple[str, Path] | None:
+    """Resolve a named or numeric geometry preset for one trajectory mode."""
+
+    available = path_profiles.get(mode)
+    if not available:
+        if value is not None:
+            raise argparse.ArgumentTypeError(
+                f"--path-preset is not available for {mode}"
+            )
+        return None
+    keys = tuple(available)
+    selected = keys[0] if value is None else str(value).strip().lower()
+    for index, key in enumerate(keys, start=1):
+        aliases = {str(index), key.lower(), f"{mode}-{key}".lower()}
+        if selected in aliases:
+            return key, Path(available[key])
+    choices = ", ".join(f"{index}/{key}" for index, key in enumerate(keys, 1))
+    raise argparse.ArgumentTypeError(
+        f"unknown {mode} path preset {value!r}; choose {choices}"
+    )
+
+
+def _interactive_path_preset(
+    mode: str,
+    path_profiles: Mapping[str, Mapping[str, str | Path]],
+    input_fn: Callable[[str], str],
+    default: str | None = None,
+) -> str | None:
+    available = path_profiles.get(mode)
+    if not available:
+        return None
+    print(f"\n{mode.title()} paths:")
+    for index, key in enumerate(available, start=1):
+        print(f"[{index}] {key}")
+    resolved_default = resolve_path_preset(mode, default, path_profiles)
+    if resolved_default is None:  # defensive: ``available`` is non-empty above
+        return None
+    default_key = resolved_default[0]
+    return _prompt(
+        "Select path preset",
+        default_key,
+        lambda value: resolve_path_preset(mode, value, path_profiles)[0],
+        input_fn,
+    )
 
 
 def _interactive_mode(input_fn: Callable[[str], str]) -> str:
@@ -1359,6 +1331,7 @@ def format_run_summary(
     headless: bool | None = None,
     realtime: bool | None = None,
     camera_tracking: bool | None = None,
+    path_preset: str | None = None,
 ) -> str:
     """Format the effective pre-flight summary displayed to the operator."""
 
@@ -1366,6 +1339,8 @@ def format_run_summary(
         ("Mode", mission.name.title()),
         ("Control mode", config.control_mode.upper()),
     ]
+    if path_preset is not None:
+        rows.append(("Path preset", path_preset))
     if mission.name == "hover":
         hover = config.mission.hover
         rows.extend(
@@ -1456,6 +1431,7 @@ def _runtime_payload(
 ) -> dict[str, Any]:
     return {
         "mode": mission.name,
+        "path_preset": getattr(args, "path_preset", None),
         "mission": mission.effective_parameters(),
         "control_mode": config.control_mode,
         "policy": args.policy,
@@ -1477,12 +1453,21 @@ def run_evaluation_cli(
     argv: Sequence[str] | None = None,
     unified: bool = False,
     mode_profiles: Mapping[str, str | Path] | None = None,
+    path_profiles: Mapping[str, Mapping[str, str | Path]] | None = None,
+    always_compare: bool = False,
     stdin: TextIO | None = None,
     input_fn: Callable[[str], str] = input,
 ) -> int:
     raw_argv = list(sys.argv[1:] if argv is None else argv)
     parser = build_parser(default_config, description)
     args = parser.parse_args(raw_argv)
+    if always_compare:
+        if args.policy != "both":
+            print(
+                "note: unified view_live.py always compares floor and PPO; "
+                f"ignoring --policy {args.policy}"
+            )
+        args.policy = "both"
     explicit_config = _has_option(raw_argv, "--config")
     stream = sys.stdin if stdin is None else stdin
     interactive_answers = False
@@ -1506,10 +1491,40 @@ def run_evaluation_cli(
                 "python view_live.py --mode hover --headless"
             )
 
+    if explicit_config and args.path_preset is not None:
+        parser.error("--config and --path-preset cannot be used together")
+
+    selected_path_profile: Path | None = None
+    if path_profiles is not None and mode is not None:
+        try:
+            if interactive_answers:
+                args.path_preset = _interactive_path_preset(
+                    mode,
+                    path_profiles,
+                    input_fn,
+                    default=args.path_preset,
+                )
+            if not explicit_config:
+                resolved = resolve_path_preset(
+                    mode, args.path_preset, path_profiles
+                )
+                if resolved is not None:
+                    args.path_preset, selected_path_profile = resolved
+                elif mode == "hover":
+                    args.path_preset = "hover"
+            elif mode == "hover":
+                args.path_preset = "hover"
+            else:
+                args.path_preset = "custom"
+        except (EOFError, argparse.ArgumentTypeError) as exc:
+            parser.error(str(exc))
+
     _ensure_runtime_imports()
     if preliminary_config is None:
         config_path = args.config
-        if unified and not explicit_config and mode_profiles is not None and mode:
+        if selected_path_profile is not None:
+            config_path = selected_path_profile
+        elif unified and not explicit_config and mode_profiles is not None and mode:
             config_path = Path(mode_profiles[mode])
         config = load_config(config_path)
     else:
@@ -1537,7 +1552,12 @@ def run_evaluation_cli(
     requires_model = any(key == "residual" for key, _label in specs)
     candidate_model = _model_candidate(args.model, config) if requires_model else None
     condition = mission_condition(
-        config, mission, legacy_circle_preset=legacy_circle_preset
+        config,
+        mission,
+        legacy_circle_preset=legacy_circle_preset,
+        path_preset=(
+            args.path_preset if path_profiles is not None else None
+        ),
     )
     artifacts = ArtifactManager.create(
         config,
@@ -1551,6 +1571,7 @@ def run_evaluation_cli(
         "status": "running",
         "effective_condition": condition,
         "effective_parameters": mission.effective_parameters(),
+        "path_preset": getattr(args, "path_preset", None),
         "runtime_parameters": runtime_values,
         "control_mode": config.control_mode,
         "selected_policy": args.policy,
@@ -1585,6 +1606,7 @@ def run_evaluation_cli(
                 headless=bool(args.headless),
                 realtime=not args.no_realtime,
                 camera_tracking=not args.no_camera,
+                path_preset=getattr(args, "path_preset", None),
             )
         )
         artifacts.write_runtime_config(runtime_values)
@@ -1605,6 +1627,9 @@ def run_evaluation_cli(
             mission=mission,
             legacy_circle_preset=legacy_circle_preset,
         )
+        traces: list[RolloutTrace] = []
+        comparison_mode = unified and len(specs) == 2
+        rollout_failure: str | None = None
         for policy_key, label in specs:
             print(f"\n>>> {label}")
             trace = runner.run(
@@ -1614,7 +1639,8 @@ def run_evaluation_cli(
             )
             policy_metrics = trace_metrics(trace, config.evaluation.tail_fraction)
             metrics["policies"][policy_key] = policy_metrics
-            if trace.sample_count:
+            traces.append(trace)
+            if trace.sample_count and not comparison_mode:
                 plot_path = _save_trace(
                     artifacts, config, trace, mission, title_condition=condition
                 )
@@ -1622,13 +1648,25 @@ def run_evaluation_cli(
                     artifacts.run_dir
                 ).as_posix()
                 print(f"    saved: {plot_path}")
-            if trace.error is not None:
-                raise RuntimeError(
+            if trace.error is not None and rollout_failure is None:
+                rollout_failure = (
                     f"{label} rollout failed after {trace.sample_count} samples: "
                     f"{trace.error}"
                 )
-            if not trace.sample_count:
-                raise RuntimeError(f"{label} rollout produced no samples")
+            if not trace.sample_count and rollout_failure is None:
+                rollout_failure = f"{label} rollout produced no samples"
+            if rollout_failure is not None and not comparison_mode:
+                raise RuntimeError(rollout_failure)
+        if comparison_mode and all(trace.sample_count for trace in traces):
+            plot_path = _save_comparison_traces(
+                artifacts, traces, mission, title_condition=condition
+            )
+            relative_plot = plot_path.relative_to(artifacts.run_dir).as_posix()
+            for policy_metrics in metrics["policies"].values():
+                policy_metrics["plot"] = relative_plot
+            print(f"    saved comparison: {plot_path}")
+        if rollout_failure is not None:
+            raise RuntimeError(rollout_failure)
         metrics["status"] = "completed"
         metrics_path = artifacts.write_metrics("evaluation", metrics)
         artifacts.finalize(
@@ -1679,6 +1717,7 @@ __all__ = [
     "normalize_direction",
     "normalize_mode",
     "prompt_runtime_options",
+    "resolve_path_preset",
     "run_evaluation_cli",
     "trace_metrics",
 ]
