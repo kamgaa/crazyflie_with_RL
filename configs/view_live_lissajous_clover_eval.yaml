@@ -11,4 +11,4 @@ mission:
 
 experiment:
   condition: liss-clover
-  description: Unified view_live.py compact 3-by-2 Lissajous clover path
+  description: Unified PID-floor versus E2E-PPO compact Lissajous clover path

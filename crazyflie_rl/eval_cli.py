@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import argparse
 from contextlib import contextmanager, nullcontext
-from dataclasses import dataclass, replace
+from dataclasses import asdict, dataclass, replace
 import math
 from pathlib import Path
 import sys
@@ -52,7 +52,7 @@ def _ensure_runtime_imports() -> None:
     from .plotting import (
         quaternion_to_euler_deg as quaternion_converter,
         save_hover_trace as hover_plotter,
-        save_policy_comparison_trace as comparison_plotter,
+        save_policy_trace as policy_plotter,
         save_tracking_trace as tracking_plotter,
     )
 
@@ -66,7 +66,7 @@ def _ensure_runtime_imports() -> None:
         mission_from_experiment=mission_factory,
         quaternion_to_euler_deg=quaternion_converter,
         save_hover_trace=hover_plotter,
-        save_policy_comparison_trace=comparison_plotter,
+        save_policy_trace=policy_plotter,
         save_tracking_trace=tracking_plotter,
     )
 
@@ -116,6 +116,17 @@ class RolloutTrace:
     error: str | None = None
     control_input: np.ndarray | None = None
     motor_thrust: np.ndarray | None = None
+    linear_velocity: np.ndarray | None = None
+    angular_velocity: np.ndarray | None = None
+    control_mode: str | None = None
+    motor_thrust_command: np.ndarray | None = None
+    motor_command: np.ndarray | None = None
+    motor_omega_rad_s: np.ndarray | None = None
+    reaction_torque_nm: np.ndarray | None = None
+    wrench_command: np.ndarray | None = None
+    wrench_actual: np.ndarray | None = None
+    allocation_error: np.ndarray | None = None
+    actuator: Mapping[str, Any] | None = None
 
     @property
     def sample_count(self) -> int:
@@ -164,9 +175,18 @@ def _load_policy(path: Path, config: ExperimentConfig):
     return policy
 
 
-def _policy_specs(config: ExperimentConfig, selected: str) -> list[tuple[str, str]]:
+def _policy_specs(
+    config: ExperimentConfig,
+    selected: str,
+    *,
+    unified: bool = False,
+) -> list[tuple[str, str]]:
     if config.control_mode == "e2e":
-        floor_label = "E2E zero-action (gravity compensation only)"
+        floor_label = (
+            "floor (PID)"
+            if unified
+            else "E2E zero-action (gravity compensation only)"
+        )
         policy_label = "E2E PPO"
     else:
         floor_label = "floor (PID)"
@@ -177,6 +197,26 @@ def _policy_specs(config: ExperimentConfig, selected: str) -> list[tuple[str, st
     if selected in {"residual", "both"}:
         result.append(("residual", policy_label))
     return result
+
+
+def _expected_policy_control_modes(
+    config: ExperimentConfig,
+    selected: str,
+    *,
+    unified: bool,
+) -> dict[str, str]:
+    """Return the controller mode intended for every selected rollout."""
+
+    return {
+        policy_key: (
+            "residual" if unified and policy_key == "floor" else config.control_mode
+        )
+        for policy_key, _label in _policy_specs(
+            config,
+            selected,
+            unified=unified,
+        )
+    }
 
 
 def _finite(value: float, name: str) -> float:
@@ -582,7 +622,14 @@ class EvaluationRunner:
         # with ``__new__`` and assigned only ``circle`` working.
         return getattr(self, "mission", None) or getattr(self, "circle", None)
 
-    def run(self, policy: Any | None, policy_key: str, label: str) -> RolloutTrace:
+    def run(
+        self,
+        policy: Any | None,
+        policy_key: str,
+        label: str,
+        *,
+        control_mode: str | None = None,
+    ) -> RolloutTrace:
         mission = self._active_mission()
         episode_override = None
         if mission is not None and mission.name != "hover" and not self.headless:
@@ -591,16 +638,33 @@ class EvaluationRunner:
         overrides = {}
         if episode_override is not None:
             overrides["episode_sec"] = episode_override
+        if control_mode is not None:
+            overrides["mode"] = control_mode
         env = self.factory.make(**overrides)
         try:
-            return self._rollout(env, policy, policy_key, label)
+            actual_control_mode = str(
+                getattr(env, "mode", control_mode or self.config.control_mode)
+            )
+            return self._rollout(
+                env,
+                policy,
+                policy_key,
+                label,
+                control_mode=actual_control_mode,
+            )
         finally:
             close = getattr(env, "close", None)
             if callable(close):
                 close()
 
     def _rollout(
-        self, env: Any, policy: Any | None, policy_key: str, label: str
+        self,
+        env: Any,
+        policy: Any | None,
+        policy_key: str,
+        label: str,
+        *,
+        control_mode: str | None = None,
     ) -> RolloutTrace:
         _ensure_runtime_imports()
         mission = self._active_mission()
@@ -617,6 +681,18 @@ class EvaluationRunner:
                 force_floor_start_error,
             ) = self._force_floor_start(env)
 
+        actuator_snapshot: dict[str, Any] | None = None
+        snapshotter = getattr(env, "actuator_snapshot", None)
+        if callable(snapshotter):
+            try:
+                snapshot = snapshotter()
+                if isinstance(snapshot, Mapping):
+                    actuator_snapshot = dict(snapshot)
+            except Exception as exc:
+                actuator_snapshot = {
+                    "snapshot_error": f"{type(exc).__name__}: {exc}"
+                }
+
         dt = float(env.dt_phys * env.substeps)
         mission_steps = (
             int(round(mission.total_sec / dt)) if mission is not None else None
@@ -630,6 +706,15 @@ class EvaluationRunner:
         phases: list[str] = []
         control_inputs: list[np.ndarray] = []
         motor_thrusts: list[np.ndarray] = []
+        motor_thrust_commands: list[np.ndarray] = []
+        motor_commands: list[np.ndarray] = []
+        motor_omegas: list[np.ndarray] = []
+        reaction_torques: list[np.ndarray] = []
+        wrench_commands: list[np.ndarray] = []
+        wrench_actuals: list[np.ndarray] = []
+        allocation_errors: list[np.ndarray] = []
+        linear_velocities: list[np.ndarray] = []
+        angular_velocities: list[np.ndarray] = []
         terminated_at: float | None = None
         truncated_at: float | None = None
         diverged_at: float | None = None
@@ -638,6 +723,17 @@ class EvaluationRunner:
         last_phase: str | None = None
         rollout_error: str | None = None
         step_index = 0
+
+        def actuator_vector(
+            attribute: str, fallback: Any = None
+        ) -> np.ndarray:
+            """Read optional BLDC diagnostics without breaking legacy fakes."""
+
+            value = getattr(env, attribute, fallback)
+            try:
+                return np.asarray(value, dtype=float).reshape(4).copy()
+            except (TypeError, ValueError):
+                return np.full(4, np.nan, dtype=float)
 
         @contextmanager
         def capture_rollout_error():
@@ -696,6 +792,13 @@ class EvaluationRunner:
                     thrust = np.asarray(
                         getattr(env, "_last_f", np.full(4, np.nan)), dtype=float
                     ).reshape(4)
+                    commanded_thrust = actuator_vector("_last_f_cmd", thrust)
+                    motor_command = actuator_vector("_last_motor_cmd")
+                    motor_omega = actuator_vector("_last_omega")
+                    reaction_torque = actuator_vector("_last_q_actual")
+                    wrench_command = actuator_vector("_last_wrench_cmd")
+                    wrench_actual = actuator_vector("_last_wrench_actual")
+                    allocation_error = actuator_vector("_last_allocation_error")
                 except Exception as exc:
                     rollout_error = f"{type(exc).__name__}: {exc}"
                     print(
@@ -710,7 +813,9 @@ class EvaluationRunner:
 
                 position_error = np.asarray(observation[0:3], dtype=float)
                 actual_position = position_error + np.asarray(env.pos_des, dtype=float)
+                linear_velocity = np.asarray(observation[3:6], dtype=float)
                 attitude = quaternion_to_euler_deg(observation[6:10])
+                angular_velocity = np.asarray(observation[10:13], dtype=float)
                 error_norm = float(np.linalg.norm(position_error))
                 if error_norm > 0.15 and training_boundary_crossed_at is None:
                     training_boundary_crossed_at = time_now
@@ -739,6 +844,15 @@ class EvaluationRunner:
                 phases.append(phase)
                 control_inputs.append(applied_action.copy())
                 motor_thrusts.append(thrust.copy())
+                motor_thrust_commands.append(commanded_thrust)
+                motor_commands.append(motor_command)
+                motor_omegas.append(motor_omega)
+                reaction_torques.append(reaction_torque)
+                wrench_commands.append(wrench_command)
+                wrench_actuals.append(wrench_actual)
+                allocation_errors.append(allocation_error)
+                linear_velocities.append(linear_velocity.copy())
+                angular_velocities.append(angular_velocity.copy())
                 step_index += 1
 
                 if terminated and terminated_at is None:
@@ -778,6 +892,23 @@ class EvaluationRunner:
             error=rollout_error,
             control_input=np.asarray(control_inputs, dtype=float).reshape((-1, 4)),
             motor_thrust=np.asarray(motor_thrusts, dtype=float).reshape((-1, 4)),
+            linear_velocity=np.asarray(linear_velocities, dtype=float).reshape((-1, 3)),
+            angular_velocity=np.asarray(angular_velocities, dtype=float).reshape((-1, 3)),
+            control_mode=control_mode,
+            motor_thrust_command=np.asarray(
+                motor_thrust_commands, dtype=float
+            ).reshape((-1, 4)),
+            motor_command=np.asarray(motor_commands, dtype=float).reshape((-1, 4)),
+            motor_omega_rad_s=np.asarray(motor_omegas, dtype=float).reshape((-1, 4)),
+            reaction_torque_nm=np.asarray(reaction_torques, dtype=float).reshape(
+                (-1, 4)
+            ),
+            wrench_command=np.asarray(wrench_commands, dtype=float).reshape((-1, 4)),
+            wrench_actual=np.asarray(wrench_actuals, dtype=float).reshape((-1, 4)),
+            allocation_error=np.asarray(allocation_errors, dtype=float).reshape(
+                (-1, 4)
+            ),
+            actuator=actuator_snapshot,
         )
 
     def _viewer_context(self, env: Any):
@@ -848,6 +979,13 @@ class EvaluationRunner:
             env.data.qpos[3:7] = np.array([1.0, 0.0, 0.0, 0.0])
             env.data.qvel[:6] = 0.0
             mujoco_module.mj_forward(env.model, env.data)
+            # ``view_live`` changes the reset pose after ``env.reset``.  The
+            # BLDC rotor state must therefore be explicitly told this is a
+            # ground start. Keep the capability optional for lightweight test
+            # environments and legacy wrappers.
+            reset_actuator = getattr(env, "reset_actuator_state", None)
+            if callable(reset_actuator):
+                reset_actuator(airborne=False)
             return True, None
         except Exception as exc:
             error = f"{type(exc).__name__}: {exc}"
@@ -858,6 +996,11 @@ class EvaluationRunner:
                     env.data.qvel[:] = original_qvel
                     if mujoco_module is not None:
                         mujoco_module.mj_forward(env.model, env.data)
+                    reset_actuator = getattr(env, "reset_actuator_state", None)
+                    if callable(reset_actuator):
+                        # Restore a consistent actuator state as well as the
+                        # MuJoCo pose if the floor-start transaction failed.
+                        reset_actuator()
                     restore_status = "reset state restored"
                 except Exception as restore_exc:
                     restore_error = (
@@ -879,6 +1022,7 @@ def trace_metrics(trace: RolloutTrace, tail_fraction: float) -> dict[str, Any]:
 
     result: dict[str, Any] = {
         "label": trace.label,
+        "control_mode": trace.control_mode,
         "sample_count": trace.sample_count,
         "completed_sample_count": trace.sample_count,
         "duration_sec": float(trace.time_sec[-1]) if trace.sample_count else 0.0,
@@ -902,6 +1046,41 @@ def trace_metrics(trace: RolloutTrace, tail_fraction: float) -> dict[str, Any]:
         if trace.motor_thrust is not None
         else np.empty((0, 4), dtype=float)
     )
+    commanded_thrust = (
+        np.asarray(trace.motor_thrust_command, dtype=float).reshape((-1, 4))
+        if trace.motor_thrust_command is not None
+        else np.empty((0, 4), dtype=float)
+    )
+    motor_command = (
+        np.asarray(trace.motor_command, dtype=float).reshape((-1, 4))
+        if trace.motor_command is not None
+        else np.empty((0, 4), dtype=float)
+    )
+    motor_omega = (
+        np.asarray(trace.motor_omega_rad_s, dtype=float).reshape((-1, 4))
+        if trace.motor_omega_rad_s is not None
+        else np.empty((0, 4), dtype=float)
+    )
+    reaction_torque = (
+        np.asarray(trace.reaction_torque_nm, dtype=float).reshape((-1, 4))
+        if trace.reaction_torque_nm is not None
+        else np.empty((0, 4), dtype=float)
+    )
+    wrench_command = (
+        np.asarray(trace.wrench_command, dtype=float).reshape((-1, 4))
+        if trace.wrench_command is not None
+        else np.empty((0, 4), dtype=float)
+    )
+    wrench_actual = (
+        np.asarray(trace.wrench_actual, dtype=float).reshape((-1, 4))
+        if trace.wrench_actual is not None
+        else np.empty((0, 4), dtype=float)
+    )
+    allocation_error = (
+        np.asarray(trace.allocation_error, dtype=float).reshape((-1, 4))
+        if trace.allocation_error is not None
+        else np.empty((0, 4), dtype=float)
+    )
 
     def finite_column_summary(
         values: np.ndarray, reducer: Callable[[np.ndarray], float]
@@ -918,6 +1097,39 @@ def trace_metrics(trace: RolloutTrace, tail_fraction: float) -> dict[str, Any]:
     result["motor_thrust_n_min"] = finite_column_summary(thrust, np.min)
     result["motor_thrust_n_max"] = finite_column_summary(thrust, np.max)
     result["motor_thrust_n_mean"] = finite_column_summary(thrust, np.mean)
+    result["motor_thrust_command_n_min"] = finite_column_summary(
+        commanded_thrust, np.min
+    )
+    result["motor_thrust_command_n_max"] = finite_column_summary(
+        commanded_thrust, np.max
+    )
+    result["motor_thrust_command_n_mean"] = finite_column_summary(
+        commanded_thrust, np.mean
+    )
+    result["motor_command_min"] = finite_column_summary(motor_command, np.min)
+    result["motor_command_max"] = finite_column_summary(motor_command, np.max)
+    result["motor_omega_rad_s_min"] = finite_column_summary(motor_omega, np.min)
+    result["motor_omega_rad_s_max"] = finite_column_summary(motor_omega, np.max)
+    result["reaction_torque_nm_min"] = finite_column_summary(
+        reaction_torque, np.min
+    )
+    result["reaction_torque_nm_max"] = finite_column_summary(
+        reaction_torque, np.max
+    )
+
+    def final_vector(values: np.ndarray) -> list[float | None]:
+        if not values.size:
+            return [None, None, None, None]
+        return [
+            float(value) if np.isfinite(value) else None
+            for value in values[-1]
+        ]
+
+    result["wrench_command_final"] = final_vector(wrench_command)
+    result["wrench_actual_final"] = final_vector(wrench_actual)
+    result["allocation_error_final"] = final_vector(allocation_error)
+    if trace.actuator is not None:
+        result["actuator"] = dict(trace.actuator)
     if not trace.sample_count:
         result.update(
             position_rmse=None,
@@ -1017,23 +1229,24 @@ def _save_trace(
     )
 
 
-def _save_comparison_traces(
+def _save_policy_report(
     artifacts: ArtifactManager,
-    traces: Sequence[RolloutTrace],
+    trace: RolloutTrace,
     mission: ReferenceMission,
     *,
     title_condition: str,
 ) -> Path:
-    """Save the unified floor-versus-PPO report as one 16:9 image."""
+    """Save one unified 16:9 report with a short policy-specific filename."""
 
     _ensure_runtime_imports()
-    if len(traces) != 2 or any(trace.sample_count < 1 for trace in traces):
-        raise RuntimeError("comparison plot requires two non-empty rollouts")
-    output = artifacts.path("plots", "comparison", ".png")
-    return save_policy_comparison_trace(
+    if trace.sample_count < 1:
+        raise RuntimeError(f"{trace.label} rollout produced no samples")
+    filename = "floor.png" if trace.policy == "floor" else "ppo.png"
+    output = artifacts.run_dir / "plots" / filename
+    return save_policy_trace(
         output,
         tag=title_condition,
-        rollouts={trace.policy: trace for trace in traces},
+        rollout=trace,
         mission_name=mission.name,
         mission_parameters=mission.effective_parameters(),
         motor_unit="N",
@@ -1332,13 +1545,23 @@ def format_run_summary(
     realtime: bool | None = None,
     camera_tracking: bool | None = None,
     path_preset: str | None = None,
+    unified: bool = False,
 ) -> str:
     """Format the effective pre-flight summary displayed to the operator."""
 
-    rows: list[tuple[str, str]] = [
-        ("Mode", mission.name.title()),
-        ("Control mode", config.control_mode.upper()),
-    ]
+    rows: list[tuple[str, str]] = [("Mode", mission.name.title())]
+    if unified:
+        rows.extend(
+            (
+                ("Floor controller", "RESIDUAL (PID)"),
+                ("PPO controller", config.control_mode.upper()),
+            )
+        )
+    else:
+        rows.append(("Control mode", config.control_mode.upper()))
+    actuator = config.actuator
+    actuator_status = f"CF2.1 first-order ({actuator.verification_status})"
+    rows.append(("Motor actuator", actuator_status))
     if path_preset is not None:
         rows.append(("Path preset", path_preset))
     if mission.name == "hover":
@@ -1428,12 +1651,19 @@ def _runtime_payload(
     mission: ReferenceMission,
     args: argparse.Namespace,
     model: Path | None,
+    *,
+    unified: bool = False,
 ) -> dict[str, Any]:
     return {
         "mode": mission.name,
         "path_preset": getattr(args, "path_preset", None),
         "mission": mission.effective_parameters(),
         "control_mode": config.control_mode,
+        "policy_control_modes": _expected_policy_control_modes(
+            config,
+            args.policy,
+            unified=unified,
+        ),
         "policy": args.policy,
         "model": str(model) if model is not None else None,
         "seed": config.evaluation.seed_start,
@@ -1443,6 +1673,10 @@ def _runtime_payload(
         "position_perturbation": config.environment.position_perturbation,
         "attitude_perturbation_deg": config.environment.attitude_perturbation_deg,
         "force_floor_start_requested": config.mission.force_floor_start,
+        # Retain every static actuator parameter in the runtime-resolved
+        # artifact.  Per-episode sampled values are appended to each rollout
+        # outcome after the environment reset has actually occurred.
+        "actuator": asdict(config.actuator),
     }
 
 
@@ -1548,7 +1782,7 @@ def run_evaluation_cli(
             environment=replace(config.environment, episode_sec=mission.total_sec),
         )
 
-    specs = _policy_specs(config, args.policy)
+    specs = _policy_specs(config, args.policy, unified=unified)
     requires_model = any(key == "residual" for key, _label in specs)
     candidate_model = _model_candidate(args.model, config) if requires_model else None
     condition = mission_condition(
@@ -1566,7 +1800,13 @@ def run_evaluation_cli(
         mission=mission.name,
         seed=config.evaluation.seed_start,
     )
-    runtime_values = _runtime_payload(config, mission, args, candidate_model)
+    runtime_values = _runtime_payload(
+        config,
+        mission,
+        args,
+        candidate_model,
+        unified=unified,
+    )
     metrics: dict[str, Any] = {
         "status": "running",
         "effective_condition": condition,
@@ -1574,6 +1814,7 @@ def run_evaluation_cli(
         "path_preset": getattr(args, "path_preset", None),
         "runtime_parameters": runtime_values,
         "control_mode": config.control_mode,
+        "actuator": asdict(config.actuator),
         "selected_policy": args.policy,
         "seed": config.evaluation.seed_start,
         "deterministic": config.evaluation.deterministic,
@@ -1585,13 +1826,24 @@ def run_evaluation_cli(
         "force_floor_start_requested": config.mission.force_floor_start,
         "preset": args.preset if legacy_circle_preset else None,
         "model": str(candidate_model) if candidate_model is not None else None,
+        "policy_control_modes": _expected_policy_control_modes(
+            config,
+            args.policy,
+            unified=unified,
+        ),
         "policies": {},
     }
     selected_model: Path | None = None
     runtime_config_written = False
     try:
         selected_model = _model_path(args.model, config) if requires_model else None
-        runtime_values = _runtime_payload(config, mission, args, selected_model)
+        runtime_values = _runtime_payload(
+            config,
+            mission,
+            args,
+            selected_model,
+            unified=unified,
+        )
         metrics["runtime_parameters"] = runtime_values
         metrics["model"] = (
             str(selected_model) if selected_model is not None else None
@@ -1607,6 +1859,7 @@ def run_evaluation_cli(
                 realtime=not args.no_realtime,
                 camera_tracking=not args.no_camera,
                 path_preset=getattr(args, "path_preset", None),
+                unified=unified,
             )
         )
         artifacts.write_runtime_config(runtime_values)
@@ -1636,13 +1889,27 @@ def run_evaluation_cli(
                 policy if policy_key == "residual" else None,
                 policy_key,
                 label,
+                control_mode=(
+                    "residual" if unified and policy_key == "floor" else None
+                ),
             )
             policy_metrics = trace_metrics(trace, config.evaluation.tail_fraction)
             metrics["policies"][policy_key] = policy_metrics
+            metrics["policy_control_modes"][policy_key] = trace.control_mode
             traces.append(trace)
-            if trace.sample_count and not comparison_mode:
-                plot_path = _save_trace(
-                    artifacts, config, trace, mission, title_condition=condition
+            if trace.sample_count:
+                plot_path = (
+                    _save_policy_report(
+                        artifacts, trace, mission, title_condition=condition
+                    )
+                    if comparison_mode
+                    else _save_trace(
+                        artifacts,
+                        config,
+                        trace,
+                        mission,
+                        title_condition=condition,
+                    )
                 )
                 policy_metrics["plot"] = plot_path.relative_to(
                     artifacts.run_dir
@@ -1657,14 +1924,6 @@ def run_evaluation_cli(
                 rollout_failure = f"{label} rollout produced no samples"
             if rollout_failure is not None and not comparison_mode:
                 raise RuntimeError(rollout_failure)
-        if comparison_mode and all(trace.sample_count for trace in traces):
-            plot_path = _save_comparison_traces(
-                artifacts, traces, mission, title_condition=condition
-            )
-            relative_plot = plot_path.relative_to(artifacts.run_dir).as_posix()
-            for policy_metrics in metrics["policies"].values():
-                policy_metrics["plot"] = relative_plot
-            print(f"    saved comparison: {plot_path}")
         if rollout_failure is not None:
             raise RuntimeError(rollout_failure)
         metrics["status"] = "completed"
@@ -1677,6 +1936,10 @@ def run_evaluation_cli(
                 str(selected_model) if selected_model is not None else None
             ),
             policy_outcomes=metrics["policies"],
+            actuator_outcomes={
+                policy_key: outcome.get("actuator")
+                for policy_key, outcome in metrics["policies"].items()
+            },
         )
         print(f"metrics: {metrics_path}")
         print(f"run: {artifacts.run_dir}")
@@ -1703,6 +1966,10 @@ def run_evaluation_cli(
             "failed",
             error=metrics["error"],
             policy_outcomes=metrics["policies"],
+            actuator_outcomes={
+                policy_key: outcome.get("actuator")
+                for policy_key, outcome in metrics["policies"].items()
+            },
         )
         raise
 

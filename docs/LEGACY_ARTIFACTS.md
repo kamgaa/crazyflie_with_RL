@@ -20,3 +20,13 @@
 - 저장된 seed는 `null`
 
 두 mode가 모두 15차원 observation을 사용하므로 shape만 보고 control mode를 추론할 수 없다. 파일명도 충분한 provenance가 아니므로 새 manifest에 사실처럼 복사하지 않는다.
+
+## 현재 BLDC plant와의 경계
+
+위 산출물은 `master@6dd7ddb`의 instantaneous force/torque plant에서 만들어진
+역사적 자료다. 현재 모든 shipped profile은 500 Hz에서 동작하는 required
+`cf21b_first_order` BLDC model을 사용하므로, ZIP의 observation/action shape가
+맞더라도 현재 plant에서의 행동은 legacy 실행과 동등하지 않다. ZIP 안에는
+actuator model·계수·검증 상태 provenance가 없으므로, 이를 현재 평가에 쓸 때는
+새 run의 resolved config/manifest를 별도로 남기고 legacy 입력 provenance를
+`unverified`로 기록한다.

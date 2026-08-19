@@ -1,0 +1,12 @@
+extends: cf21b_actuator_eval.yaml
+
+# The paper torque polynomial intentionally changes the plant-side yaw torque
+# while the allocator retains vehicle.torque_coefficient.  This profile thus
+# exposes a controller--plant yaw mismatch by design.
+actuator:
+  reaction_torque:
+    model: paper_polynomial
+
+experiment:
+  condition: cf21b-first-order-torque-poly
+  description: CF2.1 first-order evaluation with unverified paper torque polynomial

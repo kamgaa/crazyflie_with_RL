@@ -17,4 +17,4 @@ mission:
 
 experiment:
   condition: cx0-cy0-Ax0p5-Ay0p5-a1-b2-ph90-T10-cycles2
-  description: Unified view_live.py default E2E Lissajous trajectory
+  description: Unified PID-floor versus E2E-PPO figure-eight trajectory

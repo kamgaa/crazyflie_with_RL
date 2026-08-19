@@ -9,4 +9,4 @@ mission:
 
 experiment:
   condition: x0-y0-z1-dur8
-  description: Unified view_live.py hover defaults preserving legacy E2E behavior
+  description: Unified PID-floor versus E2E-PPO hover defaults

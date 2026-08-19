@@ -349,6 +349,9 @@ class ArtifactManager:
             "observation_shape": list(self.config.observation_shape),
             "action_shape": list(self.config.action_shape),
             "residual_scale": list(env.residual_scale),
+            # Keep the complete mandatory BLDC actuator contract alongside
+            # the resolved configuration for reproducible run provenance.
+            "actuator": asdict(self.config.actuator),
             "payload": {
                 "randomize": payload.randomize,
                 "mass": payload.mass,

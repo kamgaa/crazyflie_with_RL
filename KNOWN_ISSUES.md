@@ -14,5 +14,6 @@
 10. E2E best selection은 floor 개선이나 survival length를 요구하지 않고, 1,000,000 callback 뒤 rollout 반올림으로 만들어진 final checkpoint를 다시 평가하지 않는다.
 11. 기존 `tb/` event 파일에는 control mode, condition, seed를 신뢰할 수 있게 연결하는 metadata가 없다. `diag_entropy.py`는 이를 추론하지 않고 새 metrics/manifest의 input provenance를 `unverified`로 기록한다. 이때 manifest의 top-level `control_mode`는 진단 실행에 사용한 config profile이지 legacy event의 출처를 증명하지 않는다.
 12. Residual evaluator에서 `tail_fraction=0`이면 legacy slice `[-int(length * fraction):]`가 `[-0:]`가 되어 한 sample이 아니라 episode 전체를 평가한다. 활성 profile은 0.3이지만 경계 동작도 회귀 호환성을 위해 유지했다. E2E evaluator는 기존처럼 최소 한 sample을 보장한다.
+13. 현재 모든 shipped profile은 first-order BLDC motor plant를 사용한다. historical instantaneous plant에서 만든 legacy ZIP은 `(15,) -> (4,)` interface가 같아도 행동적으로 동등하지 않으며, archive에는 actuator model·계수·검증 상태 provenance가 없다. 따라서 현재 run의 resolved config/manifest와 분리해 보존하고 legacy 입력 provenance를 `unverified`로 취급해야 한다.
 
 Residual 13차원 observation이 필요하다면 별도의 schema 이름, 새 profile, 새 checkpoint로 분리해야 한다. 기존 15차원 모델의 입력 계약을 변경해서는 안 된다.

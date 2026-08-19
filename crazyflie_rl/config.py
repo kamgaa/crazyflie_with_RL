@@ -44,6 +44,66 @@ class VehicleConfig:
 
 
 @dataclass(frozen=True)
+class ActuatorParameterRangeConfig:
+    """Closed numeric range used for one independent actuator parameter."""
+
+    min: float
+    max: float
+
+
+@dataclass(frozen=True)
+class ActuatorRandomizationConfig:
+    """Optional per-episode actuator variation on a dedicated RNG stream."""
+
+    enabled: bool
+    time_constant_s: ActuatorParameterRangeConfig
+    steady_state_gain_rad_s: ActuatorParameterRangeConfig
+
+
+@dataclass(frozen=True)
+class ReactionTorqueConfig:
+    """Plant-side propeller reaction-torque model configuration.
+
+    ``legacy_ratio`` deliberately remains separate from the allocator's yaw
+    ratio.  The latter lives in :class:`VehicleConfig` as
+    ``torque_coefficient`` and is retained unchanged for checkpoint
+    compatibility.
+    """
+
+    model: str
+    legacy_ratio_m: float
+    polynomial_coefficients: tuple[float, float, float]
+    polynomial_scale: float
+    rotor_inertia_kg_m2: float
+    include_rotor_acceleration_torque: bool
+
+
+@dataclass(frozen=True)
+class ActuatorConfig:
+    """Required first-order BLDC actuator dynamics configuration.
+
+    The thrust coefficients are ordered ``(cubic, quadratic, linear)`` for
+    ``F(r) = c3*r**3 + c2*r**2 + c1*r``, where
+    ``r = omega / thrust_polynomial_omega_reference_rad_s``.  They are a
+    paper-candidate mapping, not a verified hardware calibration.
+    """
+
+    enabled: bool
+    model: str
+    time_constant_s: float
+    steady_state_gain_rad_s: float
+    thrust_polynomial_coefficients: tuple[float, float, float]
+    thrust_polynomial_omega_reference_rad_s: float
+    thrust_polynomial_positive_branch_min_ratio: float
+    thrust_polynomial_max_ratio: float
+    parameter_source: str
+    verification_status: str
+    reaction_torque: ReactionTorqueConfig
+    reset_rpm_mode: str
+    randomization: ActuatorRandomizationConfig
+
+
+@dataclass(frozen=True)
 class PIDConfig:
     kp_position: float
     velocity_limit: float
@@ -242,6 +302,7 @@ class ExperimentConfig:
     version: int
     paths: PathsConfig
     vehicle: VehicleConfig
+    actuator: ActuatorConfig
     controller: ControllerConfig
     environment: EnvironmentConfig
     training: TrainingConfig
@@ -282,7 +343,7 @@ class ExperimentConfig:
 
 
 _TOP_LEVEL_KEYS = {
-    "version", "paths", "vehicle", "controller", "environment",
+    "version", "paths", "vehicle", "actuator", "controller", "environment",
     "training", "evaluation", "mission", "experiment",
 }
 
@@ -484,6 +545,180 @@ def _build_config(data: Mapping[str, Any], source_path: Path) -> ExperimentConfi
     )
     if vehicle.thrust_max <= vehicle.thrust_min:
         raise ConfigError("vehicle.thrust_max must exceed vehicle.thrust_min")
+
+    raw_actuator = _mapping(data["actuator"], "actuator")
+    actuator_keys = {
+        "enabled",
+        "model",
+        "time_constant_s",
+        "steady_state_gain_rad_s",
+        "thrust_polynomial",
+        "parameter_source",
+        "verification_status",
+        "reaction_torque",
+        "reset_rpm_mode",
+        "randomization",
+    }
+    _keys(raw_actuator, actuator_keys, "actuator")
+    actuator_enabled = _boolean(raw_actuator["enabled"], "actuator.enabled")
+    if not actuator_enabled:
+        raise ConfigError(
+            "actuator.enabled must be true because the motor model is required"
+        )
+    actuator_model = _text(
+        raw_actuator["model"],
+        "actuator.model",
+        choices={"cf21b_first_order"},
+    )
+
+    raw_thrust_polynomial = _mapping(
+        raw_actuator["thrust_polynomial"], "actuator.thrust_polynomial"
+    )
+    thrust_polynomial_keys = {
+        "coefficients",
+        "omega_reference_rad_s",
+        "positive_branch_min_ratio",
+        "max_ratio",
+    }
+    _keys(
+        raw_thrust_polynomial,
+        thrust_polynomial_keys,
+        "actuator.thrust_polynomial",
+    )
+    thrust_polynomial_coefficients = _numbers(
+        raw_thrust_polynomial["coefficients"],
+        3,
+        "actuator.thrust_polynomial.coefficients",
+    )
+    thrust_polynomial_omega_reference_rad_s = _number(
+        raw_thrust_polynomial["omega_reference_rad_s"],
+        "actuator.thrust_polynomial.omega_reference_rad_s",
+        positive=True,
+    )
+    thrust_polynomial_positive_branch_min_ratio = _number(
+        raw_thrust_polynomial["positive_branch_min_ratio"],
+        "actuator.thrust_polynomial.positive_branch_min_ratio",
+        minimum=0.0,
+    )
+    thrust_polynomial_max_ratio = _number(
+        raw_thrust_polynomial["max_ratio"],
+        "actuator.thrust_polynomial.max_ratio",
+        positive=True,
+    )
+    if (
+        thrust_polynomial_positive_branch_min_ratio
+        > thrust_polynomial_max_ratio
+    ):
+        raise ConfigError(
+            "actuator.thrust_polynomial.positive_branch_min_ratio must not exceed "
+            "actuator.thrust_polynomial.max_ratio"
+        )
+
+    raw_reaction_torque = _mapping(
+        raw_actuator["reaction_torque"], "actuator.reaction_torque"
+    )
+    reaction_torque_keys = {
+        "model",
+        "legacy_ratio_m",
+        "polynomial_coefficients",
+        "polynomial_scale",
+        "rotor_inertia_kg_m2",
+        "include_rotor_acceleration_torque",
+    }
+    _keys(raw_reaction_torque, reaction_torque_keys, "actuator.reaction_torque")
+    reaction_torque = ReactionTorqueConfig(
+        model=_text(
+            raw_reaction_torque["model"],
+            "actuator.reaction_torque.model",
+            choices={"legacy_ratio", "paper_polynomial"},
+        ),
+        legacy_ratio_m=_number(
+            raw_reaction_torque["legacy_ratio_m"],
+            "actuator.reaction_torque.legacy_ratio_m",
+            positive=True,
+        ),
+        polynomial_coefficients=_numbers(
+            raw_reaction_torque["polynomial_coefficients"],
+            3,
+            "actuator.reaction_torque.polynomial_coefficients",
+        ),  # type: ignore[arg-type]
+        polynomial_scale=_number(
+            raw_reaction_torque["polynomial_scale"],
+            "actuator.reaction_torque.polynomial_scale",
+            positive=True,
+        ),
+        rotor_inertia_kg_m2=_number(
+            raw_reaction_torque["rotor_inertia_kg_m2"],
+            "actuator.reaction_torque.rotor_inertia_kg_m2",
+            positive=True,
+        ),
+        include_rotor_acceleration_torque=_boolean(
+            raw_reaction_torque["include_rotor_acceleration_torque"],
+            "actuator.reaction_torque.include_rotor_acceleration_torque",
+        ),
+    )
+
+    raw_randomization = _mapping(
+        raw_actuator["randomization"], "actuator.randomization"
+    )
+    randomization_keys = {"enabled", "time_constant_s", "steady_state_gain_rad_s"}
+    _keys(raw_randomization, randomization_keys, "actuator.randomization")
+
+    def _actuator_range(value: Any, field: str) -> ActuatorParameterRangeConfig:
+        mapping = _mapping(value, field)
+        _keys(mapping, {"min", "max"}, field)
+        minimum = _number(mapping["min"], f"{field}.min", positive=True)
+        maximum = _number(mapping["max"], f"{field}.max", positive=True)
+        if maximum < minimum:
+            raise ConfigError(f"{field}.max must be >= {field}.min")
+        return ActuatorParameterRangeConfig(min=minimum, max=maximum)
+
+    actuator_randomization = ActuatorRandomizationConfig(
+        enabled=_boolean(
+            raw_randomization["enabled"], "actuator.randomization.enabled"
+        ),
+        time_constant_s=_actuator_range(
+            raw_randomization["time_constant_s"],
+            "actuator.randomization.time_constant_s",
+        ),
+        steady_state_gain_rad_s=_actuator_range(
+            raw_randomization["steady_state_gain_rad_s"],
+            "actuator.randomization.steady_state_gain_rad_s",
+        ),
+    )
+    actuator = ActuatorConfig(
+        enabled=actuator_enabled,
+        model=actuator_model,
+        time_constant_s=_number(
+            raw_actuator["time_constant_s"], "actuator.time_constant_s", positive=True
+        ),
+        steady_state_gain_rad_s=_number(
+            raw_actuator["steady_state_gain_rad_s"],
+            "actuator.steady_state_gain_rad_s",
+            positive=True,
+        ),
+        thrust_polynomial_coefficients=thrust_polynomial_coefficients,  # type: ignore[arg-type]
+        thrust_polynomial_omega_reference_rad_s=thrust_polynomial_omega_reference_rad_s,
+        thrust_polynomial_positive_branch_min_ratio=(
+            thrust_polynomial_positive_branch_min_ratio
+        ),
+        thrust_polynomial_max_ratio=thrust_polynomial_max_ratio,
+        parameter_source=_text(
+            raw_actuator["parameter_source"], "actuator.parameter_source"
+        ),
+        verification_status=_text(
+            raw_actuator["verification_status"],
+            "actuator.verification_status",
+            choices={"unverified", "verified"},
+        ),
+        reaction_torque=reaction_torque,
+        reset_rpm_mode=_text(
+            raw_actuator["reset_rpm_mode"],
+            "actuator.reset_rpm_mode",
+            choices={"auto", "zero", "hover_equilibrium"},
+        ),
+        randomization=actuator_randomization,
+    )
 
     raw_controller = _mapping(data["controller"], "controller")
     _keys(raw_controller, {"pid"}, "controller")
@@ -748,6 +983,7 @@ def _build_config(data: Mapping[str, Any], source_path: Path) -> ExperimentConfi
         version=version,
         paths=paths,
         vehicle=vehicle,
+        actuator=actuator,
         controller=ControllerConfig(pid=pid),
         environment=environment,
         training=training,

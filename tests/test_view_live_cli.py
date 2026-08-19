@@ -502,9 +502,12 @@ def test_summary_includes_effective_mission_and_runtime_options() -> None:
         headless=True,
         realtime=False,
         camera_tracking=True,
+        unified=True,
     )
     for expected in (
         "Mode              : Lissajous",
+        "Floor controller  : RESIDUAL (PID)",
+        "PPO controller    : E2E",
         "Ramp              : 2 s",
         "Takeoff           : 4 s",
         "Settle            : 2 s",
@@ -765,7 +768,9 @@ class _FakeEnvironment:
     @staticmethod
     def observation() -> np.ndarray:
         result = np.zeros(15)
+        result[3:6] = [0.1, -0.2, 0.3]
         result[6] = 1.0
+        result[10:13] = [1.0, -2.0, 3.0]
         result[14] = 1.0
         return result
 
@@ -786,9 +791,12 @@ class _FakeEnvironment:
 class _FakeFactory:
     def __init__(self, env: _FakeEnvironment) -> None:
         self.env = env
+        self.overrides: list[dict[str, object]] = []
 
     def make(self, **overrides):
-        assert overrides == {}
+        self.overrides.append(dict(overrides))
+        if "mode" in overrides:
+            self.env.mode = overrides["mode"]
         return self.env
 
 
@@ -817,7 +825,108 @@ def test_runner_uses_generic_mission_and_passes_each_reference(mode: str) -> Non
     np.testing.assert_allclose(env.references[0], [0.0, 0.0, 1.0])
     np.testing.assert_allclose(trace.control_input, np.zeros((expected_steps, 4)))
     np.testing.assert_allclose(trace.motor_thrust, np.full((expected_steps, 4), 0.01))
+    np.testing.assert_allclose(
+        trace.linear_velocity,
+        np.tile([0.1, -0.2, 0.3], (expected_steps, 1)),
+    )
+    np.testing.assert_allclose(
+        trace.angular_velocity,
+        np.tile([1.0, -2.0, 3.0], (expected_steps, 1)),
+    )
+    assert trace.control_mode == config.control_mode
+    assert runner.factory.overrides == [{}]
     assert env.closed is True
+
+
+def test_runner_records_optional_bldc_signals_and_sampled_parameters() -> None:
+    config = load_config(CONFIGS / "cf21b_actuator_eval.yaml")
+
+    class ActuatorSignalEnvironment(_FakeEnvironment):
+        def actuator_snapshot(self):
+            return {
+                "enabled": True,
+                "model": "cf21b_first_order",
+                "sampled_time_constant_s": [0.05] * 4,
+                "sampled_steady_state_gain_rad_s": [2900.0] * 4,
+            }
+
+        def step(self, action):
+            self._last_f_cmd = np.full(4, 0.11)
+            self._last_f = np.full(4, 0.08)
+            self._last_motor_cmd = np.full(4, 0.6)
+            self._last_omega = np.full(4, 1740.0)
+            self._last_q_actual = np.array([0.001, -0.001, 0.001, -0.001])
+            self._last_wrench_cmd = np.array([0.0, 0.0, 0.0, 0.44])
+            self._last_wrench_actual = np.array([0.0, 0.0, 0.0, 0.32])
+            self._last_allocation_error = (
+                self._last_wrench_cmd - self._last_wrench_actual
+            )
+            self.references.append(self.pos_des.copy())
+            self.steps += 1
+            return self.observation(), 0.0, False, self.steps == 2, {}
+
+    env = ActuatorSignalEnvironment()
+    runner = EvaluationRunner(
+        config,
+        SimpleNamespace(),
+        headless=True,
+        realtime=False,
+        camera_tracking=False,
+        mission=_FakeMission("hover", total_sec=0.2),
+        environment_factory=_FakeFactory(env),
+    )
+
+    trace = runner.run(None, "floor", "floor")
+    metrics = trace_metrics(trace, 0.3)
+
+    np.testing.assert_allclose(trace.motor_thrust_command, 0.11)
+    np.testing.assert_allclose(trace.motor_thrust, 0.08)
+    np.testing.assert_allclose(trace.motor_command, 0.6)
+    np.testing.assert_allclose(trace.motor_omega_rad_s, 1740.0)
+    np.testing.assert_allclose(trace.reaction_torque_nm[0], [0.001, -0.001, 0.001, -0.001])
+    assert trace.actuator is not None
+    assert trace.actuator["sampled_time_constant_s"] == [0.05] * 4
+    assert metrics["motor_thrust_command_n_mean"] == pytest.approx([0.11] * 4)
+    assert metrics["motor_omega_rad_s_max"] == pytest.approx([1740.0] * 4)
+    assert metrics["wrench_actual_final"] == pytest.approx([0.0, 0.0, 0.0, 0.32])
+    assert metrics["actuator"]["model"] == "cf21b_first_order"
+
+
+def test_unified_residual_profile_keeps_both_rollouts_in_residual_mode() -> None:
+    config = load_config(CONFIGS / "residual_hover_eval.yaml")
+
+    class FreshFactory:
+        def __init__(self) -> None:
+            self.overrides: list[dict[str, object]] = []
+
+        def make(self, **overrides):
+            self.overrides.append(dict(overrides))
+            env = _FakeEnvironment()
+            env.mode = str(overrides.get("mode", config.control_mode))
+            return env
+
+    factory = FreshFactory()
+    runner = EvaluationRunner(
+        config,
+        SimpleNamespace(),
+        headless=True,
+        realtime=False,
+        camera_tracking=False,
+        mission=_FakeMission("hover"),
+        environment_factory=factory,
+    )
+
+    floor = runner.run(
+        None,
+        "floor",
+        "floor (PID)",
+        control_mode="residual",
+    )
+    ppo = runner.run(None, "residual", "residual (PID+RL)")
+
+    assert factory.overrides == [{"mode": "residual"}, {}]
+    assert floor.control_mode == "residual"
+    assert ppo.control_mode == "residual"
 
 
 def test_force_floor_start_fallback_is_recorded(
@@ -1079,12 +1188,18 @@ def test_unified_fake_rollout_saves_plot_metrics_runtime_config_and_manifest(
     assert metrics["position_perturbation"] == 0.0
     assert metrics["attitude_perturbation_deg"] == 0.0
     assert metrics["policies"]["floor"]["sample_count"] == 3
+    assert metrics["policies"]["floor"]["control_mode"] == "residual"
+    assert metrics["policy_control_modes"] == {"floor": "residual"}
     assert metrics["policies"]["floor"]["plot"].startswith("plots/")
+    assert factory.overrides == [{"mode": "residual"}]
 
     manifest_path = next((run_dir / "manifests").glob("*manifest*.json"))
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     assert manifest["condition"] == "x0-y0-z1-yaw0-dur0p3-p0-a0-floorReq0"
     assert manifest["runtime_config"]["parameters"]["mode"] == "hover"
+    assert manifest["runtime_config"]["parameters"]["policy_control_modes"] == {
+        "floor": "residual"
+    }
     assert manifest["result"]["effective_parameters"]["duration"] == 0.3
     assert (
         manifest["result"]["policy_outcomes"]["floor"][
@@ -1094,7 +1209,7 @@ def test_unified_fake_rollout_saves_plot_metrics_runtime_config_and_manifest(
     )
 
 
-def test_simplified_unified_run_selects_profile_forces_both_and_saves_one_plot(
+def test_simplified_unified_run_uses_pid_floor_and_saves_two_policy_plots(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     source = load_config(CONFIGS / "view_live_circle_wide_eval.yaml")
@@ -1133,10 +1248,14 @@ def test_simplified_unified_run_selects_profile_forces_both_and_saves_one_plot(
             return self.observation(), 0.0, False, self.steps == 3, {}
 
     class FreshFactory:
-        @staticmethod
-        def make(**overrides):
-            assert overrides == {}
-            return SignalEnvironment()
+        calls: list[dict[str, object]] = []
+
+        @classmethod
+        def make(cls, **overrides):
+            cls.calls.append(dict(overrides))
+            env = SignalEnvironment()
+            env.mode = str(overrides.get("mode", config.control_mode))
+            return env
 
     class FakePolicy:
         @staticmethod
@@ -1163,21 +1282,23 @@ def test_simplified_unified_run_selects_profile_forces_both_and_saves_one_plot(
     monkeypatch.setattr(eval_cli, "_load_policy", lambda _path, _config: FakePolicy())
     plotted: list[object] = []
 
-    def fake_comparison_plot(path, **kwargs):
-        traces_by_policy = kwargs["rollouts"]
-        assert list(traces_by_policy) == ["floor", "residual"]
-        traces = list(traces_by_policy.values())
-        assert [trace.policy for trace in traces] == ["floor", "residual"]
-        np.testing.assert_allclose(traces[0].control_input, 0.0)
-        np.testing.assert_allclose(
-            traces[1].control_input[0], [1.0, -1.0, 0.5, 0.0]
-        )
+    def fake_policy_plot(path, **kwargs):
+        trace = kwargs["rollout"]
+        assert path.name == ("floor.png" if trace.policy == "floor" else "ppo.png")
+        if trace.policy == "floor":
+            np.testing.assert_allclose(trace.control_input, 0.0)
+        else:
+            np.testing.assert_allclose(
+                trace.control_input[0], [1.0, -1.0, 0.5, 0.0]
+            )
+        np.testing.assert_allclose(trace.linear_velocity[0], [0.1, -0.2, 0.3])
+        np.testing.assert_allclose(trace.angular_velocity[0], [1.0, -2.0, 3.0])
         assert kwargs["motor_unit"] == "N"
-        plotted.append(traces)
-        path.write_bytes(b"comparison-png")
+        plotted.append(trace)
+        path.write_bytes(b"policy-png")
         return path
 
-    monkeypatch.setattr(eval_cli, "save_policy_comparison_trace", fake_comparison_plot)
+    monkeypatch.setattr(eval_cli, "save_policy_trace", fake_policy_plot)
 
     assert run_evaluation_cli(
         default_config=CONFIGS / "view_live_hover_eval.yaml",
@@ -1205,9 +1326,14 @@ def test_simplified_unified_run_selects_profile_forces_both_and_saves_one_plot(
     ) == 0
 
     assert loaded_profiles[0].name == "view_live_circle_wide_eval.yaml"
-    assert len(plotted) == 1
+    assert [trace.policy for trace in plotted] == ["floor", "residual"]
+    assert [trace.control_mode for trace in plotted] == ["residual", "e2e"]
+    assert FreshFactory.calls == [{"mode": "residual"}, {}]
     run_dir = next((tmp_path / "artifacts" / "runs").iterdir())
-    assert len(list((run_dir / "plots").glob("*.png"))) == 1
+    assert {path.name for path in (run_dir / "plots").glob("*.png")} == {
+        "floor.png",
+        "ppo.png",
+    }
     metrics = json.loads(
         next((run_dir / "metrics").glob("*.json")).read_text(encoding="utf-8")
     )
@@ -1215,10 +1341,107 @@ def test_simplified_unified_run_selects_profile_forces_both_and_saves_one_plot(
     assert metrics["selected_policy"] == "both"
     assert metrics["path_preset"] == "wide"
     assert set(metrics["policies"]) == {"floor", "residual"}
-    assert (
-        metrics["policies"]["floor"]["plot"]
-        == metrics["policies"]["residual"]["plot"]
+    assert metrics["policy_control_modes"] == {
+        "floor": "residual",
+        "residual": "e2e",
+    }
+    assert metrics["runtime_parameters"]["policy_control_modes"] == {
+        "floor": "residual",
+        "residual": "e2e",
+    }
+    assert metrics["policies"]["floor"]["control_mode"] == "residual"
+    assert metrics["policies"]["residual"]["control_mode"] == "e2e"
+    assert metrics["policies"]["floor"]["plot"] == "plots/floor.png"
+    assert metrics["policies"]["residual"]["plot"] == "plots/ppo.png"
+
+
+def test_unified_partial_floor_failure_still_runs_ppo_and_keeps_both_reports(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    source = load_config(CONFIGS / "view_live_hover_eval.yaml")
+    xml = tmp_path / "model.xml"
+    xml.write_text("<mujoco/>", encoding="utf-8")
+    model = tmp_path / "policy.zip"
+    model.write_bytes(b"fake-model")
+    config = replace(
+        source,
+        paths=replace(
+            source.paths,
+            mujoco_xml=xml,
+            artifact_root=tmp_path / "artifacts",
+        ),
     )
+    calls: list[tuple[str, str | None]] = []
+
+    class FakeRunner:
+        def __init__(self, *_args, **_kwargs) -> None:
+            pass
+
+        def run(self, _policy, policy_key, label, *, control_mode=None):
+            calls.append((policy_key, control_mode))
+            samples = 2
+            return RolloutTrace(
+                policy=policy_key,
+                label=label,
+                time_sec=np.array([0.0, 0.1]),
+                position=np.zeros((samples, 3)),
+                attitude_deg=np.zeros((samples, 3)),
+                reference_position=np.zeros((samples, 3)),
+                position_error=np.zeros(samples),
+                phases=("HOVER",) * samples,
+                training_boundary_crossed_at=None,
+                guard_boundary_crossed_at=None,
+                terminated_at=None,
+                truncated_at=None,
+                diverged_at=None,
+                error=("RuntimeError: floor fault" if policy_key == "floor" else None),
+                control_input=np.zeros((samples, 4)),
+                motor_thrust=np.full((samples, 4), 0.01),
+                linear_velocity=np.zeros((samples, 3)),
+                angular_velocity=np.zeros((samples, 3)),
+                control_mode=control_mode or config.control_mode,
+            )
+
+    def fake_policy_plot(path, **_kwargs):
+        path.write_bytes(b"partial-policy-png")
+        return path
+
+    eval_cli._ensure_runtime_imports()
+    monkeypatch.setattr(eval_cli, "load_config", lambda _path: config)
+    monkeypatch.setattr(eval_cli, "EvaluationRunner", FakeRunner)
+    monkeypatch.setattr(eval_cli, "_load_policy", lambda _path, _config: object())
+    monkeypatch.setattr(eval_cli, "save_policy_trace", fake_policy_plot)
+
+    with pytest.raises(RuntimeError, match="floor fault"):
+        run_evaluation_cli(
+            default_config=source.source_path,
+            description="test",
+            argv=[
+                "--mode",
+                "hover",
+                "--model",
+                str(model),
+                "--headless",
+                "--no-realtime",
+            ],
+            unified=True,
+            mode_profiles={"hover": CONFIGS / "view_live_hover_eval.yaml"},
+            always_compare=True,
+        )
+
+    assert calls == [("floor", "residual"), ("residual", None)]
+    run_dir = next((tmp_path / "artifacts" / "runs").iterdir())
+    assert {path.name for path in (run_dir / "plots").glob("*.png")} == {
+        "floor.png",
+        "ppo.png",
+    }
+    metrics = json.loads(
+        next((run_dir / "metrics").glob("*.json")).read_text(encoding="utf-8")
+    )
+    assert metrics["status"] == "failed"
+    assert metrics["policies"]["floor"]["error"] == "RuntimeError: floor fault"
+    assert metrics["policies"]["floor"]["plot"] == "plots/floor.png"
+    assert metrics["policies"]["residual"]["plot"] == "plots/ppo.png"
 
 
 def test_model_zip_fallback_uses_actual_path_in_all_provenance(

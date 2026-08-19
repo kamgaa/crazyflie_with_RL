@@ -1,0 +1,9 @@
+extends: e2e_hover_eval.yaml
+
+# Named E2E hover evaluation alias for the required Crazyflie 2.1 Brushless
+# first-order rotor model inherited from base.yaml.  Its mapping parameters
+# remain paper-candidate/unverified and are for simulator evaluation only.
+
+experiment:
+  condition: cf21b-first-order
+  description: E2E hover evaluation with required CF2.1 brushless rotor dynamics

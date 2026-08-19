@@ -49,13 +49,14 @@ python -m pip install -r requirements.txt
 
 Legacy ZIP이 Stable-Baselines3 2.9.0에서 생성되었으므로 reload와 학습 의미를 맞추기 위해 해당 버전을 고정한다.
 
-MuJoCo XML 기본값은 의도적으로 다음 서버 절대경로다.
+MuJoCo XML 기본값과 필요한 STL mesh는 저장소에 포함되어 있다.
 
 ```text
-/home/mrl_6534/ros2_ws/src/mujoco_crazyflie/plant/data/cf21B_500.xml
+resources/mujoco/cf21B_500.xml
+resources/mujoco/assets/cf21B/*.stl
 ```
 
-코드는 다른 XML을 검색하거나, 저장소로 복사하거나, placeholder XML/mesh/texture를 만들지 않는다. XML과 종속 asset이 없는 머신에서는 config/artifact/unit test만 실행하고 MuJoCo 통합 검증은 skip한다.
+코드는 이 project-relative 경로를 resolved config의 project root에서 절대경로로 해석한다. 다른 XML/mesh tree를 자동 탐색하거나 대체하지 않는다. runtime package 또는 asset이 없는 머신에서는 config/artifact/unit test만 실행하고 MuJoCo 통합 검증은 skip한다.
 
 ## Config profile
 
@@ -68,6 +69,8 @@ MuJoCo XML 기본값은 의도적으로 다음 서버 절대경로다.
 | `residual_hover_eval.yaml` | residual 30 g / 30 mm integrator diagnostic, scale 0.006 |
 | `residual_circle_eval.yaml` | 기존 `circle_traj.py`: 5 g / 100 mm / 180°, scale 0.022 |
 | `residual_circle_legacy006_eval.yaml` | 기존 `view_live_hover.py`: nominal circle, scale 0.006 |
+| `cf21b_actuator_eval.yaml` | 명시적인 CF2.1 BLDC hover evaluation alias |
+| `cf21b_actuator_torque_poly_eval.yaml` | BLDC plant-side paper-candidate propeller torque polynomial 추가 profile |
 | `view_live_hover_eval.yaml` | 통합 `view_live.py` hover 기본값 |
 | `view_live_circle_eval.yaml` | `small`: center (0.5, 0), radius 0.5 m |
 | `view_live_circle_wide_eval.yaml` | `wide`: center (0, 0), radius 0.8 m |
@@ -93,6 +96,26 @@ experiment:
 ```
 
 Resolved configuration은 각 run의 `config/`에 저장된다. Frozen dataclass와 tuple을 사용하므로 실행 중 shared list/NumPy reference가 설정을 바꾸지 않는다.
+
+## CF2.1 BLDC actuator
+
+모든 기본 train/eval/view_live profile은 `enabled: true`, `model: cf21b_first_order`를 사용한다. allocator가 만든 clipped requested motor thrust `f_cmd`는 positive-thrust branch의 bounded inverse를 거쳐 rotor speed target이 되고, physics 500 Hz substep마다 exact first-order update 뒤 actual thrust와 torque가 MuJoCo에 적용된다. 기본값은 `T=0.050 s`, `K=2900 rad/s`이며, 기본 plant-side yaw torque는 기존 allocation ratio `q = direction × 0.00594 × f_actual`를 유지한다.
+
+외부 custom YAML도 위 두 값을 유지해야 한다. `actuator.enabled: false` 또는 `actuator.model: instantaneous`는 더 이상 유효한 실행 설정이 아니며 config 로딩 단계에서 실패한다. `randomization.enabled`만은 모터 모델 자체와 별개인 episode별 파라미터 변동 옵션이므로 기본적으로 꺼져 있다.
+
+candidate thrust/torque polynomial과 rotor parameters는 논문의 값에서 가져온 **paper-candidate / unverified** 설정이다. 이 저장소의 XML·기체 질량·실기체에 대해 검증된 calibration이라고 주장하지 않는다. [How to Model Your Crazyflie Brushless (arXiv:2603.05944)](https://arxiv.org/abs/2603.05944)를 원 출처로 기록한다. 특히 과거 instantaneous plant에서 학습된 PPO checkpoint는 새 BLDC plant에서 같은 비행 성능을 보장하지 않으므로 재평가·필요 시 재학습해야 한다.
+
+```bash
+python view_live.py --mode hover --model model/ppo_best.zip --headless
+
+# plant-side torque polynomial까지 별도로 켜기
+python view_live.py --config configs/cf21b_actuator_torque_poly_eval.yaml \
+  --model model/ppo_best.zip --headless
+```
+
+두 번째 profile은 allocator의 legacy constant yaw ratio는 바꾸지 않고 plant torque만 polynomial으로 바꾼다. 따라서 controller–plant yaw mismatch가 의도적으로 발생할 수 있으며, nonlinear/QP allocator나 thrust-limit 재분배는 수행하지 않는다. `0.20 N/motor` 상한도 그대로다.
+
+각 run의 resolved config와 manifest에는 nominal actuator 설정이, evaluation policy outcome에는 episode에서 실제 사용한 sampled `T/K`, motor command, desired/actual thrust, omega, reaction torque, commanded/achieved wrench summary가 남는다. 기존 floor/PPO 두 장의 16:9 plot은 유지되며 motor thrust panel은 MuJoCo에 실제 적용한 force(N)를 표시한다.
 
 ## 학습
 
@@ -146,7 +169,9 @@ python view_live.py --mode lissajous \
   --path-preset clover --period 10 --cycles 2 --headless
 ```
 
-통합 `view_live.py`는 항상 floor와 PPO를 같은 조건에서 차례로 실행한다. 결과는 position/reference, XY path, error, attitude, normalized control input `u1-u4`, motor thrust `M1-M4`(N)를 포함한 16:9 PNG 한 장으로 저장된다. PWM calibration은 저장소에 없으므로 motor 값은 N만 제공한다. `--policy`는 legacy wrapper 호환을 위해 parser에 남지만 통합 진입점에서는 `both`로 고정된다.
+통합 `view_live.py`는 항상 floor와 PPO를 같은 mission/seed 조건에서 차례로 실행한다. floor는 `residual` 환경에서 zero policy action으로 cascade PID만 사용하고, PPO는 선택한 profile의 control mode를 사용한다. 기본 `view_live_*` profile은 E2E checkpoint용이므로 기본 비교는 PID floor 대 E2E PPO다. 명시적으로 residual profile을 넘기면 PPO도 residual(PID+RL) mode로 실행된다.
+
+각 rollout은 별도의 16:9 PNG로 저장되어 한 번 실행할 때 `plots/floor.png`와 `plots/ppo.png` 두 장이 생성된다. 각 그림에는 position/reference, linear velocity, motor별·총 thrust(N), attitude, angular velocity, XY path overview, normalized control input `u`가 모두 들어간다. PWM calibration은 저장소에 없으므로 motor 값은 N만 제공한다. `--policy`는 legacy wrapper 호환을 위해 parser에 남지만 통합 진입점에서는 `both`로 고정된다.
 
 Lissajous의 XY reference는 다음 식을 사용하며 `theta(t)`에는 Circle과 동일한 half-cosine 속도 ramp를 적용한다.
 
@@ -171,7 +196,7 @@ python circle_traj.py --config configs/residual_circle_eval.yaml \
   --preset 1 --policy both --headless
 ```
 
-공통 선택지는 `--model`, `--headless`, `--no-realtime`, `--no-camera`다. `--preset`은 기존 `circle_traj.py`/`view_live_hover.py`의 legacy circle 전용이고, 통합 진입점의 `--path-preset`과 다르다. `view_live.py`의 E2E floor는 PID가 아니라 zero action + gravity compensation이다.
+공통 선택지는 `--model`, `--headless`, `--no-realtime`, `--no-camera`다. `--preset`은 기존 `circle_traj.py`/`view_live_hover.py`의 legacy circle 전용이고, 통합 진입점의 `--path-preset`과 다르다. 통합 `view_live.py`의 floor는 profile mode와 관계없이 항상 residual-mode cascade PID baseline이다. PPO rollout은 profile mode를 그대로 따르며, 실제 rollout별 control mode는 metrics와 manifest에 기록된다.
 
 Legacy model은 자동으로 이름을 바꾸지 않는다. 기본 model은 `model/ppo_best.zip`이며 다른 checkpoint는 항상 `--model`로 명시한다. Shape `(15,) -> (4,)`만으로 residual/E2E provenance를 알 수 없으므로 사용자가 실제 학습 mode와 profile을 확인해야 한다. Legacy inventory와 hash는 [docs/LEGACY_ARTIFACTS.md](docs/LEGACY_ARTIFACTS.md)에 있다.
 
@@ -209,7 +234,8 @@ ppo_residual_hover_m10g-r30mm-th0deg-fixed_seed42_final_20260807-153012.zip
 ppo_residual_circle_rho0p5-T10-m5g-r100mm-th180deg-fixed_seed42_trajectory-residual_20260807-153012.png
 ppo_e2e_hover_nominal_seed42_manifest_20260807-153012.json
 ppo_e2e_hover_nominal_seed42_resolved-config_20260807-153012.yaml
-ppo_e2e_circle_c-small-T10-L2_seed42_comparison_20260807-153012.png
+plots/floor.png
+plots/ppo.png
 ppo_e2e_lissajous_l-clover-T10-C2_seed42_runtime-resolved_20260807-153012.yaml
 ```
 
@@ -234,12 +260,12 @@ Run manifest에는 condition/timestamp/timezone, Git SHA/branch/dirty state, 실
 pytest -q
 ```
 
-순수 함수·mock 기반 계약 테스트는 master의 정적 기준선과 비교한다. 실제 MuJoCo fixed-action trace, legacy checkpoint action, 짧은 PPO save/reload/headless smoke는 runtime 패키지와 보호된 서버 XML 및 종속 asset이 있는 환경에서만 실행되고, 없으면 명시적으로 skip된다.
+순수 함수·mock 기반 계약 테스트는 master의 정적 기준선과 비교한다. 실제 MuJoCo fixed-action trace, legacy checkpoint action, 짧은 PPO save/reload/headless smoke는 runtime 패키지와 project-local XML/STL asset이 모두 있는 환경에서만 실행되고, 없으면 명시적으로 skip된다.
 
-실제 server asset이 있는 환경에서 추가로 실행할 smoke 검증:
+실제 runtime dependency가 설치된 환경에서 추가로 실행할 smoke 검증:
 
 ```bash
-test -f /home/mrl_6534/ros2_ws/src/mujoco_crazyflie/plant/data/cf21B_500.xml
+test -f resources/mujoco/cf21B_500.xml
 python train_ppo_02.py --config configs/e2e_train.yaml --total-timesteps 4096
 python circle_traj.py --config configs/residual_circle_eval.yaml \
   --preset 1 --policy both --headless

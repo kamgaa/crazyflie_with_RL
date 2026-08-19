@@ -1,8 +1,8 @@
 version: 1
 
 paths:
-  # This server path is an intentional runtime contract. Do not auto-discover
-  # or replace it with a repository-relative XML.
+  # Project-local MuJoCo XML contract. Resolve this path from project_root;
+  # do not auto-discover or silently substitute another XML/mesh tree.
   mujoco_xml: resources/mujoco/cf21B_500.xml
   project_root: .
   artifact_root: artifacts
@@ -19,6 +19,49 @@ vehicle:
   torque_coefficient: 0.00594
   inertia_diagonal: [0.000023951, 0.000023951, 0.000032347]
   physics_hz: 500.0
+
+# Required CF2.1 Brushless motor model.  Every shipped profile inherits this
+# first-order actuator path; ``enabled: false`` and instantaneous actuator
+# models are intentionally rejected by the configuration contract.
+# The polynomial values below are candidate values attributed to "How to Model
+# Your Crazyflie Brushless" (arXiv:2603.05944); they are not independently
+# verified for this project's XML or hardware.
+actuator:
+  enabled: true
+  model: cf21b_first_order
+  time_constant_s: 0.050
+  steady_state_gain_rad_s: 2900.0
+  thrust_polynomial:
+    # F(r) [N] = c3*r^3 + c2*r^2 + c1*r, r = omega / omega_reference.
+    # The inverse is limited to this positive-thrust branch; the low-speed
+    # polynomial region is not assumed to be physically valid.
+    coefficients: [-0.23, 0.562, -0.043]
+    omega_reference_rad_s: 2900.0
+    positive_branch_min_ratio: 0.0791
+    max_ratio: 1.0
+  parameter_source: paper_candidate
+  verification_status: unverified
+  reaction_torque:
+    # This is deliberately plant-side. vehicle.torque_coefficient remains the
+    # allocator yaw ratio, so the optional polynomial profile can expose their
+    # mismatch.
+    model: legacy_ratio
+    legacy_ratio_m: 0.00594
+    polynomial_coefficients: [-3.4, 8.7, 2.9]
+    polynomial_scale: 0.0001
+    rotor_inertia_kg_m2: 5.0e-8
+    include_rotor_acceleration_torque: false
+  # auto selects zero RPM for a ground start and hover-equilibrium RPM for an
+  # airborne start; explicit zero/hover_equilibrium modes are also supported.
+  reset_rpm_mode: auto
+  randomization:
+    enabled: false
+    time_constant_s:
+      min: 0.040
+      max: 0.060
+    steady_state_gain_rad_s:
+      min: 2320.0
+      max: 3480.0
 
 controller:
   pid:

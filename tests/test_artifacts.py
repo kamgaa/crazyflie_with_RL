@@ -57,12 +57,14 @@ def test_fixed_timestamp_layout_names_and_manifest(tmp_path: Path) -> None:
     for key in (
         "experiment_name", "condition", "timestamp", "timezone", "git", "command",
         "control_mode", "observation_shape", "action_shape", "residual_scale",
-        "payload", "seed", "ppo", "mujoco_xml", "resolved_config", "models", "versions",
+        "payload", "actuator", "seed", "ppo", "mujoco_xml", "resolved_config", "models", "versions",
     ):
         assert key in manifest
     assert manifest["timezone"] == "Asia/Seoul"
     assert manifest["observation_shape"] == [15]
     assert manifest["action_shape"] == [4]
+    assert manifest["actuator"]["enabled"] is True
+    assert manifest["actuator"]["model"] == "cf21b_first_order"
 
 
 def test_best_final_names_and_no_double_zip(tmp_path: Path) -> None:

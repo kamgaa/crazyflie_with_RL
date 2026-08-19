@@ -9,6 +9,9 @@ import pytest
 
 import crazyflie_rl.environment as env_module
 import crazyflie_rl.factories as factory_module
+from crazyflie_rl.actuators import (
+    Cf21bFirstOrderActuatorModel,
+)
 from crazyflie_rl.config import load_config
 from crazyflie_rl.controllers import (
     ARM,
@@ -424,25 +427,169 @@ def test_motor_allocation_order_and_signs() -> None:
 
 
 def test_motor_thrust_clip_and_reaction_torque_application() -> None:
+    config = load_config(CONFIGS / "residual_train.yaml")
+    env = _actuator_only_env(config)
+    env.reset_actuator_state(airborne=False, resample_parameters=True)
+
+    # A 2 N collective request maps to 0.5 N per motor before the preserved
+    # per-motor clip, so all four desired thrust commands saturate at 0.20 N.
+    # The required first-order plant then applies delayed actual force/torque.
+    # The first two milliseconds remain below the deliberately conservative
+    # positive branch.  Advance several 500 Hz substeps to observe force.
+    for _ in range(5):
+        env._apply_control(np.array([0.0, 0.0, 0.0, 2.0]))
+
+    np.testing.assert_allclose(env._last_f_cmd, np.full(4, 0.20))
+    assert np.all(env._last_f > 0.0)
+    assert np.all(env._last_f < 0.20)
+    np.testing.assert_allclose(env.data.ctrl[0:4], env._last_f)
+    np.testing.assert_allclose(
+        env.data.ctrl[4:8], MOTOR_DIR * K_TAU * env._last_f
+    )
+
+
+def _actuator_only_env(config, *, seed: int = 0) -> CrazyflieResidualEnv:
+    """Build just enough environment state to test allocator/actuator wiring."""
+
+    env = CrazyflieResidualEnv.__new__(CrazyflieResidualEnv)
+    env.B, env.B_pinv = build_allocation_matrix(
+        config.vehicle.arm_length,
+        config.vehicle.motor_direction,
+        config.vehicle.torque_coefficient,
+    )
+    env.dt_phys = 1.0 / config.vehicle.physics_hz
+    env.motor_direction = np.asarray(config.vehicle.motor_direction, dtype=float)
+    env.thrust_min = config.vehicle.thrust_min
+    env.thrust_max = config.vehicle.thrust_max
+    env.torque_coefficient = config.vehicle.torque_coefficient
+    env.gravity = config.vehicle.gravity
+    env._actuator_config = config.actuator
+    env._actuator_reset_rpm_mode = config.actuator.reset_rpm_mode
+    env._actuator_randomization = config.actuator.randomization
+    env._actuator_rng = env_module._actuator_rng(seed)
+    env.model = SimpleNamespace(body_mass=np.array([config.vehicle.mass]))
+    env.drone_bid = 0
+    env.data = SimpleNamespace(
+        ctrl=np.zeros(8),
+        qpos=np.array([0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0]),
+    )
+    env.act_force = [0, 1, 2, 3]
+    env.act_torque = [4, 5, 6, 7]
+    env._actuator = env._make_actuator_model(config.actuator)
+    env.actuator_model = env._actuator
+    env._record_actuator_output(env._actuator.last_output, np.zeros(4))
+    return env
+
+
+def test_default_environment_always_uses_the_bldc_actuator_path() -> None:
+    config = load_config(CONFIGS / "residual_train.yaml")
+    env = _actuator_only_env(config)
+    env.reset_actuator_state(airborne=False, resample_parameters=True)
+
+    for _ in range(5):
+        env._apply_control(np.array([0.0, 0.0, 0.0, 2.0]))
+
+    assert isinstance(env.actuator_model, Cf21bFirstOrderActuatorModel)
+    np.testing.assert_allclose(env._last_f_cmd, np.full(4, 0.20))
+    assert np.all(env._last_f >= 0.0)
+    assert np.all(env._last_f < env._last_f_cmd)
+    np.testing.assert_allclose(env.data.ctrl[0:4], env._last_f)
+    np.testing.assert_allclose(
+        env.data.ctrl[4:8], MOTOR_DIR * K_TAU * env._last_f
+    )
+    assert np.all(np.isfinite(env._last_motor_cmd))
+    assert np.all(np.isfinite(env._last_omega))
+    assert env.actuator_snapshot()["enabled"] is True
+
+
+def test_required_bldc_applies_delayed_actual_force_and_reports_wrenches() -> None:
+    config = load_config(CONFIGS / "residual_train.yaml")
+    env = _actuator_only_env(config)
+    env.reset_actuator_state(airborne=False, resample_parameters=True)
+    requested_wrench = np.array([0.0, 0.0, 0.0, config.vehicle.mass * config.vehicle.gravity])
+
+    for _ in range(5):
+        env._apply_control(requested_wrench)
+
+    assert isinstance(env.actuator_model, Cf21bFirstOrderActuatorModel)
+    np.testing.assert_allclose(
+        env._last_f_cmd,
+        np.full(4, config.vehicle.mass * config.vehicle.gravity / 4.0),
+    )
+    assert np.all(env._last_f >= 0.0)
+    assert np.all(env._last_f < env._last_f_cmd)
+    np.testing.assert_allclose(env.data.ctrl[0:4], env._last_f)
+    np.testing.assert_allclose(env.data.ctrl[4:8], env._last_q_actual)
+    np.testing.assert_allclose(env._last_wrench_cmd, requested_wrench)
+    assert env._last_wrench_actual[3] < requested_wrench[3]
+    np.testing.assert_allclose(
+        env._last_allocation_error,
+        env._last_wrench_cmd - env._last_wrench_actual,
+    )
+
+
+def test_no_config_environment_path_uses_required_bldc_defaults() -> None:
+    config = load_config(CONFIGS / "residual_train.yaml")
+    env = _actuator_only_env(config)
+
+    model = env._make_actuator_model(None)
+
+    assert isinstance(model, Cf21bFirstOrderActuatorModel)
+    assert model.nominal_parameters.time_constant_s.tolist() == [0.050] * 4
+    assert model.nominal_parameters.steady_state_gain_rad_s.tolist() == [2900.0] * 4
+
+
+def test_control_refuses_a_missing_required_actuator() -> None:
     env = CrazyflieResidualEnv.__new__(CrazyflieResidualEnv)
     env.B, env.B_pinv = build_allocation_matrix()
     env.thrust_min = 0.0
     env.thrust_max = 0.20
-    env.motor_direction = MOTOR_DIR.copy()
-    env.torque_coefficient = K_TAU
-    env.act_force = [0, 1, 2, 3]
-    env.act_torque = [4, 5, 6, 7]
-    env.data = SimpleNamespace(ctrl=np.zeros(8))
 
-    # A 2 N collective request maps to 0.5 N per motor before the preserved
-    # per-motor clip, so all four force controls must saturate at 0.20 N.
-    env._apply_control(np.array([0.0, 0.0, 0.0, 2.0]))
+    with pytest.raises(RuntimeError, match="required CF2.1 first-order actuator"):
+        env._apply_control(np.zeros(4))
 
-    np.testing.assert_allclose(env._last_f, np.full(4, 0.20))
-    np.testing.assert_allclose(env.data.ctrl[0:4], np.full(4, 0.20))
-    np.testing.assert_allclose(
-        env.data.ctrl[4:8], MOTOR_DIR * K_TAU * np.full(4, 0.20)
+
+def test_bldc_reset_uses_ground_zero_or_episode_mass_hover_equilibrium() -> None:
+    config = load_config(CONFIGS / "cf21b_actuator_eval.yaml")
+    env = _actuator_only_env(config)
+
+    env.reset_actuator_state(airborne=False, resample_parameters=True)
+    np.testing.assert_array_equal(env._last_omega, np.zeros(4))
+    np.testing.assert_array_equal(env._last_f, np.zeros(4))
+
+    episode_mass = config.vehicle.mass + 0.010
+    env.model.body_mass[env.drone_bid] = episode_mass
+    env.reset_actuator_state(airborne=True, resample_parameters=True)
+
+    assert np.sum(env._last_f) == pytest.approx(
+        episode_mass * config.vehicle.gravity,
+        abs=2e-12,
     )
+    assert np.all(env._last_omega > 0.0)
+
+
+def test_bldc_randomization_uses_a_reproducible_dedicated_rng_stream() -> None:
+    config = load_config(CONFIGS / "cf21b_actuator_eval.yaml")
+    randomized = replace(
+        config.actuator,
+        randomization=replace(config.actuator.randomization, enabled=True),
+    )
+    config = replace(config, actuator=randomized)
+    first = _actuator_only_env(config, seed=31)
+    second = _actuator_only_env(config, seed=31)
+
+    first.reset_actuator_state(airborne=True, resample_parameters=True)
+    second.reset_actuator_state(airborne=True, resample_parameters=True)
+
+    first_snapshot = first.actuator_snapshot()
+    second_snapshot = second.actuator_snapshot()
+    assert first_snapshot["sampled_time_constant_s"] == second_snapshot[
+        "sampled_time_constant_s"
+    ]
+    assert first_snapshot["sampled_steady_state_gain_rad_s"] == second_snapshot[
+        "sampled_steady_state_gain_rad_s"
+    ]
+    assert first_snapshot["sampled_time_constant_s"] != [0.050] * 4
 
 
 def test_pid_hover_and_integrator_contract() -> None:
@@ -536,6 +683,9 @@ def test_payload_randomization_preserves_master_rng_draw_order(monkeypatch) -> N
         np.zeros(3),
         np.zeros(3),
     )
+    # This fixture isolates the historical payload/pose RNG draw order; it
+    # deliberately does not construct a MuJoCo actuator environment.
+    env.reset_actuator_state = lambda **_kwargs: {}
 
     observation, _ = env.reset(seed=123)
 

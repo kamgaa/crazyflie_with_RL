@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING, Any, Sequence
 
 import numpy as np
 
+from .actuators import Cf21bFirstOrderActuatorModel
 from .controllers import (
     ARM,
     GRAV,
@@ -53,6 +54,7 @@ DEFAULT_RESIDUAL_SCALE = (0.022, 0.022, 0.0001, 0.3)
 OBSERVATION_DIM = 15
 ACTION_DIM = 4
 CONTROL_MODES = frozenset({"residual", "e2e"})
+_ACTUATOR_SEED_SALT = 0xCF21B
 
 
 def _selected(explicit: Any, configured: Any, legacy: Any) -> Any:
@@ -109,6 +111,20 @@ def _validated_action(value: Any) -> np.ndarray:
     return result.copy()
 
 
+def _actuator_rng(seed: int | None) -> np.random.Generator:
+    """Create an RNG stream independent from the preserved reset RNG.
+
+    Payload and pose sampling intentionally continue to use ``self._rng`` in
+    their historical order.  Opt-in actuator randomisation receives this
+    separately derived stream instead, so a fixed reset seed remains fully
+    reproducible without perturbing any legacy draws.
+    """
+
+    if seed is None:
+        return np.random.default_rng()
+    return np.random.default_rng(np.random.SeedSequence([int(seed), _ACTUATOR_SEED_SALT]))
+
+
 def _absolute_xml_path(value: Any) -> str:
     if value is None:
         raise ValueError("xml_path is required when no ExperimentConfig is supplied")
@@ -162,6 +178,7 @@ class CrazyflieResidualEnv(_GymEnv):
 
         configured_vehicle = config.vehicle if config is not None else None
         configured_environment = config.environment if config is not None else None
+        configured_actuator = config.actuator if config is not None else None
         configured_payload = (
             configured_environment.payload if configured_environment is not None else None
         )
@@ -439,6 +456,25 @@ class CrazyflieResidualEnv(_GymEnv):
             for i in range(4)
         ]
 
+        # The allocator remains unchanged: it still produces clipped desired
+        # motor thrust.  The mandatory BLDC model determines what plant
+        # force/torque reaches MuJoCo from that command.
+        self._actuator_config = configured_actuator
+        self._actuator_reset_rpm_mode = str(
+            getattr(configured_actuator, "reset_rpm_mode", "auto")
+        )
+        self._actuator_randomization = getattr(
+            configured_actuator, "randomization", None
+        )
+        self._actuator_rng = _actuator_rng(seed)
+        self._actuator = self._make_actuator_model(configured_actuator)
+        # Public read-only-by-convention handle for simulator diagnostics.
+        self.actuator_model = self._actuator
+        self._record_actuator_output(
+            self._actuator.last_output,
+            np.zeros(ACTION_DIM, dtype=float),
+        )
+
         self._m0 = float(self.model.body_mass[self.drone_bid])
         self._ipos0 = self.model.body_ipos[self.drone_bid].copy()
         self._J0 = self.model.body_inertia[self.drone_bid].copy()
@@ -476,17 +512,279 @@ class CrazyflieResidualEnv(_GymEnv):
             [y * y, x * x, x * x + y * y]
         )
 
-    def _apply_control(self, wrench: Sequence[float]) -> None:
-        motor_thrust = self.B_pinv @ np.asarray(wrench, dtype=float)
-        motor_thrust = np.clip(motor_thrust, self.thrust_min, self.thrust_max)
-        self._last_f = motor_thrust.copy()
-        for index in range(4):
-            self.data.ctrl[self.act_force[index]] = float(motor_thrust[index])
-        motor_torque = (
-            self.motor_direction * self.torque_coefficient * motor_thrust
+    def _make_actuator_model(self, configured_actuator: Any | None):
+        """Build a plant actuator without changing the preserved allocator."""
+
+        # A normal runtime environment always has a validated config.  The
+        # no-config legacy constructor nevertheless receives the same BLDC
+        # plant defaults so no executable environment silently falls back to
+        # an ideal instantaneous motor path.
+        enabled = (
+            True
+            if configured_actuator is None
+            else bool(getattr(configured_actuator, "enabled", True))
         )
-        for index in range(4):
-            self.data.ctrl[self.act_torque[index]] = float(motor_torque[index])
+        model_name = str(
+            getattr(configured_actuator, "model", "cf21b_first_order")
+        )
+        if enabled and model_name == "cf21b_first_order":
+            reaction = getattr(configured_actuator, "reaction_torque", None)
+            return Cf21bFirstOrderActuatorModel(
+                dt=self.dt_phys,
+                motor_direction=self.motor_direction,
+                thrust_min=self.thrust_min,
+                thrust_max=self.thrust_max,
+                time_constant_s=getattr(
+                    configured_actuator, "time_constant_s", 0.050
+                ),
+                steady_state_gain_rad_s=getattr(
+                    configured_actuator, "steady_state_gain_rad_s", 2900.0
+                ),
+                thrust_polynomial_coefficients=getattr(
+                    configured_actuator,
+                    "thrust_polynomial_coefficients",
+                    (-0.23, 0.562, -0.043),
+                ),
+                omega_reference_rad_s=getattr(
+                    configured_actuator,
+                    "thrust_polynomial_omega_reference_rad_s",
+                    2900.0,
+                ),
+                positive_branch_min_ratio=getattr(
+                    configured_actuator,
+                    "thrust_polynomial_positive_branch_min_ratio",
+                    0.0791,
+                ),
+                max_ratio=getattr(
+                    configured_actuator, "thrust_polynomial_max_ratio", 1.0
+                ),
+                reaction_torque_model=getattr(reaction, "model", "legacy_ratio"),
+                legacy_ratio_m=getattr(
+                    reaction, "legacy_ratio_m", self.torque_coefficient
+                ),
+                torque_polynomial_coefficients=getattr(
+                    reaction, "polynomial_coefficients", (-3.4, 8.7, 2.9)
+                ),
+                torque_polynomial_scale=getattr(reaction, "polynomial_scale", 1e-4),
+                rotor_inertia_kg_m2=getattr(
+                    reaction, "rotor_inertia_kg_m2", 0.5e-7
+                ),
+                include_rotor_acceleration_torque=getattr(
+                    reaction, "include_rotor_acceleration_torque", False
+                ),
+                allocation_matrix=self.B,
+            )
+
+        raise ValueError(
+            "the runtime actuator must be enabled with model "
+            "'cf21b_first_order'"
+        )
+
+    def _record_actuator_output(
+        self,
+        output: Any,
+        wrench_command: Sequence[float] | None = None,
+    ) -> None:
+        """Mirror command/plant actuator quantities under stable env names."""
+
+        f_cmd = np.asarray(output.f_cmd, dtype=float).reshape(ACTION_DIM).copy()
+        f_actual = np.asarray(output.f_actual, dtype=float).reshape(ACTION_DIM).copy()
+        q_actual = np.asarray(output.q_actual, dtype=float).reshape(ACTION_DIM).copy()
+        if wrench_command is None:
+            requested_wrench = self.B @ f_cmd
+        else:
+            requested_wrench = np.asarray(wrench_command, dtype=float).reshape(
+                ACTION_DIM
+            )
+        achieved_wrench = self.B @ f_actual
+        # The allocation matrix contains the legacy constant yaw ratio.  A
+        # polynomial plant torque therefore needs its measured yaw component
+        # written explicitly rather than silently reporting the allocator's.
+        achieved_wrench[2] = float(np.sum(q_actual))
+
+        self._last_f_cmd = f_cmd
+        self._last_f = f_actual
+        self._last_motor_cmd = np.asarray(
+            output.motor_command, dtype=float
+        ).reshape(ACTION_DIM).copy()
+        self._last_omega = np.asarray(output.omega, dtype=float).reshape(
+            ACTION_DIM
+        ).copy()
+        self._last_q_actual = q_actual
+        self._last_wrench_cmd = requested_wrench.copy()
+        self._last_wrench_allocated = self.B @ f_cmd
+        self._last_wrench_actual = achieved_wrench.copy()
+        self._last_allocation_error = (
+            self._last_wrench_cmd - self._last_wrench_actual
+        )
+
+    def _write_applied_motor_controls(self) -> None:
+        """Write the last plant force/torque outputs to MuJoCo controls."""
+
+        for index in range(ACTION_DIM):
+            self.data.ctrl[self.act_force[index]] = float(self._last_f[index])
+        for index in range(ACTION_DIM):
+            self.data.ctrl[self.act_torque[index]] = float(
+                self._last_q_actual[index]
+            )
+
+    def _auto_actuator_airborne(self) -> bool:
+        """Classify the already-initialised MuJoCo reset pose for rotor reset."""
+
+        return bool(float(self.data.qpos[2]) > 0.1)
+
+    def reset_actuator_state(
+        self,
+        airborne: bool | None = None,
+        *,
+        resample_parameters: bool = False,
+    ) -> dict[str, Any]:
+        """Reset mandatory motor-model state without changing the vehicle API.
+
+        ``resample_parameters`` is deliberately restricted to the regular
+        environment reset.  ``view_live`` can change an already reset pose to
+        the floor and call this method with ``airborne=False`` without drawing
+        a second set of per-episode parameters.
+        """
+
+        model = getattr(self, "_actuator", None)
+        if model is None:
+            raise RuntimeError("the required CF2.1 first-order actuator is unavailable")
+        if airborne is None:
+            if self._actuator_reset_rpm_mode == "zero":
+                airborne = False
+            elif self._actuator_reset_rpm_mode == "hover_equilibrium":
+                airborne = True
+            else:
+                airborne = self._auto_actuator_airborne()
+
+        if not isinstance(model, Cf21bFirstOrderActuatorModel):
+            raise RuntimeError("the required CF2.1 first-order actuator is unavailable")
+
+        randomization = self._actuator_randomization
+        randomize = bool(
+            resample_parameters
+            and getattr(randomization, "enabled", False)
+        )
+        if resample_parameters and not randomize:
+            model.restore_nominal_parameters()
+        output = model.reset(
+            airborne=bool(airborne),
+            episode_mass=float(self.model.body_mass[self.drone_bid]),
+            gravity_m_s2=self.gravity,
+            rng=self._actuator_rng if randomize else None,
+            randomize=randomize,
+            time_constant_range=(
+                getattr(
+                    getattr(randomization, "time_constant_s", None),
+                    "min",
+                    0.040,
+                ),
+                getattr(
+                    getattr(randomization, "time_constant_s", None),
+                    "max",
+                    0.060,
+                ),
+            ),
+            steady_state_gain_range=(
+                getattr(
+                    getattr(randomization, "steady_state_gain_rad_s", None),
+                    "min",
+                    2320.0,
+                ),
+                getattr(
+                    getattr(randomization, "steady_state_gain_rad_s", None),
+                    "max",
+                    3480.0,
+                ),
+            ),
+        )
+        self._record_actuator_output(output)
+        # Reset is normally followed by a control update before physics
+        # advances, but writing here also makes the public helper coherent if
+        # a caller explicitly switches a running simulation to ground/air.
+        self._write_applied_motor_controls()
+        return self.actuator_snapshot()
+
+    def actuator_snapshot(self) -> dict[str, Any]:
+        """Return JSON-safe nominal/sampled actuator provenance and state."""
+
+        model = getattr(self, "_actuator", None)
+        configured = getattr(self, "_actuator_config", None)
+        reaction = getattr(configured, "reaction_torque", None)
+        result: dict[str, Any] = {
+            "enabled": isinstance(model, Cf21bFirstOrderActuatorModel),
+            "model": (
+                "cf21b_first_order"
+                if isinstance(model, Cf21bFirstOrderActuatorModel)
+                else "unavailable"
+            ),
+            "parameter_source": getattr(
+                configured, "parameter_source", "paper_candidate"
+            ),
+            "verification_status": getattr(
+                configured, "verification_status", "unverified"
+            ),
+            "thrust_saturation_n": [float(self.thrust_min), float(self.thrust_max)],
+            "motor_command_saturation": [0.0, 1.0],
+            "randomization_enabled": bool(
+                getattr(self._actuator_randomization, "enabled", False)
+            ),
+            "reset_rpm_mode": getattr(
+                configured, "reset_rpm_mode", "auto"
+            ),
+            "reaction_torque_model": getattr(reaction, "model", "legacy_ratio"),
+            "legacy_ratio_m": float(
+                getattr(model, "legacy_ratio_m", self.torque_coefficient)
+            ),
+        }
+        if model is None:
+            return result
+        if isinstance(model, Cf21bFirstOrderActuatorModel):
+            nominal = model.nominal_parameters
+            sampled = model.parameters
+            result.update(
+                {
+                    "nominal_time_constant_s": nominal.time_constant_s.tolist(),
+                    "nominal_steady_state_gain_rad_s": (
+                        nominal.steady_state_gain_rad_s.tolist()
+                    ),
+                    "sampled_time_constant_s": sampled.time_constant_s.tolist(),
+                    "sampled_steady_state_gain_rad_s": (
+                        sampled.steady_state_gain_rad_s.tolist()
+                    ),
+                    "thrust_polynomial_coefficients": (
+                        model.thrust_polynomial_coefficients.tolist()
+                    ),
+                    "thrust_omega_reference_rad_s": float(
+                        model.omega_reference_rad_s
+                    ),
+                    "positive_branch_min_ratio": float(
+                        model.positive_branch_min_ratio
+                    ),
+                    "max_ratio": float(model.max_ratio),
+                    "reaction_torque_coefficients": (
+                        model.torque_polynomial_coefficients.tolist()
+                    ),
+                    "reaction_torque_scale": float(model.torque_polynomial_scale),
+                    "rotor_inertia_kg_m2": float(model.rotor_inertia_kg_m2),
+                    "include_rotor_acceleration_torque": bool(
+                        model.include_rotor_acceleration_torque
+                    ),
+                }
+            )
+        return result
+
+    def _apply_control(self, wrench: Sequence[float]) -> None:
+        wrench_command = np.asarray(wrench, dtype=float)
+        motor_thrust = self.B_pinv @ wrench_command
+        motor_thrust = np.clip(motor_thrust, self.thrust_min, self.thrust_max)
+        model = getattr(self, "_actuator", None)
+        if not isinstance(model, Cf21bFirstOrderActuatorModel):
+            raise RuntimeError("the required CF2.1 first-order actuator is unavailable")
+        output = model.apply(motor_thrust)
+        self._record_actuator_output(output, wrench_command)
+        self._write_applied_motor_controls()
 
     def _read_state(self) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         position = self.data.qpos[0:3].copy()
@@ -536,6 +834,7 @@ class CrazyflieResidualEnv(_GymEnv):
         del options  # Preserved API: master accepted but did not use options.
         if seed is not None:
             self._rng = np.random.default_rng(seed)
+            self._actuator_rng = _actuator_rng(seed)
         mujoco.mj_resetData(self.model, self.data)
         self.data.xfrc_applied[:] = 0.0
 
@@ -575,6 +874,11 @@ class CrazyflieResidualEnv(_GymEnv):
         self.data.qvel[:] = 0.0
         mujoco.mj_forward(self.model, self.data)
 
+        # Normal environment resets begin around ``pos_des`` (normally an
+        # airborne hover pose).  The helper applies the configured reset mode
+        # and optionally samples per-episode motor *parameters* on its
+        # dedicated RNG stream.  The motor model itself is always active.
+        self.reset_actuator_state(resample_parameters=True)
         self.pid.reset()
         self._step = 0
         self._prev_action = np.zeros(ACTION_DIM)

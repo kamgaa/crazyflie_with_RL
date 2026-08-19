@@ -34,8 +34,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         default_config=DEFAULT_CONFIG,
         description=(
             "Run an interactive or scripted Crazyflie Hover, Circle, or "
-            "Lissajous flight test. The E2E floor remains zero policy action "
-            "plus gravity compensation, not cascade PID."
+            "Lissajous flight test. The floor rollout always uses the "
+            "residual environment's cascade PID; PPO uses the control mode "
+            "that matches the selected profile."
         ),
         argv=argv,
         unified=True,

@@ -2,6 +2,10 @@
 
 리팩터링 기준 커밋은 `master@6dd7ddb667e7483bb6dce6c81edf783ca0ffe133`이다. 이 문서는 주석이 아니라 해당 커밋에서 실제 실행되는 코드를 정적 분석한 결과다.
 
+이 문서의 force/torque 즉시 적용은 **historical baseline**이지 현재 runtime
+plant의 주장이나 legacy checkpoint의 재현 보장이 아니다. 현재 shipped profile은
+모두 `cf21b_first_order` BLDC actuator를 요구한다.
+
 ## 환경·제어 계약
 
 - MuJoCo XML 기본 경로: `/home/mrl_6534/ros2_ws/src/mujoco_crazyflie/plant/data/cf21B_500.xml`
@@ -41,6 +45,18 @@ f = pinv(B) @ wrench
 f_i = clip(f_i, 0, 0.20)
 motor torque_i = direction_i * 0.00594 * f_i
 ```
+
+## 현재 required BLDC plant (historical baseline과의 차이)
+
+현재는 같은 allocation의 clipped `f_cmd`를 직접 force actuator에 넣지 않는다.
+매 500 Hz physics substep에서 `f_cmd → omega_target → first-order motor state →
+f_actual` 순서로 적용하며, 기본 reaction torque는
+`direction * 0.00594 * f_actual`이다. PID, allocator, action/observation/reward
+계약은 유지하지만 `f_actual`의 동특성이 바뀌므로 이 문서의 historical rollout과
+현재 rollout은 행동적으로 동등하지 않다. BLDC thrust mapping은
+paper-candidate/unverified 값이며 현재 XML 또는 실기체에 대한 검증된 calibration이
+아니다. legacy ZIP은 interface shape만 맞을 뿐 actuator provenance가 없으므로
+현재 동작의 기준 또는 재현 증거로 사용하면 안 된다.
 
 ## Reward와 종료
 

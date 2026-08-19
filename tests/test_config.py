@@ -11,7 +11,7 @@ from crazyflie_rl.config import ConfigError, _foreign_posix_absolute, load_confi
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIGS = ROOT / "configs"
-SERVER_XML = (ROOT / "resources" / "mujoco" / "cf21B_500.xml").resolve()
+PROJECT_XML = (ROOT / "resources" / "mujoco" / "cf21B_500.xml").resolve()
 
 
 def _mutated_base(tmp_path: Path, mutate) -> Path:
@@ -30,8 +30,10 @@ def test_base_and_profiles_merge_without_changing_master_contracts() -> None:
     assert residual.control_mode == "residual"
     assert e2e.observation_shape == residual.observation_shape == (15,)
     assert e2e.action_shape == residual.action_shape == (4,)
-    assert e2e.paths.mujoco_xml.as_posix() == SERVER_XML
+    assert e2e.paths.mujoco_xml == PROJECT_XML
     assert residual.environment.residual_scale == (0.022, 0.022, 0.0001, 0.3)
+    assert e2e.actuator.enabled
+    assert e2e.actuator.model == "cf21b_first_order"
 
     assert e2e.training.total_timesteps == 1_000_000
     assert e2e.training.ppo.ent_coef == 0.003
@@ -58,19 +60,98 @@ def test_every_shipped_profile_loads(profile: str) -> None:
     assert config.source_path.name == profile
     assert config.observation_shape == (15,)
     assert config.action_shape == (4,)
+    assert config.actuator.enabled
+    assert config.actuator.model == "cf21b_first_order"
+    if profile == "cf21b_actuator_torque_poly_eval.yaml":
+        assert config.actuator.reaction_torque.model == "paper_polynomial"
+    else:
+        assert config.actuator.reaction_torque.model == "legacy_ratio"
 
 
-def test_protected_xml_default_is_literal_server_path() -> None:
+def test_default_xml_is_repository_relative_and_resolves_from_project_root() -> None:
     source = (CONFIGS / "base.yaml").read_text(encoding="utf-8")
-    assert f"mujoco_xml: {SERVER_XML}" in source
-    assert "resources/mujoco" not in source
+    assert "mujoco_xml: resources/mujoco/cf21B_500.xml" in source
+    assert load_config(CONFIGS / "base.yaml").paths.mujoco_xml == PROJECT_XML
 
 
-def test_posix_server_path_is_preserved_when_native_host_calls_it_relative() -> None:
-    preserved = _foreign_posix_absolute(SERVER_XML, native_is_absolute=False)
+def test_foreign_posix_absolute_path_is_preserved_when_inspected_on_windows() -> None:
+    server_xml = "/srv/crazyflie/cf21B_500.xml"
+    preserved = _foreign_posix_absolute(server_xml, native_is_absolute=False)
     assert preserved is not None
-    assert preserved.as_posix() == SERVER_XML
-    assert _foreign_posix_absolute(SERVER_XML, native_is_absolute=True) is None
+    assert preserved.as_posix() == server_xml
+    assert _foreign_posix_absolute(server_xml, native_is_absolute=True) is None
+
+
+def test_required_actuator_config_uses_first_order_model_and_legacy_yaw_torque() -> None:
+    config = load_config(CONFIGS / "base.yaml")
+    actuator = config.actuator
+
+    assert actuator.enabled
+    assert actuator.model == "cf21b_first_order"
+    assert actuator.time_constant_s == pytest.approx(0.050)
+    assert actuator.steady_state_gain_rad_s == pytest.approx(2900.0)
+    assert actuator.thrust_polynomial_coefficients == (-0.23, 0.562, -0.043)
+    assert actuator.parameter_source == "paper_candidate"
+    assert actuator.verification_status == "unverified"
+    assert actuator.reaction_torque.model == "legacy_ratio"
+    assert actuator.reaction_torque.legacy_ratio_m == pytest.approx(0.00594)
+    assert actuator.reset_rpm_mode == "auto"
+    assert not actuator.randomization.enabled
+    assert actuator.randomization.time_constant_s.min == pytest.approx(0.040)
+    assert actuator.randomization.time_constant_s.max == pytest.approx(0.060)
+
+
+def test_cf21b_actuator_profiles_keep_legacy_yaw_by_default_and_opt_in_to_polynomial() -> None:
+    first_order = load_config(CONFIGS / "cf21b_actuator_eval.yaml")
+    torque_poly = load_config(CONFIGS / "cf21b_actuator_torque_poly_eval.yaml")
+
+    assert first_order.actuator.enabled
+    assert first_order.actuator.model == "cf21b_first_order"
+    assert first_order.actuator.reaction_torque.model == "legacy_ratio"
+    assert torque_poly.actuator.enabled
+    assert torque_poly.actuator.model == "cf21b_first_order"
+    assert torque_poly.actuator.reaction_torque.model == "paper_polynomial"
+    assert torque_poly.actuator.reaction_torque.polynomial_coefficients == (
+        -3.4,
+        8.7,
+        2.9,
+    )
+
+
+@pytest.mark.parametrize(
+    ("mutate", "message"),
+    [
+        (
+            lambda data: data["actuator"].__setitem__("enabled", False),
+            "actuator.enabled must be true",
+        ),
+        (
+            lambda data: data["actuator"].__setitem__("model", "instantaneous"),
+            "actuator.model",
+        ),
+        (
+            lambda data: data["actuator"]["thrust_polynomial"].__setitem__(
+                "positive_branch_min_ratio", 1.1
+            ),
+            "must not exceed",
+        ),
+        (
+            lambda data: data["actuator"]["randomization"]["time_constant_s"].update(
+                {"min": 0.06, "max": 0.04}
+            ),
+            "max must be >=",
+        ),
+        (
+            lambda data: data["actuator"]["reaction_torque"].__setitem__(
+                "model", "invented_curve"
+            ),
+            "reaction_torque.model",
+        ),
+    ],
+)
+def test_invalid_actuator_values_fail_early(tmp_path: Path, mutate, message: str) -> None:
+    with pytest.raises(ConfigError, match=message):
+        load_config(_mutated_base(tmp_path, mutate))
 
 
 def test_unknown_key_is_rejected(tmp_path: Path) -> None:
