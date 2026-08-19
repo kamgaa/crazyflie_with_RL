@@ -3,7 +3,7 @@ version: 1
 paths:
   # This server path is an intentional runtime contract. Do not auto-discover
   # or replace it with a repository-relative XML.
-  mujoco_xml: /home/mrl_6534/ros2_ws/src/mujoco_crazyflie/plant/data/cf21B_500.xml
+  mujoco_xml: resources/mujoco/cf21B_500.xml
   project_root: .
   artifact_root: artifacts
   legacy_model_root: model

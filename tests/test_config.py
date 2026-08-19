@@ -11,7 +11,7 @@ from crazyflie_rl.config import ConfigError, _foreign_posix_absolute, load_confi
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIGS = ROOT / "configs"
-SERVER_XML = "/home/mrl_6534/ros2_ws/src/mujoco_crazyflie/plant/data/cf21B_500.xml"
+SERVER_XML = (ROOT / "resources" / "mujoco" / "cf21B_500.xml").resolve()
 
 
 def _mutated_base(tmp_path: Path, mutate) -> Path:
