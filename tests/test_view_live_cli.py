@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -83,6 +84,7 @@ else:
     assert "--path-preset" in completed.stdout
     assert "--period" in completed.stdout
     assert "--amplitude-x" in completed.stdout
+    assert "latest-best" in completed.stdout
 
 
 @pytest.mark.parametrize(
@@ -168,6 +170,113 @@ def test_parser_exposes_all_runtime_override_groups() -> None:
         "attitude_perturbation_deg",
         "force_floor_start",
     } <= destinations
+    assert parser.parse_args(["--model", "latest-best"]).model == Path(
+        "latest-best"
+    )
+
+
+def _write_saved_best_model(
+    artifact_root: Path,
+    *,
+    run_name: str,
+    control_mode: str,
+    model_name: str,
+    modified_ns: int,
+) -> Path:
+    """Create the minimal completed-artifact shape used by latest-best."""
+
+    run_dir = artifact_root / "runs" / run_name
+    model_path = run_dir / "models" / model_name
+    model_path.parent.mkdir(parents=True)
+    model_path.write_bytes(b"model")
+    os.utime(model_path, ns=(modified_ns, modified_ns))
+    manifest_path = run_dir / "manifests" / "manifest.json"
+    manifest_path.parent.mkdir()
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "control_mode": control_mode,
+                "models": {
+                    "best": {
+                        "path": model_path.relative_to(run_dir).as_posix(),
+                    },
+                    "final": None,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    return model_path.resolve()
+
+
+def test_latest_best_selects_newest_matching_control_mode(tmp_path: Path) -> None:
+    residual_source = load_config(CONFIGS / "residual_train.yaml")
+    e2e_source = load_config(CONFIGS / "e2e_train.yaml")
+    artifact_root = tmp_path / "artifacts"
+    residual_config = replace(
+        residual_source,
+        paths=replace(residual_source.paths, artifact_root=artifact_root),
+    )
+    e2e_config = replace(
+        e2e_source,
+        paths=replace(e2e_source.paths, artifact_root=artifact_root),
+    )
+
+    older_residual = _write_saved_best_model(
+        artifact_root,
+        run_name="ppo_residual_hover_old",
+        control_mode="residual",
+        model_name="old_best.zip",
+        modified_ns=1_000_000_000,
+    )
+    newest_residual = _write_saved_best_model(
+        artifact_root,
+        run_name="ppo_residual_hover_new",
+        control_mode="residual",
+        model_name="new_best.zip",
+        modified_ns=2_000_000_000,
+    )
+    newest_e2e = _write_saved_best_model(
+        artifact_root,
+        run_name="ppo_e2e_hover_newest",
+        control_mode="e2e",
+        model_name="e2e_best.zip",
+        modified_ns=3_000_000_000,
+    )
+
+    assert eval_cli._model_path("latest-best", residual_config) == newest_residual
+    assert eval_cli._model_path(Path("LATEST-BEST"), e2e_config) == newest_e2e
+    assert eval_cli._model_path("latest-best", residual_config) != older_residual
+
+
+def test_latest_best_never_falls_back_to_final_model(tmp_path: Path) -> None:
+    source = load_config(CONFIGS / "residual_train.yaml")
+    artifact_root = tmp_path / "artifacts"
+    config = replace(
+        source,
+        paths=replace(source.paths, artifact_root=artifact_root),
+    )
+    run_dir = artifact_root / "runs" / "ppo_residual_final_only"
+    final_model = run_dir / "models" / "final.zip"
+    final_model.parent.mkdir(parents=True)
+    final_model.write_bytes(b"final")
+    manifest_path = run_dir / "manifests" / "manifest.json"
+    manifest_path.parent.mkdir()
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "control_mode": "residual",
+                "models": {
+                    "best": None,
+                    "final": {"path": "models/final.zip"},
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(FileNotFoundError, match="No saved best PPO model"):
+        eval_cli._model_path("latest-best", config)
 
 
 def test_hover_runtime_overrides_update_mission_and_environment() -> None:

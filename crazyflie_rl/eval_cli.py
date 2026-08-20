@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 from contextlib import contextmanager, nullcontext
 from dataclasses import asdict, dataclass, replace
+import json
 import math
 from pathlib import Path
 import sys
@@ -34,6 +35,8 @@ DIRECTION_ALIASES = {
     "ccw": "ccw",
     "counterclockwise": "ccw",
 }
+
+LATEST_BEST_MODEL = "latest-best"
 
 
 def _ensure_runtime_imports() -> None:
@@ -133,6 +136,62 @@ class RolloutTrace:
         return int(self.time_sec.size)
 
 
+def _is_latest_best_model(value: str | Path | None) -> bool:
+    """Return whether ``value`` requests the run-scoped latest best archive."""
+
+    return value is not None and str(value).strip().casefold() == LATEST_BEST_MODEL
+
+
+def _latest_best_model_path(config: ExperimentConfig) -> Path:
+    """Find the newest saved ``best`` archive for this control mode.
+
+    Selection is deliberately manifest-driven rather than filename-driven so
+    residual and E2E archives cannot be mixed merely because both retain the
+    same observation/action shapes.  A missing or malformed old manifest is
+    ignored; an explicit ``--model`` path remains unaffected.
+    """
+
+    runs_root = Path(config.paths.artifact_root) / "runs"
+    candidates: list[tuple[int, Path]] = []
+    if runs_root.is_dir():
+        for manifest_path in runs_root.glob("*/manifests/*manifest*.json"):
+            try:
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                continue
+            if not isinstance(manifest, Mapping):
+                continue
+            if manifest.get("control_mode") != config.control_mode:
+                continue
+
+            models = manifest.get("models")
+            best = models.get("best") if isinstance(models, Mapping) else None
+            best_path = best.get("path") if isinstance(best, Mapping) else None
+            if not isinstance(best_path, str) or not best_path:
+                continue
+
+            run_dir = manifest_path.parent.parent.resolve()
+            relative_model = Path(best_path)
+            if relative_model.is_absolute():
+                continue
+            model_path = (run_dir / relative_model).resolve()
+            try:
+                model_path.relative_to(run_dir)
+            except ValueError:
+                continue
+            if model_path.suffix.casefold() != ".zip" or not model_path.is_file():
+                continue
+            candidates.append((model_path.stat().st_mtime_ns, model_path))
+
+    if candidates:
+        return max(candidates, key=lambda item: (item[0], str(item[1])))[1]
+    raise FileNotFoundError(
+        "No saved best PPO model matches control mode "
+        f"{config.control_mode!r} under {runs_root}. Train one first or "
+        "pass an explicit --model path."
+    )
+
+
 def _model_candidate(value: str | Path | None, config: ExperimentConfig) -> Path:
     candidate = (
         config.paths.legacy_model_root / "ppo_best.zip"
@@ -147,6 +206,9 @@ def _model_candidate(value: str | Path | None, config: ExperimentConfig) -> Path
 
 
 def _model_path(value: str | Path | None, config: ExperimentConfig) -> Path:
+    if _is_latest_best_model(value):
+        return _latest_best_model_path(config)
+
     candidate = _model_candidate(value, config)
     if candidate.is_file():
         return candidate
@@ -1278,7 +1340,10 @@ def build_parser(default_config: str | Path, description: str) -> argparse.Argum
         "--model",
         type=Path,
         default=None,
-        help="PPO archive (default: <legacy_model_root>/ppo_best.zip)",
+        help=(
+            "PPO archive, or latest-best for the newest matching best archive "
+            "(default: <legacy_model_root>/ppo_best.zip)"
+        ),
     )
     parser.add_argument(
         "--policy",
