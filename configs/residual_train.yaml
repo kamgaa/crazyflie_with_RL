@@ -13,7 +13,7 @@ environment:
     action_rate_weight: 0.0
 
 training:
-  total_timesteps: 30000
+  total_timesteps: 1000000
   ppo:
     verbose: 1
     ent_coef: 0.0
