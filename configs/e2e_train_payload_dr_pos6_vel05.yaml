@@ -1,0 +1,11 @@
+extends: e2e_train_payload_dr_v1.yaml
+
+environment:
+  reward:
+    position_weight: 6.0
+    velocity_weight: 0.5
+
+
+experiment:
+  condition: payload-dr-pos6
+  description: Payload DR fine-tuning with position weight 6.0

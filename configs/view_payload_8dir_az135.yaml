@@ -1,0 +1,15 @@
+extends: ../artifacts/analyses/payload_dr_1m_run_analysis_20260911-114026/view_nominal_payload_free.yaml
+paths:
+  project_root: .
+  mujoco_xml: resources/mujoco/cf21B_500.xml
+environment:
+  payload:
+    randomize: false
+    mass: 0.01
+    offset:
+    - -0.021213203435596423
+    - 0.021213203435596427
+  reward:
+    position_weight: 6.0
+experiment:
+  condition: view-payload-10g-r30mm-az135

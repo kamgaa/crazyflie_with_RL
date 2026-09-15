@@ -66,6 +66,8 @@ class _PolicyRollout:
     attitude_deg: np.ndarray
     angular_velocity: np.ndarray
     control_input: np.ndarray
+    wrench_command: np.ndarray
+    wrench_command_reference: str
     motor_thrust: np.ndarray
     motor_thrust_command: np.ndarray | None
     phases: tuple[str, ...]
@@ -151,7 +153,7 @@ def _optional_policy_array(
 def _normalize_policy_rollout(
     rollout: Mapping[str, Any] | Any,
 ) -> _PolicyRollout:
-    """Validate the signals needed by the seven-panel per-policy plot."""
+    """Validate the signals needed by the per-policy flight report."""
 
     label = str(_rollout_value(rollout, "label", default="policy"))
     time_sec = np.asarray(
@@ -172,6 +174,16 @@ def _normalize_policy_rollout(
     )
     if len(phases) != samples:
         raise ValueError("policy rollout phases must have one value per time sample")
+
+    default_wrench_reference = (
+        "body frame; torque about the nominal allocator origin "
+        "(not the payload-shifted combined CoM)"
+    )
+    raw_wrench_reference = _rollout_value(
+        rollout,
+        "wrench_command_reference",
+        default=default_wrench_reference,
+    )
 
     return _PolicyRollout(
         label=label,
@@ -221,6 +233,17 @@ def _normalize_policy_rollout(
             field="control_input",
             samples=samples,
             columns=4,
+        ),
+        wrench_command=_policy_array(
+            _rollout_value(rollout, "wrench_command", "commanded_wrench"),
+            field="wrench_command",
+            samples=samples,
+            columns=4,
+        ),
+        wrench_command_reference=str(
+            raw_wrench_reference
+            if raw_wrench_reference is not None
+            else default_wrench_reference
         ),
         motor_thrust=_policy_array(
             _rollout_value(
@@ -422,11 +445,12 @@ def save_policy_trace(
 ) -> Path:
     """Save one policy's complete flight trace as a single 16:9 PNG.
 
-    The seven panels are position, world-frame linear velocity, per-motor and
-    total thrust, attitude, body angular velocity, an equal-scale XY path, and
-    normalized control input ``u``. ``rollout`` may be a mapping or an
-    attribute object and must provide one row per ``time_sec`` sample for all
-    signals. The caller should invoke this once for the floor and once for PPO.
+    The panels are position, world-frame linear velocity, per-motor and total
+    thrust, attitude, body angular velocity, an equal-scale XY path, and four
+    independently scaled pre-allocation commanded-wrench channels. ``rollout``
+    may be a mapping or an attribute object and must provide one row per
+    ``time_sec`` sample for all signals. The caller should invoke this once for
+    the floor and once for PPO.
     """
 
     unit = str(motor_unit).strip()
@@ -437,28 +461,30 @@ def save_policy_trace(
     plt = _pyplot()
     fig = plt.figure(figsize=(16, 9))
     grid = fig.add_gridspec(
-        3,
-        3,
-        height_ratios=(1.0, 1.0, 0.72),
+        4,
+        12,
+        height_ratios=(1.0, 1.0, 0.10, 0.72),
         hspace=0.48,
         wspace=0.30,
     )
-    position_axis = fig.add_subplot(grid[0, 0])
-    linear_velocity_axis = fig.add_subplot(grid[0, 1], sharex=position_axis)
-    thrust_axis = fig.add_subplot(grid[0, 2], sharex=position_axis)
-    attitude_axis = fig.add_subplot(grid[1, 0], sharex=position_axis)
-    angular_velocity_axis = fig.add_subplot(grid[1, 1], sharex=position_axis)
-    path_axis = fig.add_subplot(grid[1, 2])
-    # A wide final panel keeps all four control channels readable while
-    # retaining the sketch's two rows of three primary flight-state panels.
-    control_axis = fig.add_subplot(grid[2, :], sharex=position_axis)
+    position_axis = fig.add_subplot(grid[0, 0:4])
+    linear_velocity_axis = fig.add_subplot(grid[0, 4:8], sharex=position_axis)
+    thrust_axis = fig.add_subplot(grid[0, 8:12], sharex=position_axis)
+    attitude_axis = fig.add_subplot(grid[1, 0:4], sharex=position_axis)
+    angular_velocity_axis = fig.add_subplot(grid[1, 4:8], sharex=position_axis)
+    path_axis = fig.add_subplot(grid[1, 8:12])
+    wrench_title_axis = fig.add_subplot(grid[2, :])
+    wrench_axes = tuple(
+        fig.add_subplot(grid[3, index * 3 : (index + 1) * 3], sharex=position_axis)
+        for index in range(4)
+    )
     time_axes = (
         position_axis,
         linear_velocity_axis,
         thrust_axis,
         attitude_axis,
         angular_velocity_axis,
-        control_axis,
+        *wrench_axes,
     )
 
     xyz_colors = ("tab:blue", "tab:orange", "tab:green")
@@ -542,19 +568,35 @@ def save_policy_trace(
         label="total",
     )
 
-    control_labels = ("u_tau_x", "u_tau_y", "u_tau_z", "u_Fz")
-    control_styles = ("-", "--", "-.", ":")
-    for index, (label, color, style) in enumerate(
-        zip(control_labels, motor_colors, control_styles)
+    wrench_titles = ("tau_x_cmd", "tau_y_cmd", "tau_z_cmd", "Fz_cmd")
+    wrench_labels = (
+        "tau_x_cmd [N·m]",
+        "tau_y_cmd [N·m]",
+        "tau_z_cmd [N·m]",
+        "Fz_cmd [N]",
+    )
+    wrench_units = ("torque [N·m]", "torque [N·m]", "torque [N·m]", "force [N]")
+    for index, (axis, title, label, unit_label, color) in enumerate(
+        zip(wrench_axes, wrench_titles, wrench_labels, wrench_units, motor_colors)
     ):
-        control_axis.plot(
+        values = trace.wrench_command[:, index]
+        axis.plot(
             trace.time_sec,
-            trace.control_input[:, index],
+            values,
             color=color,
-            ls=style,
             lw=line_width,
             label=label,
         )
+        low = float(np.min(values))
+        high = float(np.max(values))
+        scale = max(abs(low), abs(high), 1e-12)
+        padding = max(0.08 * (high - low), 0.05 * scale, 1e-12)
+        axis.set_ylim(low - padding, high + padding)
+        axis.set_title(title)
+        axis.set_ylabel(unit_label)
+        axis.set_xlabel("time [s]")
+        axis.axhline(0.0, color="gray", ls=":", lw=0.8)
+        axis.legend(loc="best", fontsize=6.5)
 
     path_axis.plot(
         trace.reference_position[:, 0],
@@ -621,14 +663,9 @@ def save_policy_trace(
     path_axis.set_xlabel("x [m]")
     path_axis.set_ylabel("y [m]")
     path_axis.axis("equal")
-    control_axis.set_title("Normalized control input u")
-    control_axis.set_ylabel("u [-1, 1]")
-    control_axis.set_xlabel("time [s]")
-    control_axis.set_ylim(-1.05, 1.05)
-
-    for axis in time_axes[:-1]:
+    for axis in time_axes[:5]:
         axis.set_xlabel("time [s]")
-    for axis in (attitude_axis, angular_velocity_axis, control_axis):
+    for axis in (attitude_axis, angular_velocity_axis):
         axis.axhline(0.0, color="gray", ls=":", lw=0.8)
     thrust_axis.axhline(0.0, color="gray", ls=":", lw=0.8)
 
@@ -656,7 +693,18 @@ def save_policy_trace(
     attitude_axis.legend(loc="best", ncol=3, fontsize=7)
     angular_velocity_axis.legend(loc="best", ncol=3, fontsize=7)
     path_axis.legend(loc="best", fontsize=6.5)
-    control_axis.legend(loc="best", ncol=4, fontsize=7)
+    wrench_title_axis.axis("off")
+    wrench_title_axis.text(
+        0.5,
+        0.5,
+        "Commanded wrench — before allocation\n"
+        f"{trace.wrench_command_reference}",
+        transform=wrench_title_axis.transAxes,
+        ha="center",
+        va="center",
+        fontsize=8,
+        color="dimgray",
+    )
 
     fig.suptitle(f"{tag} - {trace.label}", fontsize=14)
     fig.text(
@@ -1118,6 +1166,91 @@ def save_circle_trace(
     )
 
 
+def save_lyapunov_trace(
+    path: str | Path,
+    *,
+    tag: str,
+    time_sec: np.ndarray,
+    v_before: np.ndarray,
+    v_after: np.ndarray,
+    delta_v: np.ndarray,
+    decay_target: np.ndarray,
+) -> Path:
+    """Save candidate value, transition difference, and configured decay bound.
+
+    This diagnostic intentionally makes no stability claim.  It visualizes
+    empirical transitions of the configured quadratic candidate only.
+    """
+
+    time_values = np.asarray(time_sec, dtype=float).reshape(-1)
+    series = {
+        "v_before": np.asarray(v_before, dtype=float).reshape(-1),
+        "v_after": np.asarray(v_after, dtype=float).reshape(-1),
+        "delta_v": np.asarray(delta_v, dtype=float).reshape(-1),
+        "decay_target": np.asarray(decay_target, dtype=float).reshape(-1),
+    }
+    if time_values.size < 1 or any(
+        values.size != time_values.size for values in series.values()
+    ):
+        raise ValueError("Lyapunov-candidate plot series must have equal nonzero length")
+    finite = np.isfinite(time_values)
+    for values in series.values():
+        finite &= np.isfinite(values)
+    if not np.any(finite):
+        raise ValueError("Lyapunov-candidate plot has no finite transition")
+
+    time_values = time_values[finite]
+    values = {name: data[finite] for name, data in series.items()}
+    target = _new_path(path)
+    plt = _pyplot()
+    fig, axes = plt.subplots(2, 1, figsize=(10, 7), sharex=True)
+    axes[0].plot(
+        time_values,
+        values["v_after"],
+        color="tab:blue",
+        lw=1.8,
+        label="V after",
+    )
+    axes[0].plot(
+        time_values,
+        values["v_before"],
+        color="tab:gray",
+        ls=":",
+        lw=1.2,
+        label="V before",
+    )
+    axes[0].plot(
+        time_values,
+        values["decay_target"],
+        color="tab:orange",
+        ls="--",
+        lw=1.4,
+        label="(1 - kappa dt) V before",
+    )
+    axes[0].set_ylabel("candidate V [-]")
+    axes[0].set_title(f"{tag} — Lyapunov-candidate transition diagnostic")
+    axes[0].legend(loc="best")
+    axes[0].grid(alpha=0.3)
+
+    axes[1].plot(
+        time_values,
+        values["delta_v"],
+        color="tab:purple",
+        lw=1.6,
+        label="V after - V before",
+    )
+    axes[1].axhline(0.0, color="black", ls=":", lw=1.0)
+    axes[1].set_ylabel("delta V [-]")
+    axes[1].set_xlabel("time [s]")
+    axes[1].legend(loc="best")
+    axes[1].grid(alpha=0.3)
+
+    fig.tight_layout()
+    fig.savefig(target, dpi=130)
+    plt.close(fig)
+    return target
+
+
 def save_entropy_diagnostic(
     path: str | Path,
     series: Mapping[str, tuple[np.ndarray, np.ndarray] | None],
@@ -1262,6 +1395,7 @@ __all__ = [
     "save_hover_trace",
     "save_iterm_diagnostic",
     "save_learning_curve",
+    "save_lyapunov_trace",
     "save_policy_comparison_trace",
     "save_policy_trace",
     "save_tracking_trace",

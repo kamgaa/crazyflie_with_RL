@@ -49,6 +49,28 @@ def rotmat_from_quat_wxyz(q: Sequence[float]) -> np.ndarray:
     )
 
 
+def geometric_attitude_error(
+    rotation: Sequence[Sequence[float]],
+    desired_rotation: Sequence[Sequence[float]],
+) -> np.ndarray:
+    """Return the cascade PID's geometric SO(3) attitude-error convention."""
+
+    actual = np.asarray(rotation, dtype=float)
+    desired = np.asarray(desired_rotation, dtype=float)
+    if actual.shape != (3, 3) or desired.shape != (3, 3):
+        raise ValueError("rotation matrices must have shape (3, 3)")
+    if not np.all(np.isfinite(actual)) or not np.all(np.isfinite(desired)):
+        raise ValueError("rotation matrices must contain finite values")
+    attitude_matrix = desired.T @ actual - actual.T @ desired
+    return 0.5 * np.array(
+        [
+            attitude_matrix[2, 1],
+            attitude_matrix[0, 2],
+            attitude_matrix[1, 0],
+        ]
+    )
+
+
 def build_allocation_matrix(
     arm_length: float = ARM,
     motor_direction: Sequence[float] = MOTOR_DIR,
@@ -241,12 +263,7 @@ class CascadePID:
             [body_x_desired, body_y_desired, body_z_desired]
         )
 
-        attitude_matrix = (
-            desired_rotation.T @ rotation - rotation.T @ desired_rotation
-        )
-        attitude_error = 0.5 * np.array(
-            [attitude_matrix[2, 1], attitude_matrix[0, 2], attitude_matrix[1, 0]]
-        )
+        attitude_error = geometric_attitude_error(rotation, desired_rotation)
         rate_setpoint = -self.kp_att * attitude_error
 
         rate_error = rate_setpoint - omega
@@ -273,6 +290,7 @@ __all__ = [
     "THRUST_MIN",
     "_build_B",
     "build_allocation_matrix",
+    "geometric_attitude_error",
     "quat_normalize_wxyz",
     "rotmat_from_quat_wxyz",
 ]

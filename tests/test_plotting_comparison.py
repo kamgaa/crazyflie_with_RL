@@ -34,6 +34,18 @@ def _rollout(*, label: str, offset: float = 0.0) -> dict[str, Any]:
         "control_input": np.column_stack(
             tuple((index + 1.0) * time_sec for index in range(4))
         ),
+        "wrench_command": np.column_stack(
+            (
+                1.0e-4 * time_sec,
+                -2.0e-4 * time_sec,
+                3.0e-5 * time_sec,
+                0.40 + 0.05 * time_sec,
+            )
+        ),
+        "wrench_command_reference": (
+            "body frame; torque about the nominal allocator origin "
+            "(not the payload-shifted combined CoM)"
+        ),
         "motor_thrust": np.column_stack(
             tuple(0.05 * (index + 1.0) + time_sec * 0.01 for index in range(4))
         ),
@@ -112,7 +124,7 @@ def _plot_labels(axis: _FakeAxis) -> set[str]:
     }
 
 
-def test_policy_plot_is_one_16_by_9_figure_with_seven_requested_panels(
+def test_policy_plot_uses_four_physical_commanded_wrench_panels(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     fake_plt = _FakePyplot()
@@ -133,12 +145,14 @@ def test_policy_plot_is_one_16_by_9_figure_with_seven_requested_panels(
     figure = fake_plt.figure_instance
     assert figure is not None
     assert figure.figsize == (16, 9)
-    assert len(figure.axes) == 7
+    assert len(figure.axes) == 11
     assert fake_plt.closed == [figure]
 
-    position, linear_velocity, thrust, attitude, angular_velocity, path, control = (
-        figure.axes
+    position, linear_velocity, thrust, attitude, angular_velocity, path = (
+        figure.axes[:6]
     )
+    wrench_title_axis = figure.axes[6]
+    wrench_axes = figure.axes[7:]
     assert {"x actual", "x ref", "y actual", "y ref", "z actual", "z ref"} <= (
         _plot_labels(position)
     )
@@ -147,7 +161,38 @@ def test_policy_plot_is_one_16_by_9_figure_with_seven_requested_panels(
     assert _plot_labels(attitude) == {"roll", "pitch", "yaw"}
     assert _plot_labels(angular_velocity) == {"wx", "wy", "wz"}
     assert {"reference", "actual"} <= _plot_labels(path)
-    assert _plot_labels(control) == {"u_tau_x", "u_tau_y", "u_tau_z", "u_Fz"}
+    assert [_plot_labels(axis) for axis in wrench_axes] == [
+        {"tau_x_cmd [N·m]"},
+        {"tau_y_cmd [N·m]"},
+        {"tau_z_cmd [N·m]"},
+        {"Fz_cmd [N]"},
+    ]
+    source_wrench = _rollout(label="PID floor")["wrench_command"]
+    for index, axis in enumerate(wrench_axes):
+        plotted_values = next(
+            args[1] for name, args, _kwargs in axis.calls if name == "plot"
+        )
+        np.testing.assert_allclose(plotted_values, source_wrench[:, index])
+    assert [
+        next(args[0] for name, args, _kwargs in axis.calls if name == "set_ylabel")
+        for axis in wrench_axes
+    ] == ["torque [N·m]", "torque [N·m]", "torque [N·m]", "force [N]"]
+    assert all("set_ylim" in _call_names(axis) for axis in wrench_axes)
+    limits = [
+        next(args for name, args, _kwargs in axis.calls if name == "set_ylim")
+        for axis in wrench_axes
+    ]
+    assert len(set(limits)) == 4
+    assert any(
+        name == "text"
+        and args[2].startswith("Commanded wrench — before allocation")
+        and "not the payload-shifted combined CoM" in args[2]
+        for name, args, _kwargs in wrench_title_axis.calls
+    )
+    assert any(
+        name == "axis" and args == ("off",)
+        for name, args, _kwargs in wrench_title_axis.calls
+    )
     assert any(name == "axis" and args == ("equal",) for name, args, _ in path.calls)
     assert any(
         name == "set_ylabel" and args == ("thrust [N]",)
@@ -160,7 +205,7 @@ def test_policy_plot_is_one_16_by_9_figure_with_seven_requested_panels(
         thrust,
         attitude,
         angular_velocity,
-        control,
+        *wrench_axes,
     ):
         assert "axvline" in _call_names(axis)
 
@@ -176,6 +221,7 @@ def test_policy_plot_accepts_attribute_aliases() -> None:
         attitude=source["attitude_deg"],
         omega=source["angular_velocity"],
         action=source["control_input"],
+        commanded_wrench=source["wrench_command"],
         motor_force=source["motor_thrust"],
         phase=source["phases"],
     )
@@ -185,6 +231,7 @@ def test_policy_plot_accepts_attribute_aliases() -> None:
     assert normalized.label == "PPO residual"
     np.testing.assert_allclose(normalized.linear_velocity, source["linear_velocity"])
     np.testing.assert_allclose(normalized.angular_velocity, source["angular_velocity"])
+    np.testing.assert_allclose(normalized.wrench_command, source["wrench_command"])
 
 
 def test_policy_plot_overlays_requested_thrust_only_when_bldc_signal_is_available(
@@ -219,6 +266,7 @@ def test_policy_plot_overlays_requested_thrust_only_when_bldc_signal_is_availabl
         ("linear_velocity", np.zeros((4, 2)), "linear_velocity must have shape"),
         ("angular_velocity", np.zeros((4, 4)), "angular_velocity must have shape"),
         ("motor_thrust", np.full((4, 4), np.nan), "motor_thrust must contain finite"),
+        ("wrench_command", np.zeros((4, 3)), "wrench_command must have shape"),
         ("phases", ("GOTO",), "phases must have one value per time sample"),
     ],
 )

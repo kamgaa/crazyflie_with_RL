@@ -1,0 +1,32 @@
+extends: e2e_train_payload_dr_pos6_vel05.yaml
+
+# First combined finite-history/integral experiment.  This does not change the
+# rigid payload plant, motor model, allocation, payload/initial-state curricula,
+# action scale, PPO hyperparameters, or the donor's [64, 64] MLP architecture.
+physics_model_version: rigid_point_payload_v2
+
+environment:
+  observation:
+    schema_version: e2e_history_integral_v1
+    state_reader: current_freejoint_body_rate_v1
+    trace_schema_version: policy_transition_trace_v2
+    history:
+      enabled: true
+      length_steps: 20
+    position_error_integral:
+      enabled: true
+      clamp_m_s: [1.0, 1.0, 1.0]
+  reward:
+    # Active legacy reward values.  Position and velocity remain unchanged.
+    # Tilt is donor active value x2; angular velocity is donor active value x5.
+    tilt_weight: 2.0
+    angular_velocity_weight: 0.05
+
+training:
+  seed: 42
+  total_timesteps: 1000000
+  policy_initialization_required: true
+
+experiment:
+  condition: payload-dr-history-integral-v1
+  description: E2E payload DR with synchronized body rate, 20-step history, bounded position-error integral, and strengthened legacy attitude/rate costs

@@ -1,0 +1,26 @@
+extends: e2e_train_payload_dr_history_integral_v1.yaml
+
+environment:
+  episode_sec: 8.0
+  position_perturbation: 0.0
+  attitude_perturbation_deg: 0.0
+  initial_state_randomization:
+    enabled: false
+  payload:
+    randomize: false
+    mass: 0.0
+    offset: [0.0, 0.0]
+    curriculum:
+      enabled: false
+
+mission:
+  type: hover
+  force_floor_start: false
+  hover:
+    target: [0.0, 0.0, 1.0]
+    yaw_deg: 0.0
+    duration: 8.0
+
+experiment:
+  condition: view-history-integral-nominal
+  description: Fixed payload-free viewer for e2e_history_integral_v1 checkpoints

@@ -43,6 +43,14 @@ def build_parser() -> argparse.ArgumentParser:
         type=_positive_integer,
         help="override training.total_timesteps for this run",
     )
+    parser.add_argument(
+        "--init-policy-from",
+        type=Path,
+        help=(
+            "initialize only policy parameters from a manifest-validated "
+            "E2E PPO archive (not resume training)"
+        ),
+    )
     return parser
 
 
@@ -75,6 +83,40 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         return 0
 
+    if config.training.policy_initialization_required and args.init_policy_from is None:
+        if config.environment.payload.curriculum.enabled:
+            raise SystemExit(
+                "this payload-DR profile requires an explicit "
+                "--init-policy-from archive; donor discovery and checkpoint "
+                "reselection are intentionally disabled"
+            )
+        from crazyflie_rl.warm_start import discover_legacy_e2e_donors
+
+        candidates = discover_legacy_e2e_donors(config)
+        if candidates:
+            candidate_lines = "\n".join(
+                f"  {item.model_path} ({item.model_kind}, step "
+                f"{item.model_timestep}, manifest {item.manifest_path})"
+                for item in candidates
+                if item.model_kind == "final"
+            )
+            if not candidate_lines:
+                candidate_lines = "\n".join(
+                    f"  {item.model_path} ({item.model_kind}, step "
+                    f"{item.model_timestep})"
+                    for item in candidates
+                )
+            raise SystemExit(
+                "this recovery fine-tuning profile requires "
+                "--init-policy-from. Compatible donor candidates:\n"
+                f"{candidate_lines}"
+            )
+        raise SystemExit(
+            "no compatible nominal legacy E2E donor was found. Train "
+            "configs/e2e_train.yaml first, then pass its original artifact "
+            "model with --init-policy-from"
+        )
+
     # Set this before the first SB3/Torch import, matching master execution.
     import os
 
@@ -83,7 +125,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     from crazyflie_rl.training import PPOTrainer
 
-    PPOTrainer(config).train()
+    PPOTrainer(config, init_policy_from=args.init_policy_from).train()
     return 0
 
 

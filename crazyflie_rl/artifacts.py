@@ -58,8 +58,12 @@ def sanitize_component(value: object) -> str:
 def _git_value(project_root: Path, *args: str) -> str | None:
     try:
         result = subprocess.run(
-            ["git", *args], cwd=project_root, check=True, capture_output=True,
-            text=True, timeout=5,
+            ["git", *args],
+            cwd=project_root,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=5,
         )
     except (OSError, subprocess.SubprocessError):
         return None
@@ -246,8 +250,10 @@ class ArtifactManager:
         timestep: int | None = None,
         metadata: Mapping[str, Any] | None = None,
     ) -> Path:
-        if kind not in {"best", "final"}:
-            raise ValueError("model kind must be 'best' or 'final'")
+        if kind not in {"best", "best-recovery", "best-payload", "final"}:
+            raise ValueError(
+                "model kind must be 'best', 'best-recovery', 'best-payload', or 'final'"
+            )
         # A callback may discover several progressively better checkpoints.
         # Preserve every one with a suffix instead of silently replacing the
         # earlier archive; manifest.models[kind] always points at the latest.
@@ -258,10 +264,14 @@ class ArtifactManager:
             if save_argument.is_file():
                 save_argument.rename(target)
             else:
-                raise RuntimeError(f"model save did not create expected archive: {target}")
+                raise RuntimeError(
+                    f"model save did not create expected archive: {target}"
+                )
         double_zip = Path(f"{target}.zip")
         if double_zip.exists():
-            raise RuntimeError(f"model backend created forbidden double extension: {double_zip}")
+            raise RuntimeError(
+                f"model backend created forbidden double extension: {double_zip}"
+            )
 
         record: dict[str, Any] = {
             "kind": kind,
@@ -280,6 +290,42 @@ class ArtifactManager:
         self.manifest["models"][kind] = record
         self._write_manifest()
         return target
+
+    def record_policy_initialization(
+        self, parent_model: Path, provenance: Mapping[str, Any]
+    ) -> None:
+        """Record a policy-only warm-start without claiming training resume."""
+
+        if "policy_initialization" in self.manifest:
+            raise RuntimeError("policy initialization provenance is already recorded")
+        training_provenance = provenance.get("training_provenance", {})
+        if not isinstance(training_provenance, Mapping):
+            training_provenance = {}
+        transfer = provenance.get("parameter_transfer", {})
+        if not isinstance(transfer, Mapping):
+            transfer = {}
+        self.manifest["policy_initialization"] = {
+            "strategy": provenance.get("strategy", "policy_parameters_only"),
+            "parent_model": str(parent_model.resolve()),
+            "parent_model_sha256": training_provenance.get(
+                "model_sha256", provenance.get("model_sha256")
+            ),
+            "optimizer_state_copied": bool(
+                transfer.get("optimizer_state_copied", False)
+            ),
+            "rollout_buffer_copied": bool(transfer.get("rollout_buffer_copied", False)),
+            "initial_timestep": int(transfer.get("initial_timestep", 0)),
+            "curriculum_initial_step": 0,
+            "training_physics_model_version": provenance.get(
+                "training_physics_model_version",
+                provenance.get("physics_model_version"),
+            ),
+            "new_run_physics_model_version": self.config.physics_model_version,
+            "cross_physics_evaluation": provenance.get("cross_physics_evaluation"),
+            "parameter_transfer": dict(transfer),
+            "parent_provenance": dict(provenance),
+        }
+        self._write_manifest()
 
     def write_metrics(self, kind: str, payload: Mapping[str, Any]) -> Path:
         path = self.ensure_available(self.path("metrics", kind, ".json"))
@@ -304,9 +350,7 @@ class ArtifactManager:
             raise RuntimeError("PyYAML is required to write runtime config") from exc
 
         values = _artifact_value(payload)
-        path = self.ensure_available(
-            self.path("config", "runtime-resolved", ".yaml")
-        )
+        path = self.ensure_available(self.path("config", "runtime-resolved", ".yaml"))
         path.write_text(
             yaml.safe_dump(values, sort_keys=False, allow_unicode=True),
             encoding="utf-8",
@@ -334,6 +378,7 @@ class ArtifactManager:
         payload = env.payload
         return {
             "schema_version": 1,
+            "physics_model_version": self.config.physics_model_version,
             "run_id": self.run_dir.name,
             "experiment_name": self.config.experiment.name,
             "condition": self.condition,
@@ -346,7 +391,13 @@ class ArtifactManager:
             "git": _git_metadata(self.config.paths.project_root),
             "command": list(self.command),
             "control_mode": self.config.control_mode,
+            "reward_mode": env.reward.mode,
             "observation_shape": list(self.config.observation_shape),
+            "observation_schema": self.config.observation_schema,
+            "state_reader": self.config.observation_schema["state_reader"],
+            "trace_schema_version": self.config.observation_schema[
+                "trace_schema_version"
+            ],
             "action_shape": list(self.config.action_shape),
             "residual_scale": list(env.residual_scale),
             # Keep the complete mandatory BLDC actuator contract alongside
@@ -357,6 +408,7 @@ class ArtifactManager:
                 "mass": payload.mass,
                 "offset": list(payload.offset),
                 "randomization_limits": asdict(payload.randomization_limits),
+                "curriculum": asdict(payload.curriculum),
             },
             "seed": self.seed,
             "ppo": asdict(self.config.training.ppo),
@@ -364,7 +416,12 @@ class ArtifactManager:
             "config_profile": self.config.profile_name,
             "resolved_config_path": resolved_path.relative_to(self.run_dir).as_posix(),
             "resolved_config": self.config.resolved_dict(),
-            "models": {"best": None, "final": None},
+            "models": {
+                "best": None,
+                "best-recovery": None,
+                "best-payload": None,
+                "final": None,
+            },
             "model_history": [],
             "metrics": {},
             "versions": runtime_versions(),

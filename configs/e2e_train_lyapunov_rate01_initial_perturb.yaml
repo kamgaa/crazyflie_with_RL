@@ -1,0 +1,21 @@
+extends: e2e_train_lyapunov_rate01.yaml
+
+environment:
+  # Replace the historical reset perturbations with the opt-in airborne
+  # absolute-timestep curriculum used by e2e_train_initial_perturb.yaml.
+  position_perturbation: 0.0
+  attitude_perturbation_deg: 0.0
+  initial_state_randomization:
+    enabled: true
+    nominal_reset_probability: 0.20
+    curriculum_end_step: 300000
+    initial_max_tilt_deg: 5.0
+    final_max_tilt_deg: 30.0
+    initial_max_horizontal_offset_m: 0.02
+    final_max_horizontal_offset_m: 0.20
+    initial_max_vertical_offset_m: 0.02
+    final_max_vertical_offset_m: 0.10
+
+experiment:
+  condition: initial-perturb-lyapunov-rate01
+  description: E2E PPO Lyapunov rate01 reward with airborne initial-state curriculum

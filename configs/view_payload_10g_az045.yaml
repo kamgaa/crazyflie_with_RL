@@ -1,0 +1,8 @@
+extends: view_payload_10g_az180.yaml
+
+environment:
+  payload:
+    offset: [0.021213203435596427, 0.021213203435596423]
+
+experiment:
+  condition: view-payload10g-az045

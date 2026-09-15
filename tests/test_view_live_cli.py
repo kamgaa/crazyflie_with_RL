@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 from dataclasses import dataclass, replace
 import json
 import os
@@ -11,6 +12,11 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 
+from crazyflie_rl.attitude import (
+    ATTITUDE_AXIS_CHOICES,
+    attitude_axis_vector,
+    named_attitude_quaternion_wxyz,
+)
 from crazyflie_rl.config import ConfigError, load_config
 import crazyflie_rl.eval_cli as eval_cli
 from crazyflie_rl.eval_cli import (
@@ -168,11 +174,510 @@ def test_parser_exposes_all_runtime_override_groups() -> None:
         "seed",
         "position_perturbation",
         "attitude_perturbation_deg",
+        "attitude_axis",
         "force_floor_start",
     } <= destinations
     assert parser.parse_args(["--model", "latest-best"]).model == Path(
         "latest-best"
     )
+    assert parser.parse_args(["--policy", "ppo"]).policy == "ppo"
+
+
+@pytest.mark.parametrize("attitude_axis", ATTITUDE_AXIS_CHOICES)
+def test_parser_accepts_each_attitude_axis(attitude_axis: str) -> None:
+    parser = build_parser(CONFIGS / "e2e_hover_eval.yaml", "test")
+
+    args = parser.parse_args(["--attitude-axis", attitude_axis])
+
+    assert args.attitude_axis == attitude_axis
+
+
+def test_parser_rejects_invalid_attitude_axis() -> None:
+    parser = build_parser(CONFIGS / "e2e_hover_eval.yaml", "test")
+
+    with pytest.raises(SystemExit) as caught:
+        parser.parse_args(["--attitude-axis", "yaw_plus"])
+
+    assert caught.value.code == 2
+
+
+@pytest.mark.parametrize("attitude_axis", ATTITUDE_AXIS_CHOICES)
+def test_named_attitude_axes_are_unit_vectors(attitude_axis: str) -> None:
+    assert np.linalg.norm(attitude_axis_vector(attitude_axis)) == pytest.approx(1.0)
+
+
+def test_roll_minus_twenty_degree_quaternion_uses_wxyz_convention() -> None:
+    quaternion = named_attitude_quaternion_wxyz("roll_minus", 20.0)
+
+    np.testing.assert_allclose(
+        quaternion,
+        [np.cos(np.deg2rad(10.0)), -np.sin(np.deg2rad(10.0)), 0.0, 0.0],
+        rtol=0.0,
+        atol=1e-15,
+    )
+    assert np.linalg.norm(quaternion) == pytest.approx(1.0)
+    assert quaternion[0] >= 0.0
+
+
+@pytest.mark.parametrize(
+    ("attitude_axis", "expected"),
+    [
+        ("diagonal_pp", [1.0, 1.0, 0.0]),
+        ("diagonal_pm", [1.0, -1.0, 0.0]),
+        ("diagonal_mp", [-1.0, 1.0, 0.0]),
+        ("diagonal_mm", [-1.0, -1.0, 0.0]),
+    ],
+)
+def test_diagonal_attitude_axes_are_normalized(
+    attitude_axis: str, expected: list[float]
+) -> None:
+    np.testing.assert_allclose(
+        attitude_axis_vector(attitude_axis),
+        np.asarray(expected, dtype=float) / np.sqrt(2.0),
+        rtol=0.0,
+        atol=1e-15,
+    )
+
+
+@pytest.mark.parametrize("attitude_axis", ATTITUDE_AXIS_CHOICES)
+def test_zero_degree_perturbation_is_identity_for_every_axis(
+    attitude_axis: str,
+) -> None:
+    assert named_attitude_quaternion_wxyz(attitude_axis, 0.0) == (
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+    )
+
+
+def test_omitting_attitude_axis_preserves_legacy_parser_default() -> None:
+    args = build_parser(CONFIGS / "e2e_hover_eval.yaml", "test").parse_args(
+        ["--attitude-perturbation-deg", "20"]
+    )
+
+    assert args.attitude_axis is None
+
+
+@pytest.mark.parametrize(
+    ("name", "policy", "position", "attitude", "model"),
+    [
+        ("recovery-ppo-nominal", "ppo", 0.0, 0.0, "latest-final"),
+        ("recovery-ppo-tilt30", "ppo", 0.0, 30.0, "latest-final"),
+        ("recovery-pid-tilt30", "floor", 0.0, 30.0, None),
+        ("recovery-both-tilt30", "both", 0.0, 30.0, "latest-final"),
+        ("recovery-ppo-position20cm", "ppo", 0.20, 0.0, "latest-final"),
+    ],
+)
+def test_named_evaluation_preset_contracts(
+    name: str,
+    policy: str,
+    position: float,
+    attitude: float,
+    model: str | None,
+) -> None:
+    raw = ["--eval-preset", name]
+    args = build_parser(CONFIGS / "e2e_hover_eval.yaml", "test").parse_args(raw)
+    merged = eval_cli._apply_evaluation_preset(args, raw)
+
+    assert merged.config == CONFIGS / "e2e_train_initial_perturb.yaml"
+    assert merged.mode == "hover"
+    assert merged.policy == policy
+    assert merged.duration == 8.0
+    assert merged.position_perturbation == pytest.approx(position)
+    assert merged.attitude_perturbation_deg == pytest.approx(attitude)
+    assert merged.seed == 1000
+    assert merged.force_floor_start is False
+    assert merged.headless is False
+    assert merged.no_realtime is False
+    assert merged.no_camera is False
+    assert merged.model == (Path(model) if model is not None else None)
+
+
+def test_explicit_cli_values_override_named_evaluation_preset(tmp_path: Path) -> None:
+    explicit_model = tmp_path / "manual.zip"
+    raw = [
+        "--eval-preset",
+        "recovery-ppo-tilt30",
+        "--config",
+        str(CONFIGS / "e2e_hover_eval.yaml"),
+        "--mode",
+        "circle",
+        "--policy",
+        "floor",
+        "--duration",
+        "2",
+        "--position-perturbation",
+        "0.07",
+        "--attitude-perturbation-deg",
+        "12",
+        "--seed",
+        "9",
+        "--model",
+        str(explicit_model),
+        "--force-floor-start",
+        "--headless",
+        "--no-realtime",
+        "--no-camera",
+    ]
+    args = build_parser(CONFIGS / "e2e_hover_eval.yaml", "test").parse_args(raw)
+    merged = eval_cli._apply_evaluation_preset(args, raw)
+
+    assert merged.config == CONFIGS / "e2e_hover_eval.yaml"
+    assert merged.mode == "circle"
+    assert merged.policy == "floor"
+    assert merged.duration == 2.0
+    assert merged.position_perturbation == pytest.approx(0.07)
+    assert merged.attitude_perturbation_deg == pytest.approx(12.0)
+    assert merged.seed == 9
+    assert merged.model == explicit_model
+    assert merged.force_floor_start is True
+    assert merged.headless is True
+    assert merged.no_realtime is True
+    assert merged.no_camera is True
+
+
+def test_list_presets_prints_names_without_mode_or_runtime_imports() -> None:
+    completed = subprocess.run(
+        [sys.executable, str(ROOT / "view_live.py"), "--list-presets"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert completed.returncode == 0, completed.stderr
+    for name in eval_cli.EVALUATION_PRESETS:
+        assert name in completed.stdout
+
+
+def test_view_live_attitude_axis_headless_cli_smoke(tmp_path: Path) -> None:
+    pytest.importorskip("mujoco")
+    pytest.importorskip("gymnasium")
+    yaml = pytest.importorskip("yaml")
+
+    source = load_config(CONFIGS / "e2e_train_legacy_initial_perturb_v2.yaml")
+    artifact_root = tmp_path / "artifacts"
+    smoke_config = tmp_path / "smoke.yaml"
+    smoke_config.write_text(
+        yaml.safe_dump(
+            {
+                "extends": os.path.relpath(source.source_path, tmp_path),
+                "paths": {
+                    "mujoco_xml": str(source.paths.mujoco_xml),
+                    "project_root": str(source.paths.project_root),
+                    "artifact_root": str(artifact_root),
+                    "legacy_model_root": str(source.paths.legacy_model_root),
+                    "legacy_tensorboard_root": str(
+                        source.paths.legacy_tensorboard_root
+                    ),
+                },
+            },
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-u",
+            str(ROOT / "view_live.py"),
+            "--config",
+            str(smoke_config),
+            "--mode",
+            "hover",
+            "--policy",
+            "floor",
+            "--duration",
+            "0.01",
+            "--position-perturbation",
+            "0",
+            "--attitude-perturbation-deg",
+            "20",
+            "--attitude-axis",
+            "roll_minus",
+            "--headless",
+            "--no-realtime",
+        ],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    assert "Attitude perturb. : 20 deg" in completed.stdout
+    assert "Attitude axis     : roll_minus" in completed.stdout
+    assert "Initial axis      : [-1, 0, 0]" in completed.stdout
+    assert "Initial quaternion:" in completed.stdout
+
+    run_dir = next((artifact_root / "runs").iterdir())
+    metrics = json.loads(
+        next((run_dir / "metrics").glob("*.json")).read_text(encoding="utf-8")
+    )
+    assert metrics["attitude_axis"] == "roll_minus"
+    assert metrics["initial_axis_xyz"] == pytest.approx([-1.0, 0.0, 0.0])
+    assert metrics["initial_quaternion_wxyz"] == pytest.approx(
+        named_attitude_quaternion_wxyz("roll_minus", 20.0)
+    )
+    floor_metrics = metrics["policies"]["floor"]
+    assert floor_metrics["attitude_axis"] == "roll_minus"
+    assert floor_metrics["trace_csv"].endswith(".csv")
+
+    trace_csv = run_dir / floor_metrics["trace_csv"]
+    with trace_csv.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+    assert len(rows) == 1
+    assert rows[0]["attitude_axis"] == "roll_minus"
+    assert float(rows[0]["initial_axis_x"]) == pytest.approx(-1.0)
+    assert float(rows[0]["initial_quaternion_w"]) == pytest.approx(
+        np.cos(np.deg2rad(10.0))
+    )
+
+
+@pytest.mark.parametrize(
+    ("selected", "expected_keys", "expected_modes"),
+    [
+        ("floor", ["floor"], {"floor": "residual"}),
+        ("residual", ["residual"], {"residual": "e2e"}),
+        (
+            "both",
+            ["floor", "residual"],
+            {"floor": "residual", "residual": "e2e"},
+        ),
+    ],
+)
+def test_initial_perturb_profile_honors_unified_policy_selection(
+    selected: str,
+    expected_keys: list[str],
+    expected_modes: dict[str, str],
+) -> None:
+    config = load_config(CONFIGS / "e2e_train_initial_perturb.yaml")
+    assert [
+        key for key, _label in eval_cli._policy_specs(config, selected, unified=True)
+    ] == expected_keys
+    assert eval_cli._expected_policy_control_modes(
+        config, selected, unified=True
+    ) == expected_modes
+
+
+def test_viewer_immutably_disables_curriculum_but_keeps_cli_perturbations() -> None:
+    source = load_config(CONFIGS / "e2e_train_initial_perturb.yaml")
+    args = build_parser(source.source_path, "test").parse_args(
+        [
+            "--position-perturbation",
+            "0.12",
+            "--attitude-perturbation-deg",
+            "30",
+        ]
+    )
+    overridden = apply_runtime_overrides(source, args, "hover")
+    effective = eval_cli._disable_training_initial_state_randomization(overridden)
+
+    assert source.environment.initial_state_randomization.enabled is True
+    assert overridden.environment.initial_state_randomization.enabled is True
+    assert effective.environment.initial_state_randomization.enabled is False
+    assert effective.environment.position_perturbation == pytest.approx(0.12)
+    assert effective.environment.attitude_perturbation_deg == pytest.approx(30.0)
+
+
+def test_explicit_thirty_degree_viewer_perturbation_has_exact_total_tilt() -> None:
+    pytest.importorskip("mujoco")
+    pytest.importorskip("gymnasium")
+    from crazyflie_rl.factories import EnvironmentFactory
+
+    source = load_config(CONFIGS / "e2e_train_initial_perturb.yaml")
+    args = build_parser(source.source_path, "test").parse_args(
+        ["--position-perturbation", "0", "--attitude-perturbation-deg", "30"]
+    )
+    effective = eval_cli._disable_training_initial_state_randomization(
+        apply_runtime_overrides(source, args, "hover")
+    )
+    environment = EnvironmentFactory(effective).make(
+        seed=1000,
+        initial_state_randomization_enabled=False,
+        exact_attitude_perturbation=True,
+    )
+    try:
+        observation, _info = environment.reset(seed=1000)
+        quaternion = np.asarray(observation[6:10], dtype=float)
+        quaternion /= np.linalg.norm(quaternion)
+        tilt_deg = np.degrees(
+            np.arccos(
+                np.clip(
+                    1.0 - 2.0 * (quaternion[1] ** 2 + quaternion[2] ** 2),
+                    -1.0,
+                    1.0,
+                )
+            )
+        )
+        assert tilt_deg == pytest.approx(30.0, abs=1e-5)
+    finally:
+        environment.close()
+
+
+def test_unified_floor_and_e2e_start_from_identical_nominal_hover_state() -> None:
+    pytest.importorskip("mujoco")
+    pytest.importorskip("gymnasium")
+    from crazyflie_rl.factories import EnvironmentFactory
+
+    source = load_config(CONFIGS / "e2e_train_initial_perturb.yaml")
+    args = build_parser(source.source_path, "test").parse_args(
+        ["--position-perturbation", "0", "--attitude-perturbation-deg", "0"]
+    )
+    effective = eval_cli._disable_training_initial_state_randomization(
+        apply_runtime_overrides(source, args, "hover")
+    )
+    factory = EnvironmentFactory(effective)
+    floor = factory.make(
+        seed=1000,
+        mode="residual",
+        initial_state_randomization_enabled=False,
+        exact_attitude_perturbation=True,
+    )
+    policy = factory.make(
+        seed=1000,
+        initial_state_randomization_enabled=False,
+        exact_attitude_perturbation=True,
+    )
+    try:
+        floor_observation, _floor_info = floor.reset(seed=1000)
+        policy_observation, _policy_info = policy.reset(seed=1000)
+        np.testing.assert_array_equal(floor_observation, policy_observation)
+        np.testing.assert_array_equal(floor.data.qpos, policy.data.qpos)
+        np.testing.assert_array_equal(floor.data.qvel, policy.data.qvel)
+        np.testing.assert_array_equal(floor.data.xpos, policy.data.xpos)
+        np.testing.assert_array_equal(floor.data.xquat, policy.data.xquat)
+        np.testing.assert_array_equal(floor.data.sensordata, policy.data.sensordata)
+        np.testing.assert_array_equal(floor._last_f_cmd, policy._last_f_cmd)
+        np.testing.assert_array_equal(floor._last_f, policy._last_f)
+        np.testing.assert_array_equal(floor._last_omega, policy._last_omega)
+        np.testing.assert_array_equal(floor._actuator.omega, policy._actuator.omega)
+        np.testing.assert_array_equal(floor.data.qpos[0:3], [0.0, 0.0, 1.0])
+        np.testing.assert_array_equal(floor.data.qpos[3:7], [1.0, 0.0, 0.0, 0.0])
+        np.testing.assert_array_equal(floor.data.qvel, np.zeros_like(floor.data.qvel))
+        hover_thrust = effective.vehicle.mass * effective.vehicle.gravity / 4.0
+        np.testing.assert_allclose(floor._last_f_cmd, hover_thrust, atol=1e-12)
+        np.testing.assert_allclose(floor._last_f, hover_thrust, atol=1e-12)
+    finally:
+        floor.close()
+        policy.close()
+
+
+def test_omitted_axis_preserves_the_seeded_legacy_reset_result_exactly() -> None:
+    pytest.importorskip("mujoco")
+    pytest.importorskip("gymnasium")
+    from crazyflie_rl.factories import EnvironmentFactory
+
+    source = load_config(CONFIGS / "e2e_train_legacy_initial_perturb_v2.yaml")
+    config = replace(
+        source,
+        environment=replace(
+            source.environment,
+            episode_sec=0.01,
+            position_perturbation=0.05,
+            attitude_perturbation_deg=20.0,
+        ),
+        mission=replace(
+            source.mission,
+            hover=replace(source.mission.hover, duration=0.01),
+        ),
+    )
+    legacy_environment = EnvironmentFactory(config).make(
+        initial_state_randomization_enabled=False,
+        exact_attitude_perturbation=True,
+    )
+    try:
+        expected_observation, _info = legacy_environment.reset(
+            seed=config.evaluation.seed_start
+        )
+    finally:
+        legacy_environment.close()
+
+    policy_observations: list[np.ndarray] = []
+
+    class CapturingPolicy:
+        @staticmethod
+        def predict(observation, deterministic=True):
+            assert deterministic is True
+            policy_observations.append(np.asarray(observation).copy())
+            return np.zeros(4, dtype=np.float32), None
+
+    runner = EvaluationRunner(
+        config,
+        SimpleNamespace(),
+        headless=True,
+        realtime=False,
+        camera_tracking=False,
+        mission=mission_from_experiment(config, mission_type="hover"),
+        disable_initial_state_randomization=True,
+        exact_attitude_perturbation=True,
+    )
+
+    trace = runner.run(CapturingPolicy(), "residual", "PPO")
+
+    np.testing.assert_array_equal(policy_observations[0], expected_observation)
+    assert trace.attitude_axis is None
+    assert trace.initial_quaternion_wxyz is None
+
+
+def test_floor_and_ppo_share_selected_initial_attitude_and_actuator_state() -> None:
+    pytest.importorskip("mujoco")
+    pytest.importorskip("gymnasium")
+
+    source = load_config(CONFIGS / "e2e_train_legacy_initial_perturb_v2.yaml")
+    config = replace(
+        source,
+        environment=replace(
+            source.environment,
+            episode_sec=0.01,
+            position_perturbation=0.0,
+            attitude_perturbation_deg=20.0,
+        ),
+        mission=replace(
+            source.mission,
+            hover=replace(source.mission.hover, duration=0.01),
+        ),
+    )
+    mission = mission_from_experiment(config, mission_type="hover")
+    runner = EvaluationRunner(
+        config,
+        SimpleNamespace(),
+        headless=True,
+        realtime=False,
+        camera_tracking=False,
+        mission=mission,
+        disable_initial_state_randomization=True,
+        exact_attitude_perturbation=True,
+        attitude_axis="roll_minus",
+    )
+
+    class ZeroPolicy:
+        @staticmethod
+        def predict(_observation, deterministic=True):
+            assert deterministic is True
+            return np.zeros(4, dtype=np.float32), None
+
+    floor = runner.run(None, "floor", "PID floor", control_mode="residual")
+    ppo = runner.run(ZeroPolicy(), "residual", "PPO")
+
+    expected_quaternion = named_attitude_quaternion_wxyz("roll_minus", 20.0)
+    np.testing.assert_array_equal(
+        floor.initial_position_xyz_m, ppo.initial_position_xyz_m
+    )
+    np.testing.assert_array_equal(
+        floor.initial_quaternion_wxyz, ppo.initial_quaternion_wxyz
+    )
+    np.testing.assert_allclose(
+        floor.initial_quaternion_wxyz,
+        expected_quaternion,
+        rtol=0.0,
+        atol=1e-15,
+    )
+    assert floor.initial_actuator_state == ppo.initial_actuator_state
+    assert floor.actuator == ppo.actuator
+    assert floor.initial_axis_xyz == pytest.approx([-1.0, 0.0, 0.0])
+    assert ppo.initial_axis_xyz == pytest.approx([-1.0, 0.0, 0.0])
 
 
 def _write_saved_best_model(
@@ -277,6 +782,122 @@ def test_latest_best_never_falls_back_to_final_model(tmp_path: Path) -> None:
 
     with pytest.raises(FileNotFoundError, match="No saved best PPO model"):
         eval_cli._model_path("latest-best", config)
+
+
+def _write_final_manifest(
+    artifact_root: Path,
+    *,
+    run_name: str,
+    profile: str,
+    created_at: str,
+    command: str = "train_ppo_02.py",
+    control_mode: str = "e2e",
+    observation_shape: list[int] | None = None,
+    action_shape: list[int] | None = None,
+) -> Path:
+    run_dir = artifact_root / "runs" / run_name
+    model_path = run_dir / "models" / "final.zip"
+    model_path.parent.mkdir(parents=True)
+    model_path.write_bytes(b"final-model")
+    manifest_path = run_dir / "manifests" / "manifest.json"
+    manifest_path.parent.mkdir()
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "run_id": run_name,
+                "status": "completed",
+                "created_at": created_at,
+                "command": [command, "--config", f"configs/{profile}.yaml"],
+                "config_profile": profile,
+                "control_mode": control_mode,
+                "observation_shape": observation_shape or [15],
+                "action_shape": action_shape or [4],
+                "models": {
+                    "best": None,
+                    "final": {
+                        "kind": "final",
+                        "path": "models/final.zip",
+                        "timestep": 1_001_472,
+                    },
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    return model_path.resolve()
+
+
+def test_latest_final_requires_training_profile_mode_shape_and_final_record(
+    tmp_path: Path,
+) -> None:
+    source = load_config(CONFIGS / "e2e_train_initial_perturb.yaml")
+    artifact_root = tmp_path / "artifacts"
+    config = replace(source, paths=replace(source.paths, artifact_root=artifact_root))
+    older = _write_final_manifest(
+        artifact_root,
+        run_name="matching-old",
+        profile=source.profile_name,
+        created_at="2026-09-03T12:00:00+09:00",
+    )
+    newer = _write_final_manifest(
+        artifact_root,
+        run_name="matching-new",
+        profile=source.profile_name,
+        created_at="2026-09-03T13:00:00+09:00",
+    )
+    _write_final_manifest(
+        artifact_root,
+        run_name="recovery-newest",
+        profile=source.profile_name,
+        created_at="2026-09-03T16:00:00+09:00",
+        command="evaluate_recovery.py",
+    )
+    _write_final_manifest(
+        artifact_root,
+        run_name="wrong-profile",
+        profile="e2e_train_lyapunov",
+        created_at="2026-09-03T15:00:00+09:00",
+    )
+    _write_final_manifest(
+        artifact_root,
+        run_name="wrong-shape",
+        profile=source.profile_name,
+        created_at="2026-09-03T14:00:00+09:00",
+        observation_shape=[13],
+    )
+
+    selected, provenance = eval_cli._latest_final_model_selection(config)
+
+    assert selected == newer
+    assert selected != older
+    assert provenance["config_profile"] == source.profile_name
+    assert provenance["control_mode"] == "e2e"
+    assert provenance["observation_shape"] == [15]
+    assert provenance["action_shape"] == [4]
+    assert provenance["final_timestep"] == 1_001_472
+
+
+def test_latest_final_refuses_ambiguous_newest_provenance(tmp_path: Path) -> None:
+    source = load_config(CONFIGS / "e2e_train_initial_perturb.yaml")
+    artifact_root = tmp_path / "artifacts"
+    config = replace(source, paths=replace(source.paths, artifact_root=artifact_root))
+    first = _write_final_manifest(
+        artifact_root,
+        run_name="same-time-a",
+        profile=source.profile_name,
+        created_at="2026-09-03T13:00:00+09:00",
+    )
+    second = _write_final_manifest(
+        artifact_root,
+        run_name="same-time-b",
+        profile=source.profile_name,
+        created_at="2026-09-03T13:00:00+09:00",
+    )
+
+    with pytest.raises(RuntimeError, match="Pass an explicit --model path") as caught:
+        eval_cli._latest_final_model_selection(config)
+    assert str(first) in str(caught.value)
+    assert str(second) in str(caught.value)
 
 
 def test_hover_runtime_overrides_update_mission_and_environment() -> None:
@@ -617,6 +1238,7 @@ def test_summary_includes_effective_mission_and_runtime_options() -> None:
         "Mode              : Lissajous",
         "Floor controller  : RESIDUAL (PID)",
         "PPO controller    : E2E",
+        "Selected controls : PID floor=RESIDUAL, learned PPO=E2E",
         "Ramp              : 2 s",
         "Takeoff           : 4 s",
         "Settle            : 2 s",
@@ -630,6 +1252,91 @@ def test_summary_includes_effective_mission_and_runtime_options() -> None:
         "Attitude perturb. : 0 deg",
     ):
         assert expected in summary
+
+
+def test_summary_includes_selected_axis_vector_and_initial_quaternion() -> None:
+    source = load_config(CONFIGS / "view_live_hover_eval.yaml")
+    config = replace(
+        source,
+        environment=replace(source.environment, attitude_perturbation_deg=20.0),
+    )
+    mission = mission_from_experiment(config, mission_type="hover")
+
+    summary = format_run_summary(
+        config,
+        mission,
+        policy="floor",
+        model=None,
+        unified=True,
+        attitude_axis="roll_minus",
+    )
+
+    assert "Attitude perturb. : 20 deg" in summary
+    assert "Attitude axis     : roll_minus" in summary
+    assert "Initial axis      : [-1, 0, 0]" in summary
+    assert "Initial quaternion: [0.984808, -0.173648, 0, 0]" in summary
+
+
+def test_plot_subtitle_records_selected_attitude_axis(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    config = load_config(CONFIGS / "view_live_hover_eval.yaml")
+    mission = mission_from_experiment(config, mission_type="hover")
+    trace = RolloutTrace(
+        policy="floor",
+        label="PID floor",
+        time_sec=np.array([0.0]),
+        position=np.array([[0.0, 0.0, 1.0]]),
+        attitude_deg=np.array([[-20.0, 0.0, 0.0]]),
+        reference_position=np.array([[0.0, 0.0, 1.0]]),
+        position_error=np.array([0.0]),
+        phases=("HOVER",),
+        training_boundary_crossed_at=None,
+        guard_boundary_crossed_at=None,
+        terminated_at=None,
+        truncated_at=None,
+        diverged_at=None,
+        attitude_axis="roll_minus",
+        initial_axis_xyz=np.array([-1.0, 0.0, 0.0]),
+        initial_position_xyz_m=np.array([0.0, 0.0, 1.0]),
+        initial_quaternion_wxyz=np.asarray(
+            named_attitude_quaternion_wxyz("roll_minus", 20.0)
+        ),
+    )
+    recorded: dict[str, str] = {}
+
+    def fake_hover_plot(path, **kwargs):
+        recorded["single_tag"] = kwargs["tag"]
+        return path
+
+    def fake_policy_plot(path, **kwargs):
+        recorded["comparison_tag"] = kwargs["tag"]
+        return path
+
+    eval_cli._ensure_runtime_imports()
+    monkeypatch.setattr(eval_cli, "save_hover_trace", fake_hover_plot)
+    monkeypatch.setattr(eval_cli, "save_policy_trace", fake_policy_plot)
+    artifacts = SimpleNamespace(
+        path=lambda _group, _kind, _suffix: tmp_path / "trace.png",
+        run_dir=tmp_path,
+    )
+
+    eval_cli._save_trace(
+        artifacts,
+        config,
+        trace,
+        mission,
+        title_condition="hover-test",
+    )
+    eval_cli._save_policy_report(
+        artifacts,
+        trace,
+        mission,
+        title_condition="hover-test",
+    )
+
+    assert "Attitude axis: roll_minus" in recorded["single_tag"]
+    assert "Attitude axis: roll_minus" in recorded["comparison_tag"]
 
 
 def test_interactive_hover_blank_answers_use_profile_defaults() -> None:
@@ -947,10 +1654,55 @@ def test_runner_uses_generic_mission_and_passes_each_reference(mode: str) -> Non
     assert env.closed is True
 
 
+def test_omitted_attitude_axis_does_not_touch_the_legacy_reset_observation(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    config = load_config(CONFIGS / "view_live_hover_eval.yaml")
+    env = _FakeEnvironment()
+    received_observations: list[np.ndarray] = []
+
+    class CapturingPolicy:
+        @staticmethod
+        def predict(observation, deterministic=True):
+            assert deterministic is True
+            received_observations.append(np.asarray(observation).copy())
+            return np.zeros(4), None
+
+    monkeypatch.setattr(
+        EvaluationRunner,
+        "_apply_initial_attitude_axis",
+        staticmethod(
+            lambda *_args, **_kwargs: pytest.fail(
+                "legacy reset must not be rewritten when --attitude-axis is omitted"
+            )
+        ),
+    )
+    runner = EvaluationRunner(
+        config,
+        SimpleNamespace(),
+        headless=True,
+        realtime=False,
+        camera_tracking=False,
+        mission=_FakeMission("hover"),
+        environment_factory=_FakeFactory(env),
+    )
+
+    trace = runner.run(CapturingPolicy(), "residual", "PPO")
+
+    np.testing.assert_array_equal(received_observations[0], env.observation())
+    assert trace.attitude_axis is None
+    assert trace.initial_quaternion_wxyz is None
+
+
 def test_runner_records_optional_bldc_signals_and_sampled_parameters() -> None:
     config = load_config(CONFIGS / "cf21b_actuator_eval.yaml")
 
     class ActuatorSignalEnvironment(_FakeEnvironment):
+        wrench_command_reference = (
+            "body frame; torque about the nominal allocator origin "
+            "(not the payload-shifted combined CoM)"
+        )
+
         def actuator_snapshot(self):
             return {
                 "enabled": True,
@@ -998,6 +1750,18 @@ def test_runner_records_optional_bldc_signals_and_sampled_parameters() -> None:
     assert metrics["motor_thrust_command_n_mean"] == pytest.approx([0.11] * 4)
     assert metrics["motor_omega_rad_s_max"] == pytest.approx([1740.0] * 4)
     assert metrics["wrench_actual_final"] == pytest.approx([0.0, 0.0, 0.0, 0.32])
+    assert metrics["wrench_command_final"] == pytest.approx(
+        [0.0, 0.0, 0.0, 0.44]
+    )
+    assert metrics["wrench_command_order"] == [
+        "tau_x_cmd",
+        "tau_y_cmd",
+        "tau_z_cmd",
+        "Fz_cmd",
+    ]
+    assert metrics["wrench_command_units"] == ["N*m", "N*m", "N*m", "N"]
+    assert metrics["wrench_command_stage"] == "before_allocation"
+    assert "nominal allocator origin" in metrics["wrench_command_reference"]
     assert metrics["actuator"]["model"] == "cf21b_first_order"
 
 
@@ -1300,7 +2064,9 @@ def test_unified_fake_rollout_saves_plot_metrics_runtime_config_and_manifest(
     assert metrics["policies"]["floor"]["control_mode"] == "residual"
     assert metrics["policy_control_modes"] == {"floor": "residual"}
     assert metrics["policies"]["floor"]["plot"].startswith("plots/")
-    assert factory.overrides == [{"mode": "residual"}]
+    assert factory.overrides == [
+        {"initial_state_randomization_enabled": False, "mode": "residual"}
+    ]
 
     manifest_path = next((run_dir / "manifests").glob("*manifest*.json"))
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -1349,9 +2115,22 @@ def test_simplified_unified_run_uses_pid_floor_and_saves_two_policy_plots(
     )
 
     class SignalEnvironment(_FakeEnvironment):
+        wrench_command_reference = (
+            "body frame; torque about the nominal allocator origin "
+            "(not the payload-shifted combined CoM)"
+        )
+
         def step(self, action):
             action = np.clip(np.asarray(action, dtype=float), -1.0, 1.0)
             self._last_f = 0.01 + 0.002 * action
+            # Deliberately unrelated to normalized action so the assertion below
+            # proves that plotting receives the environment's actual control-path
+            # signal instead of reconstructing a wrench in the plotting layer.
+            self._last_wrench_cmd = (
+                np.array([0.001, -0.002, 0.00003, 0.41])
+                if self.mode == "residual"
+                else np.array([0.004, -0.005, 0.00006, 0.43])
+            )
             self.references.append(self.pos_des.copy())
             self.steps += 1
             return self.observation(), 0.0, False, self.steps == 3, {}
@@ -1396,10 +2175,19 @@ def test_simplified_unified_run_uses_pid_floor_and_saves_two_policy_plots(
         assert path.name == ("floor.png" if trace.policy == "floor" else "ppo.png")
         if trace.policy == "floor":
             np.testing.assert_allclose(trace.control_input, 0.0)
+            np.testing.assert_allclose(
+                trace.wrench_command,
+                np.tile([0.001, -0.002, 0.00003, 0.41], (trace.sample_count, 1)),
+            )
         else:
             np.testing.assert_allclose(
                 trace.control_input[0], [1.0, -1.0, 0.5, 0.0]
             )
+            np.testing.assert_allclose(
+                trace.wrench_command,
+                np.tile([0.004, -0.005, 0.00006, 0.43], (trace.sample_count, 1)),
+            )
+        assert "nominal allocator origin" in trace.wrench_command_reference
         np.testing.assert_allclose(trace.linear_velocity[0], [0.1, -0.2, 0.3])
         np.testing.assert_allclose(trace.angular_velocity[0], [1.0, -2.0, 3.0])
         assert kwargs["motor_unit"] == "N"
@@ -1422,7 +2210,7 @@ def test_simplified_unified_run_uses_pid_floor_and_saves_two_policy_plots(
             "--laps",
             "1",
             "--policy",
-            "floor",
+            "both",
             "--model",
             str(model),
             "--headless",
@@ -1437,7 +2225,10 @@ def test_simplified_unified_run_uses_pid_floor_and_saves_two_policy_plots(
     assert loaded_profiles[0].name == "view_live_circle_wide_eval.yaml"
     assert [trace.policy for trace in plotted] == ["floor", "residual"]
     assert [trace.control_mode for trace in plotted] == ["residual", "e2e"]
-    assert FreshFactory.calls == [{"mode": "residual"}, {}]
+    assert FreshFactory.calls == [
+        {"initial_state_randomization_enabled": False, "mode": "residual"},
+        {"initial_state_randomization_enabled": False},
+    ]
     run_dir = next((tmp_path / "artifacts" / "runs").iterdir())
     assert {path.name for path in (run_dir / "plots").glob("*.png")} == {
         "floor.png",

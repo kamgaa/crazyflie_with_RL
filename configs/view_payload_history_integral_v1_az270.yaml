@@ -1,0 +1,7 @@
+extends: view_payload_history_integral_v1_nominal.yaml
+environment:
+  payload:
+    mass: 0.010
+    offset: [0.0, -0.030]
+experiment:
+  condition: view-history-integral-payload-10g-r30mm-az270

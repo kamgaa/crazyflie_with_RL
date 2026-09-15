@@ -1,0 +1,14 @@
+extends: e2e_train.yaml
+
+
+training:
+  seed: 42
+environment:
+  reward:
+    mode: lyapunov
+    e2e_torque_xy_weight: 0.1
+    e2e_torque_yaw_weight: 0.02
+
+experiment:
+  condition: nominal-lyapunov-candidate-start
+  description: E2E PPO Lyapunov-candidate reward starting point; not long-run tuned

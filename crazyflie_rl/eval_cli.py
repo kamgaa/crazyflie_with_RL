@@ -4,13 +4,26 @@ from __future__ import annotations
 
 import argparse
 from contextlib import contextmanager, nullcontext
+import csv
 from dataclasses import asdict, dataclass, replace
+from datetime import datetime
 import json
 import math
 from pathlib import Path
 import sys
 import time
 from typing import TYPE_CHECKING, Any, Callable, Mapping, Sequence, TextIO
+
+from .attitude import (
+    ATTITUDE_AXIS_CHOICES,
+    attitude_axis_vector,
+    named_attitude_quaternion_wxyz,
+)
+from .physics_version import (
+    PHYSICS_MODEL_VERSION,
+    manifest_physics_version,
+    physics_comparison,
+)
 
 if TYPE_CHECKING:
     import numpy as np
@@ -37,6 +50,70 @@ DIRECTION_ALIASES = {
 }
 
 LATEST_BEST_MODEL = "latest-best"
+LATEST_FINAL_MODEL = "latest-final"
+
+EVALUATION_PRESETS: dict[str, dict[str, Any]] = {
+    "recovery-ppo-nominal": {
+        "description": "E2E PPO nominal airborne hover for 8 seconds",
+        "config": "configs/e2e_train_initial_perturb.yaml",
+        "mode": "hover",
+        "policy": "ppo",
+        "duration": 8.0,
+        "position_perturbation": 0.0,
+        "attitude_perturbation_deg": 0.0,
+        "seed": 1000,
+        "force_floor_start": False,
+        "model": LATEST_FINAL_MODEL,
+    },
+    "recovery-ppo-tilt30": {
+        "description": "E2E PPO recovery from an exact 30 degree tilt",
+        "config": "configs/e2e_train_initial_perturb.yaml",
+        "mode": "hover",
+        "policy": "ppo",
+        "duration": 8.0,
+        "position_perturbation": 0.0,
+        "attitude_perturbation_deg": 30.0,
+        "seed": 1000,
+        "force_floor_start": False,
+        "model": LATEST_FINAL_MODEL,
+    },
+    "recovery-pid-tilt30": {
+        "description": "PID-only recovery from an exact 30 degree tilt",
+        "config": "configs/e2e_train_initial_perturb.yaml",
+        "mode": "hover",
+        "policy": "floor",
+        "duration": 8.0,
+        "position_perturbation": 0.0,
+        "attitude_perturbation_deg": 30.0,
+        "seed": 1000,
+        "force_floor_start": False,
+        "model": None,
+    },
+    "recovery-both-tilt30": {
+        "description": "PID then E2E PPO from the same exact 30 degree tilt",
+        "config": "configs/e2e_train_initial_perturb.yaml",
+        "mode": "hover",
+        "policy": "both",
+        "duration": 8.0,
+        "position_perturbation": 0.0,
+        "attitude_perturbation_deg": 30.0,
+        "seed": 1000,
+        "force_floor_start": False,
+        "model": LATEST_FINAL_MODEL,
+    },
+    "recovery-ppo-position20cm": {
+        "description": "E2E PPO hover with a 0.20 m position perturbation",
+        "config": "configs/e2e_train_initial_perturb.yaml",
+        "mode": "hover",
+        "policy": "ppo",
+        "duration": 8.0,
+        "position_perturbation": 0.20,
+        "attitude_perturbation_deg": 0.0,
+        "seed": 1000,
+        "force_floor_start": False,
+        "model": LATEST_FINAL_MODEL,
+    },
+}
 
 
 def _ensure_runtime_imports() -> None:
@@ -46,7 +123,10 @@ def _ensure_runtime_imports() -> None:
         return
     import numpy as numpy_module
 
-    from .artifacts import ArtifactManager as artifact_manager, stable_float as float_tag
+    from .artifacts import (
+        ArtifactManager as artifact_manager,
+        stable_float as float_tag,
+    )
     from .config import ConfigError as config_error, load_config as config_loader
     from .missions import (
         CircleMission as circle_mission,
@@ -55,6 +135,7 @@ def _ensure_runtime_imports() -> None:
     from .plotting import (
         quaternion_to_euler_deg as quaternion_converter,
         save_hover_trace as hover_plotter,
+        save_lyapunov_trace as lyapunov_plotter,
         save_policy_trace as policy_plotter,
         save_tracking_trace as tracking_plotter,
     )
@@ -69,6 +150,7 @@ def _ensure_runtime_imports() -> None:
         mission_from_experiment=mission_factory,
         quaternion_to_euler_deg=quaternion_converter,
         save_hover_trace=hover_plotter,
+        save_lyapunov_trace=lyapunov_plotter,
         save_policy_trace=policy_plotter,
         save_tracking_trace=tracking_plotter,
     )
@@ -127,9 +209,31 @@ class RolloutTrace:
     motor_omega_rad_s: np.ndarray | None = None
     reaction_torque_nm: np.ndarray | None = None
     wrench_command: np.ndarray | None = None
+    wrench_command_reference: str | None = None
     wrench_actual: np.ndarray | None = None
     allocation_error: np.ndarray | None = None
     actuator: Mapping[str, Any] | None = None
+    lyapunov_v_before: np.ndarray | None = None
+    lyapunov_v: np.ndarray | None = None
+    lyapunov_delta_v: np.ndarray | None = None
+    lyapunov_decay_target: np.ndarray | None = None
+    normalized_tracking_error: np.ndarray | None = None
+    geometric_attitude_error: np.ndarray | None = None
+    angular_rate_error: np.ndarray | None = None
+    actuator_saturation_fraction: np.ndarray | None = None
+    terminated_transition: np.ndarray | None = None
+    truncated_transition: np.ndarray | None = None
+    policy_dt: float | None = None
+    attitude_axis: str | None = None
+    initial_axis_xyz: np.ndarray | None = None
+    initial_position_xyz_m: np.ndarray | None = None
+    initial_quaternion_wxyz: np.ndarray | None = None
+    initial_actuator_state: Mapping[str, Any] | None = None
+    reset_info: Mapping[str, Any] | None = None
+    physics_wrenches: tuple[Mapping[str, Any], ...] = ()
+    observation_diagnostics: tuple[Mapping[str, Any], ...] = ()
+    legacy_reward_terms: tuple[Mapping[str, Any], ...] = ()
+    transition_timing: tuple[Mapping[str, Any], ...] = ()
 
     @property
     def sample_count(self) -> int:
@@ -140,6 +244,10 @@ def _is_latest_best_model(value: str | Path | None) -> bool:
     """Return whether ``value`` requests the run-scoped latest best archive."""
 
     return value is not None and str(value).strip().casefold() == LATEST_BEST_MODEL
+
+
+def _is_latest_final_model(value: str | Path | None) -> bool:
+    return value is not None and str(value).strip().casefold() == LATEST_FINAL_MODEL
 
 
 def _latest_best_model_path(config: ExperimentConfig) -> Path:
@@ -192,6 +300,150 @@ def _latest_best_model_path(config: ExperimentConfig) -> Path:
     )
 
 
+def _latest_final_model_selection(
+    config: ExperimentConfig,
+) -> tuple[Path, dict[str, Any]]:
+    """Resolve a provenance-complete final archive for one training profile."""
+
+    runs_root = Path(config.paths.artifact_root) / "runs"
+    accepted: list[tuple[datetime, Path, dict[str, Any]]] = []
+    examined: list[str] = []
+    if runs_root.is_dir():
+        for manifest_path in runs_root.glob("*/manifests/*manifest*.json"):
+            try:
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                continue
+            if not isinstance(manifest, Mapping):
+                continue
+            models = manifest.get("models")
+            final = models.get("final") if isinstance(models, Mapping) else None
+            final_path = final.get("path") if isinstance(final, Mapping) else None
+            if not isinstance(final_path, str) or not final_path:
+                continue
+
+            run_dir = manifest_path.parent.parent.resolve()
+            relative_model = Path(final_path)
+            if relative_model.is_absolute():
+                examined.append(f"{manifest_path}: absolute final path rejected")
+                continue
+            model_path = (run_dir / relative_model).resolve()
+            try:
+                model_path.relative_to(run_dir)
+            except ValueError:
+                examined.append(f"{manifest_path}: escaping final path rejected")
+                continue
+            examined.append(str(model_path))
+
+            command = manifest.get("command")
+            executable = (
+                Path(str(command[0])).name
+                if isinstance(command, list) and command
+                else ""
+            )
+            if executable not in {"train_ppo.py", "train_ppo_02.py"}:
+                continue
+            if manifest.get("status") != "completed":
+                continue
+            if manifest.get("config_profile") != config.profile_name:
+                continue
+            if manifest.get("control_mode") != "e2e":
+                continue
+            if tuple(manifest.get("observation_shape", ())) != config.observation_shape:
+                continue
+            if tuple(manifest.get("action_shape", ())) != config.action_shape:
+                continue
+            if model_path.suffix.casefold() != ".zip" or not model_path.is_file():
+                continue
+            created_text = manifest.get("created_at")
+            if not isinstance(created_text, str):
+                continue
+            try:
+                created_at = datetime.fromisoformat(created_text)
+            except ValueError:
+                continue
+            if created_at.tzinfo is None:
+                continue
+            provenance = {
+                "selection": LATEST_FINAL_MODEL,
+                "physics_model_version": manifest_physics_version(manifest),
+                "manifest": str(manifest_path.resolve()),
+                "run_id": manifest.get("run_id"),
+                "status": manifest.get("status"),
+                "created_at": created_text,
+                "command": list(command),
+                "config_profile": manifest.get("config_profile"),
+                "control_mode": manifest.get("control_mode"),
+                "observation_shape": list(manifest.get("observation_shape", ())),
+                "action_shape": list(manifest.get("action_shape", ())),
+                "final_timestep": final.get("timestep"),
+            }
+            accepted.append((created_at, model_path, provenance))
+
+    if not accepted:
+        details = "\n  ".join(examined) if examined else "(no final model records)"
+        raise FileNotFoundError(
+            "No unambiguous completed E2E training final matches profile "
+            f"{config.profile_name!r} under {runs_root}. Candidates examined:\n  "
+            f"{details}\nPass an explicit --model path."
+        )
+    newest_time = max(item[0] for item in accepted)
+    newest = [item for item in accepted if item[0] == newest_time]
+    if len(newest) != 1:
+        paths = "\n  ".join(str(item[1]) for item in newest)
+        raise RuntimeError(
+            "Multiple matching final models have the same newest provenance "
+            f"timestamp {newest_time.isoformat()}:\n  {paths}\n"
+            "Pass an explicit --model path."
+        )
+    _created_at, model_path, provenance = newest[0]
+    return model_path, provenance
+
+
+def _model_provenance(model_path: Path) -> dict[str, Any]:
+    """Describe an explicit archive without pretending unrecorded provenance."""
+
+    resolved = model_path.resolve()
+    run_dir = resolved.parent.parent
+    manifests_dir = run_dir / "manifests"
+    if manifests_dir.is_dir():
+        for manifest_path in manifests_dir.glob("*manifest*.json"):
+            try:
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                continue
+            models = manifest.get("models") if isinstance(manifest, Mapping) else None
+            if not isinstance(models, Mapping):
+                continue
+            for kind in ("final", "best", "best-recovery"):
+                record = models.get(kind)
+                relative = record.get("path") if isinstance(record, Mapping) else None
+                if not isinstance(relative, str) or Path(relative).is_absolute():
+                    continue
+                if (run_dir / relative).resolve() != resolved:
+                    continue
+                return {
+                    "physics_model_version": manifest_physics_version(manifest),
+                    "selection": "explicit-cli",
+                    "manifest": str(manifest_path.resolve()),
+                    "run_id": manifest.get("run_id"),
+                    "status": manifest.get("status"),
+                    "created_at": manifest.get("created_at"),
+                    "command": manifest.get("command"),
+                    "config_profile": manifest.get("config_profile"),
+                    "control_mode": manifest.get("control_mode"),
+                    "observation_shape": manifest.get("observation_shape"),
+                    "action_shape": manifest.get("action_shape"),
+                    "model_kind": kind,
+                    "model_timestep": record.get("timestep"),
+                }
+    return {
+        "selection": "explicit-cli",
+        "manifest": None,
+        "verification": "unmanaged-or-unrecognized",
+    }
+
+
 def _model_candidate(value: str | Path | None, config: ExperimentConfig) -> Path:
     candidate = (
         config.paths.legacy_model_root / "ppo_best.zip"
@@ -208,6 +460,8 @@ def _model_candidate(value: str | Path | None, config: ExperimentConfig) -> Path
 def _model_path(value: str | Path | None, config: ExperimentConfig) -> Path:
     if _is_latest_best_model(value):
         return _latest_best_model_path(config)
+    if _is_latest_final_model(value):
+        return _latest_final_model_selection(config)[0]
 
     candidate = _model_candidate(value, config)
     if candidate.is_file():
@@ -221,6 +475,7 @@ def _model_path(value: str | Path | None, config: ExperimentConfig) -> Path:
 
 def _load_policy(path: Path, config: ExperimentConfig):
     from stable_baselines3 import PPO
+    from .warm_start import validate_loaded_observation_schema
 
     policy = PPO.load(str(path), device=config.training.ppo.device)
     observed = tuple(getattr(policy.observation_space, "shape", ()))
@@ -234,6 +489,8 @@ def _load_policy(path: Path, config: ExperimentConfig):
         raise ValueError(
             f"model action shape {action} does not match {config.action_shape}: {path}"
         )
+    validate_loaded_observation_schema(policy, config, model_path=path)
+    policy.physics_model_version = _model_provenance(path).get("physics_model_version")
     return policy
 
 
@@ -245,9 +502,7 @@ def _policy_specs(
 ) -> list[tuple[str, str]]:
     if config.control_mode == "e2e":
         floor_label = (
-            "floor (PID)"
-            if unified
-            else "E2E zero-action (gravity compensation only)"
+            "floor (PID)" if unified else "E2E zero-action (gravity compensation only)"
         )
         policy_label = "E2E PPO"
     else:
@@ -256,7 +511,7 @@ def _policy_specs(
     result: list[tuple[str, str]] = []
     if selected in {"floor", "both"}:
         result.append(("floor", floor_label))
-    if selected in {"residual", "both"}:
+    if selected in {"ppo", "residual", "both"}:
         result.append(("residual", policy_label))
     return result
 
@@ -279,6 +534,20 @@ def _expected_policy_control_modes(
             unified=unified,
         )
     }
+
+
+def _controller_selection_text(
+    config: ExperimentConfig,
+    selected: str,
+    *,
+    unified: bool,
+) -> str:
+    values: list[str] = []
+    for policy_key, _label in _policy_specs(config, selected, unified=unified):
+        mode = "residual" if unified and policy_key == "floor" else config.control_mode
+        controller = "PID floor" if policy_key == "floor" else "learned PPO"
+        values.append(f"{controller}={mode.upper()}")
+    return ", ".join(values)
 
 
 def _finite(value: float, name: str) -> float:
@@ -344,9 +613,7 @@ def apply_runtime_overrides(
     if args.goto_sec is not None:
         common["goto_sec"] = _positive(args.goto_sec, "GOTO duration")
     if args.post_hold_sec is not None:
-        common["post_hold_sec"] = _nonnegative(
-            args.post_hold_sec, "post-HOLD duration"
-        )
+        common["post_hold_sec"] = _nonnegative(args.post_hold_sec, "post-HOLD duration")
     if args.force_floor_start is not None:
         common["force_floor_start"] = bool(args.force_floor_start)
 
@@ -381,8 +648,10 @@ def apply_runtime_overrides(
         )
     elif mode == "circle":
         circle = mission.circle
-        center = circle.center_xy if args.center is None else tuple(
-            _finite(value, "circle center") for value in args.center
+        center = (
+            circle.center_xy
+            if args.center is None
+            else tuple(_finite(value, "circle center") for value in args.center)
         )
         radius = (
             circle.radius
@@ -398,11 +667,7 @@ def apply_runtime_overrides(
             if period_override is None
             else _positive(period_override, "circle period")
         )
-        laps = (
-            circle.laps
-            if args.laps is None
-            else _positive(args.laps, "circle laps")
-        )
+        laps = circle.laps if args.laps is None else _positive(args.laps, "circle laps")
         start_angle = (
             circle.start_angle_deg
             if args.start_angle_deg is None
@@ -436,8 +701,10 @@ def apply_runtime_overrides(
         mission = replace(mission, **common, circle=circle, goto_xy=goto_xy)
     elif mode == "lissajous":
         lissajous = mission.lissajous
-        center = lissajous.center_xy if args.center is None else tuple(
-            _finite(value, "Lissajous center") for value in args.center
+        center = (
+            lissajous.center_xy
+            if args.center is None
+            else tuple(_finite(value, "Lissajous center") for value in args.center)
         )
         amplitude_x = (
             lissajous.amplitude_xy[0]
@@ -501,9 +768,7 @@ def apply_runtime_overrides(
             center[0] + amplitude_x * math.sin(math.radians(phase_deg)),
             center[1],
         )
-        mission = replace(
-            mission, **common, lissajous=lissajous, goto_xy=goto_xy
-        )
+        mission = replace(mission, **common, lissajous=lissajous, goto_xy=goto_xy)
     else:  # defensive: parser and config validation normally catch this
         raise ConfigError(f"unknown mission mode: {mode!r}")
 
@@ -515,14 +780,29 @@ def apply_runtime_overrides(
     )
 
 
+def _disable_training_initial_state_randomization(
+    config: ExperimentConfig,
+) -> ExperimentConfig:
+    """Return a viewer config that keeps CLI perturbations but not curriculum."""
+
+    settings = config.environment.initial_state_randomization
+    if not settings.enabled:
+        return config
+    return replace(
+        config,
+        environment=replace(
+            config.environment,
+            initial_state_randomization=replace(settings, enabled=False),
+        ),
+    )
+
+
 def _legacy_circle_condition(config: ExperimentConfig, mission: CircleMission) -> str:
     payload = config.environment.payload
     offset_x, offset_y = payload.offset
     offset_radius = math.hypot(offset_x, offset_y)
     offset_angle = (
-        0.0
-        if offset_radius == 0.0
-        else math.degrees(math.atan2(offset_y, offset_x))
+        0.0 if offset_radius == 0.0 else math.degrees(math.atan2(offset_y, offset_x))
     )
     randomization = "rand" if payload.randomize else "fixed"
     return "-".join(
@@ -657,6 +937,9 @@ class EvaluationRunner:
         mission: ReferenceMission | None = None,
         legacy_circle_preset: bool = True,
         environment_factory: Any | None = None,
+        disable_initial_state_randomization: bool = False,
+        exact_attitude_perturbation: bool = False,
+        attitude_axis: str | None = None,
     ) -> None:
         _ensure_runtime_imports()
         if environment_factory is None:
@@ -669,6 +952,14 @@ class EvaluationRunner:
         self.headless = bool(headless)
         self.realtime = bool(realtime)
         self.camera_tracking = bool(camera_tracking)
+        self.disable_initial_state_randomization = bool(
+            disable_initial_state_randomization
+        )
+        self.exact_attitude_perturbation = bool(exact_attitude_perturbation)
+        if attitude_axis is not None:
+            # Validate programmatic callers as strictly as argparse callers.
+            attitude_axis_vector(attitude_axis)
+        self.attitude_axis = attitude_axis
         self.seed = config.evaluation.seed_start
         self.mission = mission or mission_from_experiment(
             config,
@@ -698,6 +989,10 @@ class EvaluationRunner:
             # Legacy trajectory viewers reserved two seconds beyond the loop.
             episode_override = mission.total_sec + 2.0
         overrides = {}
+        if self.disable_initial_state_randomization:
+            overrides["initial_state_randomization_enabled"] = False
+        if self.exact_attitude_perturbation:
+            overrides["exact_attitude_perturbation"] = True
         if episode_override is not None:
             overrides["episode_sec"] = episode_override
         if control_mode is not None:
@@ -731,7 +1026,7 @@ class EvaluationRunner:
         _ensure_runtime_imports()
         mission = self._active_mission()
         env.dist_torque_body = np.zeros(3)
-        observation, _ = env.reset(seed=self.seed)
+        observation, reset_info = env.reset(seed=self.seed)
         force_floor_start_requested = bool(
             mission is not None and self.config.mission.force_floor_start
         )
@@ -742,6 +1037,32 @@ class EvaluationRunner:
                 force_floor_start_applied,
                 force_floor_start_error,
             ) = self._force_floor_start(env)
+            if (
+                force_floor_start_applied
+                and getattr(env, "_auxiliary_observation", None) is not None
+            ):
+                observation = np.asarray(env.reset_auxiliary_observation_state())
+
+        attitude_axis = getattr(self, "attitude_axis", None)
+        initial_axis_xyz: np.ndarray | None = None
+        initial_position_xyz_m: np.ndarray | None = None
+        initial_quaternion_wxyz: np.ndarray | None = None
+        initial_actuator_state: dict[str, Any] | None = None
+        if attitude_axis is not None:
+            observation = self._apply_initial_attitude_axis(
+                env,
+                observation,
+                attitude_axis,
+                self.config.environment.attitude_perturbation_deg,
+            )
+            initial_axis_xyz = np.asarray(
+                attitude_axis_vector(attitude_axis), dtype=float
+            )
+            (
+                initial_position_xyz_m,
+                initial_quaternion_wxyz,
+                initial_actuator_state,
+            ) = self._capture_initial_state(env, observation)
 
         actuator_snapshot: dict[str, Any] | None = None
         snapshotter = getattr(env, "actuator_snapshot", None)
@@ -751,11 +1072,22 @@ class EvaluationRunner:
                 if isinstance(snapshot, Mapping):
                     actuator_snapshot = dict(snapshot)
             except Exception as exc:
-                actuator_snapshot = {
-                    "snapshot_error": f"{type(exc).__name__}: {exc}"
-                }
+                actuator_snapshot = {"snapshot_error": f"{type(exc).__name__}: {exc}"}
 
         dt = float(env.dt_phys * env.substeps)
+        # Floor/named-attitude overrides may reinitialize the actuators after reset.
+        if callable(getattr(env, "actuator_snapshot", None)):
+            reset_info = dict(reset_info)
+            reset_info["rollout_initial_actuator_state"] = (
+                {
+                    "parameters": env.actuator_snapshot(),
+                    "actual_thrust_n": np.asarray(env._last_f).tolist(),
+                    "omega_rad_s": np.asarray(env._last_omega).tolist(),
+                }
+                if hasattr(env, "_last_omega")
+                else env.actuator_snapshot()
+            )
+        physics_wrenches = []
         mission_steps = (
             int(round(mission.total_sec / dt)) if mission is not None else None
         )
@@ -777,6 +1109,19 @@ class EvaluationRunner:
         allocation_errors: list[np.ndarray] = []
         linear_velocities: list[np.ndarray] = []
         angular_velocities: list[np.ndarray] = []
+        lyapunov_v_befores: list[float] = []
+        lyapunov_values: list[float] = []
+        lyapunov_deltas: list[float] = []
+        lyapunov_decay_targets: list[float] = []
+        normalized_tracking_errors: list[float] = []
+        geometric_attitude_errors: list[np.ndarray] = []
+        angular_rate_errors: list[np.ndarray] = []
+        actuator_saturation_fractions: list[float] = []
+        terminated_transitions: list[bool] = []
+        truncated_transitions: list[bool] = []
+        observation_diagnostics: list[Mapping[str, Any]] = []
+        legacy_reward_diagnostics: list[Mapping[str, Any]] = []
+        transition_timings: list[Mapping[str, Any]] = []
         terminated_at: float | None = None
         truncated_at: float | None = None
         diverged_at: float | None = None
@@ -786,9 +1131,7 @@ class EvaluationRunner:
         rollout_error: str | None = None
         step_index = 0
 
-        def actuator_vector(
-            attribute: str, fallback: Any = None
-        ) -> np.ndarray:
+        def actuator_vector(attribute: str, fallback: Any = None) -> np.ndarray:
             """Read optional BLDC diagnostics without breaking legacy fakes."""
 
             value = getattr(env, attribute, fallback)
@@ -796,6 +1139,24 @@ class EvaluationRunner:
                 return np.asarray(value, dtype=float).reshape(4).copy()
             except (TypeError, ValueError):
                 return np.full(4, np.nan, dtype=float)
+
+        def reward_scalar(terms: Mapping[str, Any], key: str) -> float:
+            try:
+                value = float(terms[key])
+            except (KeyError, TypeError, ValueError):
+                return float("nan")
+            return value if np.isfinite(value) else float("nan")
+
+        def reward_vector(terms: Mapping[str, Any], key: str) -> np.ndarray:
+            try:
+                value = np.asarray(terms[key], dtype=float).reshape(3)
+            except (KeyError, TypeError, ValueError):
+                return np.full(3, np.nan, dtype=float)
+            return (
+                value.copy()
+                if np.all(np.isfinite(value))
+                else np.full(3, np.nan, dtype=float)
+            )
 
         @contextmanager
         def capture_rollout_error():
@@ -828,6 +1189,11 @@ class EvaluationRunner:
                 else:
                     reference, phase = mission.reference(time_now)
                     env.pos_des = np.asarray(reference, dtype=float).copy()
+                    # The enhanced reader rebuilds only the current base
+                    # feature for a changed reference. This is a pure query;
+                    # history and integral remain transition-owned.
+                    if getattr(env, "_auxiliary_observation", None) is not None:
+                        observation = np.asarray(env.current_observation())
                 if phase != last_phase:
                     print(f"    t={time_now:6.2f}s phase -> {phase}")
                     last_phase = phase
@@ -848,9 +1214,13 @@ class EvaluationRunner:
                     # Keep the environment's preserved dtype/clipping behavior;
                     # ``applied_action`` is the equivalent normalized signal
                     # recorded for diagnostics.
-                    observation, _reward, terminated, truncated, _ = env.step(
-                        action
-                    )
+                    (
+                        observation,
+                        _reward,
+                        terminated,
+                        truncated,
+                        step_info,
+                    ) = env.step(action)
                     thrust = np.asarray(
                         getattr(env, "_last_f", np.full(4, np.nan)), dtype=float
                     ).reshape(4)
@@ -861,6 +1231,26 @@ class EvaluationRunner:
                     wrench_command = actuator_vector("_last_wrench_cmd")
                     wrench_actual = actuator_vector("_last_wrench_actual")
                     allocation_error = actuator_vector("_last_allocation_error")
+                    reward_terms_value = (
+                        step_info.get("reward_terms", {})
+                        if isinstance(step_info, Mapping)
+                        else {}
+                    )
+                    reward_terms = (
+                        reward_terms_value
+                        if isinstance(reward_terms_value, Mapping)
+                        else {}
+                    )
+                    if isinstance(step_info, Mapping):
+                        observation_diagnostics.append(
+                            dict(step_info.get("observation_diagnostics", {}))
+                        )
+                        legacy_reward_diagnostics.append(
+                            dict(step_info.get("legacy_reward_terms", {}))
+                        )
+                        transition_timings.append(
+                            dict(step_info.get("transition_timing", {}))
+                        )
                 except Exception as exc:
                     rollout_error = f"{type(exc).__name__}: {exc}"
                     print(
@@ -878,11 +1268,22 @@ class EvaluationRunner:
                 linear_velocity = np.asarray(observation[3:6], dtype=float)
                 attitude = quaternion_to_euler_deg(observation[6:10])
                 angular_velocity = np.asarray(observation[10:13], dtype=float)
+                state_sample_time = time_now
+                if getattr(env, "_auxiliary_observation", None) is not None:
+                    timing = (
+                        step_info.get("transition_timing", {})
+                        if isinstance(step_info, Mapping)
+                        else {}
+                    )
+                    if isinstance(timing, Mapping):
+                        state_sample_time = float(
+                            timing.get("physics_step_end_time_s", time_now)
+                        )
                 error_norm = float(np.linalg.norm(position_error))
                 if error_norm > 0.15 and training_boundary_crossed_at is None:
-                    training_boundary_crossed_at = time_now
+                    training_boundary_crossed_at = state_sample_time
                 if error_norm > 1.5 and guard_boundary_crossed_at is None:
-                    guard_boundary_crossed_at = time_now
+                    guard_boundary_crossed_at = state_sample_time
 
                 if (
                     is_trajectory
@@ -894,11 +1295,11 @@ class EvaluationRunner:
                         or abs(attitude[1]) > 80.0
                     )
                 ):
-                    diverged_at = time_now
+                    diverged_at = state_sample_time
                     print(f"    state divergence at t={time_now:.2f}s phase={phase}")
                     break
 
-                times.append(time_now)
+                times.append(state_sample_time)
                 positions.append(actual_position.copy())
                 attitudes.append(attitude)
                 references.append(np.asarray(env.pos_des, dtype=float).copy())
@@ -913,19 +1314,41 @@ class EvaluationRunner:
                 wrench_commands.append(wrench_command)
                 wrench_actuals.append(wrench_actual)
                 allocation_errors.append(allocation_error)
+                if callable(getattr(env, "physics_wrench_snapshot", None)):
+                    physics_wrenches.append(env.physics_wrench_snapshot())
                 linear_velocities.append(linear_velocity.copy())
                 angular_velocities.append(angular_velocity.copy())
+                lyapunov_v_befores.append(reward_scalar(reward_terms, "v_before"))
+                lyapunov_values.append(reward_scalar(reward_terms, "v_after"))
+                lyapunov_deltas.append(reward_scalar(reward_terms, "delta_v"))
+                lyapunov_decay_targets.append(
+                    reward_scalar(reward_terms, "decay_target")
+                )
+                normalized_tracking_errors.append(
+                    reward_scalar(reward_terms, "normalized_tracking_error_norm")
+                )
+                geometric_attitude_errors.append(
+                    reward_vector(reward_terms, "attitude_error")
+                )
+                angular_rate_errors.append(
+                    reward_vector(reward_terms, "angular_rate_error")
+                )
+                actuator_saturation_fractions.append(
+                    reward_scalar(reward_terms, "actuator_saturation_fraction")
+                )
+                terminated_transitions.append(bool(terminated))
+                truncated_transitions.append(bool(truncated))
                 step_index += 1
 
                 if terminated and terminated_at is None:
-                    terminated_at = time_now
+                    terminated_at = state_sample_time
                     if is_trajectory:
                         print(
                             f"    env guard at t={time_now:.2f}s phase={phase}; "
                             "continuing trajectory mission"
                         )
                 if truncated and truncated_at is None:
-                    truncated_at = time_now
+                    truncated_at = state_sample_time
 
                 self._sync_viewer(viewer, actual_position, dt, wall_start)
 
@@ -955,22 +1378,61 @@ class EvaluationRunner:
             control_input=np.asarray(control_inputs, dtype=float).reshape((-1, 4)),
             motor_thrust=np.asarray(motor_thrusts, dtype=float).reshape((-1, 4)),
             linear_velocity=np.asarray(linear_velocities, dtype=float).reshape((-1, 3)),
-            angular_velocity=np.asarray(angular_velocities, dtype=float).reshape((-1, 3)),
+            angular_velocity=np.asarray(angular_velocities, dtype=float).reshape(
+                (-1, 3)
+            ),
             control_mode=control_mode,
-            motor_thrust_command=np.asarray(
-                motor_thrust_commands, dtype=float
-            ).reshape((-1, 4)),
+            motor_thrust_command=np.asarray(motor_thrust_commands, dtype=float).reshape(
+                (-1, 4)
+            ),
             motor_command=np.asarray(motor_commands, dtype=float).reshape((-1, 4)),
             motor_omega_rad_s=np.asarray(motor_omegas, dtype=float).reshape((-1, 4)),
             reaction_torque_nm=np.asarray(reaction_torques, dtype=float).reshape(
                 (-1, 4)
             ),
             wrench_command=np.asarray(wrench_commands, dtype=float).reshape((-1, 4)),
+            wrench_command_reference=str(
+                getattr(
+                    env,
+                    "wrench_command_reference",
+                    "body frame; torque about the nominal allocator origin "
+                    "(not the payload-shifted combined CoM)",
+                )
+            ),
             wrench_actual=np.asarray(wrench_actuals, dtype=float).reshape((-1, 4)),
             allocation_error=np.asarray(allocation_errors, dtype=float).reshape(
                 (-1, 4)
             ),
             actuator=actuator_snapshot,
+            reset_info=reset_info,
+            physics_wrenches=tuple(physics_wrenches),
+            observation_diagnostics=tuple(observation_diagnostics),
+            legacy_reward_terms=tuple(legacy_reward_diagnostics),
+            transition_timing=tuple(transition_timings),
+            lyapunov_v_before=np.asarray(lyapunov_v_befores, dtype=float),
+            lyapunov_v=np.asarray(lyapunov_values, dtype=float),
+            lyapunov_delta_v=np.asarray(lyapunov_deltas, dtype=float),
+            lyapunov_decay_target=np.asarray(lyapunov_decay_targets, dtype=float),
+            normalized_tracking_error=np.asarray(
+                normalized_tracking_errors, dtype=float
+            ),
+            geometric_attitude_error=np.asarray(
+                geometric_attitude_errors, dtype=float
+            ).reshape((-1, 3)),
+            angular_rate_error=np.asarray(angular_rate_errors, dtype=float).reshape(
+                (-1, 3)
+            ),
+            actuator_saturation_fraction=np.asarray(
+                actuator_saturation_fractions, dtype=float
+            ),
+            terminated_transition=np.asarray(terminated_transitions, dtype=bool),
+            truncated_transition=np.asarray(truncated_transitions, dtype=bool),
+            policy_dt=dt,
+            attitude_axis=attitude_axis,
+            initial_axis_xyz=initial_axis_xyz,
+            initial_position_xyz_m=initial_position_xyz_m,
+            initial_quaternion_wxyz=initial_quaternion_wxyz,
+            initial_actuator_state=initial_actuator_state,
         )
 
     def _viewer_context(self, env: Any):
@@ -1011,11 +1473,7 @@ class EvaluationRunner:
         if viewer is None:
             return
         mission = self._active_mission()
-        if (
-            mission is not None
-            and mission.name != "hover"
-            and self.camera_tracking
-        ):
+        if mission is not None and mission.name != "hover" and self.camera_tracking:
             with viewer.lock():
                 viewer.cam.lookat[:] = (
                     0.9 * np.asarray(viewer.cam.lookat) + 0.1 * actual_position
@@ -1025,6 +1483,102 @@ class EvaluationRunner:
             slack = dt - (time.time() - wall_start)
             if slack > 0.0:
                 time.sleep(slack)
+
+    @staticmethod
+    def _apply_initial_attitude_axis(
+        env: Any,
+        observation: np.ndarray,
+        attitude_axis: str,
+        perturbation_deg: float,
+    ) -> np.ndarray:
+        """Replace only the reset quaternion with one named axis-angle pose."""
+
+        _ensure_runtime_imports()
+        import mujoco
+
+        quaternion = np.asarray(
+            named_attitude_quaternion_wxyz(attitude_axis, perturbation_deg),
+            dtype=float,
+        )
+        original_quaternion = np.asarray(env.data.qpos[3:7], dtype=float).copy()
+        try:
+            env.data.qpos[3:7] = quaternion
+            mujoco.mj_forward(env.model, env.data)
+        except Exception:
+            env.data.qpos[3:7] = original_quaternion
+            try:
+                mujoco.mj_forward(env.model, env.data)
+            except Exception:
+                pass
+            raise
+
+        reset_info = getattr(env, "_last_reset_info", None)
+        if isinstance(reset_info, dict):
+            reset_info.update(
+                {
+                    "attitude_axis": attitude_axis,
+                    "initial_tilt_deg": float(perturbation_deg),
+                    "initial_tilt_axis_xyz": list(attitude_axis_vector(attitude_axis)),
+                    "initial_quaternion_wxyz": quaternion.tolist(),
+                }
+            )
+
+        reset_auxiliary = getattr(env, "reset_auxiliary_observation_state", None)
+        if callable(reset_auxiliary):
+            return np.asarray(reset_auxiliary())
+        state_reader = getattr(env, "_read_state", None)
+        observation_builder = getattr(env, "_obs", None)
+        if callable(state_reader) and callable(observation_builder):
+            return np.asarray(observation_builder(*state_reader()))
+
+        updated = np.asarray(observation).copy()
+        if updated.ndim != 1 or updated.size < 10:
+            raise ValueError("environment observation cannot hold a wxyz quaternion")
+        updated[6:10] = quaternion
+        return updated
+
+    @staticmethod
+    def _capture_initial_state(
+        env: Any, observation: np.ndarray
+    ) -> tuple[np.ndarray, np.ndarray, dict[str, Any]]:
+        """Capture pose and live actuator state before the first control step."""
+
+        _ensure_runtime_imports()
+        state_reader = getattr(env, "_read_state", None)
+        if callable(state_reader):
+            position, quaternion, _velocity, _omega = state_reader()
+            initial_position = np.asarray(position, dtype=float).reshape(3).copy()
+            initial_quaternion = np.asarray(quaternion, dtype=float).reshape(4).copy()
+        else:
+            initial_observation = np.asarray(observation, dtype=float).reshape(-1)
+            if initial_observation.size < 10:
+                raise ValueError("environment observation is missing its initial pose")
+            initial_position = initial_observation[0:3] + np.asarray(
+                env.pos_des, dtype=float
+            ).reshape(3)
+            initial_quaternion = initial_observation[6:10].copy()
+
+        quaternion_norm = float(np.linalg.norm(initial_quaternion))
+        if not np.isfinite(quaternion_norm) or quaternion_norm <= 0.0:
+            raise ValueError("initial quaternion must have a positive finite norm")
+        initial_quaternion /= quaternion_norm
+        if initial_quaternion[0] < 0.0:
+            initial_quaternion = -initial_quaternion
+
+        actuator_fields = {
+            "requested_motor_thrust_n": "_last_f_cmd",
+            "actual_motor_thrust_n": "_last_f",
+            "motor_command": "_last_motor_cmd",
+            "rotor_omega_rad_s": "_last_omega",
+            "reaction_torque_nm": "_last_q_actual",
+        }
+        actuator_state: dict[str, Any] = {}
+        for field, attribute in actuator_fields.items():
+            if not hasattr(env, attribute):
+                continue
+            value = np.asarray(getattr(env, attribute), dtype=float).reshape(4)
+            actuator_state[field] = value.tolist()
+        return initial_position, initial_quaternion, actuator_state
 
     @staticmethod
     def _force_floor_start(env: Any) -> tuple[bool, str | None]:
@@ -1065,15 +1619,10 @@ class EvaluationRunner:
                         reset_actuator()
                     restore_status = "reset state restored"
                 except Exception as restore_exc:
-                    restore_error = (
-                        f"{type(restore_exc).__name__}: {restore_exc}"
-                    )
+                    restore_error = f"{type(restore_exc).__name__}: {restore_exc}"
                     error += f"; restore failed: {restore_error}"
                     restore_status = "reset state restoration FAILED"
-            print(
-                "    warning: force_floor_start failed "
-                f"({error}); {restore_status}"
-            )
+            print(f"    warning: force_floor_start failed ({error}); {restore_status}")
             return False, error
 
 
@@ -1084,6 +1633,9 @@ def trace_metrics(trace: RolloutTrace, tail_fraction: float) -> dict[str, Any]:
 
     result: dict[str, Any] = {
         "label": trace.label,
+        "physics_model_version": PHYSICS_MODEL_VERSION,
+        "reset_info": dict(trace.reset_info or {}),
+        "physics_wrenches": list(trace.physics_wrenches),
         "control_mode": trace.control_mode,
         "sample_count": trace.sample_count,
         "completed_sample_count": trace.sample_count,
@@ -1097,7 +1649,129 @@ def trace_metrics(trace: RolloutTrace, tail_fraction: float) -> dict[str, Any]:
         "force_floor_start_applied": trace.force_floor_start_applied,
         "force_floor_start_error": trace.force_floor_start_error,
         "error": trace.error,
+        "terminated": trace.terminated_at is not None,
+        "truncated": trace.truncated_at is not None,
+        "crash_or_guard_termination": trace.terminated_at is not None,
+        "mean_v": None,
+        "max_v": None,
+        "terminal_v": None,
+        "mean_delta_v": None,
+        "v_decrease_transition_ratio": None,
+        "decay_condition_satisfied_ratio": None,
+        "integrated_tracking_error": None,
+        "integrated_normalized_tracking_error": None,
+        "geometric_attitude_rmse_rad": None,
+        "angular_rate_rmse_rad_s": None,
+        "action_rms": None,
+        "residual_action_rms": None,
+        "action_total_variation": None,
+        "actuator_saturation_ratio": None,
     }
+    observation_rows = [dict(row) for row in trace.observation_diagnostics if row]
+    reward_rows = [dict(row) for row in trace.legacy_reward_terms if row]
+    timing_rows = [dict(row) for row in trace.transition_timing if row]
+    result["observation_schema"] = dict(
+        (trace.reset_info or {}).get("observation_schema", {})
+    )
+    result["final_observation_diagnostics"] = (
+        observation_rows[-1] if observation_rows else None
+    )
+    result["transition_timing_first"] = timing_rows[0] if timing_rows else None
+    result["transition_timing_last"] = timing_rows[-1] if timing_rows else None
+    result["legacy_reward_terms_last"] = reward_rows[-1] if reward_rows else None
+    if reward_rows:
+        for group_name in ("raw_costs", "weighted_costs"):
+            keys = sorted(
+                {
+                    key
+                    for row in reward_rows
+                    for key in (
+                        row.get(group_name, {}).keys()
+                        if isinstance(row.get(group_name), Mapping)
+                        else ()
+                    )
+                }
+            )
+            result[f"legacy_reward_{group_name}_mean"] = {
+                key: float(
+                    np.mean(
+                        [
+                            float(row[group_name][key])
+                            for row in reward_rows
+                            if isinstance(row.get(group_name), Mapping)
+                            and key in row[group_name]
+                        ]
+                    )
+                )
+                for key in keys
+            }
+    if (
+        trace.angular_velocity is not None
+        and len(trace.physics_wrenches) == trace.sample_count
+        and trace.sample_count > 0
+    ):
+        motor_torques = np.asarray(
+            [
+                row["motor_wrench_vehicle_com_body"][:3]
+                for row in trace.physics_wrenches
+            ],
+            dtype=float,
+        )
+        external_torques = np.asarray(
+            [
+                row["external_applied_wrench_vehicle_com_body"][:3]
+                for row in trace.physics_wrenches
+            ],
+            dtype=float,
+        )
+        angular_velocity = np.asarray(trace.angular_velocity, dtype=float)
+        motor_axis_power = motor_torques * angular_velocity
+        external_axis_power = external_torques * angular_velocity
+        total_axis_power = motor_axis_power + external_axis_power
+        result["rotational_power_vehicle_com_body"] = {
+            "definition": (
+                "same post-step sample: torque about actual vehicle CoM in body "
+                "frame dotted with body angular velocity"
+            ),
+            "time_sec": trace.time_sec.tolist(),
+            "angular_velocity_body_rad_s": angular_velocity.tolist(),
+            "motor_torque_vehicle_com_body_nm": motor_torques.tolist(),
+            "external_torque_vehicle_com_body_nm": external_torques.tolist(),
+            "motor_axis_power_w": motor_axis_power.tolist(),
+            "external_axis_power_w": external_axis_power.tolist(),
+            "total_axis_power_w": total_axis_power.tolist(),
+            "total_rotational_power_w": np.sum(total_axis_power, axis=1).tolist(),
+        }
+    if trace.attitude_axis is not None:
+        result.update(
+            {
+                "attitude_axis": trace.attitude_axis,
+                "initial_axis_xyz": (
+                    np.asarray(trace.initial_axis_xyz, dtype=float).reshape(3).tolist()
+                    if trace.initial_axis_xyz is not None
+                    else None
+                ),
+                "initial_position_xyz_m": (
+                    np.asarray(trace.initial_position_xyz_m, dtype=float)
+                    .reshape(3)
+                    .tolist()
+                    if trace.initial_position_xyz_m is not None
+                    else None
+                ),
+                "initial_quaternion_wxyz": (
+                    np.asarray(trace.initial_quaternion_wxyz, dtype=float)
+                    .reshape(4)
+                    .tolist()
+                    if trace.initial_quaternion_wxyz is not None
+                    else None
+                ),
+                "initial_actuator_state": (
+                    dict(trace.initial_actuator_state)
+                    if trace.initial_actuator_state is not None
+                    else None
+                ),
+            }
+        )
     control = (
         np.asarray(trace.control_input, dtype=float).reshape((-1, 4))
         if trace.control_input is not None
@@ -1144,6 +1818,37 @@ def trace_metrics(trace: RolloutTrace, tail_fraction: float) -> dict[str, Any]:
         else np.empty((0, 4), dtype=float)
     )
 
+    def optional_series(value: Any, *, dtype: Any = float) -> np.ndarray:
+        if value is None:
+            return np.empty(0, dtype=dtype)
+        try:
+            array = np.asarray(value, dtype=dtype).reshape(-1)
+        except (TypeError, ValueError):
+            return np.empty(0, dtype=dtype)
+        return array if array.size == trace.sample_count else np.empty(0, dtype=dtype)
+
+    def optional_vectors(value: Any) -> np.ndarray:
+        if value is None:
+            return np.empty((0, 3), dtype=float)
+        try:
+            array = np.asarray(value, dtype=float).reshape((-1, 3))
+        except (TypeError, ValueError):
+            return np.empty((0, 3), dtype=float)
+        return (
+            array
+            if array.shape[0] == trace.sample_count
+            else np.empty((0, 3), dtype=float)
+        )
+
+    v_values = optional_series(trace.lyapunov_v)
+    delta_v_values = optional_series(trace.lyapunov_delta_v)
+    decay_targets = optional_series(trace.lyapunov_decay_target)
+    normalized_errors = optional_series(trace.normalized_tracking_error)
+    attitude_errors = optional_vectors(trace.geometric_attitude_error)
+    rate_errors = optional_vectors(trace.angular_rate_error)
+    saturation_fractions = optional_series(trace.actuator_saturation_fraction)
+    terminated_transitions = optional_series(trace.terminated_transition, dtype=bool)
+
     def finite_column_summary(
         values: np.ndarray, reducer: Callable[[np.ndarray], float]
     ) -> list[float | None]:
@@ -1153,9 +1858,7 @@ def trace_metrics(trace: RolloutTrace, tail_fraction: float) -> dict[str, Any]:
             summary.append(float(reducer(finite)) if finite.size else None)
         return summary
 
-    result["control_input_abs_max"] = finite_column_summary(
-        np.abs(control), np.max
-    )
+    result["control_input_abs_max"] = finite_column_summary(np.abs(control), np.max)
     result["motor_thrust_n_min"] = finite_column_summary(thrust, np.min)
     result["motor_thrust_n_max"] = finite_column_summary(thrust, np.max)
     result["motor_thrust_n_mean"] = finite_column_summary(thrust, np.mean)
@@ -1172,24 +1875,76 @@ def trace_metrics(trace: RolloutTrace, tail_fraction: float) -> dict[str, Any]:
     result["motor_command_max"] = finite_column_summary(motor_command, np.max)
     result["motor_omega_rad_s_min"] = finite_column_summary(motor_omega, np.min)
     result["motor_omega_rad_s_max"] = finite_column_summary(motor_omega, np.max)
-    result["reaction_torque_nm_min"] = finite_column_summary(
-        reaction_torque, np.min
-    )
-    result["reaction_torque_nm_max"] = finite_column_summary(
-        reaction_torque, np.max
-    )
+    result["reaction_torque_nm_min"] = finite_column_summary(reaction_torque, np.min)
+    result["reaction_torque_nm_max"] = finite_column_summary(reaction_torque, np.max)
 
     def final_vector(values: np.ndarray) -> list[float | None]:
         if not values.size:
             return [None, None, None, None]
-        return [
-            float(value) if np.isfinite(value) else None
-            for value in values[-1]
-        ]
+        return [float(value) if np.isfinite(value) else None for value in values[-1]]
 
     result["wrench_command_final"] = final_vector(wrench_command)
+    result["wrench_command_order"] = [
+        "tau_x_cmd",
+        "tau_y_cmd",
+        "tau_z_cmd",
+        "Fz_cmd",
+    ]
+    result["wrench_command_units"] = ["N*m", "N*m", "N*m", "N"]
+    result["wrench_command_stage"] = "before_allocation"
+    result["wrench_command_reference"] = trace.wrench_command_reference
     result["wrench_actual_final"] = final_vector(wrench_actual)
     result["allocation_error_final"] = final_vector(allocation_error)
+    if control.size:
+        result["action_rms"] = float(np.sqrt(np.mean(np.square(control))))
+        result["residual_action_rms"] = (
+            result["action_rms"] if trace.control_mode == "residual" else None
+        )
+        result["action_total_variation"] = float(
+            np.sum(np.abs(np.diff(control, axis=0)))
+        )
+    finite_saturation = saturation_fractions[np.isfinite(saturation_fractions)]
+    if finite_saturation.size:
+        result["actuator_saturation_ratio"] = float(np.mean(finite_saturation))
+
+    finite_v = np.isfinite(v_values)
+    if np.any(finite_v):
+        selected_v = v_values[finite_v]
+        result["mean_v"] = float(np.mean(selected_v))
+        result["max_v"] = float(np.max(selected_v))
+        if terminated_transitions.size:
+            terminal_indices = np.flatnonzero(terminated_transitions & finite_v)
+            if terminal_indices.size:
+                result["terminal_v"] = float(v_values[terminal_indices[0]])
+    finite_delta = np.isfinite(delta_v_values)
+    if np.any(finite_delta):
+        selected_delta = delta_v_values[finite_delta]
+        result["mean_delta_v"] = float(np.mean(selected_delta))
+        result["v_decrease_transition_ratio"] = float(np.mean(selected_delta < 0.0))
+    finite_decay = finite_v & np.isfinite(decay_targets)
+    if np.any(finite_decay):
+        result["decay_condition_satisfied_ratio"] = float(
+            np.mean(v_values[finite_decay] <= decay_targets[finite_decay])
+        )
+
+    if attitude_errors.size:
+        finite_attitude_rows = np.all(np.isfinite(attitude_errors), axis=1)
+        if np.any(finite_attitude_rows):
+            result["geometric_attitude_rmse_rad"] = float(
+                np.sqrt(
+                    np.mean(
+                        np.sum(np.square(attitude_errors[finite_attitude_rows]), axis=1)
+                    )
+                )
+            )
+    if rate_errors.size:
+        finite_rate_rows = np.all(np.isfinite(rate_errors), axis=1)
+        if np.any(finite_rate_rows):
+            result["angular_rate_rmse_rad_s"] = float(
+                np.sqrt(
+                    np.mean(np.sum(np.square(rate_errors[finite_rate_rows]), axis=1))
+                )
+            )
     if trace.actuator is not None:
         result["actuator"] = dict(trace.actuator)
     if not trace.sample_count:
@@ -1204,6 +1959,24 @@ def trace_metrics(trace: RolloutTrace, tail_fraction: float) -> dict[str, Any]:
         return result
 
     errors = np.asarray(trace.position_error, dtype=float)
+    positive_time_deltas = np.diff(np.asarray(trace.time_sec, dtype=float))
+    positive_time_deltas = positive_time_deltas[positive_time_deltas > 0.0]
+    configured_dt = trace.policy_dt
+    sample_dt = (
+        float(configured_dt)
+        if configured_dt is not None
+        and np.isfinite(configured_dt)
+        and configured_dt > 0.0
+        else float(np.median(positive_time_deltas))
+        if positive_time_deltas.size
+        else 0.0
+    )
+    result["integrated_tracking_error"] = float(np.sum(errors) * sample_dt)
+    finite_normalized = normalized_errors[np.isfinite(normalized_errors)]
+    if finite_normalized.size:
+        result["integrated_normalized_tracking_error"] = float(
+            np.sum(finite_normalized) * sample_dt
+        )
     tail_start = int(trace.sample_count * (1.0 - tail_fraction))
     result["position_rmse"] = float(np.sqrt(np.mean(np.square(errors))))
     result["mean_position_error"] = float(np.mean(errors))
@@ -1243,6 +2016,85 @@ def trace_metrics(trace: RolloutTrace, tail_fraction: float) -> dict[str, Any]:
 _trace_metrics = trace_metrics
 
 
+def _attitude_axis_plot_subtitle(trace: RolloutTrace) -> str | None:
+    if trace.attitude_axis is None:
+        return None
+    return f"Attitude axis: {trace.attitude_axis}"
+
+
+def _save_trace_csv(
+    artifacts: ArtifactManager,
+    trace: RolloutTrace,
+) -> Path:
+    """Save the plotted kinematic trace with constant initial-pose metadata."""
+
+    _ensure_runtime_imports()
+    output = artifacts.ensure_available(
+        artifacts.path("metrics", f"trace-{trace.policy}", ".csv")
+    )
+    fieldnames = (
+        "time_sec",
+        "phase",
+        "position_x_m",
+        "position_y_m",
+        "position_z_m",
+        "reference_x_m",
+        "reference_y_m",
+        "reference_z_m",
+        "roll_deg",
+        "pitch_deg",
+        "yaw_deg",
+        "position_error_norm_m",
+        "attitude_axis",
+        "initial_axis_x",
+        "initial_axis_y",
+        "initial_axis_z",
+        "initial_quaternion_w",
+        "initial_quaternion_x",
+        "initial_quaternion_y",
+        "initial_quaternion_z",
+    )
+    initial_axis = (
+        np.asarray(trace.initial_axis_xyz, dtype=float).reshape(3)
+        if trace.initial_axis_xyz is not None
+        else np.full(3, np.nan, dtype=float)
+    )
+    initial_quaternion = (
+        np.asarray(trace.initial_quaternion_wxyz, dtype=float).reshape(4)
+        if trace.initial_quaternion_wxyz is not None
+        else np.full(4, np.nan, dtype=float)
+    )
+    with output.open("x", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        for index in range(trace.sample_count):
+            writer.writerow(
+                {
+                    "time_sec": float(trace.time_sec[index]),
+                    "phase": trace.phases[index],
+                    "position_x_m": float(trace.position[index, 0]),
+                    "position_y_m": float(trace.position[index, 1]),
+                    "position_z_m": float(trace.position[index, 2]),
+                    "reference_x_m": float(trace.reference_position[index, 0]),
+                    "reference_y_m": float(trace.reference_position[index, 1]),
+                    "reference_z_m": float(trace.reference_position[index, 2]),
+                    "roll_deg": float(trace.attitude_deg[index, 0]),
+                    "pitch_deg": float(trace.attitude_deg[index, 1]),
+                    "yaw_deg": float(trace.attitude_deg[index, 2]),
+                    "position_error_norm_m": float(trace.position_error[index]),
+                    "attitude_axis": trace.attitude_axis or "",
+                    "initial_axis_x": float(initial_axis[0]),
+                    "initial_axis_y": float(initial_axis[1]),
+                    "initial_axis_z": float(initial_axis[2]),
+                    "initial_quaternion_w": float(initial_quaternion[0]),
+                    "initial_quaternion_x": float(initial_quaternion[1]),
+                    "initial_quaternion_y": float(initial_quaternion[2]),
+                    "initial_quaternion_z": float(initial_quaternion[3]),
+                }
+            )
+    return output
+
+
 def _save_trace(
     artifacts: ArtifactManager,
     config: ExperimentConfig,
@@ -1266,6 +2118,9 @@ def _save_trace(
     if title_condition:
         plot_tag += f"\n{title_condition}"
     plot_tag += f"\n{floor_status}"
+    attitude_subtitle = _attitude_axis_plot_subtitle(trace)
+    if attitude_subtitle is not None:
+        plot_tag += f"\n{attitude_subtitle}"
     if mission.name == "hover":
         return save_hover_trace(
             output,
@@ -1305,9 +2160,13 @@ def _save_policy_report(
         raise RuntimeError(f"{trace.label} rollout produced no samples")
     filename = "floor.png" if trace.policy == "floor" else "ppo.png"
     output = artifacts.run_dir / "plots" / filename
+    plot_tag = title_condition
+    attitude_subtitle = _attitude_axis_plot_subtitle(trace)
+    if attitude_subtitle is not None:
+        plot_tag += f"\n{attitude_subtitle}"
     return save_policy_trace(
         output,
-        tag=title_condition,
+        tag=plot_tag,
         rollout=trace,
         mission_name=mission.name,
         mission_parameters=mission.effective_parameters(),
@@ -1315,8 +2174,62 @@ def _save_policy_report(
     )
 
 
-def build_parser(default_config: str | Path, description: str) -> argparse.ArgumentParser:
+def _save_lyapunov_report(
+    artifacts: ArtifactManager,
+    trace: RolloutTrace,
+    *,
+    title_condition: str,
+) -> Path | None:
+    """Save an additional candidate diagnostic when transition data exists."""
+
+    _ensure_runtime_imports()
+    required = (
+        trace.lyapunov_v_before,
+        trace.lyapunov_v,
+        trace.lyapunov_delta_v,
+        trace.lyapunov_decay_target,
+    )
+    if any(value is None for value in required):
+        return None
+    arrays = [np.asarray(value, dtype=float).reshape(-1) for value in required]
+    if any(value.size != trace.sample_count for value in arrays):
+        return None
+    finite = np.ones(trace.sample_count, dtype=bool)
+    for value in arrays:
+        finite &= np.isfinite(value)
+    if not np.any(finite):
+        return None
+    output = artifacts.path("plots", f"lyapunov-{trace.policy}", ".png")
+    plot_tag = f"{title_condition} — {trace.label}"
+    attitude_subtitle = _attitude_axis_plot_subtitle(trace)
+    if attitude_subtitle is not None:
+        plot_tag += f"\n{attitude_subtitle}"
+    return save_lyapunov_trace(
+        output,
+        tag=plot_tag,
+        time_sec=trace.time_sec,
+        v_before=arrays[0],
+        v_after=arrays[1],
+        delta_v=arrays[2],
+        decay_target=arrays[3],
+    )
+
+
+def build_parser(
+    default_config: str | Path, description: str
+) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=description)
+    parser.add_argument(
+        "--eval-preset",
+        choices=tuple(EVALUATION_PRESETS),
+        default=None,
+        help="reproducible named evaluation preset (distinct from legacy --preset)",
+    )
+    parser.add_argument(
+        "--list-presets",
+        action="store_true",
+        help="list named evaluation presets and exit",
+    )
     parser.add_argument(
         "--config", type=Path, default=Path(default_config), help="YAML profile"
     )
@@ -1347,13 +2260,25 @@ def build_parser(default_config: str | Path, description: str) -> argparse.Argum
     )
     parser.add_argument(
         "--policy",
-        choices=("floor", "residual", "both"),
+        choices=("floor", "ppo", "residual", "both"),
         default="both",
-        help="policy comparison (unified view_live.py always runs both)",
+        help=(
+            "controller selection: floor=PID only, residual=learned PPO only "
+            "(legacy option name), both=PID then PPO"
+        ),
     )
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--position-perturbation", type=float, default=None)
     parser.add_argument("--attitude-perturbation-deg", type=float, default=None)
+    parser.add_argument(
+        "--attitude-axis",
+        choices=ATTITUDE_AXIS_CHOICES,
+        default=None,
+        help=(
+            "body-frame axis and sign for an exact initial attitude "
+            "perturbation; omitted preserves the legacy seeded random axis"
+        ),
+    )
 
     viewer = parser.add_mutually_exclusive_group()
     viewer.add_argument("--headless", dest="headless", action="store_true")
@@ -1361,9 +2286,7 @@ def build_parser(default_config: str | Path, description: str) -> argparse.Argum
     parser.set_defaults(headless=False)
 
     pacing = parser.add_mutually_exclusive_group()
-    pacing.add_argument(
-        "--no-realtime", dest="no_realtime", action="store_true"
-    )
+    pacing.add_argument("--no-realtime", dest="no_realtime", action="store_true")
     pacing.add_argument("--realtime", dest="no_realtime", action="store_false")
     parser.set_defaults(no_realtime=False)
 
@@ -1436,9 +2359,7 @@ def _prompt(
             print(f"Invalid value: {exc}")
 
 
-def _prompt_bool(
-    label: str, default: bool, input_fn: Callable[[str], str]
-) -> bool:
+def _prompt_bool(label: str, default: bool, input_fn: Callable[[str], str]) -> bool:
     display = "Y/n" if default else "y/N"
 
     def convert(value: str) -> bool:
@@ -1480,9 +2401,7 @@ def prompt_runtime_options(
     if mode == "hover":
         args.duration = _prompt(
             "Hover duration",
-            _cli_or_config_default(
-                args, "duration", config.mission.hover.duration
-            ),
+            _cli_or_config_default(args, "duration", config.mission.hover.duration),
             float,
             input_fn,
             "s",
@@ -1523,9 +2442,7 @@ def prompt_runtime_options(
         )
         args.cycles = _prompt(
             "Number of cycles",
-            _cli_or_config_default(
-                args, "cycles", config.mission.lissajous.cycles
-            ),
+            _cli_or_config_default(args, "cycles", config.mission.lissajous.cycles),
             float,
             input_fn,
         )
@@ -1534,6 +2451,57 @@ def prompt_runtime_options(
 
 def _has_option(argv: Sequence[str], option: str) -> bool:
     return any(value == option or value.startswith(f"{option}=") for value in argv)
+
+
+def _print_evaluation_presets(stream: TextIO) -> None:
+    print("Named evaluation presets (--eval-preset):", file=stream)
+    for name, values in EVALUATION_PRESETS.items():
+        print(f"  {name:<28} {values['description']}", file=stream)
+
+
+def _apply_evaluation_preset(
+    args: argparse.Namespace,
+    raw_argv: Sequence[str],
+) -> argparse.Namespace:
+    """Merge a named preset below explicit CLI arguments."""
+
+    if args.eval_preset is None:
+        return args
+    preset = EVALUATION_PRESETS[args.eval_preset]
+    root = Path(__file__).resolve().parents[1]
+    option_fields = (
+        ("--config", "config"),
+        ("--mode", "mode"),
+        ("--policy", "policy"),
+        ("--duration", "duration"),
+        ("--position-perturbation", "position_perturbation"),
+        ("--attitude-perturbation-deg", "attitude_perturbation_deg"),
+        ("--seed", "seed"),
+        ("--model", "model"),
+    )
+    for option, field in option_fields:
+        if _has_option(raw_argv, option):
+            continue
+        value = preset[field]
+        if field == "config":
+            value = root / str(value)
+        elif field == "model" and value is not None:
+            value = Path(str(value))
+        setattr(args, field, value)
+    if not (
+        _has_option(raw_argv, "--force-floor-start")
+        or _has_option(raw_argv, "--no-force-floor-start")
+    ):
+        args.force_floor_start = bool(preset["force_floor_start"])
+    if not (_has_option(raw_argv, "--headless") or _has_option(raw_argv, "--viewer")):
+        args.headless = False
+    if not (
+        _has_option(raw_argv, "--no-realtime") or _has_option(raw_argv, "--realtime")
+    ):
+        args.no_realtime = False
+    if not (_has_option(raw_argv, "--no-camera") or _has_option(raw_argv, "--camera")):
+        args.no_camera = False
+    return args
 
 
 def resolve_path_preset(
@@ -1600,6 +2568,10 @@ def _format_number(value: Any) -> str:
     return str(value)
 
 
+def _format_vector(values: Sequence[float]) -> str:
+    return "[" + ", ".join(_format_number(float(value)) for value in values) + "]"
+
+
 def format_run_summary(
     config: ExperimentConfig,
     mission: ReferenceMission,
@@ -1611,6 +2583,8 @@ def format_run_summary(
     camera_tracking: bool | None = None,
     path_preset: str | None = None,
     unified: bool = False,
+    attitude_axis: str | None = None,
+    initial_quaternion_wxyz: Sequence[float] | None = None,
 ) -> str:
     """Format the effective pre-flight summary displayed to the operator."""
 
@@ -1620,10 +2594,15 @@ def format_run_summary(
             (
                 ("Floor controller", "RESIDUAL (PID)"),
                 ("PPO controller", config.control_mode.upper()),
+                (
+                    "Selected controls",
+                    _controller_selection_text(config, policy, unified=True),
+                ),
             )
         )
     else:
         rows.append(("Control mode", config.control_mode.upper()))
+    rows.append(("Reward mode", config.environment.reward.mode))
     actuator = config.actuator
     actuator_status = f"CF2.1 first-order ({actuator.verification_status})"
     rows.append(("Motor actuator", actuator_status))
@@ -1697,6 +2676,23 @@ def format_run_summary(
             ),
         )
     )
+    if attitude_axis is not None:
+        initial_axis = attitude_axis_vector(attitude_axis)
+        initial_quaternion = (
+            named_attitude_quaternion_wxyz(
+                attitude_axis,
+                config.environment.attitude_perturbation_deg,
+            )
+            if initial_quaternion_wxyz is None
+            else tuple(float(value) for value in initial_quaternion_wxyz)
+        )
+        rows.extend(
+            (
+                ("Attitude axis", attitude_axis),
+                ("Initial axis", _format_vector(initial_axis)),
+                ("Initial quaternion", _format_vector(initial_quaternion)),
+            )
+        )
     if headless is not None:
         rows.append(("Display", "headless" if headless else "viewer"))
     if realtime is not None:
@@ -1711,6 +2707,118 @@ def format_run_summary(
     return "\n".join(f"{label:<18}: {value}" for label, value in rows)
 
 
+def _initial_state_preview(
+    config: ExperimentConfig,
+    *,
+    exact_attitude_perturbation: bool,
+    attitude_axis: str | None = None,
+) -> dict[str, Any]:
+    """Reset a disposable environment using the same viewer reset path."""
+
+    from .factories import EnvironmentFactory
+
+    environment = EnvironmentFactory(config).make(
+        seed=config.evaluation.seed_start,
+        initial_state_randomization_enabled=False,
+        exact_attitude_perturbation=exact_attitude_perturbation,
+    )
+    try:
+        observation, _reset_info = environment.reset(seed=config.evaluation.seed_start)
+        if config.mission.force_floor_start:
+            applied, error = EvaluationRunner._force_floor_start(environment)
+            if not applied:
+                raise RuntimeError(f"initial-state preview floor start failed: {error}")
+        if attitude_axis is not None:
+            observation = EvaluationRunner._apply_initial_attitude_axis(
+                environment,
+                observation,
+                attitude_axis,
+                config.environment.attitude_perturbation_deg,
+            )
+        position, quaternion, _velocity, _omega = environment._read_state()
+        yaw_half = 0.5 * float(environment.yaw_des)
+        reference_conjugate = np.array(
+            [np.cos(yaw_half), 0.0, 0.0, -np.sin(yaw_half)], dtype=float
+        )
+        w1, x1, y1, z1 = reference_conjugate
+        w2, x2, y2, z2 = np.asarray(quaternion, dtype=float)
+        relative = np.array(
+            [
+                w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2,
+                w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2,
+                w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2,
+                w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2,
+            ]
+        )
+        if relative[0] < 0.0:
+            relative = -relative
+        vector_norm = float(np.linalg.norm(relative[1:]))
+        total_tilt_deg = float(np.degrees(2.0 * np.arctan2(vector_norm, relative[0])))
+        tilt_axis = relative[1:] / vector_norm if vector_norm > 1e-12 else np.zeros(3)
+        result = {
+            "position_xyz_m": position.tolist(),
+            "position_offset_xyz_m": (position - environment.pos_des).tolist(),
+            "quaternion_wxyz": np.asarray(quaternion, dtype=float).tolist(),
+            "total_tilt_deg": total_tilt_deg,
+            "tilt_axis_xyz": tilt_axis.tolist(),
+            "qvel": np.asarray(environment.data.qvel, dtype=float).tolist(),
+            "actuator": {
+                "requested_motor_thrust_n": environment._last_f_cmd.tolist(),
+                "actual_motor_thrust_n": environment._last_f.tolist(),
+                "rotor_omega_rad_s": environment._last_omega.tolist(),
+                "snapshot": environment.actuator_snapshot(),
+            },
+        }
+        if attitude_axis is not None:
+            result.update(
+                {
+                    "attitude_axis": attitude_axis,
+                    "selected_axis_xyz": list(attitude_axis_vector(attitude_axis)),
+                }
+            )
+        return result
+    finally:
+        environment.close()
+
+
+def _format_preset_resolution(
+    name: str,
+    config: ExperimentConfig,
+    model: Path | None,
+    model_provenance: Mapping[str, Any] | None,
+    initial_state: Mapping[str, Any],
+    policy: str,
+) -> str:
+    actuator = initial_state["actuator"]
+    rows = (
+        ("Evaluation preset", name),
+        ("Config path", str(config.source_path)),
+        ("Selected model", str(model) if model is not None else "not required"),
+        (
+            "Model provenance",
+            json.dumps(model_provenance, sort_keys=True) if model_provenance else "n/a",
+        ),
+        ("Controllers", _controller_selection_text(config, policy, unified=True)),
+        ("Initial position", str(initial_state["position_xyz_m"])),
+        (
+            "Initial tilt",
+            f"{float(initial_state['total_tilt_deg']):g} deg, "
+            f"axis={initial_state['tilt_axis_xyz']}",
+        ),
+        (
+            "Actuator initial",
+            f"requested={actuator['requested_motor_thrust_n']} N, "
+            f"actual={actuator['actual_motor_thrust_n']} N, "
+            f"omega={actuator['rotor_omega_rad_s']} rad/s",
+        ),
+        (
+            "Duration / seed",
+            f"{config.mission.hover.duration:g} s / {config.evaluation.seed_start}",
+        ),
+    )
+    return "\n".join(f"{label:<18}: {value}" for label, value in rows)
+
+
 def _runtime_payload(
     config: ExperimentConfig,
     mission: ReferenceMission,
@@ -1719,11 +2827,15 @@ def _runtime_payload(
     *,
     unified: bool = False,
 ) -> dict[str, Any]:
-    return {
+    payload = {
         "mode": mission.name,
+        "evaluation_preset": getattr(args, "eval_preset", None),
         "path_preset": getattr(args, "path_preset", None),
         "mission": mission.effective_parameters(),
         "control_mode": config.control_mode,
+        "reward_mode": config.environment.reward.mode,
+        "physics_model_version": PHYSICS_MODEL_VERSION,
+        "payload": asdict(config.environment.payload),
         "policy_control_modes": _expected_policy_control_modes(
             config,
             args.policy,
@@ -1743,6 +2855,21 @@ def _runtime_payload(
         # outcome after the environment reset has actually occurred.
         "actuator": asdict(config.actuator),
     }
+    attitude_axis = getattr(args, "attitude_axis", None)
+    if attitude_axis is not None:
+        payload.update(
+            {
+                "attitude_axis": attitude_axis,
+                "initial_axis_xyz": list(attitude_axis_vector(attitude_axis)),
+                "initial_quaternion_wxyz": list(
+                    named_attitude_quaternion_wxyz(
+                        attitude_axis,
+                        config.environment.attitude_perturbation_deg,
+                    )
+                ),
+            }
+        )
+    return payload
 
 
 def run_evaluation_cli(
@@ -1760,14 +2887,15 @@ def run_evaluation_cli(
     raw_argv = list(sys.argv[1:] if argv is None else argv)
     parser = build_parser(default_config, description)
     args = parser.parse_args(raw_argv)
-    if always_compare:
-        if args.policy != "both":
-            print(
-                "note: unified view_live.py always compares floor and PPO; "
-                f"ignoring --policy {args.policy}"
-            )
-        args.policy = "both"
+    if args.list_presets:
+        _print_evaluation_presets(sys.stdout)
+        return 0
+    args = _apply_evaluation_preset(args, raw_argv)
+    # Kept as a no-op keyword for source compatibility with older wrappers.
+    # Controller selection now always follows the parsed --policy value.
+    del always_compare
     explicit_config = _has_option(raw_argv, "--config")
+    selected_config = explicit_config or args.eval_preset is not None
     stream = sys.stdin if stdin is None else stdin
     interactive_answers = False
 
@@ -1803,10 +2931,8 @@ def run_evaluation_cli(
                     input_fn,
                     default=args.path_preset,
                 )
-            if not explicit_config:
-                resolved = resolve_path_preset(
-                    mode, args.path_preset, path_profiles
-                )
+            if not selected_config:
+                resolved = resolve_path_preset(mode, args.path_preset, path_profiles)
                 if resolved is not None:
                     args.path_preset, selected_path_profile = resolved
                 elif mode == "hover":
@@ -1823,7 +2949,7 @@ def run_evaluation_cli(
         config_path = args.config
         if selected_path_profile is not None:
             config_path = selected_path_profile
-        elif unified and not explicit_config and mode_profiles is not None and mode:
+        elif unified and not selected_config and mode_profiles is not None and mode:
             config_path = Path(mode_profiles[mode])
         config = load_config(config_path)
     else:
@@ -1834,6 +2960,10 @@ def run_evaluation_cli(
     if interactive_answers:
         args = prompt_runtime_options(args, config, mode, input_fn=input_fn)
     config = apply_runtime_overrides(config, args, mode)
+    if unified:
+        # Training curriculum is not a viewer initial condition. This immutable
+        # copy preserves any explicit CLI position/attitude perturbations.
+        config = _disable_training_initial_state_randomization(config)
     legacy_circle_preset = not unified and mode == "circle"
     mission = mission_from_experiment(
         config,
@@ -1849,14 +2979,16 @@ def run_evaluation_cli(
 
     specs = _policy_specs(config, args.policy, unified=unified)
     requires_model = any(key == "residual" for key, _label in specs)
-    candidate_model = _model_candidate(args.model, config) if requires_model else None
+    candidate_model = (
+        None
+        if not requires_model or _is_latest_final_model(args.model)
+        else _model_candidate(args.model, config)
+    )
     condition = mission_condition(
         config,
         mission,
         legacy_circle_preset=legacy_circle_preset,
-        path_preset=(
-            args.path_preset if path_profiles is not None else None
-        ),
+        path_preset=(args.path_preset if path_profiles is not None else None),
     )
     artifacts = ArtifactManager.create(
         config,
@@ -1874,12 +3006,15 @@ def run_evaluation_cli(
     )
     metrics: dict[str, Any] = {
         "status": "running",
+        "physics_model_version": PHYSICS_MODEL_VERSION,
         "effective_condition": condition,
         "effective_parameters": mission.effective_parameters(),
         "path_preset": getattr(args, "path_preset", None),
         "runtime_parameters": runtime_values,
         "control_mode": config.control_mode,
+        "reward_mode": config.environment.reward.mode,
         "actuator": asdict(config.actuator),
+        "evaluation_preset": args.eval_preset,
         "selected_policy": args.policy,
         "seed": config.evaluation.seed_start,
         "deterministic": config.evaluation.deterministic,
@@ -1898,10 +3033,41 @@ def run_evaluation_cli(
         ),
         "policies": {},
     }
+    if args.attitude_axis is not None:
+        metrics.update(
+            {
+                "attitude_axis": args.attitude_axis,
+                "initial_axis_xyz": list(attitude_axis_vector(args.attitude_axis)),
+                "initial_quaternion_wxyz": list(
+                    named_attitude_quaternion_wxyz(
+                        args.attitude_axis,
+                        config.environment.attitude_perturbation_deg,
+                    )
+                ),
+            }
+        )
     selected_model: Path | None = None
+    model_provenance: dict[str, Any] | None = None
+    initial_state_preview: dict[str, Any] | None = None
     runtime_config_written = False
     try:
-        selected_model = _model_path(args.model, config) if requires_model else None
+        if requires_model and _is_latest_final_model(args.model):
+            selected_model, model_provenance = _latest_final_model_selection(config)
+        elif requires_model:
+            selected_model = _model_path(args.model, config)
+            model_provenance = _model_provenance(selected_model)
+        exact_attitude_perturbation = unified and (
+            args.eval_preset is not None
+            or _has_option(raw_argv, "--attitude-perturbation-deg")
+            or args.attitude_axis is not None
+        )
+        config.require_runtime_resources()
+        if args.eval_preset is not None or args.attitude_axis is not None:
+            initial_state_preview = _initial_state_preview(
+                config,
+                exact_attitude_perturbation=exact_attitude_perturbation,
+                attitude_axis=args.attitude_axis,
+            )
         runtime_values = _runtime_payload(
             config,
             mission,
@@ -1909,10 +3075,19 @@ def run_evaluation_cli(
             selected_model,
             unified=unified,
         )
-        metrics["runtime_parameters"] = runtime_values
-        metrics["model"] = (
-            str(selected_model) if selected_model is not None else None
+        runtime_values["model_provenance"] = model_provenance
+        comparison = physics_comparison(
+            (model_provenance or {}).get("physics_model_version")
         )
+        runtime_values["physics_provenance"] = comparison
+        metrics["physics_provenance"] = comparison
+        if selected_model is not None:
+            print("Physics evaluation: " + comparison["physics_comparison_status"])
+        runtime_values["initial_state_preview"] = initial_state_preview
+        metrics["runtime_parameters"] = runtime_values
+        if args.attitude_axis is not None:
+            metrics["initial_state"] = initial_state_preview
+        metrics["model"] = str(selected_model) if selected_model is not None else None
         print(
             "\n"
             + format_run_summary(
@@ -1925,15 +3100,31 @@ def run_evaluation_cli(
                 camera_tracking=not args.no_camera,
                 path_preset=getattr(args, "path_preset", None),
                 unified=unified,
+                attitude_axis=args.attitude_axis,
+                initial_quaternion_wxyz=(
+                    initial_state_preview["quaternion_wxyz"]
+                    if initial_state_preview is not None
+                    and args.attitude_axis is not None
+                    else None
+                ),
             )
         )
+        if args.eval_preset is not None and initial_state_preview is not None:
+            print(
+                "\n"
+                + _format_preset_resolution(
+                    args.eval_preset,
+                    config,
+                    selected_model,
+                    model_provenance,
+                    initial_state_preview,
+                    args.policy,
+                )
+            )
         artifacts.write_runtime_config(runtime_values)
         runtime_config_written = True
-        config.require_runtime_resources()
         policy = (
-            _load_policy(selected_model, config)
-            if selected_model is not None
-            else None
+            _load_policy(selected_model, config) if selected_model is not None else None
         )
         runner = EvaluationRunner(
             config,
@@ -1944,6 +3135,9 @@ def run_evaluation_cli(
             preset=args.preset,
             mission=mission,
             legacy_circle_preset=legacy_circle_preset,
+            disable_initial_state_randomization=unified,
+            exact_attitude_perturbation=exact_attitude_perturbation,
+            attitude_axis=args.attitude_axis,
         )
         traces: list[RolloutTrace] = []
         comparison_mode = unified and len(specs) == 2
@@ -1962,6 +3156,12 @@ def run_evaluation_cli(
             metrics["policies"][policy_key] = policy_metrics
             metrics["policy_control_modes"][policy_key] = trace.control_mode
             traces.append(trace)
+            if trace.attitude_axis is not None and trace.sample_count:
+                trace_csv_path = _save_trace_csv(artifacts, trace)
+                policy_metrics["trace_csv"] = trace_csv_path.relative_to(
+                    artifacts.run_dir
+                ).as_posix()
+                print(f"    saved: {trace_csv_path}")
             if trace.sample_count:
                 plot_path = (
                     _save_policy_report(
@@ -1980,6 +3180,16 @@ def run_evaluation_cli(
                     artifacts.run_dir
                 ).as_posix()
                 print(f"    saved: {plot_path}")
+                lyapunov_plot_path = _save_lyapunov_report(
+                    artifacts,
+                    trace,
+                    title_condition=condition,
+                )
+                if lyapunov_plot_path is not None:
+                    policy_metrics["lyapunov_candidate_plot"] = (
+                        lyapunov_plot_path.relative_to(artifacts.run_dir).as_posix()
+                    )
+                    print(f"    saved: {lyapunov_plot_path}")
             if trace.error is not None and rollout_failure is None:
                 rollout_failure = (
                     f"{label} rollout failed after {trace.sample_count} samples: "
@@ -1997,9 +3207,7 @@ def run_evaluation_cli(
             "completed",
             effective_condition=condition,
             effective_parameters=mission.effective_parameters(),
-            input_model=(
-                str(selected_model) if selected_model is not None else None
-            ),
+            input_model=(str(selected_model) if selected_model is not None else None),
             policy_outcomes=metrics["policies"],
             actuator_outcomes={
                 policy_key: outcome.get("actuator")
@@ -2040,12 +3248,15 @@ def run_evaluation_cli(
 
 
 __all__ = [
+    "ATTITUDE_AXIS_CHOICES",
     "EvaluationRunner",
     "RolloutTrace",
     "apply_runtime_overrides",
+    "attitude_axis_vector",
     "build_parser",
     "format_run_summary",
     "mission_condition",
+    "named_attitude_quaternion_wxyz",
     "normalize_direction",
     "normalize_mode",
     "prompt_runtime_options",

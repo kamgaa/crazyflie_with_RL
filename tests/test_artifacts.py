@@ -73,16 +73,64 @@ def test_best_final_names_and_no_double_zip(tmp_path: Path) -> None:
         now=datetime(2026, 8, 7, 15, 30, 12, tzinfo=ZoneInfo("Asia/Seoul")),
     )
     best = run.save_model(FakeSB3Model(), "best", timestep=20_000)
+    best_payload = run.save_model(
+        FakeSB3Model(), "best-payload", timestep=25_000
+    )
     final = run.save_model(FakeSB3Model(), "final", timestep=30_720)
 
     assert "_best_20260807-153012.zip" in best.name
+    assert "_best-payload_20260807-153012.zip" in best_payload.name
     assert "_final_20260807-153012.zip" in final.name
     assert not best.name.endswith(".zip.zip")
     assert not final.name.endswith(".zip.zip")
-    assert best.is_file() and final.is_file()
+    assert best.is_file() and best_payload.is_file() and final.is_file()
     manifest = json.loads(run.manifest_path.read_text(encoding="utf-8"))
     assert manifest["models"]["best"]["path"] == best.relative_to(run.run_dir).as_posix()
+    assert manifest["models"]["best-payload"]["path"] == best_payload.relative_to(
+        run.run_dir
+    ).as_posix()
     assert manifest["models"]["final"]["path"] == final.relative_to(run.run_dir).as_posix()
+
+
+def test_best_recovery_is_separate_and_policy_parent_is_recorded(
+    tmp_path: Path,
+) -> None:
+    run = ArtifactManager.create(
+        _config(tmp_path),
+        now=datetime(2026, 8, 7, 15, 30, 12, tzinfo=ZoneInfo("Asia/Seoul")),
+    )
+    parent = tmp_path / "parent.zip"
+    parent.write_bytes(b"parent")
+    run.record_policy_initialization(
+        parent,
+        {
+            "control_mode": "e2e",
+            "reward_mode": "legacy",
+            "training_provenance": {"model_sha256": "abc123"},
+            "cross_physics_evaluation": True,
+        },
+    )
+    recovery = run.save_model(
+        FakeSB3Model(),
+        "best-recovery",
+        timestep=100_000,
+        metadata={"overall_success_rate": 0.5},
+    )
+
+    manifest = json.loads(run.manifest_path.read_text(encoding="utf-8"))
+    assert manifest["models"]["best"] is None
+    assert manifest["models"]["best-recovery"]["path"] == recovery.relative_to(
+        run.run_dir
+    ).as_posix()
+    initialization = manifest["policy_initialization"]
+    assert initialization["strategy"] == "policy_parameters_only"
+    assert initialization["parent_model"] == str(parent.resolve())
+    assert initialization["parent_model_sha256"] == "abc123"
+    assert initialization["optimizer_state_copied"] is False
+    assert initialization["rollout_buffer_copied"] is False
+    assert initialization["initial_timestep"] == 0
+    assert initialization["curriculum_initial_step"] == 0
+    assert initialization["cross_physics_evaluation"] is True
 
 
 def test_caller_metadata_cannot_replace_required_provenance(tmp_path: Path) -> None:

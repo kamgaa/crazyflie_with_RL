@@ -25,6 +25,7 @@ crazyflie_rl/
   config.py                 frozen dataclass, merge, validation
   artifacts.py              run ID, 파일명, resolved config, manifest
   controllers.py            cascade PID와 allocation/rotation 순수 함수
+  rewards.py                Lyapunov-candidate 오차·V·shaping·decay 순수 함수
   environment.py            15D Gymnasium MuJoCo 환경
   factories.py              train/eval 환경 생성
   evaluation.py             고정-seed policy 평가
@@ -65,6 +66,9 @@ resources/mujoco/assets/cf21B/*.stl
 | `base.yaml` | 공통 vehicle/PID/reward/termination, E2E 활성 기본값 |
 | `e2e_train.yaml` | 기존 `train_ppo_02.py`: 1M step, nominal, 30 evaluation episodes |
 | `residual_train.yaml` | 기존 `train_ppo.py`: 30k step, fixed 10 g, 5 evaluation episodes |
+| `e2e_train_legacy_initial_perturb_v2.yaml` | canonical legacy-reward E2E recovery fine-tuning profile |
+| `e2e_train_lyapunov.yaml` | archived/experimental E2E Lyapunov-candidate profile (미튜닝) |
+| `residual_train_lyapunov.yaml` | archived/experimental residual Lyapunov-candidate profile (미튜닝) |
 | `e2e_hover_eval.yaml` | 기존 `view_live.py`: E2E, seed 42, nominal hover |
 | `residual_hover_eval.yaml` | residual 30 g / 30 mm integrator diagnostic, scale 0.006 |
 | `residual_circle_eval.yaml` | 기존 `circle_traj.py`: 5 g / 100 mm / 180°, scale 0.022 |
@@ -96,6 +100,21 @@ experiment:
 ```
 
 Resolved configuration은 각 run의 `config/`에 저장된다. Frozen dataclass와 tuple을 사용하므로 실행 중 shared list/NumPy reference가 설정을 바꾸지 않는다.
+
+## Lyapunov-candidate reward (archived/experimental opt-in)
+
+기본 reward mode는 모든 기존 profile에서 `legacy`다. 새 기능은
+`lyapunov` 또는 `legacy_plus_lyapunov`를 명시한 profile에서만 켜지며,
+position/velocity/geometric-attitude/body-rate 오차로 만든 quadratic
+Lyapunov candidate, PPO와 동일한 gamma의 potential shaping, exponential
+decrease 위반 soft penalty를 서로 독립적으로 계산·기록한다. E2E profile은
+normalized torque 세 축에 대한 선택적 magnitude penalty도 사용하며, thrust
+action은 이 항에서 제외한다. 이는 안정성 증명이 아니며 \(P\succ0\)만으로
+실제 closed-loop 감소도 보장되지 않는다.
+
+정확한 수식, 좌표계와 현재 trajectory-reference 한계, terminal/truncation 처리,
+설정 단위, ablation mode, 실행 예시는
+[Lyapunov-candidate reward 문서](docs/LYAPUNOV_CANDIDATE_REWARD.md)에 있다.
 
 ## CF2.1 BLDC actuator
 
@@ -132,6 +151,30 @@ python train_ppo.py --config configs/residual_train.yaml --dry-run
 python train_ppo_02.py --config configs/e2e_train.yaml
 python train_ppo_02.py --config configs/residual_train.yaml
 ```
+
+Lyapunov-candidate reward의 residual/E2E opt-in dry run:
+
+```bash
+python train_ppo.py --config configs/residual_train_lyapunov.yaml --dry-run
+python train_ppo_02.py --config configs/e2e_train_lyapunov.yaml --dry-run
+```
+
+저장소의 legacy checkpoint는 이 새 reward로 재학습된 model이 아니다. 같은
+observation/action shape로 load할 수 있다는 사실을 새 reward 성능이나 안정성
+검증으로 해석하지 않는다.
+
+Canonical E2E recovery fine-tuning은 legacy reward와 manifest-validated
+policy-only warm-start를 사용한다. 새 PPO와 optimizer 및 timestep 0에서
+시작하며 donor optimizer/rollout buffer는 복사하지 않는다.
+
+```bash
+python train_ppo_02.py \
+  --config configs/e2e_train_legacy_initial_perturb_v2.yaml \
+  --init-policy-from /absolute/path/to/nominal_legacy_e2e_model.zip
+```
+
+Lyapunov profile과 과거 artifact는 재현성을 위해 남아 있지만 기본 또는 권장
+E2E 학습 경로가 아니다.
 
 짧은 server smoke test에는 `--total-timesteps`를 사용할 수 있다.
 
@@ -208,6 +251,51 @@ python diag_iterm_sat.py --config configs/residual_hover_eval.yaml \
   --model model/ppo_best.zip
 python plot_curve.py --config configs/residual_train.yaml
 ```
+
+E2E policy의 국소 feedback, normalized-action scaling, requested/actual motor
+thrust, BLDC lag, reward component 합 및 termination reason은 별도 진단으로
+기록할 수 있다.
+
+```bash
+python diagnose_e2e_policy.py \
+  --config configs/e2e_train_legacy_initial_perturb_v2.yaml \
+  --model /absolute/path/to/best_or_final_model.zip \
+  --seed 1000
+```
+
+정확한 observation/action contract와 출력 형식은
+[E2E policy diagnostics](docs/E2E_POLICY_DIAGNOSTICS.md)에 있다.
+
+Base/legacy reward를 유지하면서 공중 hover 초기 위치·자세 curriculum을 쓰는
+E2E profile과 deterministic recovery grid evaluator도 별도로 제공한다.
+
+```bash
+python train_ppo_02.py --config configs/e2e_train_initial_perturb.yaml \
+  --total-timesteps 50000
+python evaluate_recovery.py \
+  --config configs/e2e_train_initial_perturb.yaml \
+  --model /absolute/path/to/final_model.zip --seed 1000
+```
+
+Interactive recovery checks can use reproducible viewer presets. The existing
+`--preset` remains the legacy circle-preset option, so named evaluations use
+`--eval-preset` instead:
+
+```bash
+python view_live.py --list-presets
+python view_live.py --eval-preset recovery-ppo-nominal
+python view_live.py --eval-preset recovery-ppo-tilt30
+python view_live.py --eval-preset recovery-pid-tilt30
+python view_live.py --eval-preset recovery-both-tilt30
+python view_live.py --eval-preset recovery-ppo-position20cm
+```
+
+Explicit low-level options override preset values. `--policy ppo` and the
+legacy spelling `--policy residual` both select the learned policy; its actual
+E2E/residual control mode is printed before rollout.
+
+분포, absolute-timestep curriculum 및 recovery success 정의는
+[initial-perturbation recovery 문서](docs/INITIAL_PERTURB_RECOVERY.md)에 있다.
 
 기존 `tb/`에는 run별 control mode/condition/seed provenance가 없으므로 entropy 진단은 이를 residual이라고 추론하지 않는다. 생성된 metrics와 manifest의 input provenance는 `unverified`이며, top-level mode는 진단 실행 profile만 뜻한다.
 

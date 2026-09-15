@@ -58,7 +58,13 @@ def test_base_and_profiles_merge_without_changing_master_contracts() -> None:
 def test_every_shipped_profile_loads(profile: str) -> None:
     config = load_config(CONFIGS / profile)
     assert config.source_path.name == profile
-    assert config.observation_shape == (15,)
+    expected_observation_shape = (
+        (418,)
+        if profile == "e2e_train_payload_dr_history_integral_v1.yaml"
+        or profile.startswith("view_payload_history_integral_v1_")
+        else (15,)
+    )
+    assert config.observation_shape == expected_observation_shape
     assert config.action_shape == (4,)
     assert config.actuator.enabled
     assert config.actuator.model == "cf21b_first_order"
@@ -82,7 +88,9 @@ def test_foreign_posix_absolute_path_is_preserved_when_inspected_on_windows() ->
     assert _foreign_posix_absolute(server_xml, native_is_absolute=True) is None
 
 
-def test_required_actuator_config_uses_first_order_model_and_legacy_yaw_torque() -> None:
+def test_required_actuator_config_uses_first_order_model_and_legacy_yaw_torque() -> (
+    None
+):
     config = load_config(CONFIGS / "base.yaml")
     actuator = config.actuator
 
@@ -101,7 +109,9 @@ def test_required_actuator_config_uses_first_order_model_and_legacy_yaw_torque()
     assert actuator.randomization.time_constant_s.max == pytest.approx(0.060)
 
 
-def test_cf21b_actuator_profiles_keep_legacy_yaw_by_default_and_opt_in_to_polynomial() -> None:
+def test_cf21b_actuator_profiles_keep_legacy_yaw_by_default_and_opt_in_to_polynomial() -> (
+    None
+):
     first_order = load_config(CONFIGS / "cf21b_actuator_eval.yaml")
     torque_poly = load_config(CONFIGS / "cf21b_actuator_torque_poly_eval.yaml")
 
@@ -149,7 +159,9 @@ def test_cf21b_actuator_profiles_keep_legacy_yaw_by_default_and_opt_in_to_polyno
         ),
     ],
 )
-def test_invalid_actuator_values_fail_early(tmp_path: Path, mutate, message: str) -> None:
+def test_invalid_actuator_values_fail_early(
+    tmp_path: Path, mutate, message: str
+) -> None:
     with pytest.raises(ConfigError, match=message):
         load_config(_mutated_base(tmp_path, mutate))
 
@@ -160,6 +172,17 @@ def test_unknown_key_is_rejected(tmp_path: Path) -> None:
         lambda data: data["environment"].__setitem__("policy_hzz", 100),
     )
     with pytest.raises(ConfigError, match="policy_hzz"):
+        load_config(profile)
+
+
+def test_unknown_reward_key_is_rejected(tmp_path: Path) -> None:
+    profile = _mutated_base(
+        tmp_path,
+        lambda data: data["environment"]["reward"].__setitem__(
+            "e2e_torque_xy_wieght", 0.1
+        ),
+    )
+    with pytest.raises(ConfigError, match="e2e_torque_xy_wieght"):
         load_config(profile)
 
 
@@ -175,13 +198,21 @@ def test_missing_required_key_is_rejected(tmp_path: Path) -> None:
 @pytest.mark.parametrize(
     ("mutate", "message"),
     [
-        (lambda data: data["environment"].__setitem__("control_mode", "absolute"), "control_mode"),
-        (lambda data: data["environment"].__setitem__("residual_scale", [1, 2, 3]), "exactly 4"),
+        (
+            lambda data: data["environment"].__setitem__("control_mode", "absolute"),
+            "control_mode",
+        ),
+        (
+            lambda data: data["environment"].__setitem__("residual_scale", [1, 2, 3]),
+            "exactly 4",
+        ),
         (lambda data: data["environment"].__setitem__("policy_hz", -1), "positive"),
         (lambda data: data["environment"].__setitem__("episode_sec", 0), "positive"),
     ],
 )
-def test_invalid_environment_values_fail_early(tmp_path: Path, mutate, message: str) -> None:
+def test_invalid_environment_values_fail_early(
+    tmp_path: Path, mutate, message: str
+) -> None:
     with pytest.raises(ConfigError, match=message):
         load_config(_mutated_base(tmp_path, mutate))
 
@@ -201,7 +232,9 @@ def test_loaded_config_has_no_shared_mutable_sequences() -> None:
     assert first.environment.residual_scale[0] == 0.022
 
 
-def test_loading_config_has_no_filesystem_or_runtime_side_effects(tmp_path: Path) -> None:
+def test_loading_config_has_no_filesystem_or_runtime_side_effects(
+    tmp_path: Path,
+) -> None:
     before = set(tmp_path.rglob("*"))
     config = load_config(CONFIGS / "e2e_train.yaml")
     assert config.profile_name == "e2e_train"

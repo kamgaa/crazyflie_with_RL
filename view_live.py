@@ -42,7 +42,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         unified=True,
         mode_profiles=MODE_CONFIGS,
         path_profiles=PATH_PROFILES,
-        always_compare=True,
     )
 
 

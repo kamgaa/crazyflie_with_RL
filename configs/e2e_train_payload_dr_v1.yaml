@@ -1,0 +1,69 @@
+extends: e2e_train_legacy_initial_perturb_v2.yaml
+
+# The parent profile resolves identically to the selected donor's archived
+# resolved config outside the additions below. This profile is a new run under
+# the corrected rigid-point-payload plant; it is not a training resume.
+physics_model_version: rigid_point_payload_v2
+
+environment:
+  payload:
+    # Keep the legacy torque-derived sampler disabled and unchanged. Only this
+    # opt-in curriculum uses the new independent mass/radius distribution.
+    randomize: false
+    mass: 0.0
+    offset: [0.0, 0.0]
+    curriculum:
+      enabled: true
+      payload_free_probability: 0.30
+      attachment_z_m: 0.0
+      mass_distribution: uniform
+      radius_distribution: uniform
+      azimuth_distribution: uniform_0_2pi
+      mass_radius_independent: true
+      sample_at_reset: true
+      fixed_within_episode: true
+      rng_mode: separate_seed_sequence_v1
+      stages:
+        # Half-open intervals in the new run's absolute policy timesteps.
+        - name: centered_0_to_5g
+          start_step: 0
+          end_step: 200000
+          mass_min_kg: 0.0
+          mass_max_kg: 0.005
+          centered_payload_probability: 1.0
+          radius_min_m: 0.0
+          radius_max_m: 0.0
+        - name: center20_or_radius_0_to_10mm
+          start_step: 200000
+          end_step: 500000
+          mass_min_kg: 0.0
+          mass_max_kg: 0.010
+          centered_payload_probability: 0.20
+          radius_min_m: 0.0
+          radius_max_m: 0.010
+        - name: center20_or_radius_0_to_30mm
+          start_step: 500000
+          end_step: null
+          mass_min_kg: 0.0
+          mass_max_kg: 0.010
+          centered_payload_probability: 0.20
+          radius_min_m: 0.0
+          radius_max_m: 0.030
+      feasibility_filter:
+        enabled: true
+        minimum_lower_thrust_margin_n: 0.020
+        minimum_upper_thrust_margin_n: 0.020
+        max_resample_attempts: 32
+        exhausted_action: raise
+        margin_design_note: 0.02 N is an experiment design value, not an agility guarantee
+
+evaluation:
+  payload:
+    enabled: true
+    evaluation_interval: 100000
+    duration_s: 8.0
+    seed: 1000
+
+experiment:
+  condition: payload-dr-v1
+  description: Warm-start E2E payload DR under rigid_point_payload_v2

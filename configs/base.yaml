@@ -1,4 +1,5 @@
 version: 1
+physics_model_version: rigid_point_payload_v2
 
 paths:
   # Project-local MuJoCo XML contract. Resolve this path from project_root;
@@ -88,6 +89,18 @@ environment:
   yaw_target: 0.0
   position_perturbation: 0.05
   attitude_perturbation_deg: 0.0
+  # Opt-in E2E airborne reset curriculum. Disabled preserves the historical
+  # cube-position/random-horizontal-axis reset path and its RNG draw order.
+  initial_state_randomization:
+    enabled: false
+    nominal_reset_probability: 0.20
+    curriculum_end_step: 300000
+    initial_max_tilt_deg: 5.0
+    final_max_tilt_deg: 30.0
+    initial_max_horizontal_offset_m: 0.02
+    final_max_horizontal_offset_m: 0.20
+    initial_max_vertical_offset_m: 0.02
+    final_max_vertical_offset_m: 0.10
   payload:
     randomize: false
     mass: 0.0
@@ -98,16 +111,43 @@ environment:
       torque_fraction: 0.5
       mass_max: 0.015
   reward:
+    # All existing profiles stay on the executable legacy reward unless an
+    # opt-in profile overrides this field.
+    mode: legacy
     position_weight: 3.0
-    velocity_weight: 0.01
-    tilt_weight: 3.0
-    angular_velocity_weight: 0.001
-    yaw_weight: 1.0
+    velocity_weight: 0.5
+    tilt_weight: 1.0
+    angular_velocity_weight: 0.01
+    yaw_weight: 0.8
     action_weight: 0.0
     action_rate_weight: 0.0
+    e2e_torque_xy_weight: 0.0
+    e2e_torque_yaw_weight: 0.0
     crash_penalty: 10.0
+    lyapunov:
+      # The legacy reward used raw SI/radian errors and had no normalization
+      # tolerances. Unit scales preserve that starting convention; they are
+      # configurable per axis and are not claimed to be tuned values.
+      normalization:
+        position: [1.0, 1.0, 1.0]       # m
+        velocity: [1.0, 1.0, 1.0]       # m/s
+        attitude: [1.0, 1.0, 1.0]       # geometric error; small-angle rad convention
+        angular_rate: [1.0, 1.0, 1.0]   # rad/s, body frame
+      # Positive diagonal blocks make P positive definite. They do not prove
+      # that this candidate decreases for the actual closed-loop dynamics.
+      matrix_weights:
+        position: 3.0
+        velocity: 0.1
+        attitude: 3.0
+        angular_rate: 0.001
+      state_cost_weight: 1.0
+      potential_weight: 1.0
+      decay_weight: 1.0
+      decay_rate: 1.0  # kappa [1/s]; must satisfy 0 < kappa*policy_dt < 1
+      potential_shaping_enabled: true
+      decay_penalty_enabled: true
   termination:
-    min_altitude: 0.2
+    min_altitude: 0.02
     max_altitude: 2.5
     max_tilt_deg: 60.0
     max_position_error: 1.5

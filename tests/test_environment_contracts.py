@@ -68,10 +68,16 @@ def test_both_modes_preserve_the_exact_fifteen_value_observation(mode: str) -> N
     np.testing.assert_allclose(observation, expected, rtol=0.0, atol=1e-7)
 
 
-def test_all_profiles_publish_the_same_observation_contract() -> None:
+def test_profiles_publish_the_declared_observation_contract() -> None:
     for profile in CONFIGS.glob("*.yaml"):
         config = load_config(profile)
-        assert config.observation_shape == (15,), profile.name
+        expected = (
+            (418,)
+            if profile.name == "e2e_train_payload_dr_history_integral_v1.yaml"
+            or profile.name.startswith("view_payload_history_integral_v1_")
+            else (15,)
+        )
+        assert config.observation_shape == expected, profile.name
         assert config.action_shape == (4,), profile.name
 
 
@@ -120,6 +126,7 @@ class _FakeModel:
         self.body_mass = np.array([MASS])
         self.body_ipos = np.zeros((1, 3))
         self.body_inertia = np.array([[2.3951e-5, 2.3951e-5, 3.2347e-5]])
+        self.body_iquat = np.array([[1.0, 0.0, 0.0, 0.0]])
         self.sensor_adr = np.array([0])
 
 
@@ -134,9 +141,7 @@ def test_config_values_are_wired_into_the_runtime_before_model_use(monkeypatch) 
     fake_mujoco = SimpleNamespace(
         MjModel=SimpleNamespace(from_xml_path=lambda path: fake_model),
         MjData=_FakeData,
-        mjtObj=SimpleNamespace(
-            mjOBJ_BODY=1, mjOBJ_SENSOR=2, mjOBJ_ACTUATOR=3
-        ),
+        mjtObj=SimpleNamespace(mjOBJ_BODY=1, mjOBJ_SENSOR=2, mjOBJ_ACTUATOR=3),
         mj_name2id=lambda *_args: 0,
     )
     monkeypatch.setattr(env_module, "gym", SimpleNamespace())
@@ -174,9 +179,7 @@ def test_legacy_constructor_overrides_take_precedence_over_config(monkeypatch) -
         SimpleNamespace(
             MjModel=SimpleNamespace(from_xml_path=lambda path: fake_model),
             MjData=_FakeData,
-            mjtObj=SimpleNamespace(
-                mjOBJ_BODY=1, mjOBJ_SENSOR=2, mjOBJ_ACTUATOR=3
-            ),
+            mjtObj=SimpleNamespace(mjOBJ_BODY=1, mjOBJ_SENSOR=2, mjOBJ_ACTUATOR=3),
             mj_name2id=lambda *_args: 0,
         ),
     )
@@ -192,9 +195,7 @@ def test_legacy_constructor_overrides_take_precedence_over_config(monkeypatch) -
     )
 
     assert env.mode == "residual"
-    np.testing.assert_array_equal(
-        env.residual_scale, (0.006, 0.006, 0.0001, 0.3)
-    )
+    np.testing.assert_array_equal(env.residual_scale, (0.006, 0.006, 0.0001, 0.3))
     assert env.max_steps == 3600
     assert env.com_bias_mass == 0.005
     assert env.pos_perturb == 0.0
@@ -270,10 +271,10 @@ def test_action_clip_scale_control_composition_and_payload_torque(
         )
         assert reward == pytest.approx(0.0)
 
-    # identity attitude: [x,y,0] x [0,0,-mg] = [-mgy, mgx, 0]
+    # Payload gravity torque is no longer injected; physical lever arms handle it.
     np.testing.assert_allclose(
         env.data.xfrc_applied[0, 3:6],
-        np.array([0.01 * GRAV * 0.2, 0.01 * GRAV * 0.1, 0.0]),
+        np.zeros(3),
     )
     assert observation.shape == (15,)
     assert terminated is False
@@ -443,9 +444,7 @@ def test_motor_thrust_clip_and_reaction_torque_application() -> None:
     assert np.all(env._last_f > 0.0)
     assert np.all(env._last_f < 0.20)
     np.testing.assert_allclose(env.data.ctrl[0:4], env._last_f)
-    np.testing.assert_allclose(
-        env.data.ctrl[4:8], MOTOR_DIR * K_TAU * env._last_f
-    )
+    np.testing.assert_allclose(env.data.ctrl[4:8], MOTOR_DIR * K_TAU * env._last_f)
 
 
 def _actuator_only_env(config, *, seed: int = 0) -> CrazyflieResidualEnv:
@@ -494,9 +493,7 @@ def test_default_environment_always_uses_the_bldc_actuator_path() -> None:
     assert np.all(env._last_f >= 0.0)
     assert np.all(env._last_f < env._last_f_cmd)
     np.testing.assert_allclose(env.data.ctrl[0:4], env._last_f)
-    np.testing.assert_allclose(
-        env.data.ctrl[4:8], MOTOR_DIR * K_TAU * env._last_f
-    )
+    np.testing.assert_allclose(env.data.ctrl[4:8], MOTOR_DIR * K_TAU * env._last_f)
     assert np.all(np.isfinite(env._last_motor_cmd))
     assert np.all(np.isfinite(env._last_omega))
     assert env.actuator_snapshot()["enabled"] is True
@@ -506,7 +503,9 @@ def test_required_bldc_applies_delayed_actual_force_and_reports_wrenches() -> No
     config = load_config(CONFIGS / "residual_train.yaml")
     env = _actuator_only_env(config)
     env.reset_actuator_state(airborne=False, resample_parameters=True)
-    requested_wrench = np.array([0.0, 0.0, 0.0, config.vehicle.mass * config.vehicle.gravity])
+    requested_wrench = np.array(
+        [0.0, 0.0, 0.0, config.vehicle.mass * config.vehicle.gravity]
+    )
 
     for _ in range(5):
         env._apply_control(requested_wrench)
@@ -583,12 +582,14 @@ def test_bldc_randomization_uses_a_reproducible_dedicated_rng_stream() -> None:
 
     first_snapshot = first.actuator_snapshot()
     second_snapshot = second.actuator_snapshot()
-    assert first_snapshot["sampled_time_constant_s"] == second_snapshot[
-        "sampled_time_constant_s"
-    ]
-    assert first_snapshot["sampled_steady_state_gain_rad_s"] == second_snapshot[
-        "sampled_steady_state_gain_rad_s"
-    ]
+    assert (
+        first_snapshot["sampled_time_constant_s"]
+        == second_snapshot["sampled_time_constant_s"]
+    )
+    assert (
+        first_snapshot["sampled_steady_state_gain_rad_s"]
+        == second_snapshot["sampled_steady_state_gain_rad_s"]
+    )
     assert first_snapshot["sampled_time_constant_s"] != [0.050] * 4
 
 
@@ -617,16 +618,23 @@ def test_pid_hover_and_integrator_contract() -> None:
     assert np.all(np.isfinite(pid._i_rate))
 
 
-def test_com_mass_offset_and_diagonal_inertia_update() -> None:
+def test_com_mass_offset_and_full_inertia_update(monkeypatch) -> None:
     env = CrazyflieResidualEnv.__new__(CrazyflieResidualEnv)
     env.drone_bid = 0
     env._m0 = MASS
     env._ipos0 = np.array([0.01, -0.02, 0.0])
     env._J0 = np.array([2.0e-5, 3.0e-5, 4.0e-5])
+    env._iquat0 = np.array([1.0, 0.0, 0.0, 0.0])
+    env._inertia_body0 = np.diag(env._J0)
+    env.data = SimpleNamespace()
+    monkeypatch.setattr(
+        env_module, "mujoco", SimpleNamespace(mj_setConst=lambda *_: None)
+    )
     env.model = SimpleNamespace(
         body_mass=np.zeros(1),
         body_ipos=np.zeros((1, 3)),
         body_inertia=np.zeros((1, 3)),
+        body_iquat=np.zeros((1, 4)),
     )
     payload_mass = 0.01
     offset = np.array([0.03, -0.04])
@@ -638,12 +646,15 @@ def test_com_mass_offset_and_diagonal_inertia_update() -> None:
     expected_ipos = (
         MASS * env._ipos0 + payload_mass * np.array([0.03, -0.04, 0.0])
     ) / total
-    expected_inertia = env._J0 + reduced * np.array(
-        [0.04**2, 0.03**2, 0.03**2 + 0.04**2]
+    d = np.r_[offset, 0.0] - env._ipos0
+    expected_inertia = np.diag(env._J0) + reduced * (
+        (d @ d) * np.eye(3) - np.outer(d, d)
     )
     assert env.model.body_mass[0] == pytest.approx(total)
     np.testing.assert_allclose(env.model.body_ipos[0], expected_ipos)
-    np.testing.assert_allclose(env.model.body_inertia[0], expected_inertia)
+    from crazyflie_rl.payload_physics import inertia_body
+
+    np.testing.assert_allclose(inertia_body(env.model, 0), expected_inertia, atol=1e-18)
 
 
 def test_payload_randomization_preserves_master_rng_draw_order(monkeypatch) -> None:
@@ -686,6 +697,10 @@ def test_payload_randomization_preserves_master_rng_draw_order(monkeypatch) -> N
     # This fixture isolates the historical payload/pose RNG draw order; it
     # deliberately does not construct a MuJoCo actuator environment.
     env.reset_actuator_state = lambda **_kwargs: {}
+    env.payload_snapshot = lambda: {}
+    env.actuator_snapshot = lambda: {}
+    env._last_f = env._last_f_cmd = env._last_omega = env._last_q_actual = np.zeros(4)
+    monkeypatch.setattr(env_module, "static_hover", lambda _: {})
 
     observation, _ = env.reset(seed=123)
 
@@ -713,7 +728,9 @@ def test_payload_randomization_preserves_master_rng_draw_order(monkeypatch) -> N
     np.testing.assert_array_equal(env._prev_action, np.zeros(4))
 
 
-def test_environment_factory_uses_config_seed_and_explicit_overrides(monkeypatch) -> None:
+def test_environment_factory_uses_config_seed_and_explicit_overrides(
+    monkeypatch,
+) -> None:
     config = load_config(CONFIGS / "e2e_train.yaml")
     seeded_training = replace(config.training, seed=42)
     config = replace(config, training=seeded_training)

@@ -10,6 +10,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Protocol
 
+from .physics_version import PHYSICS_MODEL_VERSION, physics_comparison
+
 if TYPE_CHECKING:
     from .config import ExperimentConfig
 
@@ -28,6 +30,8 @@ class EvaluationResult:
     disqualifications: int
     mean_episode_length: float
     episode_count: int
+    episodes: tuple[dict[str, Any], ...] = ()
+    physics_provenance: dict[str, Any] | None = None
 
     @property
     def mean_error(self) -> float:
@@ -35,7 +39,7 @@ class EvaluationResult:
 
         return self.score
 
-    def as_metrics(self) -> dict[str, float | int]:
+    def as_metrics(self) -> dict[str, Any]:
         """Return JSON-serializable metric values."""
 
         return {
@@ -44,6 +48,9 @@ class EvaluationResult:
             "disqualifications": self.disqualifications,
             "mean_episode_length": self.mean_episode_length,
             "episode_count": self.episode_count,
+            "physics_model_version": PHYSICS_MODEL_VERSION,
+            "episodes": list(self.episodes),
+            "physics_provenance": self.physics_provenance,
         }
 
 
@@ -82,16 +89,44 @@ class PolicyEvaluator:
         import numpy as np
 
         settings = self.config.evaluation
-        environment = self.environment_factory.make(seed=None)
+        # Periodic training evaluation must not inherit the training
+        # curriculum's moving reset distribution. Existing profiles are
+        # unchanged because this override only disables the new opt-in path.
+        overrides: dict[str, Any] = {
+            "initial_state_randomization_enabled": False,
+        }
+        payload_curriculum = getattr(
+            getattr(getattr(self.config, "environment", None), "payload", None),
+            "curriculum",
+            None,
+        )
+        if bool(getattr(payload_curriculum, "enabled", False)):
+            # The legacy periodic score remains a payload-free nominal metric.
+            # Payload checkpoint selection is handled by the fixed 14-case suite.
+            overrides.update(
+                {
+                    "payload_curriculum_enabled": False,
+                    "com_bias_randomize": False,
+                    "com_bias_mass": 0.0,
+                    "com_bias_offset": (0.0, 0.0),
+                }
+            )
+        environment = self.environment_factory.make(seed=None, **overrides)
         episode_scores: list[float] = []
         episode_lengths: list[int] = []
         disqualifications = 0
+        episodes = []
 
         try:
             for episode_index in range(settings.episode_count):
                 observation, _info = environment.reset(
                     seed=settings.seed_start + episode_index
                 )
+                episode_record = {
+                    "seed": settings.seed_start + episode_index,
+                    **_info,
+                }
+                episodes.append(episode_record)
                 position_errors: list[float] = []
                 tilt_angles_deg: list[float] = []
                 done = False
@@ -145,6 +180,18 @@ class PolicyEvaluator:
                     > settings.tilt_limit_deg
                 ):
                     disqualifications += 1
+                if isinstance(_step_info, dict) and _step_info.get(
+                    "observation_diagnostics"
+                ):
+                    episode_record["final_observation_diagnostics"] = dict(
+                        _step_info["observation_diagnostics"]
+                    )
+                    episode_record["final_legacy_reward_terms"] = dict(
+                        _step_info.get("legacy_reward_terms", {})
+                    )
+                    episode_record["final_transition_timing"] = dict(
+                        _step_info.get("transition_timing", {})
+                    )
         finally:
             close = getattr(environment, "close", None)
             if callable(close):
@@ -155,6 +202,12 @@ class PolicyEvaluator:
             disqualifications=disqualifications,
             mean_episode_length=float(np.mean(episode_lengths)),
             episode_count=settings.episode_count,
+            episodes=tuple(episodes),
+            physics_provenance=physics_comparison(
+                PHYSICS_MODEL_VERSION
+                if model is None
+                else getattr(model, "physics_model_version", None)
+            ),
         )
 
 

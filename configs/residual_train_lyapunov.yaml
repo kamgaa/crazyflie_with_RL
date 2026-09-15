@@ -1,0 +1,9 @@
+extends: residual_train.yaml
+
+environment:
+  reward:
+    mode: lyapunov
+
+experiment:
+  condition: m10g-r0mm-lyapunov-candidate-start
+  description: Residual PPO Lyapunov-candidate reward starting point; not long-run tuned

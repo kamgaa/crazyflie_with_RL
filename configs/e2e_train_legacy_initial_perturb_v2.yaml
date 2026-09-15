@@ -1,0 +1,63 @@
+extends: e2e_train.yaml
+
+training:
+  seed: 42
+  policy_initialization_required: true
+  ppo:
+    # Fine-tuning-only override. All other legacy PPO settings are inherited.
+    learning_rate: 0.0001
+
+environment:
+  control_mode: e2e
+  position_perturbation: 0.0
+  attitude_perturbation_deg: 0.0
+  initial_state_randomization:
+    enabled: true
+    nominal_reset_probability: 0.80
+    curriculum_end_step: 800000
+    initial_max_tilt_deg: 5.0
+    final_max_tilt_deg: 30.0
+    initial_max_horizontal_offset_m: 0.02
+    final_max_horizontal_offset_m: 0.20
+    initial_max_vertical_offset_m: 0.02
+    final_max_vertical_offset_m: 0.10
+    # Absolute global-step points. Repeating the stage-1 value at 200k keeps
+    # the first stage constant; subsequent segments interpolate linearly.
+    curriculum_breakpoints:
+      - global_step: 0
+        nominal_reset_probability: 0.80
+        max_tilt_deg: 5.0
+        max_horizontal_offset_m: 0.02
+        max_vertical_offset_m: 0.02
+      - global_step: 200000
+        nominal_reset_probability: 0.80
+        max_tilt_deg: 5.0
+        max_horizontal_offset_m: 0.02
+        max_vertical_offset_m: 0.02
+      - global_step: 500000
+        nominal_reset_probability: 0.50
+        max_tilt_deg: 15.0
+        max_horizontal_offset_m: 0.10
+        max_vertical_offset_m: 0.05
+      - global_step: 800000
+        nominal_reset_probability: 0.20
+        max_tilt_deg: 30.0
+        max_horizontal_offset_m: 0.20
+        max_vertical_offset_m: 0.10
+  reward:
+    mode: legacy
+    e2e_torque_xy_weight: 0.0
+    e2e_torque_yaw_weight: 0.0
+    lyapunov:
+      potential_shaping_enabled: false
+      decay_penalty_enabled: false
+
+evaluation:
+  recovery:
+    enabled: true
+    evaluation_interval: 100000
+    duration_s: 8.0
+
+experiment:
+  condition: legacy-recovery-finetune-v2
+  description: Policy-only warm-start legacy E2E recovery fine-tuning
