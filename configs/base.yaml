@@ -83,7 +83,7 @@ environment:
   control_mode: e2e
   policy_hz: 100.0
   episode_sec: 8.0
-  residual_scale: [0.022, 0.022, 0.0001, 0.3]
+  residual_scale: [0.0075, 0.0075, 0.001, 0.5]
   position_target: [0.0, 0.0, 1.0]
   yaw_target: 0.0
   position_perturbation: 0.05
@@ -98,8 +98,8 @@ environment:
       torque_fraction: 0.5
       mass_max: 0.015
   reward:
-    position_weight: 3.0
-    velocity_weight: 0.01
+    position_weight: 4.0
+    velocity_weight: 0.005
     tilt_weight: 3.0
     angular_velocity_weight: 0.001
     yaw_weight: 1.0

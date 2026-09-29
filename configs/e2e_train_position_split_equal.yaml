@@ -1,0 +1,17 @@
+extends: e2e_train.yaml
+
+# Equal to the current base.yaml position_weight. All other settings inherit
+# the active train_ppo_02.py baseline, including action scale and reset/DR.
+environment:
+  reward:
+    position_xy_weight: 10.0
+    position_z_weight: 6.0
+  initial_pose_randomization:
+    enabled: true
+    position:
+      enabled: true
+      max_norm_m: 0.15
+    attitude:
+      enabled: false
+      max_angle_deg: 0.000001
+      full_3d: false

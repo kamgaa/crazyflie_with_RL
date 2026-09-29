@@ -61,12 +61,78 @@ def _result_fields(prefix: str, result: EvaluationResult) -> dict[str, Any]:
         f"{prefix}_disqualifications": result.disqualifications,
         f"{prefix}_mean_episode_length": result.mean_episode_length,
         f"{prefix}_episode_count": result.episode_count,
+        **{f"{prefix}_{name}": getattr(result, name) for name in (
+            "position_rmse_xy", "position_rmse_z",
+            "tail_position_rmse_xy", "tail_position_rmse_z",
+        )},
     }
 
 
 def _improvement_percent(policy_score: float, floor_score: float) -> float:
     denominator = max(abs(floor_score), 1e-12)
     return 100.0 * (floor_score - policy_score) / denominator
+
+
+def _make_reward_diagnostics_callback() -> Any:
+    """Defer SB3 imports, as with the existing evaluation callback.
+
+    Scalars describe reward trajectories, not proof of gradient conflict.
+    SB3's normal rollout logger dump writes the recorded values to TensorBoard.
+    """
+    from stable_baselines3.common.callbacks import BaseCallback
+
+    components = (
+        "position", "velocity", "tilt", "angular_velocity", "yaw",
+        "action", "action_rate", "crash",
+    )
+    groups = {
+        "reward_terms": (*components, "total"),
+        "reward_raw": (
+            "position_sq", "position_sq_xy", "position_sq_z",
+            "velocity_sq", "tilt_error", "angular_velocity_sq",
+            "yaw_error_sq", "action_sq", "action_rate_sq",
+        ),
+        "reward_costs": ("position_xy", "position_z"),
+    }
+
+    class RewardDiagnosticsCallback(BaseCallback):
+        def __init__(self) -> None:
+            super().__init__(verbose=0)
+            self._on_rollout_start()
+
+        def _on_rollout_start(self) -> None:
+            self.sums = {
+                f"{group}/{name}": 0.0
+                for group, names in groups.items() for name in names
+            }
+            self.counts = dict.fromkeys(self.sums, 0)
+            self.magnitudes = dict.fromkeys(components, 0.0)
+
+        def _on_step(self) -> bool:
+            for info in self.locals.get("infos", []):
+                for group, names in groups.items():
+                    values = info.get(group, {})
+                    for name in names:
+                        if name not in values:
+                            continue
+                        value = float(values[name])
+                        tag = f"{group}/{name}"
+                        self.sums[tag] += value
+                        self.counts[tag] += 1
+                        if group == "reward_terms" and name != "total":
+                            self.magnitudes[name] += abs(value)
+            return True
+
+        def _on_rollout_end(self) -> None:
+            for tag, total in self.sums.items():
+                if self.counts[tag]:
+                    self.logger.record(tag, total / self.counts[tag])
+            if any(self.counts[f"reward_terms/{name}"] for name in components):
+                denominator = sum(self.magnitudes.values()) + 1e-12
+                for name, magnitude in self.magnitudes.items():
+                    self.logger.record(f"reward_fraction/{name}", magnitude / denominator)
+
+    return RewardDiagnosticsCallback()
 
 
 class PPOTrainer:
@@ -265,6 +331,12 @@ class PPOTrainer:
 
         # Missing static resources should fail before a run directory exists.
         self.config.require_runtime_resources()
+        reward = self.config.environment.reward
+        print(
+            f"[config] position_xy_weight={reward.effective_position_xy_weight:g} "
+            f"position_z_weight={reward.effective_position_z_weight:g} "
+            f"action_scale={self.config.environment.residual_scale}"
+        )
         artifacts = self.artifact_manager
         vector_environment: Any | None = None
 
@@ -288,9 +360,14 @@ class PPOTrainer:
             )
 
             callback = self._make_evaluation_callback(artifacts)
+            # SB3 converts a callback list into CallbackList. Keep the original
+            # evaluation handle for the unchanged best/final selection below.
+            callbacks = [_make_reward_diagnostics_callback()]
+            if callback is not None:
+                callbacks.append(callback)
             model.learn(
                 total_timesteps=int(requested_timesteps),
-                callback=callback,
+                callback=callbacks,
                 progress_bar=False,
             )
             actual_timesteps = int(

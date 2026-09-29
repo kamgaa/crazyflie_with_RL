@@ -8,3 +8,8 @@ htmlcov/
 # separately and are intentionally not moved or deleted by this refactor.
 artifacts/runs/*
 !artifacts/runs/.gitkeep
+
+# Generated flight-test runs and Windows filesystem metadata.
+artifacts/view_live/
+*.lnk
+*:Zone.Identifier

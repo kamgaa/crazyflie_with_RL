@@ -14,6 +14,22 @@ if TYPE_CHECKING:
     from .config import ExperimentConfig
 
 
+def position_rmse_metrics(errors: Any) -> dict[str, float | None]:
+    """RMSE over sampled 3D errors; xy is horizontal distance, not axis mean.
+
+    No time windows or per-axis normalization are introduced here.
+    """
+    import numpy as np
+
+    values = np.asarray(errors, dtype=float).reshape((-1, 3))
+    if not len(values):
+        return {"position_rmse_xy": None, "position_rmse_z": None}
+    return {
+        "position_rmse_xy": float(np.sqrt(np.mean(np.sum(values[:, :2] ** 2, axis=1)))),
+        "position_rmse_z": float(np.sqrt(np.mean(values[:, 2] ** 2))),
+    }
+
+
 class EnvironmentFactoryProtocol(Protocol):
     """Small factory surface needed by :class:`PolicyEvaluator`."""
 
@@ -22,12 +38,21 @@ class EnvironmentFactoryProtocol(Protocol):
 
 @dataclass(frozen=True)
 class EvaluationResult:
-    """Aggregate result for the fixed-seed hover evaluation contract."""
+    """Fixed-seed hover metrics.
+
+    Axis RMSE pools samples across episodes (including early-ended episodes);
+    tail RMSE pools exactly the existing per-episode score windows. The legacy
+    score remains the unweighted episode mean of tail mean distances.
+    """
 
     score: float
     disqualifications: int
     mean_episode_length: float
     episode_count: int
+    position_rmse_xy: float | None = None
+    position_rmse_z: float | None = None
+    tail_position_rmse_xy: float | None = None
+    tail_position_rmse_z: float | None = None
 
     @property
     def mean_error(self) -> float:
@@ -35,7 +60,7 @@ class EvaluationResult:
 
         return self.score
 
-    def as_metrics(self) -> dict[str, float | int]:
+    def as_metrics(self) -> dict[str, float | int | None]:
         """Return JSON-serializable metric values."""
 
         return {
@@ -44,6 +69,10 @@ class EvaluationResult:
             "disqualifications": self.disqualifications,
             "mean_episode_length": self.mean_episode_length,
             "episode_count": self.episode_count,
+            "position_rmse_xy": self.position_rmse_xy,
+            "position_rmse_z": self.position_rmse_z,
+            "tail_position_rmse_xy": self.tail_position_rmse_xy,
+            "tail_position_rmse_z": self.tail_position_rmse_z,
         }
 
 
@@ -86,6 +115,8 @@ class PolicyEvaluator:
         episode_scores: list[float] = []
         episode_lengths: list[int] = []
         disqualifications = 0
+        all_vectors: list[Any] = []
+        tail_vectors: list[Any] = []
 
         try:
             for episode_index in range(settings.episode_count):
@@ -93,6 +124,7 @@ class PolicyEvaluator:
                     seed=settings.seed_start + episode_index
                 )
                 position_errors: list[float] = []
+                position_vectors: list[Any] = []
                 tilt_angles_deg: list[float] = []
                 done = False
 
@@ -111,6 +143,7 @@ class PolicyEvaluator:
                     position_errors.append(
                         float(np.linalg.norm(np.asarray(observation)[0:3]))
                     )
+                    position_vectors.append(np.asarray(observation, dtype=float)[0:3].copy())
 
                     quaternion = np.asarray(observation)[6:10]
                     cosine_tilt = np.clip(
@@ -138,6 +171,8 @@ class PolicyEvaluator:
                 # the legacy smoke-test behavior and selects the full episode.
                 tail_errors = position_errors[-tail_length:]
                 tail_tilts = tilt_angles_deg[-tail_length:]
+                all_vectors.extend(position_vectors)
+                tail_vectors.extend(position_vectors[-tail_length:])
                 episode_lengths.append(episode_length)
                 episode_scores.append(float(np.mean(tail_errors)))
                 if (
@@ -155,7 +190,9 @@ class PolicyEvaluator:
             disqualifications=disqualifications,
             mean_episode_length=float(np.mean(episode_lengths)),
             episode_count=settings.episode_count,
+            **position_rmse_metrics(all_vectors),
+            **{f"tail_{key}": value for key, value in position_rmse_metrics(tail_vectors).items()},
         )
 
 
-__all__ = ["EvaluationResult", "PolicyEvaluator"]
+__all__ = ["EvaluationResult", "PolicyEvaluator", "position_rmse_metrics"]

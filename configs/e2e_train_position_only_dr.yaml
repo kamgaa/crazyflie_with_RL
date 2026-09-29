@@ -1,0 +1,16 @@
+extends: e2e_train_position_split_equal.yaml
+
+# Place alongside the parent YAML in configs/.
+# Inherit position perturbation range, rewards, action scale, PPO settings,
+# episode duration, fixed goal, and other randomization from the parent.
+environment:
+  initial_pose_randomization:
+    enabled: true
+    position:
+      enabled: true
+    attitude:
+      enabled: false
+
+experiment:
+  condition: position-only-dr
+  description: E2E fixed-goal training with position-only reset perturbations.

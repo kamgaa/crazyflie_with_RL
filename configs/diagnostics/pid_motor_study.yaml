@@ -1,0 +1,28 @@
+experiment_config: ../base.yaml
+motor_index: 0
+seed: 42
+effectiveness_values: [1.0, 0.9, 0.8, 0.7, 0.6, 0.55, 0.5]
+duration: 30.0
+activation_sec: 2.0
+steady_state_window_sec: 5.0
+settle_position_m: 0.03
+settle_attitude_deg: 3.0
+settle_velocity_m_s: 0.03
+settle_hold_sec: 2.0
+settle_buffer_sec: 2.0
+max_steady_saturation_fraction: 0.01
+timing_mode: individual
+pre_window_sec: 1.0
+pulse_amplitude: 0.0001
+pulse_duration: 0.1
+post_pulse_sec: 8.0
+pulse_amplitudes: [0.00005, 0.0001, 0.00015, 0.0002, 0.0003, 0.0004, 0.0005]
+recovery_position_m: 0.05
+recovery_attitude_deg: 5.0
+recovery_velocity_m_s: 0.05
+recovery_hold_sec: 0.5
+critical_position_m: 0.10
+critical_attitude_deg: 10.0
+critical_recovery_sec: 5.0
+critical_motor_saturation: true
+critical_termination: true

@@ -4,6 +4,9 @@ environment:
   position_perturbation: 0.0
   attitude_perturbation_deg: 0.0
 
+paths:
+  artifact_root: artifacts/view_live
+
 evaluation:
   episode_count: 1
   seed_start: 42

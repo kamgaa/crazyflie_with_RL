@@ -88,3 +88,14 @@ def test_short_ppo_save_reload_and_headless_evaluation(tmp_path: Path) -> None:
     evaluation = PolicyEvaluator(smoke_config).evaluate(reloaded)
     assert evaluation.episode_count == 1
     assert evaluation.mean_episode_length > 0
+
+    from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
+
+    event_files = list((tmp_path / "artifacts").rglob("events.out.tfevents.*"))
+    assert event_files
+    events = EventAccumulator(str(event_files[0])).Reload()
+    for tag in (
+        "reward_terms/position", "reward_terms/total",
+        "reward_raw/position_sq", "reward_fraction/position",
+    ):
+        assert [event.step for event in events.Scalars(tag)] == [32, 64]

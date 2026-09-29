@@ -10,6 +10,7 @@ import numpy as np
 import pytest
 
 from crazyflie_rl.evaluation import EvaluationResult, PolicyEvaluator
+from crazyflie_rl.config import load_config
 from crazyflie_rl.training import PPOTrainer
 
 
@@ -324,6 +325,7 @@ class FakeTrainingFactory:
 def _install_fake_training_stack(
     monkeypatch: pytest.MonkeyPatch,
 ) -> type:
+    _install_fake_callback_module(monkeypatch)
     class FakeModel:
         def __init__(self, **kwargs: Any) -> None:
             self.kwargs = kwargs
@@ -369,6 +371,7 @@ def test_zero_interval_smoke_saves_trained_policy_as_best_and_final(
     evaluator = SequencedEvaluator([floor, trained])
     config = FakeRuntimeConfig(
         resources_checked=False,
+        environment=load_config(PROJECT_ROOT / 'configs/residual_train.yaml').environment,
         control_mode="residual",
         training=SimpleNamespace(
             seed=None,
@@ -394,6 +397,9 @@ def test_zero_interval_smoke_saves_trained_policy_as_best_and_final(
     assert outcome.final_evaluation == trained
     assert artifacts.finalized[-1][0] == "completed"
     assert fake_vec_env.instances[-1].closed is True
+    callbacks = artifacts.saved[-1][2].learn_call["callback"]
+    assert len(callbacks) == 1
+    assert type(callbacks[0]).__name__ == "RewardDiagnosticsCallback"
 
 
 @pytest.mark.parametrize(

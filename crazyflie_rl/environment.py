@@ -323,6 +323,10 @@ class CrazyflieResidualEnv(_GymEnv):
         if self.pos_perturb < 0.0 or self.att_perturb_deg < 0.0:
             raise ValueError("reset perturbation limits must be non-negative")
 
+        self.initial_pose_randomization = getattr(
+            configured_environment, "initial_pose_randomization", None
+        )
+
         self.pos_des = _finite_vector(
             _selected(
                 position_target,
@@ -368,6 +372,11 @@ class CrazyflieResidualEnv(_GymEnv):
         self.position_weight = _finite_scalar(
             getattr(reward, "position_weight", 3.0), "position_weight"
         )
+        for name in ("position_xy_weight", "position_z_weight"):
+            value = getattr(reward, name, None)
+            setattr(self, name, _finite_scalar(
+                self.position_weight if value is None else value, name
+            ))
         self.velocity_weight = _finite_scalar(
             getattr(reward, "velocity_weight", 0.01), "velocity_weight"
         )
@@ -392,6 +401,8 @@ class CrazyflieResidualEnv(_GymEnv):
         )
         if min(
             self.position_weight,
+            self.position_xy_weight,
+            self.position_z_weight,
             self.velocity_weight,
             self.tilt_weight,
             self.angular_velocity_weight,
@@ -855,22 +866,34 @@ class CrazyflieResidualEnv(_GymEnv):
         else:
             self._set_com_bias(self.com_bias_mass, self.com_bias_offset)
 
-        self.data.qpos[0:3] = self.pos_des + self._rng.uniform(
-            -self.pos_perturb, self.pos_perturb, 3
-        )
-        angle = np.radians(self.att_perturb_deg) * self._rng.uniform(0.0, 1.0)
-        axis = self._rng.normal(size=3)
-        axis[2] = 0.0
-        axis /= np.linalg.norm(axis) + 1e-9
-        half_angle = 0.5 * angle
-        self.data.qpos[3:7] = np.array(
-            [
-                np.cos(half_angle),
-                np.sin(half_angle) * axis[0],
-                np.sin(half_angle) * axis[1],
-                np.sin(half_angle) * axis[2],
-            ]
-        )
+        pose_settings = getattr(self, "initial_pose_randomization", None)
+        reset_info = {}
+        if pose_settings is None:
+            self.data.qpos[0:3] = self.pos_des + self._rng.uniform(
+                -self.pos_perturb, self.pos_perturb, 3
+            )
+            angle = np.radians(self.att_perturb_deg) * self._rng.uniform(0.0, 1.0)
+            axis = self._rng.normal(size=3)
+            axis[2] = 0.0
+            axis /= np.linalg.norm(axis) + 1e-9
+            half_angle = 0.5 * angle
+            self.data.qpos[3:7] = np.array(
+                [
+                    np.cos(half_angle),
+                    np.sin(half_angle) * axis[0],
+                    np.sin(half_angle) * axis[1],
+                    np.sin(half_angle) * axis[2],
+                ]
+            )
+        else:
+            from .initial_pose import sample_initial_pose, initial_pose_info
+
+            offset, quaternion, axis, _angle = sample_initial_pose(self._rng, pose_settings)
+            self.data.qpos[0:3] = self.pos_des + offset
+            self.data.qpos[3:7] = quaternion
+            reset_info = initial_pose_info(
+                self.data.qpos[0:3], self.pos_des, self.data.qpos[3:7], axis
+            )
         self.data.qvel[:] = 0.0
         mujoco.mj_forward(self.model, self.data)
 
@@ -883,7 +906,7 @@ class CrazyflieResidualEnv(_GymEnv):
         self._step = 0
         self._prev_action = np.zeros(ACTION_DIM)
         position, quaternion, velocity, omega_body = self._read_state()
-        return self._obs(position, quaternion, velocity, omega_body), {}
+        return self._obs(position, quaternion, velocity, omega_body), reset_info
 
     def step(
         self, action: Sequence[float]
@@ -930,8 +953,18 @@ class CrazyflieResidualEnv(_GymEnv):
         action_weight = 0.0 if self.mode == "e2e" else self.action_weight
         action_rate_weight = 0.0 if self.mode == "e2e" else self.w_dact
 
+        position_sq_xy = position_error[:2] @ position_error[:2]
+        position_sq_z = position_error[2] ** 2
+        position_cost_xy = self.position_xy_weight * position_sq_xy
+        position_cost_z = self.position_z_weight * position_sq_z
+        position_cost = position_cost_xy + position_cost_z
+        if self.position_xy_weight == self.position_z_weight:
+            # Algebraically identical; preserve legacy floating-point ordering
+            # for equal weights, including old configs and checkpoints.
+            position_cost = self.position_xy_weight * (position_error @ position_error)
+
         cost = (
-            self.position_weight * (position_error @ position_error)
+            position_cost
             + self.velocity_weight * (velocity @ velocity)
             + self.tilt_weight * tilt_error
             + self.angular_velocity_weight * (omega_body @ omega_body)
@@ -957,7 +990,45 @@ class CrazyflieResidualEnv(_GymEnv):
         truncated = self._step >= self.max_steps
         if crashed:
             reward -= self.crash_penalty
-        return observation, float(reward), bool(crashed), bool(truncated), {}
+
+        # Observer-only decomposition: preserve the reward expression above,
+        # including NumPy's action dtype and multiplication semantics.  Use
+        # the existing local state; diagnostics never read the simulator again.
+        raw = {
+            "position_sq": position_error @ position_error,
+            "position_sq_xy": position_sq_xy,
+            "position_sq_z": position_sq_z,
+            "velocity_sq": velocity @ velocity,
+            "tilt_error": tilt_error,
+            "angular_velocity_sq": omega_body @ omega_body,
+            "yaw_error_sq": yaw_error**2,
+            "action_sq": action_array @ action_array,
+            "action_rate_sq": action_delta @ action_delta,
+        }
+        terms = {
+            "position": float(-position_cost),
+            "velocity": float(-(self.velocity_weight * raw["velocity_sq"])),
+            "tilt": float(-(self.tilt_weight * raw["tilt_error"])),
+            "angular_velocity": float(-(
+                self.angular_velocity_weight * raw["angular_velocity_sq"]
+            )),
+            "yaw": float(-(self.yaw_weight * raw["yaw_error_sq"])),
+            "action": float(-(action_weight * raw["action_sq"])),
+            "action_rate": float(-(action_rate_weight * raw["action_rate_sq"])),
+            "crash": float(-self.crash_penalty) if crashed else 0.0,
+            "total": float(reward),
+        }
+        info = {
+            "reward_terms": terms,
+            "reward_raw": {name: float(value) for name, value in raw.items()},
+            # Positive subcosts are separate from reward_terms to avoid counting
+            # position twice in sums and reward fractions.
+            "reward_costs": {
+                "position_xy": float(position_cost_xy),
+                "position_z": float(position_cost_z),
+            },
+        }
+        return observation, float(reward), bool(crashed), bool(truncated), info
 
     def close(self) -> None:
         # MuJoCo's Python model/data objects are released by reference counting.

@@ -1,0 +1,15 @@
+# Standalone diagnostic settings; experiment_config uses the ordinary config loader.
+experiment_config: ../base.yaml
+motor_index: 0
+effectiveness: 0.7
+activation_sec: 2.0
+disturbance_axis: roll
+disturbance_torque: 0.0001
+disturbance_start: 6.0
+disturbance_duration: 0.5
+total_sec: 12.0
+pre_window_sec: 1.0
+position_threshold_m: 0.05
+attitude_threshold_deg: 5.0
+hold_sec: 0.5
+seed: 42

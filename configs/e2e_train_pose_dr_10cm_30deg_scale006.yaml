@@ -1,0 +1,32 @@
+extends: e2e_train.yaml
+
+# Inherit the current E2E PPO/actuator/payload baseline; only reset pose changes.
+environment:
+  control_mode: e2e
+  policy_hz: 100.0
+  episode_sec: 8.0
+  residual_scale: [0.022, 0.022, 0.0001, 0.5]
+  position_target: [0.0, 0.0, 1.0]
+  yaw_target: 0.0
+  initial_pose_randomization:
+    enabled: true
+    position:
+      enabled: true
+      max_norm_m: 0.05
+    attitude:
+      enabled: true
+      max_angle_deg: 5.0
+      full_3d: true
+  reward:
+    position_weight: 3.0
+    velocity_weight: 0.005
+    tilt_weight: 3.0
+    angular_velocity_weight: 0.001
+    yaw_weight: 1.0
+    action_weight: 0.0
+    action_rate_weight: 0.0
+    crash_penalty: 10.0
+
+experiment:
+  condition: pose-dr-10cm-30deg-scale006
+  description: E2E baseline with bounded position and full SO(3) reset perturbations

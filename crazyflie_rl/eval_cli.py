@@ -130,10 +130,21 @@ class RolloutTrace:
     wrench_actual: np.ndarray | None = None
     allocation_error: np.ndarray | None = None
     actuator: Mapping[str, Any] | None = None
+    episode_mass_kg: float | None = None
 
     @property
     def sample_count(self) -> int:
         return int(self.time_sec.size)
+
+
+def _cached_episode_mass(env: Any) -> float | None:
+    """Reuse the operands of _set_com_bias; never read MuJoCo state here."""
+    base = getattr(env, "_m0", None)
+    payload = getattr(env, "_com_mw", None)
+    if base is None or payload is None:
+        return None
+    mass = float(base) + float(payload)
+    return mass if math.isfinite(mass) and mass > 0 else None
 
 
 def _is_latest_best_model(value: str | Path | None) -> bool:
@@ -971,6 +982,7 @@ class EvaluationRunner:
                 (-1, 4)
             ),
             actuator=actuator_snapshot,
+            episode_mass_kg=_cached_episode_mass(env),
         )
 
     def _viewer_context(self, env: Any):
@@ -1195,16 +1207,28 @@ def trace_metrics(trace: RolloutTrace, tail_fraction: float) -> dict[str, Any]:
     if not trace.sample_count:
         result.update(
             position_rmse=None,
+            position_rmse_xy=None,
+            position_rmse_z=None,
+            tail_position_rmse_xy=None,
+            tail_position_rmse_z=None,
             mean_position_error=None,
             max_position_error=None,
             tail_mean_position_error=None,
             trajectory_phase_rmse=None,
+            trajectory_phase_rmse_xy=None,
+            trajectory_phase_rmse_z=None,
             phases={},
         )
         return result
 
     errors = np.asarray(trace.position_error, dtype=float)
+    from .evaluation import position_rmse_metrics
+
+    error_vectors = np.asarray(trace.position) - np.asarray(trace.reference_position)
     tail_start = int(trace.sample_count * (1.0 - tail_fraction))
+    result.update(position_rmse_metrics(error_vectors))
+    result.update({f"tail_{key}": value for key, value in
+                   position_rmse_metrics(error_vectors[tail_start:]).items()})
     result["position_rmse"] = float(np.sqrt(np.mean(np.square(errors))))
     result["mean_position_error"] = float(np.mean(errors))
     result["max_position_error"] = float(np.max(errors))
@@ -1215,6 +1239,7 @@ def trace_metrics(trace: RolloutTrace, tail_fraction: float) -> dict[str, Any]:
     for phase in dict.fromkeys(trace.phases):
         selected = errors[phase_values == phase]
         phase_metrics[phase] = {
+            **position_rmse_metrics(error_vectors[phase_values == phase]),
             "count": int(selected.size),
             "rmse": float(np.sqrt(np.mean(np.square(selected)))),
             "mean_position_error": float(np.mean(selected)),
@@ -1236,6 +1261,12 @@ def trace_metrics(trace: RolloutTrace, tail_fraction: float) -> dict[str, Any]:
         if trajectory_errors.size
         else None
     )
+    trajectory_phase = next((phase for phase in trajectory_names if phase in phase_metrics), None)
+    for axis in ("xy", "z"):
+        result[f"trajectory_phase_rmse_{axis}"] = (
+            phase_metrics[trajectory_phase][f"position_rmse_{axis}"]
+            if trajectory_phase is not None else None
+        )
     return result
 
 
@@ -1721,6 +1752,9 @@ def _runtime_payload(
 ) -> dict[str, Any]:
     return {
         "mode": mission.name,
+        "position_xy_weight": config.environment.reward.effective_position_xy_weight,
+        "position_z_weight": config.environment.reward.effective_position_z_weight,
+        "action_scale": list(config.environment.residual_scale),
         "path_preset": getattr(args, "path_preset", None),
         "mission": mission.effective_parameters(),
         "control_mode": config.control_mode,
@@ -1848,6 +1882,12 @@ def run_evaluation_cli(
         )
 
     specs = _policy_specs(config, args.policy, unified=unified)
+    reward = config.environment.reward
+    print(
+        f"[config] position_xy_weight={reward.effective_position_xy_weight:g} "
+        f"position_z_weight={reward.effective_position_z_weight:g} "
+        f"action_scale={config.environment.residual_scale}"
+    )
     requires_model = any(key == "residual" for key, _label in specs)
     candidate_model = _model_candidate(args.model, config) if requires_model else None
     condition = mission_condition(
@@ -1993,6 +2033,51 @@ def run_evaluation_cli(
             raise RuntimeError(rollout_failure)
         metrics["status"] = "completed"
         metrics_path = artifacts.write_metrics("evaluation", metrics)
+        if unified:
+            # Post-processing only: both existing rollouts and plots are done.
+            from .reward_balance import build_reward_balance_report, format_reward_balance
+
+            balance = build_reward_balance_report(
+                traces, config,
+                model=str(selected_model) if selected_model is not None else None,
+            )
+            balance_path = artifacts.write_metrics("reward_balance", balance)
+            print(format_reward_balance(balance))
+            print(f"reward balance: {balance_path}")
+            from .yaw_authority import (
+                build_yaw_authority_report,
+                format_yaw_authority,
+                save_yaw_authority_plot,
+            )
+
+            yaw = build_yaw_authority_report(
+                traces, config,
+                model=str(selected_model) if selected_model is not None else None,
+            )
+            yaw_plot = save_yaw_authority_plot(
+                artifacts.path("plots", "yaw_authority", ".png"), traces, config,
+            )
+            yaw["plot"] = yaw_plot.relative_to(artifacts.run_dir).as_posix()
+            yaw_path = artifacts.write_metrics("yaw_authority", yaw)
+            print(format_yaw_authority(yaw))
+            print(f"yaw authority: {yaw_path}")
+            from .wrench_authority import (
+                build_wrench_authority_report,
+                format_wrench_authority,
+                save_wrench_authority_plot,
+            )
+
+            wrench = build_wrench_authority_report(
+                traces, config,
+                model=str(selected_model) if selected_model is not None else None,
+            )
+            wrench_plot = save_wrench_authority_plot(
+                artifacts.path("plots", "wrench_authority", ".png"), traces, config,
+            )
+            wrench["plot"] = wrench_plot.relative_to(artifacts.run_dir).as_posix()
+            wrench_path = artifacts.write_metrics("wrench_authority", wrench)
+            print(format_wrench_authority(wrench))
+            print(f"wrench authority: {wrench_path}")
         artifacts.finalize(
             "completed",
             effective_condition=condition,

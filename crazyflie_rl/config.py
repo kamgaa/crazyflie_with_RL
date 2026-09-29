@@ -151,6 +151,16 @@ class RewardConfig:
     action_weight: float
     action_rate_weight: float
     crash_penalty: float
+    position_xy_weight: float | None = None
+    position_z_weight: float | None = None
+
+    @property
+    def effective_position_xy_weight(self) -> float:
+        return self.position_weight if self.position_xy_weight is None else self.position_xy_weight
+
+    @property
+    def effective_position_z_weight(self) -> float:
+        return self.position_weight if self.position_z_weight is None else self.position_z_weight
 
 
 @dataclass(frozen=True)
@@ -159,6 +169,26 @@ class TerminationConfig:
     max_altitude: float
     max_tilt_deg: float
     max_position_error: float
+
+
+@dataclass(frozen=True)
+class PositionRandomizationConfig:
+    enabled: bool = True
+    max_norm_m: float = 0.10
+
+
+@dataclass(frozen=True)
+class AttitudeRandomizationConfig:
+    enabled: bool = True
+    max_angle_deg: float = 30.0
+    full_3d: bool = True
+
+
+@dataclass(frozen=True)
+class InitialPoseRandomizationConfig:
+    enabled: bool = False
+    position: PositionRandomizationConfig = PositionRandomizationConfig()
+    attitude: AttitudeRandomizationConfig = AttitudeRandomizationConfig()
 
 
 @dataclass(frozen=True)
@@ -174,6 +204,7 @@ class EnvironmentConfig:
     payload: PayloadConfig
     reward: RewardConfig
     termination: TerminationConfig
+    initial_pose_randomization: InitialPoseRandomizationConfig | None = None
 
 
 @dataclass(frozen=True)
@@ -330,6 +361,11 @@ class ExperimentConfig:
 
     def resolved_dict(self) -> dict[str, Any]:
         payload = _serializable(asdict(self))
+        reward = self.environment.reward
+        payload["environment"]["reward"].update(
+            position_xy_weight=reward.effective_position_xy_weight,
+            position_z_weight=reward.effective_position_z_weight,
+        )
         payload["source_path"] = str(self.source_path)
         return payload
 
@@ -446,6 +482,33 @@ def _boolean(value: Any, field: str) -> bool:
     if not isinstance(value, bool):
         raise ConfigError(f"{field} must be a boolean, got {value!r}")
     return value
+
+
+def _initial_pose_config(value: Any) -> InitialPoseRandomizationConfig | None:
+    if value is None:
+        return None  # Absent settings preserve the legacy reset and RNG draws.
+    field = "environment.initial_pose_randomization"
+    raw = _mapping(value, field)
+    _keys(raw, {"enabled", "position", "attitude"}, field, required=set())
+    position = _mapping(raw.get("position", {}), field + ".position")
+    attitude = _mapping(raw.get("attitude", {}), field + ".attitude")
+    _keys(position, {"enabled", "max_norm_m"}, field + ".position", required=set())
+    _keys(attitude, {"enabled", "max_angle_deg", "full_3d"}, field + ".attitude", required=set())
+    angle = _number(attitude.get("max_angle_deg", 30.0), field + ".attitude.max_angle_deg", minimum=0.0)
+    if angle >= 180.0:
+        raise ConfigError(field + ".attitude.max_angle_deg must be < 180")
+    return InitialPoseRandomizationConfig(
+        enabled=_boolean(raw.get("enabled", False), field + ".enabled"),
+        position=PositionRandomizationConfig(
+            enabled=_boolean(position.get("enabled", True), field + ".position.enabled"),
+            max_norm_m=_number(position.get("max_norm_m", 0.10), field + ".position.max_norm_m", minimum=0.0),
+        ),
+        attitude=AttitudeRandomizationConfig(
+            enabled=_boolean(attitude.get("enabled", True), field + ".attitude.enabled"),
+            max_angle_deg=angle,
+            full_3d=_boolean(attitude.get("full_3d", True), field + ".attitude.full_3d"),
+        ),
+    )
 
 
 def _text(value: Any, field: str, *, choices: set[str] | None = None) -> str:
@@ -743,7 +806,7 @@ def _build_config(data: Mapping[str, Any], source_path: Path) -> ExperimentConfi
 
     raw_environment = _mapping(data["environment"], "environment")
     environment_keys = {"control_mode", "policy_hz", "episode_sec", "residual_scale", "position_target", "yaw_target", "position_perturbation", "attitude_perturbation_deg", "payload", "reward", "termination"}
-    _keys(raw_environment, environment_keys, "environment")
+    _keys(raw_environment, environment_keys | {"initial_pose_randomization"}, "environment", required=environment_keys)
     raw_payload = _mapping(raw_environment["payload"], "environment.payload")
     _keys(raw_payload, {"randomize", "mass", "offset", "randomization_limits"}, "environment.payload")
     raw_limits = _mapping(raw_payload["randomization_limits"], "environment.payload.randomization_limits")
@@ -764,10 +827,11 @@ def _build_config(data: Mapping[str, Any], source_path: Path) -> ExperimentConfi
     )
     raw_reward = _mapping(raw_environment["reward"], "environment.reward")
     reward_keys = {"position_weight", "velocity_weight", "tilt_weight", "angular_velocity_weight", "yaw_weight", "action_weight", "action_rate_weight", "crash_penalty"}
-    _keys(raw_reward, reward_keys, "environment.reward")
+    axis_reward_keys = {"position_xy_weight", "position_z_weight"}
+    _keys(raw_reward, reward_keys | axis_reward_keys, "environment.reward", required=reward_keys)
     reward = RewardConfig(**{
         key: _number(raw_reward[key], f"environment.reward.{key}", minimum=0.0)
-        for key in reward_keys
+        for key in reward_keys | (axis_reward_keys & raw_reward.keys())
     })
     raw_termination = _mapping(raw_environment["termination"], "environment.termination")
     termination_keys = {"min_altitude", "max_altitude", "max_tilt_deg", "max_position_error"}
@@ -792,6 +856,7 @@ def _build_config(data: Mapping[str, Any], source_path: Path) -> ExperimentConfi
         payload=payload,
         reward=reward,
         termination=termination,
+        initial_pose_randomization=_initial_pose_config(raw_environment.get("initial_pose_randomization")),
     )
     substeps = round(vehicle.physics_hz / environment.policy_hz)
     if substeps < 1:

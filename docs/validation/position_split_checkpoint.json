@@ -1,0 +1,44 @@
+{
+  "checkpoint": "artifacts/runs/ppo_e2e_hover_nominal_seedunset_20260922-134306/models/ppo_e2e_hover_nominal_seedunset_final_20260922-134306.zip",
+  "sha256_before": "8fd230fccad5ba71e41f2ab36e4a4922497180c40b78f1700fd870298affa797",
+  "baseline_source_sha256": "758186a3fd5162cc9c4f169a78327230cddfc6f07ba1385a005551f3f53ae0e6",
+  "seed": 42,
+  "requested_steps": 200,
+  "optimizer_updates": 0,
+  "action_scale": [
+    0.0075,
+    0.0075,
+    0.001,
+    0.5
+  ],
+  "weights": {
+    "position_weight": 4.0,
+    "velocity_weight": 0.005,
+    "tilt_weight": 3.0,
+    "angular_velocity_weight": 0.001,
+    "yaw_weight": 1.0,
+    "action_weight": 0.0,
+    "action_rate_weight": 0.0,
+    "crash_penalty": 10.0,
+    "position_xy_weight": 4.0,
+    "position_z_weight": 4.0
+  },
+  "comparisons": [
+    "pre-change working tree",
+    "legacy config",
+    "explicit equal weights"
+  ],
+  "observation_shape": [
+    15
+  ],
+  "action_shape": [
+    4
+  ],
+  "termination_events": [],
+  "position_rmse_xy": 0.03264412511853761,
+  "position_rmse_z": 0.016060649962644245,
+  "position_rmse": 0.03638108549751262,
+  "completed_steps": 200,
+  "actions_observations_rewards_flags_qpos_qvel_ctrl_bitwise_equal": true,
+  "sha256_after": "8fd230fccad5ba71e41f2ab36e4a4922497180c40b78f1700fd870298affa797"
+}

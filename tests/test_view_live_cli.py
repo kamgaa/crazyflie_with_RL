@@ -1283,11 +1283,12 @@ def test_unified_fake_rollout_saves_plot_metrics_runtime_config_and_manifest(
         "ppo_e2e_hover_x0-y0-z1-yaw0-dur0p3-p0-a0-floorReq0_seed42"
         in run_dir.name
     )
-    assert len(list((run_dir / "plots").glob("*.png"))) == 1
+    assert len(list((run_dir / "plots").glob("*.png"))) == 3
+    assert len(list((run_dir / "plots").glob("*_yaw_authority_*.png"))) == 1
     runtime_configs = list((run_dir / "config").glob("*runtime-resolved*.yaml"))
     assert len(runtime_configs) == 1
 
-    metrics_path = next((run_dir / "metrics").glob("*.json"))
+    metrics_path = next((run_dir / "metrics").glob("*_evaluation_*.json"))
     metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
     assert metrics["status"] == "completed"
     assert metrics["effective_parameters"]["duration"] == 0.3
@@ -1439,12 +1440,16 @@ def test_simplified_unified_run_uses_pid_floor_and_saves_two_policy_plots(
     assert [trace.control_mode for trace in plotted] == ["residual", "e2e"]
     assert FreshFactory.calls == [{"mode": "residual"}, {}]
     run_dir = next((tmp_path / "artifacts" / "runs").iterdir())
+    wrench_plot = next((run_dir / "plots").glob("*_wrench_authority_*.png"))
+    yaw_plot = next((run_dir / "plots").glob("*_yaw_authority_*.png"))
     assert {path.name for path in (run_dir / "plots").glob("*.png")} == {
         "floor.png",
         "ppo.png",
+        yaw_plot.name,
+        wrench_plot.name,
     }
     metrics = json.loads(
-        next((run_dir / "metrics").glob("*.json")).read_text(encoding="utf-8")
+        next((run_dir / "metrics").glob("*_evaluation_*.json")).read_text(encoding="utf-8")
     )
     assert metrics["effective_condition"] == "c-wide-T0p1-L1"
     assert metrics["selected_policy"] == "both"
@@ -1462,6 +1467,32 @@ def test_simplified_unified_run_uses_pid_floor_and_saves_two_policy_plots(
     assert metrics["policies"]["residual"]["control_mode"] == "e2e"
     assert metrics["policies"]["floor"]["plot"] == "plots/floor.png"
     assert metrics["policies"]["residual"]["plot"] == "plots/ppo.png"
+
+    balance_path = next((run_dir / "metrics").glob("*reward_balance*.json"))
+    balance = json.loads(balance_path.read_text(encoding="utf-8"))
+    assert balance["floor"]["control_mode"] == "residual"
+    assert balance["ppo"]["control_mode"] == "e2e"
+    assert balance["reward_weights"]["tilt"] == config.environment.reward.tilt_weight
+    assert "CIRCLE" in balance["comparisons"]["phases"]
+    assert balance["model"] == metrics["model"]
+    json.dumps(balance, allow_nan=False)
+
+    yaw_path = next((run_dir / "metrics").glob("*_yaw_authority_*.json"))
+    yaw = json.loads(yaw_path.read_text(encoding="utf-8"))
+    assert yaw["configured_tau_z_action_scale_nm"] == config.environment.residual_scale[2]
+    assert yaw["floor"]["overall"]["u_tau_z_rms"] is None
+    assert yaw["ppo"]["normalized_yaw_action_applicable"]
+    assert yaw["model"] == metrics["model"]
+    assert run_dir / yaw["plot"] == yaw_plot
+    assert "CIRCLE" in yaw["comparisons"]["phases"]
+    json.dumps(yaw, allow_nan=False)
+    wrench_path = next((run_dir / "metrics").glob("*_wrench_authority_*.json"))
+    wrench = json.loads(wrench_path.read_text())
+    assert run_dir / wrench["plot"] == wrench_plot
+    assert wrench["floor"]["hover_force_n"] is None  # fake env has no cached mass
+    assert wrench["configured_action_scale"]["delta_fz_n"] == config.environment.residual_scale[3]
+    assert wrench["model"] == metrics["model"]
+    json.dumps(wrench, allow_nan=False)
 
 
 def test_unified_partial_floor_failure_still_runs_ppo_and_keeps_both_reports(
@@ -1545,7 +1576,7 @@ def test_unified_partial_floor_failure_still_runs_ppo_and_keeps_both_reports(
         "ppo.png",
     }
     metrics = json.loads(
-        next((run_dir / "metrics").glob("*.json")).read_text(encoding="utf-8")
+        next((run_dir / "metrics").glob("*_evaluation_*.json")).read_text(encoding="utf-8")
     )
     assert metrics["status"] == "failed"
     assert metrics["policies"]["floor"]["error"] == "RuntimeError: floor fault"
@@ -1626,7 +1657,7 @@ def test_model_zip_fallback_uses_actual_path_in_all_provenance(
 
     run_dir = next((tmp_path / "artifacts" / "runs").iterdir())
     metrics = json.loads(
-        next((run_dir / "metrics").glob("*.json")).read_text(encoding="utf-8")
+        next((run_dir / "metrics").glob("*_evaluation_*.json")).read_text(encoding="utf-8")
     )
     manifest = json.loads(
         next((run_dir / "manifests").glob("*manifest*.json")).read_text(
@@ -1675,7 +1706,7 @@ def test_preflight_resource_failure_writes_runtime_metrics_and_manifest(
     run_dir = next((tmp_path / "artifacts" / "runs").iterdir())
     assert len(list((run_dir / "config").glob("*runtime-resolved*.yaml"))) == 1
     metrics = json.loads(
-        next((run_dir / "metrics").glob("*.json")).read_text(encoding="utf-8")
+        next((run_dir / "metrics").glob("*_evaluation_*.json")).read_text(encoding="utf-8")
     )
     manifest = json.loads(
         next((run_dir / "manifests").glob("*manifest*.json")).read_text(
