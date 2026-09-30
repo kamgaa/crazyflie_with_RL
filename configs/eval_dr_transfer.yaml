@@ -1,0 +1,62 @@
+extends: e2e_train.yaml
+
+# One common plant and observation/action contract for every compared policy.
+environment:
+  control_mode: e2e
+  policy_hz: 100.0
+  residual_scale: [0.0075, 0.0075, 0.001, 0.5]
+  position_target: [0.0, 0.0, 1.0]
+  yaw_target: 0.0
+  position_perturbation: 0.0
+  attitude_perturbation_deg: 0.0
+  initial_pose_randomization:
+    enabled: false
+    position:
+      enabled: false
+      max_norm_m: 0.0
+    attitude:
+      enabled: false
+      max_angle_deg: 0.0
+      full_3d: true
+  payload:
+    randomize: false
+    mass: 0.0
+    offset: [0.0, 0.0]
+  reward:
+    position_xy_weight: 10.0
+    position_z_weight: 6.0
+
+vehicle:
+  physics_hz: 500.0
+
+actuator:
+  reset_rpm_mode: auto
+  randomization:
+    enabled: false
+
+evaluation:
+  deterministic: true
+  seed_start: 42
+
+# Same explicit circle/start/phases as view_live_circle_eval.yaml.
+mission:
+  type: circle
+  hover_altitude: 1.0
+  force_floor_start: true
+  goto_xy: [1.0, 0.0]
+  takeoff_sec: 4.0
+  settle_sec: 2.0
+  goto_sec: 4.0
+  post_hold_sec: 2.0
+  circle:
+    center_xy: [0.5, 0.0]
+    radius: 0.5
+    period: 5.0
+    laps: 2.0
+    start_angle_deg: 0.0
+    direction: ccw
+    ramp_sec: 2.0
+
+experiment:
+  condition: dr-transfer-evaluation
+  description: Common deterministic evaluation for explicit PPO checkpoints

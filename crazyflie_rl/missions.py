@@ -82,6 +82,15 @@ def ramped_phase(elapsed: float, angular_speed: float, ramp_sec: float) -> float
     return omega * (0.5 * ramp) + omega * (time_sec - ramp)
 
 
+def ramped_phase_velocity(elapsed: float, angular_speed: float, ramp_sec: float) -> float:
+    """Analytic derivative of ramped_phase (no change to its position formula)."""
+    if ramp_sec < 0:
+        raise ConfigError('ramp_sec must be non-negative')
+    if ramp_sec == 0 or elapsed >= ramp_sec:
+        return float(angular_speed)
+    return angular_speed * 0.5 * (1 - math.cos(math.pi * elapsed / ramp_sec))
+
+
 @dataclass(frozen=True)
 class MissionBoundaries:
     """Cumulative phase boundaries, in seconds from mission start."""
@@ -282,6 +291,28 @@ class CircleMission:
         """Return legacy-compatible phase displacement since CIRCLE entry."""
 
         return ramped_phase(elapsed, self.omega, self.ramp_sec)
+
+    def reference_velocity(self, time_sec: float) -> np.ndarray:
+        """World m/s derivative within each existing phase; HOLD is right-sided zero.
+
+        The CIRCLE/HOLD velocity jump has no finite derivative at the boundary.
+        Legacy position jumps, if any, are commands, never velocity impulses.
+        """
+        t, bounds = float(time_sec), self.boundaries
+        _, phase = self.reference(t)
+        if phase == 'TAKEOFF' and t >= 0:
+            return np.array([0., 0., self.config.hover_altitude * math.pi /
+                             (2 * self.config.takeoff_sec) * math.sin(math.pi * t / self.config.takeoff_sec)])
+        if phase == 'GOTO':
+            rate = math.pi / (2 * self.config.goto_sec) * math.sin(
+                math.pi * (t - bounds.settle1_end) / self.config.goto_sec)
+            return np.array([*self.goto_xy, 0.]) * rate
+        if phase == 'CIRCLE':
+            elapsed = t - bounds.settle2_end
+            phi = self.start_angle_rad + self.circle_phase(elapsed)
+            rate = ramped_phase_velocity(elapsed, self.omega, self.ramp_sec)
+            return self.radius * rate * np.array([-math.sin(phi), math.cos(phi), 0.])
+        return np.zeros(3)
 
     def _circle_reference(self, elapsed: float) -> np.ndarray:
         phi = self.start_angle_rad + self.circle_phase(elapsed)

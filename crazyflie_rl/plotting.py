@@ -1266,3 +1266,76 @@ __all__ = [
     "save_policy_trace",
     "save_tracking_trace",
 ]
+
+
+def save_transfer_comparison_plot(path, rollouts, reference, case_name):
+    """Compare any number of frozen policies at correctly aligned post times.
+
+    Reuses the repository's headless backend, overwrite guard and quaternion
+    conversion. Reference velocity is supplied by the mission, not synthesized here.
+    """
+    target = _new_path(path)
+    plt = _pyplot()
+    fig, axes = plt.subplots(4, 3, figsize=(16, 11), sharex=True)
+    model_keys = list(dict.fromkeys(rows[0].get('model_label', label)
+                                   for label, rows in rollouts.items() if rows))
+    colors = {key: f'C{i % 10}' for i, key in enumerate(model_keys)}
+
+    def style(label, rows):
+        return dict(color=colors[rows[0].get('model_label', label)],
+                    linestyle='--' if rows[0].get('observation_velocity_mode') == 'error' else '-')
+    try:
+        for column, coordinate in enumerate('xyz'):
+            axes[0, column].plot(reference['time'], reference['reference'][:, column],
+                                 'k--', label=f'reference {coordinate}', lw=1.2)
+            if 'reference_velocity' in reference:
+                axes[1, column].plot(reference['time'], reference['reference_velocity'][:, column],
+                                     'k:', label=f'reference velocity {coordinate}', lw=1.2)
+        for label, rows in rollouts.items():
+            if not rows:
+                continue
+            times = np.array([r['time_post'] for r in rows])
+            values = [np.array([r[key] for r in rows]) for key in ('position', 'velocity')]
+            values.append(np.array([quaternion_to_euler_deg(r['quaternion']) for r in rows]))
+            values.append(np.array([r['omega'] for r in rows]))
+            for row, array in enumerate(values):
+                for column in range(3):
+                    axes[row, column].plot(times, array[:, column], label=label, **style(label, rows))
+        units = ('position [m]', 'absolute velocity [m/s]', 'attitude [deg]', 'body omega [rad/s]')
+        for row, unit in enumerate(units):
+            for column, axis in enumerate(axes[row]):
+                axis.set_ylabel(f'{("roll", "pitch", "yaw")[column] if row == 2 else "xyz"[column]} {unit}')
+                axis.grid(alpha=.25)
+                axis.legend(fontsize=7)
+                axis.set_xlim(0, reference['time'][-1])
+                if row == 3:
+                    axis.set_xlabel('post-state time [s]')
+        phases = reference['phase']
+        for index in range(1, len(phases)):
+            if phases[index] != phases[index - 1]:
+                for axis in axes.flat:
+                    axis.axvline(reference['time'][index], color='gray', alpha=.2, lw=.7)
+                axes[0, 0].text(reference['time'][index], 1.01, str(phases[index]),
+                                transform=axes[0, 0].get_xaxis_transform(), fontsize=6)
+        fig.suptitle(f'{case_name}: frozen policy comparison (partial traces end at termination)')
+        fig.tight_layout()
+        fig.savefig(target, dpi=140)
+    finally:
+        plt.close(fig)
+    xy_target = _new_path(target.with_name(target.stem + '-xy.png'))
+    fig, axis = plt.subplots(figsize=(8, 8))
+    try:
+        axis.plot(reference['reference'][:, 0], reference['reference'][:, 1], 'k:', label='reference', lw=2)
+        for label, rows in rollouts.items():
+            if rows:
+                positions = np.vstack((rows[0]['position_before'], [r['position'] for r in rows]))
+                axis.plot(positions[:, 0], positions[:, 1], label=label, **style(label, rows))
+        axis.set(xlabel='x [m]', ylabel='y [m]', title=f'{case_name}: XY paths (partial traces end at termination)')
+        axis.set_aspect('equal', adjustable='datalim')
+        axis.grid(alpha=.25)
+        axis.legend(fontsize=8)
+        fig.tight_layout()
+        fig.savefig(xy_target, dpi=140)
+    finally:
+        plt.close(fig)
+    return target
