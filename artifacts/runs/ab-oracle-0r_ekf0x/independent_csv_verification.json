@@ -1,0 +1,22 @@
+{
+  "rollouts": 40,
+  "counts": {
+    "control": 185815,
+    "physics": 929075,
+    "events": 48
+  },
+  "maximum_numeric_errors": {
+    "allocation_command_error_n": 5.551115123125783e-17,
+    "allocation_residual_error": 1.1102230246251565e-16,
+    "actuator_residual_error": 2.220446049250313e-16,
+    "integral_recurrence_m": 0.0,
+    "bias_variance_m2": 1.550951207740514e-16
+  },
+  "initial_protected_files_unchanged": 1022,
+  "single_efficiency_application": true,
+  "current_efficiency_only": true,
+  "events_preserve_state": true,
+  "integral_uses_actual_allocator_saturation": true,
+  "event_recovery_capped_at_next_event": true,
+  "existing_and_oracle_equivalence_checks": "regression_comparisons.json"
+}

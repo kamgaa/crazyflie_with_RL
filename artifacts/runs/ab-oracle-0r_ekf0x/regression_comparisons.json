@@ -1,0 +1,402 @@
+{
+  "nominal-A_best-existing_no_integral": {
+    "samples": 6000,
+    "numeric_columns": 309,
+    "max_abs_error": 0.0
+  },
+  "nominal-A_best-existing_no_integral-physics": {
+    "samples": 30000,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "nominal-A_best-existing_integral_020": {
+    "samples": 6000,
+    "numeric_columns": 309,
+    "max_abs_error": 0.0
+  },
+  "nominal-A_best-existing_integral_020-physics": {
+    "samples": 30000,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "nominal-A_best-oracle_no_integral": {
+    "samples": 6000,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "nominal-A_best-oracle_no_integral-physics": {
+    "samples": 30000,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "nominal-A_best-oracle_integral_020": {
+    "samples": 6000,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "nominal-A_best-oracle_integral_020-physics": {
+    "samples": 30000,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "nominal-B_best-existing_no_integral": {
+    "samples": 6000,
+    "numeric_columns": 309,
+    "max_abs_error": 0.0
+  },
+  "nominal-B_best-existing_no_integral-physics": {
+    "samples": 30000,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "nominal-B_best-existing_integral_020": {
+    "samples": 6000,
+    "numeric_columns": 309,
+    "max_abs_error": 0.0
+  },
+  "nominal-B_best-existing_integral_020-physics": {
+    "samples": 30000,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "nominal-B_best-oracle_no_integral": {
+    "samples": 6000,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "nominal-B_best-oracle_no_integral-physics": {
+    "samples": 30000,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "nominal-B_best-oracle_integral_020": {
+    "samples": 6000,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "nominal-B_best-oracle_integral_020-physics": {
+    "samples": 30000,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "combined_motor2_70-A_best-existing_no_integral": {
+    "samples": 541,
+    "numeric_columns": 315,
+    "max_abs_error": 0.0
+  },
+  "combined_motor2_70-A_best-existing_no_integral-physics": {
+    "samples": 2705,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "combined_motor2_70-A_best-existing_integral_020": {
+    "samples": 541,
+    "numeric_columns": 315,
+    "max_abs_error": 0.0
+  },
+  "combined_motor2_70-A_best-existing_integral_020-physics": {
+    "samples": 2705,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "combined_motor2_70-A_best-oracle_no_integral": {
+    "samples": 500,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "combined_motor2_70-A_best-oracle_no_integral-physics": {
+    "samples": 2500,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "combined_motor2_70-A_best-oracle_integral_020": {
+    "samples": 500,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "combined_motor2_70-A_best-oracle_integral_020-physics": {
+    "samples": 2500,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "combined_motor2_70-B_best-existing_no_integral": {
+    "samples": 6000,
+    "numeric_columns": 315,
+    "max_abs_error": 0.0
+  },
+  "combined_motor2_70-B_best-existing_no_integral-physics": {
+    "samples": 30000,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "combined_motor2_70-B_best-existing_integral_020": {
+    "samples": 6000,
+    "numeric_columns": 315,
+    "max_abs_error": 0.0
+  },
+  "combined_motor2_70-B_best-existing_integral_020-physics": {
+    "samples": 30000,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "combined_motor2_70-B_best-oracle_no_integral": {
+    "samples": 500,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "combined_motor2_70-B_best-oracle_no_integral-physics": {
+    "samples": 2500,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "combined_motor2_70-B_best-oracle_integral_020": {
+    "samples": 500,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "combined_motor2_70-B_best-oracle_integral_020-physics": {
+    "samples": 2500,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "combined_motor3_70-A_best-existing_no_integral": {
+    "samples": 713,
+    "numeric_columns": 315,
+    "max_abs_error": 0.0
+  },
+  "combined_motor3_70-A_best-existing_no_integral-physics": {
+    "samples": 3565,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "combined_motor3_70-A_best-existing_integral_020": {
+    "samples": 716,
+    "numeric_columns": 315,
+    "max_abs_error": 0.0
+  },
+  "combined_motor3_70-A_best-existing_integral_020-physics": {
+    "samples": 3580,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "combined_motor3_70-A_best-oracle_no_integral": {
+    "samples": 500,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "combined_motor3_70-A_best-oracle_no_integral-physics": {
+    "samples": 2500,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "combined_motor3_70-A_best-oracle_integral_020": {
+    "samples": 500,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "combined_motor3_70-A_best-oracle_integral_020-physics": {
+    "samples": 2500,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "combined_motor3_70-B_best-existing_no_integral": {
+    "samples": 529,
+    "numeric_columns": 315,
+    "max_abs_error": 0.0
+  },
+  "combined_motor3_70-B_best-existing_no_integral-physics": {
+    "samples": 2645,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "combined_motor3_70-B_best-existing_integral_020": {
+    "samples": 529,
+    "numeric_columns": 315,
+    "max_abs_error": 0.0
+  },
+  "combined_motor3_70-B_best-existing_integral_020-physics": {
+    "samples": 2645,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "combined_motor3_70-B_best-oracle_no_integral": {
+    "samples": 500,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "combined_motor3_70-B_best-oracle_no_integral-physics": {
+    "samples": 2500,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "combined_motor3_70-B_best-oracle_integral_020": {
+    "samples": 500,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "combined_motor3_70-B_best-oracle_integral_020-physics": {
+    "samples": 2500,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "motor1_70_restore-A_best-existing_no_integral": {
+    "samples": 6000,
+    "numeric_columns": 315,
+    "max_abs_error": 0.0
+  },
+  "motor1_70_restore-A_best-existing_no_integral-physics": {
+    "samples": 30000,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "motor1_70_restore-A_best-existing_integral_020": {
+    "samples": 6000,
+    "numeric_columns": 315,
+    "max_abs_error": 0.0
+  },
+  "motor1_70_restore-A_best-existing_integral_020-physics": {
+    "samples": 30000,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "motor1_70_restore-A_best-oracle_no_integral": {
+    "samples": 500,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "motor1_70_restore-A_best-oracle_no_integral-physics": {
+    "samples": 2500,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "motor1_70_restore-A_best-oracle_integral_020": {
+    "samples": 500,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "motor1_70_restore-A_best-oracle_integral_020-physics": {
+    "samples": 2500,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "motor1_70_restore-B_best-existing_no_integral": {
+    "samples": 6000,
+    "numeric_columns": 315,
+    "max_abs_error": 0.0
+  },
+  "motor1_70_restore-B_best-existing_no_integral-physics": {
+    "samples": 30000,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "motor1_70_restore-B_best-existing_integral_020": {
+    "samples": 6000,
+    "numeric_columns": 315,
+    "max_abs_error": 0.0
+  },
+  "motor1_70_restore-B_best-existing_integral_020-physics": {
+    "samples": 30000,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "motor1_70_restore-B_best-oracle_no_integral": {
+    "samples": 500,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "motor1_70_restore-B_best-oracle_no_integral-physics": {
+    "samples": 2500,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "motor1_70_restore-B_best-oracle_integral_020": {
+    "samples": 500,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "motor1_70_restore-B_best-oracle_integral_020-physics": {
+    "samples": 2500,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "combined_motor1_70_restore-A_best-existing_no_integral": {
+    "samples": 6000,
+    "numeric_columns": 315,
+    "max_abs_error": 0.0
+  },
+  "combined_motor1_70_restore-A_best-existing_no_integral-physics": {
+    "samples": 30000,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "combined_motor1_70_restore-A_best-existing_integral_020": {
+    "samples": 6000,
+    "numeric_columns": 315,
+    "max_abs_error": 0.0
+  },
+  "combined_motor1_70_restore-A_best-existing_integral_020-physics": {
+    "samples": 30000,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "combined_motor1_70_restore-A_best-oracle_no_integral": {
+    "samples": 500,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "combined_motor1_70_restore-A_best-oracle_no_integral-physics": {
+    "samples": 2500,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "combined_motor1_70_restore-A_best-oracle_integral_020": {
+    "samples": 500,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "combined_motor1_70_restore-A_best-oracle_integral_020-physics": {
+    "samples": 2500,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "combined_motor1_70_restore-B_best-existing_no_integral": {
+    "samples": 6000,
+    "numeric_columns": 315,
+    "max_abs_error": 0.0
+  },
+  "combined_motor1_70_restore-B_best-existing_no_integral-physics": {
+    "samples": 30000,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "combined_motor1_70_restore-B_best-existing_integral_020": {
+    "samples": 6000,
+    "numeric_columns": 315,
+    "max_abs_error": 0.0
+  },
+  "combined_motor1_70_restore-B_best-existing_integral_020-physics": {
+    "samples": 30000,
+    "numeric_columns": 102,
+    "max_abs_error": 0.0
+  },
+  "combined_motor1_70_restore-B_best-oracle_no_integral": {
+    "samples": 500,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "combined_motor1_70_restore-B_best-oracle_no_integral-physics": {
+    "samples": 2500,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  },
+  "combined_motor1_70_restore-B_best-oracle_integral_020": {
+    "samples": 500,
+    "numeric_columns": 377,
+    "max_abs_error": 0.0
+  },
+  "combined_motor1_70_restore-B_best-oracle_integral_020-physics": {
+    "samples": 2500,
+    "numeric_columns": 162,
+    "max_abs_error": 0.0
+  }
+}

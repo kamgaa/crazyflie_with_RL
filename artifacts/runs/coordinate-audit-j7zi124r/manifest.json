@@ -1,0 +1,719 @@
+{
+  "status": "completed",
+  "mujoco_version": "3.12.0",
+  "config": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/eval_velocity_ab.yaml",
+  "git": {
+    "commit_sha": "31343f3ff5c0ad4bce218e7d7f4adc05faa05cff",
+    "branch": "refactor-experiment-pipeline-v2",
+    "dirty": true
+  },
+  "source_sha256": {
+    "crazyflie_rl/wrench_authority.py": "c4ec33d0423d40ece2ca061df63c756a554e31c681418a5e89410a8768aedb18",
+    "crazyflie_rl/integral_eval.py": "b7e16016f25b76ae6524c81f376554f24614f9046c2810a33294890fda86cf7d",
+    "crazyflie_rl/initial_pose.py": "b8f502e18ce44c62b660542c06cabe6bb921a29751b90a836db65b8fd1e2fb2f",
+    "crazyflie_rl/integral_controller.py": "eeb379146545d1915457e33f97735d435485ef9240da3cd744e7f062727221d7",
+    "crazyflie_rl/training_observers.py": "fedd4a6e8abc818f42761888fd5e956725190d98c03979f69b63c6c4843a7e6d",
+    "crazyflie_rl/config.py": "f1b2007b412872730e56e8ae7124feb31d27c49f3c5a3c96a08b895b149aa438",
+    "crazyflie_rl/actuators.py": "77bc31fbdd35ebb34340623cff420202d075706fe063e48f2d6851bca0133721",
+    "crazyflie_rl/reward_balance.py": "fdf6408a5966edfc99beb19c3ab2afe4e54b431765f2698ad049cae445bb6de2",
+    "crazyflie_rl/oracle_recovery_artifacts.py": "439fe28beabcccc9258aa05986bb7f4def7aa9261f94c0c926e107a9b7181068",
+    "crazyflie_rl/artifacts.py": "08f353cde4aa768d16974fdb84713c2cdb92611fdd1b8db2ca85d0156780c7d3",
+    "crazyflie_rl/dr_policy.py": "acfb6d5ae89deb39ec80d366e67246195d218addaaaee65227e141a53f7fa802",
+    "crazyflie_rl/interactive_eval.py": "90db1f23ef108530228c33ba0fac3836b9a66faed017a501f389d4c0ee9b1c4b",
+    "crazyflie_rl/environment.py": "791833669c668023db96d0f57eb022f20bb13168c0f7f06b24f42c87b10e0239",
+    "crazyflie_rl/plotting.py": "b89c945bff2391c995002e8926fc0ebe9563fcceb267c33773a1a1a53045829f",
+    "crazyflie_rl/oracle_recovery.py": "474f20e8b9a675d810183af586974094107b2e027a364fe63fd6d4aabe074e17",
+    "crazyflie_rl/training.py": "71267db570e6ba3e4338c77ee55e6bc114f6ab2d9c06622ff292da81b94a1c9d",
+    "crazyflie_rl/missions.py": "b5773c726b5c6a759c96ba3402b8c32e95a2c59f5133034139eb0aa8dbdfb49c",
+    "crazyflie_rl/oracle_allocation.py": "d677356d2c28f2c112149437c4619994a22ed3dadc4a38a1baa38ce252e9e28d",
+    "crazyflie_rl/integral_validation.py": "3ea8bd3ce738b4bfa85169d0d19e1c7e4860aad6b84e5a51c6984ed8761d0908",
+    "crazyflie_rl/motor_degradation.py": "5593a12e401e3b29091f34a1ee3e18685ef609b3c0196b0a71ccc77cd5255308",
+    "crazyflie_rl/__init__.py": "f00fc2cbec8d53b52e84a5f35edf50670862c5130ed7161a8c95deb3476e5e70",
+    "crazyflie_rl/oracle_eval.py": "0ebf616e218e9b644e035ca7c60da5f8551935c997f939f5b88c1947310c17db",
+    "crazyflie_rl/dr_transfer.py": "478609f5881e22614119a830053c3f06514a966ffc85d5df241b2848e481fe11",
+    "crazyflie_rl/yaw_authority.py": "c9ae47f6146542dca651ba1eafa81ed6d795c77024c4f72316632fb75c910383",
+    "crazyflie_rl/motor_study.py": "609db9ae361a6425a28bc8b4166574fa0964a8f62d88a92c0cb8f657aa4349d9",
+    "crazyflie_rl/payload_motor_eval.py": "ef1a832c06b7cdeb721429c5973a40b1021acc9508a0d06e329aab862061bdb7",
+    "crazyflie_rl/factories.py": "72465229a631a593842e0b2cca96b9f19702d4c43f559ccb1b5434c96678af99",
+    "crazyflie_rl/velocity_reference.py": "7034c9860e1e12735807d7c795564c8fff6a07947e08a334a1f1a8fccd483afe",
+    "crazyflie_rl/eval_cli.py": "2cd683d7eac6a03f1284e38e5cbc03c49d5bc58e70f85283db948cb898b367f6",
+    "crazyflie_rl/controllers.py": "a8c94dd1c72fe31cc81c09aca082b797a9ed17aff8bf1db42495717fff11e2ca",
+    "crazyflie_rl/dr_reset_audit.py": "00553ff93541d65237dfc540c50c815b3ceff2db436cb829fe45872bf6ae1fc4",
+    "crazyflie_rl/evaluation.py": "b5118376b75149cc1a61b2b97f6e3a592e32bab23123396a45f401d14d3888f2"
+  },
+  "audit_script_sha256": "ad83da37d967fd830e10eb948ca5a045b4054722f0201097579ca13d186a319f",
+  "resolved_config": {
+    "version": 1,
+    "paths": {
+      "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+      "project_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2",
+      "artifact_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts",
+      "legacy_model_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/model",
+      "legacy_tensorboard_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/tb"
+    },
+    "vehicle": {
+      "mass": 0.04338,
+      "gravity": 9.81,
+      "arm_length": 0.035355,
+      "motor_direction": [
+        1.0,
+        -1.0,
+        1.0,
+        -1.0
+      ],
+      "thrust_min": 0.0,
+      "thrust_max": 0.2,
+      "torque_coefficient": 0.00594,
+      "inertia_diagonal": [
+        2.3951e-05,
+        2.3951e-05,
+        3.2347e-05
+      ],
+      "physics_hz": 500.0
+    },
+    "actuator": {
+      "enabled": true,
+      "model": "cf21b_first_order",
+      "time_constant_s": 0.05,
+      "steady_state_gain_rad_s": 2900.0,
+      "thrust_polynomial_coefficients": [
+        -0.23,
+        0.562,
+        -0.043
+      ],
+      "thrust_polynomial_omega_reference_rad_s": 2900.0,
+      "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+      "thrust_polynomial_max_ratio": 1.0,
+      "parameter_source": "paper_candidate",
+      "verification_status": "unverified",
+      "reaction_torque": {
+        "model": "legacy_ratio",
+        "legacy_ratio_m": 0.00594,
+        "polynomial_coefficients": [
+          -3.4,
+          8.7,
+          2.9
+        ],
+        "polynomial_scale": 0.0001,
+        "rotor_inertia_kg_m2": 5e-08,
+        "include_rotor_acceleration_torque": false
+      },
+      "reset_rpm_mode": "auto",
+      "randomization": {
+        "enabled": false,
+        "time_constant_s": {
+          "min": 0.04,
+          "max": 0.06
+        },
+        "steady_state_gain_rad_s": {
+          "min": 2320.0,
+          "max": 3480.0
+        }
+      }
+    },
+    "controller": {
+      "pid": {
+        "kp_position": 4.0,
+        "velocity_limit": 1.5,
+        "kp_velocity": 4.0,
+        "ki_velocity": 1.0,
+        "kd_velocity": 0.0,
+        "kp_attitude": 12.0,
+        "kp_rate": [
+          0.0008,
+          0.0008,
+          0.0006
+        ],
+        "ki_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max_tilt_deg": 35.0,
+        "max_torque": 0.02,
+        "max_force": 1.0,
+        "integrator_limit": 2.0
+      }
+    },
+    "environment": {
+      "control_mode": "e2e",
+      "policy_hz": 100.0,
+      "episode_sec": 8.0,
+      "residual_scale": [
+        0.0075,
+        0.0075,
+        0.001,
+        0.5
+      ],
+      "position_target": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "yaw_target": 0.0,
+      "position_perturbation": 0.0,
+      "attitude_perturbation_deg": 0.0,
+      "payload": {
+        "randomize": false,
+        "mass": 0.0,
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "randomization_limits": {
+          "radius_min": 0.02,
+          "radius_max": 0.1,
+          "torque_fraction": 0.5,
+          "mass_max": 0.015
+        }
+      },
+      "reward": {
+        "position_weight": 4.0,
+        "velocity_weight": 0.005,
+        "tilt_weight": 3.0,
+        "angular_velocity_weight": 0.001,
+        "yaw_weight": 1.0,
+        "action_weight": 0.0,
+        "action_rate_weight": 0.0,
+        "crash_penalty": 10.0,
+        "position_xy_weight": 10.0,
+        "position_z_weight": 6.0
+      },
+      "termination": {
+        "min_altitude": 0.2,
+        "max_altitude": 2.5,
+        "max_tilt_deg": 60.0,
+        "max_position_error": 1.5
+      },
+      "initial_pose_randomization": null,
+      "e2e_velocity": {
+        "mode": "position_error",
+        "position_gain": 4.0,
+        "max_speed": 1.5,
+        "observation_mode": "absolute",
+        "reward_mode": "absolute"
+      }
+    },
+    "training": {
+      "seed": 42,
+      "total_timesteps": 1000000,
+      "ppo": {
+        "policy": "MlpPolicy",
+        "n_steps": 2048,
+        "batch_size": 256,
+        "learning_rate": 0.0003,
+        "gamma": 0.99,
+        "gae_lambda": 0.95,
+        "n_epochs": 10,
+        "ent_coef": 0.003,
+        "vf_coef": 0.5,
+        "max_grad_norm": 0.5,
+        "clip_range": 0.1,
+        "target_kl": 0.03,
+        "log_std_init": -1.5,
+        "net_arch": [
+          64,
+          64
+        ],
+        "device": "cpu",
+        "verbose": 0
+      },
+      "record_episodes": true,
+      "checkpoint_interval": 100000
+    },
+    "evaluation": {
+      "episode_count": 30,
+      "seed_start": 42,
+      "deterministic": true,
+      "tail_fraction": 0.3,
+      "tilt_limit_deg": 30.0,
+      "evaluation_interval": 20000
+    },
+    "mission": {
+      "type": "hover",
+      "hover_altitude": 1.0,
+      "goto_xy": [
+        1.0,
+        0.0
+      ],
+      "takeoff_sec": 4.0,
+      "settle_sec": 2.0,
+      "goto_sec": 4.0,
+      "circle_ramp_sec": 2.0,
+      "number_of_laps": 2.0,
+      "post_hold_sec": 2.0,
+      "force_floor_start": false,
+      "circle_presets": [
+        {
+          "key": "1",
+          "description": "radius 0.5m, period 10s (slow/safe)",
+          "radius": 0.5,
+          "period": 10.0
+        },
+        {
+          "key": "2",
+          "description": "radius 1.0m, period 8s (medium)",
+          "radius": 1.0,
+          "period": 8.0
+        },
+        {
+          "key": "3",
+          "description": "radius 0.5m, period 5s (fast/aggressive)",
+          "radius": 0.5,
+          "period": 5.0
+        }
+      ],
+      "hover": {
+        "target": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "yaw_deg": 0.0,
+        "duration": 8.0
+      },
+      "circle": {
+        "center_xy": [
+          0.5,
+          0.0
+        ],
+        "radius": 0.5,
+        "period": 10.0,
+        "laps": 2.0,
+        "start_angle_deg": 0.0,
+        "direction": "ccw",
+        "ramp_sec": 2.0
+      },
+      "lissajous": {
+        "center_xy": [
+          0.0,
+          0.0
+        ],
+        "amplitude_xy": [
+          0.5,
+          0.5
+        ],
+        "frequency_ratio": [
+          1,
+          2
+        ],
+        "phase_deg": 90.0,
+        "base_period": 10.0,
+        "cycles": 2.0,
+        "ramp_sec": 2.0
+      }
+    },
+    "experiment": {
+      "name": "crazyflie-ppo",
+      "condition": "velocity-ab-common-evaluation",
+      "description": "Same nominal evaluation for fresh A/B and separate historical reference",
+      "timezone": "Asia/Seoul"
+    },
+    "source_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/eval_velocity_ab.yaml"
+  },
+  "documentation": {
+    "free_joint": "https://mujoco.readthedocs.io/en/stable/overview.html#floating-objects",
+    "site_force": "https://mujoco.readthedocs.io/en/stable/XMLreference.html#actuator-general",
+    "camera_axes": "https://mujoco.readthedocs.io/en/stable/programming/visualization.html",
+    "jacobians": "https://mujoco.readthedocs.io/en/stable/APIreference/APIfunctions.html#mj-jacsubtreecom"
+  },
+  "no_training": true,
+  "no_optimizer_updates": true,
+  "production_model_or_control_modified": false,
+  "isolated_model_copies": true,
+  "loaded_xml_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+  "paths": {
+    "config_inheritance": [
+      {
+        "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/eval_velocity_ab.yaml",
+        "sha256": "e0b482ac3bd76a6c4eecc42f2f0c29f4235ebefb4f451852f88742b346489f66"
+      },
+      {
+        "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/e2e_train_velocity_ab_a.yaml",
+        "sha256": "5a714f2fbbe0fa4ec20e30033775800f31ac25d828a66b7fee63e076e515f379"
+      },
+      {
+        "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/e2e_train_position_velocity_error.yaml",
+        "sha256": "eb3afc43b9811f58e4acb9f271c7f7db9a4df34daa160928d89f0f64d059bf53"
+      },
+      {
+        "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/e2e_train.yaml",
+        "sha256": "7b2064a6022ba36d77f6d0afe813cb1f1f8207499237190c552ffde0b42230dc"
+      },
+      {
+        "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/base.yaml",
+        "sha256": "ffdc63b15309dffee8f15ae659bbd8303c8ab250fbc1be284d5794cc86afb8be"
+      }
+    ],
+    "xml_dependencies": [
+      {
+        "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+        "sha256": "5c9ce180e043ec612c6c81e88d00506f895d66050011e4896eccc8594d71f9f7",
+        "includes": []
+      }
+    ],
+    "mesh_assets": [
+      {
+        "name": "pcb",
+        "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/assets/cf21B/cf21B_pcb.stl",
+        "sha256": "c0e482f67216a5bbd6c300f67b4f8341c361d6040403f52df38a8adc07b0fbcc"
+      },
+      {
+        "name": "motors",
+        "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/assets/cf21B/cf21B_motors.stl",
+        "sha256": "2ffb768ba07ee8c985d803875f3fc2b5df1b00eefc72598f4d4479163cb8add8"
+      },
+      {
+        "name": "propL",
+        "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/assets/cf21B/cf21B_PropL.stl",
+        "sha256": "2e07cfb793f847ca30954f7359b3dc4e78ebbd6ab72520d0ec82f2873224acd5"
+      },
+      {
+        "name": "propR",
+        "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/assets/cf21B/cf21B_PropR.stl",
+        "sha256": "4436152ce78f23800730331fcf51be122b70389fe4960c64b52f455b226da6b5"
+      },
+      {
+        "name": "prop-guards",
+        "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/assets/cf21B/cf21B_prop-guards.stl",
+        "sha256": "00c326d186bc6f1270cdd2804bcb286905a57e22b28006a3f5fb0a4b160db587"
+      },
+      {
+        "name": "connectors",
+        "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/assets/cf21B/cf21B_connectors.stl",
+        "sha256": "083e1566b60f13c551ea1c1a2cb1ebc033cbaf64efbacad12aa64642289db36e"
+      },
+      {
+        "name": "connector-pins",
+        "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/assets/cf21B/cf21B_connector-pins.stl",
+        "sha256": "d6496d3549957a224460fe86d60d92b046f94d223f42774f5d8b9af5cb816ec6"
+      },
+      {
+        "name": "battery",
+        "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/assets/cf21B/cf21B_battery.stl",
+        "sha256": "19d41c3511ebb27e541c704f3aecd15f68562ddabb94630f72259cf290c3eae7"
+      },
+      {
+        "name": "battery-holder",
+        "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/assets/cf21B/cf21B_battery-holder.stl",
+        "sha256": "9c8da9ac3cd8b6dee50b239a2ad7fb5d7e460f1fcd09da6ee9d4a9049a2011f9"
+      },
+      {
+        "name": "led-diffusor",
+        "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/assets/cf21B/cf_led-diffusor.stl",
+        "sha256": "714c843b85678d904c5ba9e7aff0f5c87981ced8129ed5beb8d876a9fc2373e1"
+      }
+    ]
+  },
+  "initial_snapshot": {
+    "position": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "quaternion": [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "velocity": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "omega": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "time_sec": 0.0,
+    "qpos": [
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "qvel": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "ctrl": [
+      0.10638945000000016,
+      0.10638945000000016,
+      0.10638945000000016,
+      0.10638945000000016,
+      0.0006319533330000009,
+      -0.0006319533330000009,
+      0.0006319533330000009,
+      -0.0006319533330000009
+    ],
+    "reference": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "yaw_reference": 0.0,
+    "observation": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "step": 0,
+    "previous_action": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "pid_i_velocity": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "pid_i_rate": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "actuator": {
+      "enabled": true,
+      "model": "cf21b_first_order",
+      "parameter_source": "paper_candidate",
+      "verification_status": "unverified",
+      "thrust_saturation_n": [
+        0.0,
+        0.2
+      ],
+      "motor_command_saturation": [
+        0.0,
+        1.0
+      ],
+      "randomization_enabled": false,
+      "reset_rpm_mode": "auto",
+      "reaction_torque_model": "legacy_ratio",
+      "legacy_ratio_m": 0.00594,
+      "nominal_time_constant_s": [
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "nominal_steady_state_gain_rad_s": [
+        2900.0,
+        2900.0,
+        2900.0,
+        2900.0
+      ],
+      "sampled_time_constant_s": [
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "sampled_steady_state_gain_rad_s": [
+        2900.0,
+        2900.0,
+        2900.0,
+        2900.0
+      ],
+      "thrust_polynomial_coefficients": [
+        -0.23,
+        0.562,
+        -0.043
+      ],
+      "thrust_omega_reference_rad_s": 2900.0,
+      "positive_branch_min_ratio": 0.0791,
+      "max_ratio": 1.0,
+      "reaction_torque_coefficients": [
+        -3.4,
+        8.7,
+        2.9
+      ],
+      "reaction_torque_scale": 0.0001,
+      "rotor_inertia_kg_m2": 5e-08,
+      "include_rotor_acceleration_torque": false
+    },
+    "mass": [
+      0.0,
+      0.04338,
+      1e-06,
+      1e-06,
+      1e-06,
+      1e-06
+    ],
+    "inertia": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        2.3951e-05,
+        2.3951e-05,
+        3.2347e-05
+      ],
+      [
+        1e-09,
+        1e-09,
+        1e-09
+      ],
+      [
+        1e-09,
+        1e-09,
+        1e-09
+      ],
+      [
+        1e-09,
+        1e-09,
+        1e-09
+      ],
+      [
+        1e-09,
+        1e-09,
+        1e-09
+      ]
+    ],
+    "_last_f": [
+      0.10638945000000016,
+      0.10638945000000016,
+      0.10638945000000016,
+      0.10638945000000016
+    ],
+    "_last_f_cmd": [
+      0.10638945000000001,
+      0.10638945000000001,
+      0.10638945000000001,
+      0.10638945000000001
+    ],
+    "_last_omega": [
+      1581.521674476,
+      1581.521674476,
+      1581.521674476,
+      1581.521674476
+    ],
+    "_last_motor_cmd": [
+      0.5453523015434483,
+      0.5453523015434483,
+      0.5453523015434483,
+      0.5453523015434483
+    ],
+    "_last_q_actual": [
+      0.0006319533330000009,
+      -0.0006319533330000009,
+      0.0006319533330000009,
+      -0.0006319533330000009
+    ],
+    "_last_wrench_cmd": [
+      0.0,
+      0.0,
+      0.0,
+      0.42555780000000004
+    ],
+    "_last_wrench_actual": [
+      0.0,
+      0.0,
+      0.0,
+      0.42555780000000065
+    ],
+    "_last_allocation_error": [
+      0.0,
+      0.0,
+      0.0,
+      -6.106226635438361e-16
+    ]
+  },
+  "actuator": {
+    "enabled": true,
+    "model": "cf21b_first_order",
+    "parameter_source": "paper_candidate",
+    "verification_status": "unverified",
+    "thrust_saturation_n": [
+      0.0,
+      0.2
+    ],
+    "motor_command_saturation": [
+      0.0,
+      1.0
+    ],
+    "randomization_enabled": false,
+    "reset_rpm_mode": "auto",
+    "reaction_torque_model": "legacy_ratio",
+    "legacy_ratio_m": 0.00594,
+    "nominal_time_constant_s": [
+      0.05,
+      0.05,
+      0.05,
+      0.05
+    ],
+    "nominal_steady_state_gain_rad_s": [
+      2900.0,
+      2900.0,
+      2900.0,
+      2900.0
+    ],
+    "sampled_time_constant_s": [
+      0.05,
+      0.05,
+      0.05,
+      0.05
+    ],
+    "sampled_steady_state_gain_rad_s": [
+      2900.0,
+      2900.0,
+      2900.0,
+      2900.0
+    ],
+    "thrust_polynomial_coefficients": [
+      -0.23,
+      0.562,
+      -0.043
+    ],
+    "thrust_omega_reference_rad_s": 2900.0,
+    "positive_branch_min_ratio": 0.0791,
+    "max_ratio": 1.0,
+    "reaction_torque_coefficients": [
+      -3.4,
+      8.7,
+      2.9
+    ],
+    "reaction_torque_scale": 0.0001,
+    "rotor_inertia_kg_m2": 5e-08,
+    "include_rotor_acceleration_torque": false
+  },
+  "protected_files_unchanged": true,
+  "protected_file_count": 1372,
+  "verification_passed": true
+}

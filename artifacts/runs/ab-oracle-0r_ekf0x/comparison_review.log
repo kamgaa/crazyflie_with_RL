@@ -1,0 +1,121 @@
+COMPLETED 30 / 40
+nominal-A_best-existing_no_integral duration=60.00 tail_XY_Z_mm=1.941/+1.328 tail_yaw_deg=-0.131 clip_s=0.0 freeze_s=0.0 event_rec=[]
+nominal-A_best-existing_integral_020 duration=60.00 tail_XY_Z_mm=0.000/+0.000 tail_yaw_deg=-0.131 clip_s=0.0 freeze_s=0.0 event_rec=[]
+nominal-A_best-oracle_no_integral duration=60.00 tail_XY_Z_mm=1.941/+1.328 tail_yaw_deg=-0.131 clip_s=0.0 freeze_s=0.0 event_rec=[]
+nominal-A_best-oracle_integral_020 duration=60.00 tail_XY_Z_mm=0.000/+0.000 tail_yaw_deg=-0.131 clip_s=0.0 freeze_s=0.0 event_rec=[]
+nominal-B_best-existing_no_integral duration=60.00 tail_XY_Z_mm=1.648/+1.766 tail_yaw_deg=+0.978 clip_s=0.0 freeze_s=0.0 event_rec=[]
+nominal-B_best-existing_integral_020 duration=60.00 tail_XY_Z_mm=0.000/+0.000 tail_yaw_deg=+0.978 clip_s=0.0 freeze_s=0.0 event_rec=[]
+nominal-B_best-oracle_no_integral duration=60.00 tail_XY_Z_mm=1.648/+1.766 tail_yaw_deg=+0.978 clip_s=0.0 freeze_s=0.0 event_rec=[]
+nominal-B_best-oracle_integral_020 duration=60.00 tail_XY_Z_mm=0.000/+0.000 tail_yaw_deg=+0.978 clip_s=0.0 freeze_s=0.0 event_rec=[]
+combined_motor2_70-A_best-existing_no_integral duration=5.41 tail_XY_Z_mm=null tail_yaw_deg=null clip_s=0.38 freeze_s=0.0 event_rec=[('fault', {'xy': None, 'z': None, '3d': None})]
+combined_motor2_70-A_best-existing_integral_020 duration=5.41 tail_XY_Z_mm=null tail_yaw_deg=null clip_s=0.38 freeze_s=0.38 event_rec=[('fault', {'xy': None, 'z': None, '3d': None})]
+combined_motor2_70-A_best-oracle_no_integral duration=5.84 tail_XY_Z_mm=null tail_yaw_deg=null clip_s=0.6900000000000001 freeze_s=0.0 event_rec=[('fault', {'xy': None, 'z': None, '3d': None})]
+combined_motor2_70-A_best-oracle_integral_020 duration=5.84 tail_XY_Z_mm=null tail_yaw_deg=null clip_s=0.6900000000000001 freeze_s=0.6900000000000001 event_rec=[('fault', {'xy': None, 'z': None, '3d': None})]
+combined_motor2_70-B_best-existing_no_integral duration=60.00 tail_XY_Z_mm=278.628/-61.805 tail_yaw_deg=+10.492 clip_s=0.19 freeze_s=0.0 event_rec=[('fault', {'xy': None, 'z': None, '3d': None})]
+combined_motor2_70-B_best-existing_integral_020 duration=60.00 tail_XY_Z_mm=0.003/+0.001 tail_yaw_deg=+10.493 clip_s=0.19 freeze_s=0.19 event_rec=[('fault', {'xy': 21.6, 'z': 12.830000000000002, '3d': 21.62})]
+combined_motor2_70-B_best-oracle_no_integral duration=60.00 tail_XY_Z_mm=117.145/-21.411 tail_yaw_deg=+1.924 clip_s=0.24 freeze_s=0.0 event_rec=[('fault', {'xy': None, 'z': None, '3d': None})]
+combined_motor2_70-B_best-oracle_integral_020 duration=60.00 tail_XY_Z_mm=0.000/-0.000 tail_yaw_deg=+1.924 clip_s=0.24 freeze_s=0.24 event_rec=[('fault', {'xy': 9.23, 'z': 1.7300000000000004, '3d': 9.34})]
+combined_motor3_70-A_best-existing_no_integral duration=7.13 tail_XY_Z_mm=null tail_yaw_deg=null clip_s=1.37 freeze_s=0.0 event_rec=[('fault', {'xy': None, 'z': None, '3d': None})]
+combined_motor3_70-A_best-existing_integral_020 duration=7.16 tail_XY_Z_mm=null tail_yaw_deg=null clip_s=1.3800000000000001 freeze_s=1.3800000000000001 event_rec=[('fault', {'xy': None, 'z': None, '3d': None})]
+combined_motor3_70-A_best-oracle_no_integral duration=60.00 tail_XY_Z_mm=56.501/-23.289 tail_yaw_deg=+0.029 clip_s=0.28 freeze_s=0.0 event_rec=[('fault', {'xy': None, 'z': None, '3d': None})]
+combined_motor3_70-A_best-oracle_integral_020 duration=60.00 tail_XY_Z_mm=0.000/+0.000 tail_yaw_deg=+0.029 clip_s=0.28 freeze_s=0.28 event_rec=[('fault', {'xy': 7.030000000000001, 'z': 2.84, '3d': 7.050000000000001})]
+combined_motor3_70-B_best-existing_no_integral duration=5.29 tail_XY_Z_mm=null tail_yaw_deg=null clip_s=0.25 freeze_s=0.0 event_rec=[('fault', {'xy': None, 'z': None, '3d': None})]
+combined_motor3_70-B_best-existing_integral_020 duration=5.29 tail_XY_Z_mm=null tail_yaw_deg=null clip_s=0.25 freeze_s=0.25 event_rec=[('fault', {'xy': None, 'z': None, '3d': None})]
+combined_motor3_70-B_best-oracle_no_integral duration=5.39 tail_XY_Z_mm=null tail_yaw_deg=null clip_s=0.38 freeze_s=0.0 event_rec=[('fault', {'xy': None, 'z': None, '3d': None})]
+combined_motor3_70-B_best-oracle_integral_020 duration=5.39 tail_XY_Z_mm=null tail_yaw_deg=null clip_s=0.38 freeze_s=0.38 event_rec=[('fault', {'xy': None, 'z': None, '3d': None})]
+motor1_70_restore-A_best-existing_no_integral duration=60.00 tail_XY_Z_mm=1.941/+1.328 tail_yaw_deg=-0.131 clip_s=0.0 freeze_s=0.0 event_rec=[('fault', {'xy': None, 'z': None, '3d': None}), ('restore', {'xy': 2.780000000000001, 'z': 2.4100000000000037, '3d': 3.049999999999997})]
+motor1_70_restore-A_best-existing_integral_020 duration=60.00 tail_XY_Z_mm=0.169/+0.061 tail_yaw_deg=-0.131 clip_s=0.0 freeze_s=0.0 event_rec=[('fault', {'xy': 14.3, 'z': 6.34, '3d': 14.3}), ('restore', {'xy': 14.310000000000002, 'z': 6.039999999999999, '3d': 14.32})]
+motor1_70_restore-A_best-oracle_no_integral duration=60.00 tail_XY_Z_mm=1.941/+1.328 tail_yaw_deg=-0.131 clip_s=0.06 freeze_s=0.0 event_rec=[('fault', {'xy': 0.7599999999999998, 'z': 0.10000000000000053, '3d': 0.7700000000000005}), ('restore', {'xy': 0.8100000000000023, 'z': 0.07000000000000028, '3d': 0.8100000000000023})]
+motor1_70_restore-A_best-oracle_integral_020 duration=60.00 tail_XY_Z_mm=0.002/+0.000 tail_yaw_deg=-0.131 clip_s=0.06 freeze_s=0.06 event_rec=[('fault', {'xy': 0.7700000000000005, 'z': 0.10000000000000053, '3d': 0.7700000000000005}), ('restore', {'xy': 0.8200000000000003, 'z': 0.07000000000000028, '3d': 0.8200000000000003})]
+motor1_70_restore-B_best-existing_no_integral duration=60.00 tail_XY_Z_mm=1.648/+1.766 tail_yaw_deg=+0.978 clip_s=0.0 freeze_s=0.0 event_rec=[('fault', {'xy': None, 'z': None, '3d': None}), ('restore', {'xy': 3.530000000000001, 'z': 2.9200000000000017, '3d': 3.6899999999999977})]
+motor1_70_restore-B_best-existing_integral_020 duration=60.00 tail_XY_Z_mm=0.155/+0.110 tail_yaw_deg=+0.978 clip_s=0.0 freeze_s=0.0 event_rec=[('fault', {'xy': 15.830000000000002, 'z': 2.54, '3d': 15.91}), ('restore', {'xy': 15.86, 'z': 2.6799999999999997, '3d': 15.950000000000003})]
+motor1_70_restore-B_best-oracle_no_integral duration=60.00 tail_XY_Z_mm=1.648/+1.766 tail_yaw_deg=+0.978 clip_s=0.05 freeze_s=0.0 event_rec=[('fault', {'xy': 1.4699999999999998, 'z': 0.6100000000000003, '3d': 1.4900000000000002}), ('restore', {'xy': 1.6700000000000017, 'z': 0.620000000000001, '3d': 1.6700000000000017})]
+motor1_70_restore-B_best-oracle_integral_020 duration=60.00 tail_XY_Z_mm=0.002/-0.000 tail_yaw_deg=+0.978 clip_s=0.05 freeze_s=0.05 event_rec=[('fault', {'xy': 0.8399999999999999, 'z': 0.6100000000000003, '3d': 1.04}), ('restore', {'xy': 1.4800000000000004, 'z': 0.629999999999999, '3d': 1.4800000000000004})]
+combined_motor1_70_restore-A_best-existing_no_integral duration=60.00 tail_XY_Z_mm=71.872/-18.576 tail_yaw_deg=-1.111 clip_s=0.52 freeze_s=0.0 event_rec=[('fault', {'xy': None, 'z': None, '3d': None}), ('restore', {'xy': None, 'z': None, '3d': None})]
+combined_motor1_70_restore-A_best-existing_integral_020 duration=60.00 tail_XY_Z_mm=0.215/+0.080 tail_yaw_deg=-1.111 clip_s=0.51 freeze_s=0.51 event_rec=[('fault', {'xy': 15.93, 'z': 5.26, '3d': 15.990000000000002}), ('restore', {'xy': 15.36, 'z': 6.399999999999999, '3d': 15.369999999999997})]
+combined_motor1_70_restore-A_best-oracle_no_integral duration=60.00 tail_XY_Z_mm=71.872/-18.576 tail_yaw_deg=-1.111 clip_s=0.33 freeze_s=0.0 event_rec=[('fault', {'xy': None, 'z': None, '3d': None}), ('restore', {'xy': None, 'z': None, '3d': None})]
+combined_motor1_70_restore-A_best-oracle_integral_020 duration=60.00 tail_XY_Z_mm=0.003/+0.001 tail_yaw_deg=-1.111 clip_s=0.33 freeze_s=0.33 event_rec=[('fault', {'xy': 7.1899999999999995, 'z': 1.2199999999999998, '3d': 7.75}), ('restore', {'xy': 1.6999999999999993, 'z': 0.5300000000000011, '3d': 1.7200000000000024})]
+combined_motor1_70_restore-B_best-existing_no_integral duration=60.00 tail_XY_Z_mm=81.081/-33.040 tail_yaw_deg=+1.054 clip_s=0.29 freeze_s=0.0 event_rec=[('fault', {'xy': None, 'z': None, '3d': None}), ('restore', {'xy': None, 'z': None, '3d': None})]
+combined_motor1_70_restore-B_best-existing_integral_020 duration=60.00 tail_XY_Z_mm=0.196/+0.144 tail_yaw_deg=+1.054 clip_s=0.29 freeze_s=0.29 event_rec=[('fault', {'xy': 16.990000000000002, 'z': 5.08, '3d': 17.2}), ('restore', {'xy': 16.75, 'z': 2.950000000000003, '3d': 16.869999999999997})]
+combined_motor1_70_restore-B_best-oracle_no_integral duration=60.00 tail_XY_Z_mm=81.081/-33.040 tail_yaw_deg=+1.054 clip_s=0.27 freeze_s=0.0 event_rec=[('fault', {'xy': None, 'z': None, '3d': None}), ('restore', {'xy': None, 'z': None, '3d': None})]
+combined_motor1_70_restore-B_best-oracle_integral_020 duration=60.00 tail_XY_Z_mm=0.002/-0.001 tail_yaw_deg=+1.054 clip_s=0.27 freeze_s=0.27 event_rec=[('fault', {'xy': 7.68, 'z': 4.32, '3d': 8.280000000000001}), ('restore', {'xy': 1.9200000000000017, 'z': 0.6400000000000006, '3d': 1.9299999999999997})]
+TRANSIENT combined_motor2_70-A_best-existing_no_integral
+fault partial= True maxXY/Zmm= [281.1446741283819, 5.920171436571753] tilt= 60.00097131766869 recovery= {'xy': None, 'z': None, '3d': None}
+TRANSIENT combined_motor2_70-A_best-existing_integral_020
+fault partial= True maxXY/Zmm= [247.69594093147768, 4.771649133852307] tilt= 60.37586355525606 recovery= {'xy': None, 'z': None, '3d': None}
+TRANSIENT combined_motor2_70-A_best-oracle_no_integral
+fault partial= True maxXY/Zmm= [266.1345772873745, 45.937869691667466] tilt= 66.74070842867954 recovery= {'xy': None, 'z': None, '3d': None}
+TRANSIENT combined_motor2_70-A_best-oracle_integral_020
+fault partial= True maxXY/Zmm= [236.42132761191178, 53.09552436684684] tilt= 66.49506179428649 recovery= {'xy': None, 'z': None, '3d': None}
+TRANSIENT combined_motor2_70-B_best-existing_no_integral
+fault partial= False maxXY/Zmm= [307.7965336413829, 68.6340280702219] tilt= 10.99573185508354 recovery= {'xy': None, 'z': None, '3d': None}
+TRANSIENT combined_motor2_70-B_best-existing_integral_020
+fault partial= False maxXY/Zmm= [229.6196140563283, 48.7769906508565] tilt= 11.102655336985439 recovery= {'xy': 21.6, 'z': 12.830000000000002, '3d': 21.62}
+TRANSIENT combined_motor2_70-B_best-oracle_no_integral
+fault partial= False maxXY/Zmm= [153.77374204156678, 31.137327985280685] tilt= 5.20147849942301 recovery= {'xy': None, 'z': None, '3d': None}
+TRANSIENT combined_motor2_70-B_best-oracle_integral_020
+fault partial= False maxXY/Zmm= [87.12559629925643, 14.850468849186393] tilt= 5.155940185204259 recovery= {'xy': 9.23, 'z': 1.7300000000000004, '3d': 9.34}
+TRANSIENT combined_motor3_70-A_best-existing_no_integral
+fault partial= True maxXY/Zmm= [371.05977176625277, 309.05153490319225] tilt= 61.65663772599093 recovery= {'xy': None, 'z': None, '3d': None}
+TRANSIENT combined_motor3_70-A_best-existing_integral_020
+fault partial= True maxXY/Zmm= [349.3475927205903, 283.01800949802833] tilt= 62.73381652979573 recovery= {'xy': None, 'z': None, '3d': None}
+TRANSIENT combined_motor3_70-A_best-oracle_no_integral
+fault partial= False maxXY/Zmm= [84.64705359563186, 34.99141762978852] tilt= 6.334779456561263 recovery= {'xy': None, 'z': None, '3d': None}
+TRANSIENT combined_motor3_70-A_best-oracle_integral_020
+fault partial= False maxXY/Zmm= [52.07019003397759, 20.974916379319918] tilt= 6.318787748394838 recovery= {'xy': 7.030000000000001, 'z': 2.84, '3d': 7.050000000000001}
+TRANSIENT combined_motor3_70-B_best-existing_no_integral
+fault partial= True maxXY/Zmm= [163.69993397835904, 10.437382863958678] tilt= 65.62862589371323 recovery= {'xy': None, 'z': None, '3d': None}
+TRANSIENT combined_motor3_70-B_best-existing_integral_020
+fault partial= True maxXY/Zmm= [128.58414088582566, 7.222376252162599] tilt= 65.52719672468079 recovery= {'xy': None, 'z': None, '3d': None}
+TRANSIENT combined_motor3_70-B_best-oracle_no_integral
+fault partial= True maxXY/Zmm= [226.48117667715593, 18.493621556058493] tilt= 64.54026985205405 recovery= {'xy': None, 'z': None, '3d': None}
+TRANSIENT combined_motor3_70-B_best-oracle_integral_020
+fault partial= True maxXY/Zmm= [191.6593805078211, 22.050963245808354] tilt= 64.03979881446705 recovery= {'xy': None, 'z': None, '3d': None}
+TRANSIENT motor1_70_restore-A_best-existing_no_integral
+fault partial= False maxXY/Zmm= [100.98163418390511, 23.642292913926944] tilt= 8.36793097258244 recovery= {'xy': None, 'z': None, '3d': None}
+restore partial= False maxXY/Zmm= [100.31811911488445, 26.422978005614883] tilt= 9.757973889225125 recovery= {'xy': 2.780000000000001, 'z': 2.4100000000000037, '3d': 3.049999999999997}
+TRANSIENT motor1_70_restore-A_best-existing_integral_020
+fault partial= False maxXY/Zmm= [89.51199664949912, 24.02428891042996] tilt= 8.368769888764307 recovery= {'xy': 14.3, 'z': 6.34, '3d': 14.3}
+restore partial= False maxXY/Zmm= [89.74696994366002, 18.690488480797907] tilt= 9.757919293135739 recovery= {'xy': 14.310000000000002, 'z': 6.039999999999999, '3d': 14.32}
+TRANSIENT motor1_70_restore-A_best-oracle_no_integral
+fault partial= False maxXY/Zmm= [9.906682809201993, 2.4095172829059486] tilt= 3.5078225122294926 recovery= {'xy': 0.7599999999999998, 'z': 0.10000000000000053, '3d': 0.7700000000000005}
+restore partial= False maxXY/Zmm= [10.148070260746579, 2.968169346401872] tilt= 4.407315056535935 recovery= {'xy': 0.8100000000000023, 'z': 0.07000000000000028, '3d': 0.8100000000000023}
+TRANSIENT motor1_70_restore-A_best-oracle_integral_020
+fault partial= False maxXY/Zmm= [9.781340054047636, 2.8150053751194726] tilt= 3.5083506168788707 recovery= {'xy': 0.7700000000000005, 'z': 0.10000000000000053, '3d': 0.7700000000000005}
+restore partial= False maxXY/Zmm= [10.194891323329262, 2.8961091765559166] tilt= 4.407311836761945 recovery= {'xy': 0.8200000000000003, 'z': 0.07000000000000028, '3d': 0.8200000000000003}
+TRANSIENT motor1_70_restore-B_best-existing_no_integral
+fault partial= False maxXY/Zmm= [173.18531119267647, 46.07111099167827] tilt= 7.199346157589455 recovery= {'xy': None, 'z': None, '3d': None}
+restore partial= False maxXY/Zmm= [173.11638869427017, 28.848692212471327] tilt= 7.965383475484054 recovery= {'xy': 3.530000000000001, 'z': 2.9200000000000017, '3d': 3.6899999999999977}
+TRANSIENT motor1_70_restore-B_best-existing_integral_020
+fault partial= False maxXY/Zmm= [139.6402710407892, 46.5418647154926] tilt= 7.19967526103425 recovery= {'xy': 15.830000000000002, 'z': 2.54, '3d': 15.91}
+restore partial= False maxXY/Zmm= [136.62714192353346, 40.79257198175856] tilt= 7.965147757149833 recovery= {'xy': 15.86, 'z': 2.6799999999999997, '3d': 15.950000000000003}
+TRANSIENT motor1_70_restore-B_best-oracle_no_integral
+fault partial= False maxXY/Zmm= [10.76849085868419, 3.1948291472265744] tilt= 2.9964682057756957 recovery= {'xy': 1.4699999999999998, 'z': 0.6100000000000003, '3d': 1.4900000000000002}
+restore partial= False maxXY/Zmm= [10.185990216110268, 5.194520696988336] tilt= 3.851135852231451 recovery= {'xy': 1.6700000000000017, 'z': 0.620000000000001, '3d': 1.6700000000000017}
+TRANSIENT motor1_70_restore-B_best-oracle_integral_020
+fault partial= False maxXY/Zmm= [9.805836770730663, 3.894971479425302] tilt= 2.9968637728225884 recovery= {'xy': 0.8399999999999999, 'z': 0.6100000000000003, '3d': 1.04}
+restore partial= False maxXY/Zmm= [11.299491647318215, 3.394687245269923] tilt= 3.8511374399313065 recovery= {'xy': 1.4800000000000004, 'z': 0.629999999999999, '3d': 1.4800000000000004}
+TRANSIENT combined_motor1_70_restore-A_best-existing_no_integral
+fault partial= False maxXY/Zmm= [205.387735633039, 64.55077742342186] tilt= 11.83426628356191 recovery= {'xy': None, 'z': None, '3d': None}
+restore partial= False maxXY/Zmm= [190.61148740792785, 18.62370340671049] tilt= 11.971954855861306 recovery= {'xy': None, 'z': None, '3d': None}
+TRANSIENT combined_motor1_70_restore-A_best-existing_integral_020
+fault partial= False maxXY/Zmm= [161.59028006999824, 50.430955553933174] tilt= 11.797378243438354 recovery= {'xy': 15.93, 'z': 5.26, '3d': 15.990000000000002}
+restore partial= False maxXY/Zmm= [113.46151323194944, 23.376822598969447] tilt= 11.971366038898228 recovery= {'xy': 15.36, 'z': 6.399999999999999, '3d': 15.369999999999997}
+TRANSIENT combined_motor1_70_restore-A_best-oracle_no_integral
+fault partial= False maxXY/Zmm= [112.82128437958282, 33.95507420825672] tilt= 8.013209250020436 recovery= {'xy': None, 'z': None, '3d': None}
+restore partial= False maxXY/Zmm= [75.02537139006319, 22.633111566105146] tilt= 5.099738761525284 recovery= {'xy': None, 'z': None, '3d': None}
+TRANSIENT combined_motor1_70_restore-A_best-oracle_integral_020
+fault partial= False maxXY/Zmm= [71.30489021774154, 20.219254038809087] tilt= 7.951887336425499 recovery= {'xy': 7.1899999999999995, 'z': 1.2199999999999998, '3d': 7.75}
+restore partial= False maxXY/Zmm= [11.911182934137626, 4.269830394771246] tilt= 5.09970007417094 recovery= {'xy': 1.6999999999999993, 'z': 0.5300000000000011, '3d': 1.7200000000000024}
+TRANSIENT combined_motor1_70_restore-B_best-existing_no_integral
+fault partial= False maxXY/Zmm= [277.5421318432247, 103.24001498628488] tilt= 9.140615360751957 recovery= {'xy': None, 'z': None, '3d': None}
+restore partial= False maxXY/Zmm= [277.486194099936, 53.59532304319203] tilt= 9.904432412742713 recovery= {'xy': None, 'z': None, '3d': None}
+TRANSIENT combined_motor1_70_restore-B_best-existing_integral_020
+fault partial= False maxXY/Zmm= [201.2438615057402, 79.337403210053] tilt= 9.139044384551937 recovery= {'xy': 16.990000000000002, 'z': 5.08, '3d': 17.2}
+restore partial= False maxXY/Zmm= [172.67073849036393, 51.27772625148119] tilt= 9.904117953924404 recovery= {'xy': 16.75, 'z': 2.950000000000003, '3d': 16.869999999999997}
+TRANSIENT combined_motor1_70_restore-B_best-oracle_no_integral
+fault partial= False maxXY/Zmm= [113.40074244906536, 51.4412214450467] tilt= 5.100002527422425 recovery= {'xy': None, 'z': None, '3d': None}
+restore partial= False maxXY/Zmm= [84.13684649310541, 36.33115436210033] tilt= 4.508897631933109 recovery= {'xy': None, 'z': None, '3d': None}
+TRANSIENT combined_motor1_70_restore-B_best-oracle_integral_020
+fault partial= False maxXY/Zmm= [68.7794108554989, 28.682220945552395] tilt= 5.052033495541736 recovery= {'xy': 7.68, 'z': 4.32, '3d': 8.280000000000001}
+restore partial= False maxXY/Zmm= [13.2131293317536, 3.640570325596837] tilt= 4.5088816666574045 recovery= {'xy': 1.9200000000000017, 'z': 0.6400000000000006, '3d': 1.9299999999999997}

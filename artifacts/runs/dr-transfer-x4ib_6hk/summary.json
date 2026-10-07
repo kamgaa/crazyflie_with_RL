@@ -1,0 +1,106 @@
+[
+  {
+    "label": "baseline",
+    "display_name": "baseline (legacy position reset)",
+    "case": "circle-air",
+    "sample_count": 1400,
+    "expected_duration_sec": 14.0,
+    "actual_duration_sec": 14.0,
+    "completed": true,
+    "terminated": false,
+    "truncated": true,
+    "partial": false,
+    "metric_scope": "full",
+    "termination_reasons": [],
+    "error": null,
+    "end_reason": "horizon",
+    "position_rmse_xy": 0.29417814055326985,
+    "position_rmse_z": 0.05620718946572107,
+    "position_rmse_total": 0.2994996269229978,
+    "altitude_min_m": 0.9136327171583263,
+    "altitude_max_m": 1.0853514858544009,
+    "altitude_error_mean_m": 0.009601478044016514,
+    "altitude_error_min_m": -0.08636728284167372,
+    "altitude_error_max_m": 0.08535148585440089,
+    "altitude_error_max_abs_m": 0.08636728284167372,
+    "circle_phase": {
+      "sample_count": 1199,
+      "partial": false,
+      "position_rmse_xy": 0.31317962034676183,
+      "position_rmse_z": 0.05603015810901747,
+      "position_rmse_total": 0.3181522484884609,
+      "altitude_min_m": 0.9136327171583263,
+      "altitude_max_m": 1.0853236736124963,
+      "altitude_error_mean_m": 0.0024741967275588046,
+      "altitude_error_min_m": -0.08636728284167372,
+      "altitude_error_max_m": 0.08532367361249626,
+      "altitude_error_max_abs_m": 0.08636728284167372
+    },
+    "phases": {
+      "CIRCLE": {
+        "sample_count": 1199,
+        "position_rmse_xy": 0.31317962034676183,
+        "position_rmse_z": 0.05603015810901747,
+        "position_rmse_total": 0.3181522484884609
+      },
+      "HOLD": {
+        "sample_count": 201,
+        "position_rmse_xy": 0.13303576904793865,
+        "position_rmse_z": 0.057251841485149495,
+        "position_rmse_total": 0.14483193432256974
+      }
+    }
+  },
+  {
+    "label": "posdr",
+    "display_name": "POS-only DR (new reset)",
+    "case": "circle-air",
+    "sample_count": 1400,
+    "expected_duration_sec": 14.0,
+    "actual_duration_sec": 14.0,
+    "completed": true,
+    "terminated": false,
+    "truncated": true,
+    "partial": false,
+    "metric_scope": "full",
+    "termination_reasons": [],
+    "error": null,
+    "end_reason": "horizon",
+    "position_rmse_xy": 0.3880921751383958,
+    "position_rmse_z": 0.029362617317645532,
+    "position_rmse_total": 0.3892013613791629,
+    "altitude_min_m": 0.9608195756896044,
+    "altitude_max_m": 1.0568455421567853,
+    "altitude_error_mean_m": 0.008232586438882729,
+    "altitude_error_min_m": -0.03918042431039559,
+    "altitude_error_max_m": 0.05684554215678528,
+    "altitude_error_max_abs_m": 0.05684554215678528,
+    "circle_phase": {
+      "sample_count": 1199,
+      "partial": false,
+      "position_rmse_xy": 0.40489601316612717,
+      "position_rmse_z": 0.031047087945776347,
+      "position_rmse_total": 0.40608460097341464,
+      "altitude_min_m": 0.9608195756896044,
+      "altitude_max_m": 1.0568455421567853,
+      "altitude_error_mean_m": 0.0077653557445234245,
+      "altitude_error_min_m": -0.03918042431039559,
+      "altitude_error_max_m": 0.05684554215678528,
+      "altitude_error_max_abs_m": 0.05684554215678528
+    },
+    "phases": {
+      "CIRCLE": {
+        "sample_count": 1199,
+        "position_rmse_xy": 0.40489601316612717,
+        "position_rmse_z": 0.031047087945776347,
+        "position_rmse_total": 0.40608460097341464
+      },
+      "HOLD": {
+        "sample_count": 201,
+        "position_rmse_xy": 0.26669857371178585,
+        "position_rmse_z": 0.01597363060474781,
+        "position_rmse_total": 0.26717650737779663
+      }
+    }
+  }
+]

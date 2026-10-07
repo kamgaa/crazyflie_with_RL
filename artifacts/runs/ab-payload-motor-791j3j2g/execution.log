@@ -1,0 +1,15 @@
+nominal-A_best True 20.0 horizon
+nominal-B_best True 20.0 horizon
+centered_payload-A_best True 20.0 horizon
+centered_payload-B_best True 20.0 horizon
+offset_payload-A_best True 20.0 horizon
+offset_payload-B_best True 20.0 horizon
+motor_80-A_best True 20.0 horizon
+motor_80-B_best True 20.0 horizon
+motor_70-A_best True 20.0 horizon
+motor_70-B_best True 20.0 horizon
+combined_80-A_best True 20.0 horizon
+combined_80-B_best True 20.0 horizon
+combined_70-A_best True 20.0 horizon
+combined_70-B_best True 20.0 horizon
+results: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ab-payload-motor-791j3j2g

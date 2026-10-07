@@ -1,0 +1,157 @@
+[
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/environment.py",
+    "line": 510,
+    "text": "def _set_com_bias(self, m_w: float, off_xy: Sequence[float]) -> None:"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/environment.py",
+    "line": 620,
+    "text": "def _record_actuator_output("
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/environment.py",
+    "line": 815,
+    "text": "def _apply_control(self, wrench: Sequence[float]) -> None:"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/environment.py",
+    "line": 826,
+    "text": "def _read_state(self) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/environment.py",
+    "line": 850,
+    "text": "def _obs("
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/environment.py",
+    "line": 938,
+    "text": "def step("
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/controllers.py",
+    "line": 39,
+    "text": "def rotmat_from_quat_wxyz(q: Sequence[float]) -> np.ndarray:"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/controllers.py",
+    "line": 52,
+    "text": "def build_allocation_matrix("
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/actuators.py",
+    "line": 181,
+    "text": "def _legacy_reaction_torque(self, f_actual: np.ndarray) -> np.ndarray:"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/actuators.py",
+    "line": 288,
+    "text": "def apply(self, f_cmd: Sequence[float]) -> ActuatorOutput:"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/actuators.py",
+    "line": 610,
+    "text": "def apply(self, f_cmd: Sequence[float]) -> ActuatorOutput:"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/actuators.py",
+    "line": 635,
+    "text": "def _advance("
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/actuators.py",
+    "line": 656,
+    "text": "def _reaction_torque("
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+    "line": 102,
+    "text": "<site name=\"motor0\" pos=\"0.03536 -0.03536 0.0\" />"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+    "line": 106,
+    "text": "<body name=\"prop0\" pos=\"0.03536 -0.03536 0.012\" euler=\"0 0 45\">"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+    "line": 129,
+    "text": "<camera name=\"fpv_cam\" pos=\"0.03 0 0\" euler=\"0 -90 -90\" fovy=\"70\" resolution=\"640 480\" />"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+    "line": 143,
+    "text": "<motor gear=\"0 0 1 0 0 0\" site=\"motor0\" name=\"motor0_force\" />"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+    "line": 144,
+    "text": "<motor gear=\"0 0 1 0 0 0\" site=\"motor1\" name=\"motor1_force\" />"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+    "line": 145,
+    "text": "<motor gear=\"0 0 1 0 0 0\" site=\"motor2\" name=\"motor2_force\" />"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+    "line": 146,
+    "text": "<motor gear=\"0 0 1 0 0 0\" site=\"motor3\" name=\"motor3_force\" />"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+    "line": 147,
+    "text": "<motor gear=\"0 0 0 0 0 1\" site=\"motor0\" name=\"motor0_torque\" />"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+    "line": 148,
+    "text": "<motor gear=\"0 0 0 0 0 1\" site=\"motor1\" name=\"motor1_torque\" />"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+    "line": 149,
+    "text": "<motor gear=\"0 0 0 0 0 1\" site=\"motor2\" name=\"motor2_torque\" />"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+    "line": 150,
+    "text": "<motor gear=\"0 0 0 0 0 1\" site=\"motor3\" name=\"motor3_torque\" />"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/motor_degradation.py",
+    "line": 13,
+    "text": "def apply_motor_effectiveness(env, effectiveness):"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/interactive_eval.py",
+    "line": 81,
+    "text": "class Controls:"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/interactive_eval.py",
+    "line": 152,
+    "text": "def rotor_mapping(env):"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/integral_controller.py",
+    "line": 55,
+    "text": "def prepare_observation(self, raw, position, target, dt):"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/integral_controller.py",
+    "line": 74,
+    "text": "def finish_step(self, *, allocator_clipping, esc_boundary, action_boundary):"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/oracle_allocation.py",
+    "line": 86,
+    "text": "def sync_allocator(self):"
+  },
+  {
+    "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/oracle_allocation.py",
+    "line": 101,
+    "text": "def allocation_diagnostics(self):"
+  }
+]

@@ -1,0 +1,43 @@
+{
+  "prop_hinge_qpos": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "prop_hinge_qvel": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "actuator_omega_rad_s": [
+    1581.521674476,
+    1581.521674476,
+    1581.521674476,
+    1581.521674476
+  ],
+  "engine_actuated_transmissions": [
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4
+  ],
+  "engine_actuator_names": [
+    "motor0_force",
+    "motor1_force",
+    "motor2_force",
+    "motor3_force",
+    "motor0_torque",
+    "motor1_torque",
+    "motor2_torque",
+    "motor3_torque"
+  ],
+  "hinge_motor_actuators": 0,
+  "render_path": "viewer copies physics state; no commanded RPM animation",
+  "physical_spin_direction": "not explicitly prescribed; opposite-reaction direction is a model interpretation only"
+}

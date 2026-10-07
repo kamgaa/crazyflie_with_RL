@@ -1,0 +1,46 @@
+[
+  {
+    "key": "1",
+    "allocator_index": 0,
+    "event_motor": 1,
+    "effectiveness": [
+      0.98,
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "key": "2",
+    "allocator_index": 1,
+    "event_motor": 2,
+    "effectiveness": [
+      1.0,
+      0.98,
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "key": "3",
+    "allocator_index": 2,
+    "event_motor": 3,
+    "effectiveness": [
+      1.0,
+      1.0,
+      0.98,
+      1.0
+    ]
+  },
+  {
+    "key": "4",
+    "allocator_index": 3,
+    "event_motor": 4,
+    "effectiveness": [
+      1.0,
+      1.0,
+      1.0,
+      0.98
+    ]
+  }
+]

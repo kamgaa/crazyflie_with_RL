@@ -1,0 +1,108 @@
+{
+  "nominal": {
+    "name": "nominal",
+    "mass": 0.0,
+    "offset": [
+      0.0,
+      0.0
+    ],
+    "motor_number": null,
+    "restore": false,
+    "target_after30": null,
+    "events": []
+  },
+  "combined_motor2_70": {
+    "name": "combined_motor2_70",
+    "mass": 0.005,
+    "offset": [
+      0.0,
+      -0.03
+    ],
+    "motor_number": 2,
+    "restore": false,
+    "target_after30": null,
+    "events": [
+      {
+        "time": 5.0,
+        "kind": "fault",
+        "motor_number": 2,
+        "effectiveness": 0.7,
+        "target": null
+      }
+    ]
+  },
+  "combined_motor3_70": {
+    "name": "combined_motor3_70",
+    "mass": 0.005,
+    "offset": [
+      -0.03,
+      0.0
+    ],
+    "motor_number": 3,
+    "restore": false,
+    "target_after30": null,
+    "events": [
+      {
+        "time": 5.0,
+        "kind": "fault",
+        "motor_number": 3,
+        "effectiveness": 0.7,
+        "target": null
+      }
+    ]
+  },
+  "motor1_70_restore": {
+    "name": "motor1_70_restore",
+    "mass": 0.0,
+    "offset": [
+      0.0,
+      0.0
+    ],
+    "motor_number": 1,
+    "restore": true,
+    "target_after30": null,
+    "events": [
+      {
+        "time": 5.0,
+        "kind": "fault",
+        "motor_number": 1,
+        "effectiveness": 0.7,
+        "target": null
+      },
+      {
+        "time": 30.0,
+        "kind": "restore",
+        "motor_number": 1,
+        "effectiveness": 1.0,
+        "target": null
+      }
+    ]
+  },
+  "combined_motor1_70_restore": {
+    "name": "combined_motor1_70_restore",
+    "mass": 0.005,
+    "offset": [
+      0.03,
+      0.0
+    ],
+    "motor_number": 1,
+    "restore": true,
+    "target_after30": null,
+    "events": [
+      {
+        "time": 5.0,
+        "kind": "fault",
+        "motor_number": 1,
+        "effectiveness": 0.7,
+        "target": null
+      },
+      {
+        "time": 30.0,
+        "kind": "restore",
+        "motor_number": 1,
+        "effectiveness": 1.0,
+        "target": null
+      }
+    ]
+  }
+}

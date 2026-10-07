@@ -1,0 +1,42 @@
+[
+  {
+    "kind": "representation_only",
+    "status": "proposed_not_connected",
+    "changes": "Expose FRD/user-numbered diagnostics using S and P while preserving world frame and original native observation before frozen PPO.",
+    "positions": "body vectors S; world p/v/target/xi unchanged; R_W_FRD=R_W_native S.T; inertia S I S.T; no Euler sign patch",
+    "actions": "w_FRD=blockdiag(S,1) w_native for positive T; convert back before current path, or transform B consistently offline",
+    "motors": "all commands/eta/events/logs require the same P; user motor 1 maps native index 3",
+    "tests": "raw/normalized observation + action/rotor command and complete nominal/fault rollout equality; actuator and integral history continuity"
+  },
+  {
+    "kind": "physical_target_reaction_change",
+    "status": "proposed_not_performed",
+    "changes": "Current FRD/user-order yaw reaction row is opposite the requested row. If desired hardware spin assignment is authoritative, coordinate/permutation alone cannot fix this.",
+    "targets": [
+      "configs/base.yaml / vehicle.motor_direction and selected profile overrides",
+      "crazyflie_rl/actuators.py::_legacy_reaction_torque/_reaction_torque",
+      "crazyflie_rl/controllers.py::build_allocation_matrix yaw row",
+      "resources/mujoco/cf21B_500.xml motor*_torque gear only if changing torque-axis rather than direction parameter"
+    ],
+    "rule": "Choose one physical sign-change location, propagate the resulting sign to allocation/logs; never flip both direction and gear accidentally.",
+    "policy_risk": "A/B trained for native observations and present action-to-plant map. A changed plant/allocator is not automatically checkpoint-compatible; preserve separate legacy mode/contracts and revalidate.",
+    "tests": "repeat independent rotor increment/efficiency loss audit, command-to-actual yaw sign, frozen policy regression before any new evaluation"
+  },
+  {
+    "kind": "geometry_rounding",
+    "status": "observed_no_change",
+    "changes": "allocator axis offset .035355 vs XML .03536m: 5 micrometres per axis. This is separate from FRD numbering and reversed target yaw.",
+    "targets": [
+      "vehicle.arm_length",
+      "controllers.build_allocation_matrix",
+      "XML motor site positions"
+    ],
+    "policy_risk": "do not silently normalize old reports/checkpoints to a changed geometry"
+  },
+  {
+    "kind": "propeller_spin_model",
+    "status": "unconfirmed_physical_hardware",
+    "changes": "Python angular speed is nonnegative actuator state and does not drive XML hinge qvel. CW/CCW propeller rotation must not be inferred from direction or propL/propR mesh names.",
+    "tests": "If physical propeller spin is later specified, separately verify geometry handedness, RPM animation, reaction sign and rotor inertia terms."
+  }
+]

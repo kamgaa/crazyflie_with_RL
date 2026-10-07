@@ -1,0 +1,62 @@
+verified nominal-A_best-existing_no_integral
+verified nominal-A_best-existing_integral_020
+verified nominal-A_best-oracle_no_integral
+verified nominal-A_best-oracle_integral_020
+verified nominal-B_best-existing_no_integral
+verified nominal-B_best-existing_integral_020
+verified nominal-B_best-oracle_no_integral
+verified nominal-B_best-oracle_integral_020
+verified combined_motor2_70-A_best-existing_no_integral
+verified combined_motor2_70-A_best-existing_integral_020
+verified combined_motor2_70-A_best-oracle_no_integral
+verified combined_motor2_70-A_best-oracle_integral_020
+verified combined_motor2_70-B_best-existing_no_integral
+verified combined_motor2_70-B_best-existing_integral_020
+verified combined_motor2_70-B_best-oracle_no_integral
+verified combined_motor2_70-B_best-oracle_integral_020
+verified combined_motor3_70-A_best-existing_no_integral
+verified combined_motor3_70-A_best-existing_integral_020
+verified combined_motor3_70-A_best-oracle_no_integral
+verified combined_motor3_70-A_best-oracle_integral_020
+verified combined_motor3_70-B_best-existing_no_integral
+verified combined_motor3_70-B_best-existing_integral_020
+verified combined_motor3_70-B_best-oracle_no_integral
+verified combined_motor3_70-B_best-oracle_integral_020
+verified motor1_70_restore-A_best-existing_no_integral
+verified motor1_70_restore-A_best-existing_integral_020
+verified motor1_70_restore-A_best-oracle_no_integral
+verified motor1_70_restore-A_best-oracle_integral_020
+verified motor1_70_restore-B_best-existing_no_integral
+verified motor1_70_restore-B_best-existing_integral_020
+verified motor1_70_restore-B_best-oracle_no_integral
+verified motor1_70_restore-B_best-oracle_integral_020
+verified combined_motor1_70_restore-A_best-existing_no_integral
+verified combined_motor1_70_restore-A_best-existing_integral_020
+verified combined_motor1_70_restore-A_best-oracle_no_integral
+verified combined_motor1_70_restore-A_best-oracle_integral_020
+verified combined_motor1_70_restore-B_best-existing_no_integral
+verified combined_motor1_70_restore-B_best-existing_integral_020
+verified combined_motor1_70_restore-B_best-oracle_no_integral
+verified combined_motor1_70_restore-B_best-oracle_integral_020
+{
+  "rollouts": 40,
+  "counts": {
+    "control": 185815,
+    "physics": 929075,
+    "events": 48
+  },
+  "maximum_numeric_errors": {
+    "allocation_command_error_n": 5.551115123125783e-17,
+    "allocation_residual_error": 1.1102230246251565e-16,
+    "actuator_residual_error": 2.220446049250313e-16,
+    "integral_recurrence_m": 0.0,
+    "bias_variance_m2": 1.550951207740514e-16
+  },
+  "initial_protected_files_unchanged": 1022,
+  "single_efficiency_application": true,
+  "current_efficiency_only": true,
+  "events_preserve_state": true,
+  "integral_uses_actual_allocator_saturation": true,
+  "event_recovery_capped_at_next_event": true,
+  "existing_and_oracle_equivalence_checks": "regression_comparisons.json"
+}

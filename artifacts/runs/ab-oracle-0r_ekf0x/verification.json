@@ -1,0 +1,29 @@
+{
+  "status": "passed",
+  "focused_tests_unique": 68,
+  "existing_related_tests": 49,
+  "new_tests": 19,
+  "new_tests_rerun_after_serialization_fix": 19,
+  "full_repository_suite_run": false,
+  "test_logs": [
+    "tests.log",
+    "serialization_tests.log"
+  ],
+  "independent_csv_audit": "independent_csv_verification.json",
+  "existing_and_oracle_regression_checks": 80,
+  "maximum_regression_error": 0.0,
+  "initial_protected_files_unchanged": 1022,
+  "original_tracked_working_diff_unchanged": true,
+  "policy_parameters_unchanged": true,
+  "rollouts_executed": 40,
+  "flights_completed_60s": 30,
+  "physical_terminations": 10,
+  "new_learning_optimizer_updates_or_gain_tuning": false,
+  "commit_or_push": false,
+  "source_sha256": {
+    "compare_ab_oracle.py": "e75c9a82770c391335b26baab2c8fa4863e0de2f927ec144954d59320f6be215",
+    "crazyflie_rl/oracle_allocation.py": "d677356d2c28f2c112149437c4619994a22ed3dadc4a38a1baa38ce252e9e28d",
+    "crazyflie_rl/oracle_eval.py": "0ebf616e218e9b644e035ca7c60da5f8551935c997f939f5b88c1947310c17db",
+    "tests/test_oracle_allocation.py": "2cf22b27fdb45217bc475e981e6cd55339c6142c6c235853d0fb4237a3d2bf43"
+  }
+}

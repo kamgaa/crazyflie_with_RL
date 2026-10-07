@@ -1,0 +1,1923 @@
+{
+  "schema_version": 2,
+  "created_at": "2026-10-01T13:35:13.479179+00:00",
+  "status": "completed",
+  "common_resolved_config": {
+    "version": 1,
+    "paths": {
+      "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+      "project_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2",
+      "artifact_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts",
+      "legacy_model_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/model",
+      "legacy_tensorboard_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/tb"
+    },
+    "vehicle": {
+      "mass": 0.04338,
+      "gravity": 9.81,
+      "arm_length": 0.035355,
+      "motor_direction": [
+        1.0,
+        -1.0,
+        1.0,
+        -1.0
+      ],
+      "thrust_min": 0.0,
+      "thrust_max": 0.2,
+      "torque_coefficient": 0.00594,
+      "inertia_diagonal": [
+        2.3951e-05,
+        2.3951e-05,
+        3.2347e-05
+      ],
+      "physics_hz": 500.0
+    },
+    "actuator": {
+      "enabled": true,
+      "model": "cf21b_first_order",
+      "time_constant_s": 0.05,
+      "steady_state_gain_rad_s": 2900.0,
+      "thrust_polynomial_coefficients": [
+        -0.23,
+        0.562,
+        -0.043
+      ],
+      "thrust_polynomial_omega_reference_rad_s": 2900.0,
+      "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+      "thrust_polynomial_max_ratio": 1.0,
+      "parameter_source": "paper_candidate",
+      "verification_status": "unverified",
+      "reaction_torque": {
+        "model": "legacy_ratio",
+        "legacy_ratio_m": 0.00594,
+        "polynomial_coefficients": [
+          -3.4,
+          8.7,
+          2.9
+        ],
+        "polynomial_scale": 0.0001,
+        "rotor_inertia_kg_m2": 5e-08,
+        "include_rotor_acceleration_torque": false
+      },
+      "reset_rpm_mode": "auto",
+      "randomization": {
+        "enabled": false,
+        "time_constant_s": {
+          "min": 0.04,
+          "max": 0.06
+        },
+        "steady_state_gain_rad_s": {
+          "min": 2320.0,
+          "max": 3480.0
+        }
+      }
+    },
+    "controller": {
+      "pid": {
+        "kp_position": 4.0,
+        "velocity_limit": 1.5,
+        "kp_velocity": 4.0,
+        "ki_velocity": 1.0,
+        "kd_velocity": 0.0,
+        "kp_attitude": 12.0,
+        "kp_rate": [
+          0.0008,
+          0.0008,
+          0.0006
+        ],
+        "ki_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max_tilt_deg": 35.0,
+        "max_torque": 0.02,
+        "max_force": 1.0,
+        "integrator_limit": 2.0
+      }
+    },
+    "environment": {
+      "control_mode": "e2e",
+      "policy_hz": 100.0,
+      "episode_sec": 8.0,
+      "residual_scale": [
+        0.0075,
+        0.0075,
+        0.001,
+        0.5
+      ],
+      "position_target": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "yaw_target": 0.0,
+      "position_perturbation": 0.0,
+      "attitude_perturbation_deg": 0.0,
+      "payload": {
+        "randomize": false,
+        "mass": 0.0,
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "randomization_limits": {
+          "radius_min": 0.02,
+          "radius_max": 0.1,
+          "torque_fraction": 0.5,
+          "mass_max": 0.015
+        }
+      },
+      "reward": {
+        "position_weight": 4.0,
+        "velocity_weight": 0.005,
+        "tilt_weight": 3.0,
+        "angular_velocity_weight": 0.001,
+        "yaw_weight": 1.0,
+        "action_weight": 0.0,
+        "action_rate_weight": 0.0,
+        "crash_penalty": 10.0,
+        "position_xy_weight": 10.0,
+        "position_z_weight": 6.0
+      },
+      "termination": {
+        "min_altitude": 0.2,
+        "max_altitude": 2.5,
+        "max_tilt_deg": 60.0,
+        "max_position_error": 1.5
+      },
+      "initial_pose_randomization": null,
+      "e2e_velocity": {
+        "mode": "position_error",
+        "position_gain": 4.0,
+        "max_speed": 1.5
+      }
+    },
+    "training": {
+      "seed": 42,
+      "total_timesteps": 1000000,
+      "ppo": {
+        "policy": "MlpPolicy",
+        "n_steps": 2048,
+        "batch_size": 256,
+        "learning_rate": 0.0003,
+        "gamma": 0.99,
+        "gae_lambda": 0.95,
+        "n_epochs": 10,
+        "ent_coef": 0.003,
+        "vf_coef": 0.5,
+        "max_grad_norm": 0.5,
+        "clip_range": 0.1,
+        "target_kl": 0.03,
+        "log_std_init": -1.5,
+        "net_arch": [
+          64,
+          64
+        ],
+        "device": "cpu",
+        "verbose": 0
+      }
+    },
+    "evaluation": {
+      "episode_count": 30,
+      "seed_start": 42,
+      "deterministic": true,
+      "tail_fraction": 0.3,
+      "tilt_limit_deg": 30.0,
+      "evaluation_interval": 20000
+    },
+    "mission": {
+      "type": "hover",
+      "hover_altitude": 1.0,
+      "goto_xy": [
+        1.0,
+        0.0
+      ],
+      "takeoff_sec": 4.0,
+      "settle_sec": 2.0,
+      "goto_sec": 4.0,
+      "circle_ramp_sec": 2.0,
+      "number_of_laps": 2.0,
+      "post_hold_sec": 2.0,
+      "force_floor_start": false,
+      "circle_presets": [
+        {
+          "key": "1",
+          "description": "radius 0.5m, period 10s (slow/safe)",
+          "radius": 0.5,
+          "period": 10.0
+        },
+        {
+          "key": "2",
+          "description": "radius 1.0m, period 8s (medium)",
+          "radius": 1.0,
+          "period": 8.0
+        },
+        {
+          "key": "3",
+          "description": "radius 0.5m, period 5s (fast/aggressive)",
+          "radius": 0.5,
+          "period": 5.0
+        }
+      ],
+      "hover": {
+        "target": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "yaw_deg": 0.0,
+        "duration": 8.0
+      },
+      "circle": {
+        "center_xy": [
+          0.5,
+          0.0
+        ],
+        "radius": 0.5,
+        "period": 10.0,
+        "laps": 2.0,
+        "start_angle_deg": 0.0,
+        "direction": "ccw",
+        "ramp_sec": 2.0
+      },
+      "lissajous": {
+        "center_xy": [
+          0.0,
+          0.0
+        ],
+        "amplitude_xy": [
+          0.5,
+          0.5
+        ],
+        "frequency_ratio": [
+          1,
+          2
+        ],
+        "phase_deg": 90.0,
+        "base_period": 10.0,
+        "cycles": 2.0,
+        "ramp_sec": 2.0
+      }
+    },
+    "experiment": {
+      "name": "crazyflie-ppo",
+      "condition": "position-velocity-error-evaluation",
+      "description": "Stateless position-generated velocity error observation and reward, corrected payload physics",
+      "timezone": "Asia/Seoul"
+    },
+    "source_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/eval_position_velocity_error.yaml"
+  },
+  "seed": 42,
+  "deterministic": true,
+  "thresholds": {
+    "position_band_m": 0.005,
+    "speed_band_m_s": 0.02,
+    "minimum_settle_sec": 1.0,
+    "tail_sec": 2.0
+  },
+  "git": {
+    "commit_sha": "31343f3ff5c0ad4bce218e7d7f4adc05faa05cff",
+    "branch": "refactor-experiment-pipeline-v2",
+    "dirty": true
+  },
+  "source_sha256": {
+    "crazyflie_rl/dr_transfer.py": "ba48c79ed85c8c4e30a78f5587557cf3941b6b1db743b8053f07a3e09684f080",
+    "crazyflie_rl/dr_policy.py": "71cb68df8678ad95e66c42b748a5db45ceb4086aefd35604343a76c2ac26f028",
+    "crazyflie_rl/missions.py": "b5773c726b5c6a759c96ba3402b8c32e95a2c59f5133034139eb0aa8dbdfb49c",
+    "crazyflie_rl/environment.py": "0963e457a27d9a4fab1ae0a26a8fabb365b776cf3ce003d865cd44ef9188c7b7",
+    "crazyflie_rl/plotting.py": "b89c945bff2391c995002e8926fc0ebe9563fcceb267c33773a1a1a53045829f",
+    "crazyflie_rl/velocity_reference.py": "57d014a54e700e3ce28537feb0fb67cfa1e3cdf32d1376e1fbe52f33deb50ddd",
+    "crazyflie_rl/config.py": "1ed701717e93b1e1ea8e26ba466df003bd238729a4adfa9f61d56572c849ad53"
+  },
+  "velocity_inputs": [
+    "absolute"
+  ],
+  "rollouts": [
+    {
+      "model_label": "final",
+      "observation_velocity_mode": "absolute",
+      "case": "hover"
+    },
+    {
+      "model_label": "final",
+      "observation_velocity_mode": "absolute",
+      "case": "step-005"
+    },
+    {
+      "model_label": "final",
+      "observation_velocity_mode": "absolute",
+      "case": "step-050"
+    }
+  ],
+  "policy_input_contract": {
+    "environment_raw": "position_error,position_generated_velocity_error,wxyz,body_omega,sin_yaw_error,cos_yaw_error",
+    "velocity_semantics": {
+      "mode": "position_error",
+      "position_gain": 4.0,
+      "max_speed": 1.5
+    },
+    "velocity_slice": [
+      3,
+      6
+    ],
+    "internal_reference": "norm_clip(-Kp*(p-p_target),v_max); recompute at each state; no target differentiation",
+    "velocity_frame": "world",
+    "velocity_unit": "m/s",
+    "absolute": "native environment input unchanged",
+    "error": "v_world-v_ref_world (legacy only)",
+    "error_mode_interpretation": "inference input intervention on an absolute-velocity-trained policy",
+    "order": [
+      "environment raw observation",
+      "copy and replace velocity in error mode only",
+      "frozen saved observation normalization and clipping if present",
+      "deterministic policy predict"
+    ],
+    "normalization_frozen": true,
+    "physical_state_and_reward_unchanged": true
+  },
+  "reference_velocity": {
+    "implementation": "CircleMission.reference_velocity; derivative of ramped_phase",
+    "circle": "r*theta_dot*[-sin(theta),cos(theta),0]; theta_dot=omega*(1-cos(pi*s/ramp))/2 in ramp, omega afterwards",
+    "step": "zero for regulation targets; no impulse",
+    "hold": "zero from HOLD boundary inclusive",
+    "boundary": "CIRCLE/HOLD velocity discontinuity; right-phase value, no spike",
+    "timing": "position and velocity use the same case time offset; input at t, metrics at t+dt"
+  },
+  "metric_units": {
+    "velocity_rmse": "m/s",
+    "horizontal_speed_rms_m_s": "m/s",
+    "roll_rms_deg": "deg",
+    "pitch_rms_deg": "deg"
+  },
+  "models": [
+    {
+      "label": "final",
+      "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_position-velocity-error-nominal_seed42_20261001-210046/models/ppo_e2e_hover_position-velocity-error-nominal_seed42_final_20261001-210046.zip",
+      "sha256": "badb391d8eeaafeb19cbc6d981ea4aabc2cec3ab1d41d7366295b224c8206be9",
+      "training_manifest_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_position-velocity-error-nominal_seed42_20261001-210046/manifests/ppo_e2e_hover_position-velocity-error-nominal_seed42_manifest_20261001-210046.json",
+      "training_manifest_sha256": "69c24aa111b201692efb30fe03f2751553776714533266323b2ebdedfd7758b8",
+      "training_manifest": {
+        "action_shape": [
+          4
+        ],
+        "actuator": {
+          "enabled": true,
+          "model": "cf21b_first_order",
+          "parameter_source": "paper_candidate",
+          "randomization": {
+            "enabled": false,
+            "steady_state_gain_rad_s": {
+              "max": 3480.0,
+              "min": 2320.0
+            },
+            "time_constant_s": {
+              "max": 0.06,
+              "min": 0.04
+            }
+          },
+          "reaction_torque": {
+            "include_rotor_acceleration_torque": false,
+            "legacy_ratio_m": 0.00594,
+            "model": "legacy_ratio",
+            "polynomial_coefficients": [
+              -3.4,
+              8.7,
+              2.9
+            ],
+            "polynomial_scale": 0.0001,
+            "rotor_inertia_kg_m2": 5e-08
+          },
+          "reset_rpm_mode": "auto",
+          "steady_state_gain_rad_s": 2900.0,
+          "thrust_polynomial_coefficients": [
+            -0.23,
+            0.562,
+            -0.043
+          ],
+          "thrust_polynomial_max_ratio": 1.0,
+          "thrust_polynomial_omega_reference_rad_s": 2900.0,
+          "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+          "time_constant_s": 0.05,
+          "verification_status": "unverified"
+        },
+        "command": [
+          "train_ppo_02.py",
+          "--config",
+          "configs/e2e_train_position_velocity_error.yaml"
+        ],
+        "condition": "position-velocity-error-nominal",
+        "config_profile": "e2e_train_position_velocity_error",
+        "control_mode": "e2e",
+        "created_at": "2026-10-01T21:00:46.195271+09:00",
+        "description": "Stateless position-generated velocity error observation and reward, corrected payload physics",
+        "experiment_name": "crazyflie-ppo",
+        "finished_at": "2026-10-01T22:32:55.024811+09:00",
+        "git": {
+          "branch": "refactor-experiment-pipeline-v2",
+          "commit_sha": "31343f3ff5c0ad4bce218e7d7f4adc05faa05cff",
+          "dirty": true
+        },
+        "metrics": {
+          "evaluation-floor-step0000000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-floor-step0000000_20261001-210046.json",
+          "evaluation-step0020000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0020000_20261001-210046.json",
+          "evaluation-step0040000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0040000_20261001-210046.json",
+          "evaluation-step0060000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0060000_20261001-210046.json",
+          "evaluation-step0080000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0080000_20261001-210046.json",
+          "evaluation-step0100000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0100000_20261001-210046.json",
+          "evaluation-step0120000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0120000_20261001-210046.json",
+          "evaluation-step0140000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0140000_20261001-210046.json",
+          "evaluation-step0160000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0160000_20261001-210046.json",
+          "evaluation-step0180000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0180000_20261001-210046.json",
+          "evaluation-step0200000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0200000_20261001-210046.json",
+          "evaluation-step0220000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0220000_20261001-210046.json",
+          "evaluation-step0240000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0240000_20261001-210046.json",
+          "evaluation-step0260000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0260000_20261001-210046.json",
+          "evaluation-step0280000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0280000_20261001-210046.json",
+          "evaluation-step0300000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0300000_20261001-210046.json",
+          "evaluation-step0320000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0320000_20261001-210046.json",
+          "evaluation-step0340000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0340000_20261001-210046.json",
+          "evaluation-step0360000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0360000_20261001-210046.json",
+          "evaluation-step0380000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0380000_20261001-210046.json",
+          "evaluation-step0400000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0400000_20261001-210046.json",
+          "evaluation-step0420000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0420000_20261001-210046.json",
+          "evaluation-step0440000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0440000_20261001-210046.json",
+          "evaluation-step0460000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0460000_20261001-210046.json",
+          "evaluation-step0480000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0480000_20261001-210046.json",
+          "evaluation-step0500000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0500000_20261001-210046.json",
+          "evaluation-step0520000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0520000_20261001-210046.json",
+          "evaluation-step0540000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0540000_20261001-210046.json",
+          "evaluation-step0560000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0560000_20261001-210046.json",
+          "evaluation-step0580000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0580000_20261001-210046.json",
+          "evaluation-step0600000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0600000_20261001-210046.json",
+          "evaluation-step0620000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0620000_20261001-210046.json",
+          "evaluation-step0640000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0640000_20261001-210046.json",
+          "evaluation-step0660000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0660000_20261001-210046.json",
+          "evaluation-step0680000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0680000_20261001-210046.json",
+          "evaluation-step0700000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0700000_20261001-210046.json",
+          "evaluation-step0720000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0720000_20261001-210046.json",
+          "evaluation-step0740000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0740000_20261001-210046.json",
+          "evaluation-step0760000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0760000_20261001-210046.json",
+          "evaluation-step0780000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0780000_20261001-210046.json",
+          "evaluation-step0800000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0800000_20261001-210046.json",
+          "evaluation-step0820000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0820000_20261001-210046.json",
+          "evaluation-step0840000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0840000_20261001-210046.json",
+          "evaluation-step0860000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0860000_20261001-210046.json",
+          "evaluation-step0880000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0880000_20261001-210046.json",
+          "evaluation-step0900000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0900000_20261001-210046.json",
+          "evaluation-step0920000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0920000_20261001-210046.json",
+          "evaluation-step0940000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0940000_20261001-210046.json",
+          "evaluation-step0960000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0960000_20261001-210046.json",
+          "evaluation-step0980000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step0980000_20261001-210046.json",
+          "evaluation-step1000000": "metrics/ppo_e2e_hover_position-velocity-error-nominal_seed42_evaluation-step1000000_20261001-210046.json"
+        },
+        "mission": "hover",
+        "model_history": [
+          {
+            "kind": "final",
+            "path": "models/ppo_e2e_hover_position-velocity-error-nominal_seed42_final_20261001-210046.zip",
+            "timestep": 1001472
+          }
+        ],
+        "models": {
+          "best": null,
+          "final": {
+            "kind": "final",
+            "path": "models/ppo_e2e_hover_position-velocity-error-nominal_seed42_final_20261001-210046.zip",
+            "timestep": 1001472
+          }
+        },
+        "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+        "observation_contract": "position_error,position_generated_velocity_error,wxyz,body_omega,sin_yaw_error,cos_yaw_error",
+        "observation_shape": [
+          15
+        ],
+        "payload": {
+          "mass": 0.0,
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "randomization_limits": {
+            "mass_max": 0.015,
+            "radius_max": 0.1,
+            "radius_min": 0.02,
+            "torque_fraction": 0.5
+          },
+          "randomize": false
+        },
+        "payload_physics": "com_full_inertia_setconst_no_explicit_gravity_torque_v2",
+        "ppo": {
+          "batch_size": 256,
+          "clip_range": 0.1,
+          "device": "cpu",
+          "ent_coef": 0.003,
+          "gae_lambda": 0.95,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "log_std_init": -1.5,
+          "max_grad_norm": 0.5,
+          "n_epochs": 10,
+          "n_steps": 2048,
+          "net_arch": [
+            64,
+            64
+          ],
+          "policy": "MlpPolicy",
+          "target_kl": 0.03,
+          "verbose": 0,
+          "vf_coef": 0.5
+        },
+        "residual_scale": [
+          0.0075,
+          0.0075,
+          0.001,
+          0.5
+        ],
+        "resolved_config": {
+          "actuator": {
+            "enabled": true,
+            "model": "cf21b_first_order",
+            "parameter_source": "paper_candidate",
+            "randomization": {
+              "enabled": false,
+              "steady_state_gain_rad_s": {
+                "max": 3480.0,
+                "min": 2320.0
+              },
+              "time_constant_s": {
+                "max": 0.06,
+                "min": 0.04
+              }
+            },
+            "reaction_torque": {
+              "include_rotor_acceleration_torque": false,
+              "legacy_ratio_m": 0.00594,
+              "model": "legacy_ratio",
+              "polynomial_coefficients": [
+                -3.4,
+                8.7,
+                2.9
+              ],
+              "polynomial_scale": 0.0001,
+              "rotor_inertia_kg_m2": 5e-08
+            },
+            "reset_rpm_mode": "auto",
+            "steady_state_gain_rad_s": 2900.0,
+            "thrust_polynomial_coefficients": [
+              -0.23,
+              0.562,
+              -0.043
+            ],
+            "thrust_polynomial_max_ratio": 1.0,
+            "thrust_polynomial_omega_reference_rad_s": 2900.0,
+            "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+            "time_constant_s": 0.05,
+            "verification_status": "unverified"
+          },
+          "controller": {
+            "pid": {
+              "integrator_limit": 2.0,
+              "kd_rate": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "kd_velocity": 0.0,
+              "ki_rate": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "ki_velocity": 1.0,
+              "kp_attitude": 12.0,
+              "kp_position": 4.0,
+              "kp_rate": [
+                0.0008,
+                0.0008,
+                0.0006
+              ],
+              "kp_velocity": 4.0,
+              "max_force": 1.0,
+              "max_tilt_deg": 35.0,
+              "max_torque": 0.02,
+              "velocity_limit": 1.5
+            }
+          },
+          "environment": {
+            "attitude_perturbation_deg": 0.0,
+            "control_mode": "e2e",
+            "e2e_velocity": {
+              "max_speed": 1.5,
+              "mode": "position_error",
+              "position_gain": 4.0
+            },
+            "episode_sec": 8.0,
+            "initial_pose_randomization": null,
+            "payload": {
+              "mass": 0.0,
+              "offset": [
+                0.0,
+                0.0
+              ],
+              "randomization_limits": {
+                "mass_max": 0.015,
+                "radius_max": 0.1,
+                "radius_min": 0.02,
+                "torque_fraction": 0.5
+              },
+              "randomize": false
+            },
+            "policy_hz": 100.0,
+            "position_perturbation": 0.05,
+            "position_target": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "residual_scale": [
+              0.0075,
+              0.0075,
+              0.001,
+              0.5
+            ],
+            "reward": {
+              "action_rate_weight": 0.0,
+              "action_weight": 0.0,
+              "angular_velocity_weight": 0.001,
+              "crash_penalty": 10.0,
+              "position_weight": 4.0,
+              "position_xy_weight": 10.0,
+              "position_z_weight": 6.0,
+              "tilt_weight": 3.0,
+              "velocity_weight": 0.005,
+              "yaw_weight": 1.0
+            },
+            "termination": {
+              "max_altitude": 2.5,
+              "max_position_error": 1.5,
+              "max_tilt_deg": 60.0,
+              "min_altitude": 0.2
+            },
+            "yaw_target": 0.0
+          },
+          "evaluation": {
+            "deterministic": true,
+            "episode_count": 30,
+            "evaluation_interval": 20000,
+            "seed_start": 1000,
+            "tail_fraction": 0.3,
+            "tilt_limit_deg": 30.0
+          },
+          "experiment": {
+            "condition": "position-velocity-error-nominal",
+            "description": "Stateless position-generated velocity error observation and reward, corrected payload physics",
+            "name": "crazyflie-ppo",
+            "timezone": "Asia/Seoul"
+          },
+          "mission": {
+            "circle": {
+              "center_xy": [
+                0.5,
+                0.0
+              ],
+              "direction": "ccw",
+              "laps": 2.0,
+              "period": 10.0,
+              "radius": 0.5,
+              "ramp_sec": 2.0,
+              "start_angle_deg": 0.0
+            },
+            "circle_presets": [
+              {
+                "description": "radius 0.5m, period 10s (slow/safe)",
+                "key": "1",
+                "period": 10.0,
+                "radius": 0.5
+              },
+              {
+                "description": "radius 1.0m, period 8s (medium)",
+                "key": "2",
+                "period": 8.0,
+                "radius": 1.0
+              },
+              {
+                "description": "radius 0.5m, period 5s (fast/aggressive)",
+                "key": "3",
+                "period": 5.0,
+                "radius": 0.5
+              }
+            ],
+            "circle_ramp_sec": 2.0,
+            "force_floor_start": false,
+            "goto_sec": 4.0,
+            "goto_xy": [
+              1.0,
+              0.0
+            ],
+            "hover": {
+              "duration": 8.0,
+              "target": [
+                0.0,
+                0.0,
+                1.0
+              ],
+              "yaw_deg": 0.0
+            },
+            "hover_altitude": 1.0,
+            "lissajous": {
+              "amplitude_xy": [
+                0.5,
+                0.5
+              ],
+              "base_period": 10.0,
+              "center_xy": [
+                0.0,
+                0.0
+              ],
+              "cycles": 2.0,
+              "frequency_ratio": [
+                1,
+                2
+              ],
+              "phase_deg": 90.0,
+              "ramp_sec": 2.0
+            },
+            "number_of_laps": 2.0,
+            "post_hold_sec": 2.0,
+            "settle_sec": 2.0,
+            "takeoff_sec": 4.0,
+            "type": "hover"
+          },
+          "paths": {
+            "artifact_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts",
+            "legacy_model_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/model",
+            "legacy_tensorboard_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/tb",
+            "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+            "project_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2"
+          },
+          "source_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/e2e_train_position_velocity_error.yaml",
+          "training": {
+            "ppo": {
+              "batch_size": 256,
+              "clip_range": 0.1,
+              "device": "cpu",
+              "ent_coef": 0.003,
+              "gae_lambda": 0.95,
+              "gamma": 0.99,
+              "learning_rate": 0.0003,
+              "log_std_init": -1.5,
+              "max_grad_norm": 0.5,
+              "n_epochs": 10,
+              "n_steps": 2048,
+              "net_arch": [
+                64,
+                64
+              ],
+              "policy": "MlpPolicy",
+              "target_kl": 0.03,
+              "verbose": 0,
+              "vf_coef": 0.5
+            },
+            "seed": 42,
+            "total_timesteps": 1000000
+          },
+          "vehicle": {
+            "arm_length": 0.035355,
+            "gravity": 9.81,
+            "inertia_diagonal": [
+              2.3951e-05,
+              2.3951e-05,
+              3.2347e-05
+            ],
+            "mass": 0.04338,
+            "motor_direction": [
+              1.0,
+              -1.0,
+              1.0,
+              -1.0
+            ],
+            "physics_hz": 500.0,
+            "thrust_max": 0.2,
+            "thrust_min": 0.0,
+            "torque_coefficient": 0.00594
+          },
+          "version": 1
+        },
+        "resolved_config_path": "config/ppo_e2e_hover_position-velocity-error-nominal_seed42_resolved-config_20261001-210046.yaml",
+        "result": {
+          "actual_total_timesteps": 1001472,
+          "best_model": null,
+          "final_model": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_position-velocity-error-nominal_seed42_20261001-210046/models/ppo_e2e_hover_position-velocity-error-nominal_seed42_final_20261001-210046.zip",
+          "requested_total_timesteps": 1000000
+        },
+        "run_id": "ppo_e2e_hover_position-velocity-error-nominal_seed42_20261001-210046",
+        "schema_version": 1,
+        "seed": 42,
+        "status": "completed",
+        "timestamp": "20261001-210046",
+        "timezone": "Asia/Seoul",
+        "velocity_semantics": {
+          "max_speed": 1.5,
+          "mode": "position_error",
+          "position_gain": 4.0
+        },
+        "versions": {
+          "gymnasium": "1.3.0",
+          "mujoco": "3.12.0",
+          "numpy": "2.2.6",
+          "python": "3.10.21",
+          "stable_baselines3": "2.9.0",
+          "torch": "2.13.0"
+        }
+      },
+      "observation_shape": [
+        15
+      ],
+      "action_shape": [
+        4
+      ],
+      "observation_contract": "position_error,position_generated_velocity_error,wxyz,body_omega,sin_yaw_error,cos_yaw_error",
+      "velocity_semantics": {
+        "mode": "position_error",
+        "position_gain": 4.0,
+        "max_speed": 1.5
+      },
+      "action_scale_verification": "matched_available_metadata",
+      "applied_action_scale": [
+        0.0075,
+        0.0075,
+        0.001,
+        0.5
+      ],
+      "normalization": {
+        "path": null,
+        "sha256": null,
+        "source": "repository training command + null PPO _last_original_obs (no VecNormalize evidence)",
+        "limitation": "PPO zip alone cannot prove absence of custom external preprocessing"
+      },
+      "display_name": "final"
+    }
+  ],
+  "cases": {
+    "hover": {
+      "name": "hover",
+      "horizon_sec": 8.0,
+      "policy_steps": 800,
+      "initial_position": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "initial_quaternion_wxyz": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "initial_velocity": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "initial_omega": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "yaw_reference": 0.0,
+      "floor_start": false,
+      "actuator_reset": "airborne_hover_equilibrium",
+      "first_reference": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "first_reference_velocity_world_m_s": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mission_parameters": null,
+      "source_mission_phase_boundaries": null,
+      "reference_time_offset_sec": 0.0,
+      "phase_boundaries": null,
+      "start_provenance": "explicit step initial state, no pre-hover",
+      "reference_file": "hover-reference.npz",
+      "reference_sha256": "6f4fccbe86899f2b482db8ba96f64b267b5e69d8f518c7f2c5399c51cf9f1a95"
+    },
+    "step-005": {
+      "name": "step-005",
+      "horizon_sec": 8.0,
+      "policy_steps": 800,
+      "initial_position": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "initial_quaternion_wxyz": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "initial_velocity": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "initial_omega": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "yaw_reference": 0.0,
+      "floor_start": false,
+      "actuator_reset": "airborne_hover_equilibrium",
+      "first_reference": [
+        0.05,
+        0.0,
+        1.0
+      ],
+      "first_reference_velocity_world_m_s": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mission_parameters": null,
+      "source_mission_phase_boundaries": null,
+      "reference_time_offset_sec": 0.0,
+      "phase_boundaries": null,
+      "start_provenance": "explicit step initial state, no pre-hover",
+      "reference_file": "step-005-reference.npz",
+      "reference_sha256": "146c7c4765f1cbc5994d9ecd4c72b74e5289cd6724ea02b1475fbcb53e3fcc01"
+    },
+    "step-050": {
+      "name": "step-050",
+      "horizon_sec": 8.0,
+      "policy_steps": 800,
+      "initial_position": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "initial_quaternion_wxyz": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "initial_velocity": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "initial_omega": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "yaw_reference": 0.0,
+      "floor_start": false,
+      "actuator_reset": "airborne_hover_equilibrium",
+      "first_reference": [
+        0.5,
+        0.0,
+        1.0
+      ],
+      "first_reference_velocity_world_m_s": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mission_parameters": null,
+      "source_mission_phase_boundaries": null,
+      "reference_time_offset_sec": 0.0,
+      "phase_boundaries": null,
+      "start_provenance": "explicit step initial state, no pre-hover",
+      "reference_file": "step-050-reference.npz",
+      "reference_sha256": "c938f15bcd3e15edef4fff6538618d8733d12f9a2b51ff7a2fa0f7d7194db8c7"
+    }
+  },
+  "initial_snapshots": {
+    "hover": {
+      "final": {
+        "position": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "quaternion": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "omega": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "time_sec": 0.0,
+        "qpos": [
+          0.0,
+          0.0,
+          1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "qvel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "ctrl": [
+          0.10638945000000016,
+          0.10638945000000016,
+          0.10638945000000016,
+          0.10638945000000016,
+          0.0006319533330000009,
+          -0.0006319533330000009,
+          0.0006319533330000009,
+          -0.0006319533330000009
+        ],
+        "reference": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "yaw_reference": 0.0,
+        "observation": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "step": 0,
+        "previous_action": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "pid_i_velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "pid_i_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "actuator": {
+          "enabled": true,
+          "model": "cf21b_first_order",
+          "parameter_source": "paper_candidate",
+          "verification_status": "unverified",
+          "thrust_saturation_n": [
+            0.0,
+            0.2
+          ],
+          "motor_command_saturation": [
+            0.0,
+            1.0
+          ],
+          "randomization_enabled": false,
+          "reset_rpm_mode": "auto",
+          "reaction_torque_model": "legacy_ratio",
+          "legacy_ratio_m": 0.00594,
+          "nominal_time_constant_s": [
+            0.05,
+            0.05,
+            0.05,
+            0.05
+          ],
+          "nominal_steady_state_gain_rad_s": [
+            2900.0,
+            2900.0,
+            2900.0,
+            2900.0
+          ],
+          "sampled_time_constant_s": [
+            0.05,
+            0.05,
+            0.05,
+            0.05
+          ],
+          "sampled_steady_state_gain_rad_s": [
+            2900.0,
+            2900.0,
+            2900.0,
+            2900.0
+          ],
+          "thrust_polynomial_coefficients": [
+            -0.23,
+            0.562,
+            -0.043
+          ],
+          "thrust_omega_reference_rad_s": 2900.0,
+          "positive_branch_min_ratio": 0.0791,
+          "max_ratio": 1.0,
+          "reaction_torque_coefficients": [
+            -3.4,
+            8.7,
+            2.9
+          ],
+          "reaction_torque_scale": 0.0001,
+          "rotor_inertia_kg_m2": 5e-08,
+          "include_rotor_acceleration_torque": false
+        },
+        "mass": [
+          0.0,
+          0.04338,
+          1e-06,
+          1e-06,
+          1e-06,
+          1e-06
+        ],
+        "inertia": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            2.3951e-05,
+            2.3951e-05,
+            3.2347e-05
+          ],
+          [
+            1e-09,
+            1e-09,
+            1e-09
+          ],
+          [
+            1e-09,
+            1e-09,
+            1e-09
+          ],
+          [
+            1e-09,
+            1e-09,
+            1e-09
+          ],
+          [
+            1e-09,
+            1e-09,
+            1e-09
+          ]
+        ],
+        "_last_f": [
+          0.10638945000000016,
+          0.10638945000000016,
+          0.10638945000000016,
+          0.10638945000000016
+        ],
+        "_last_f_cmd": [
+          0.10638945000000001,
+          0.10638945000000001,
+          0.10638945000000001,
+          0.10638945000000001
+        ],
+        "_last_omega": [
+          1581.521674476,
+          1581.521674476,
+          1581.521674476,
+          1581.521674476
+        ],
+        "_last_motor_cmd": [
+          0.5453523015434483,
+          0.5453523015434483,
+          0.5453523015434483,
+          0.5453523015434483
+        ],
+        "_last_q_actual": [
+          0.0006319533330000009,
+          -0.0006319533330000009,
+          0.0006319533330000009,
+          -0.0006319533330000009
+        ],
+        "_last_wrench_cmd": [
+          0.0,
+          0.0,
+          0.0,
+          0.42555780000000004
+        ],
+        "_last_wrench_actual": [
+          0.0,
+          0.0,
+          0.0,
+          0.42555780000000065
+        ],
+        "_last_allocation_error": [
+          0.0,
+          0.0,
+          0.0,
+          -6.106226635438361e-16
+        ]
+      }
+    },
+    "step-005": {
+      "final": {
+        "position": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "quaternion": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "omega": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "time_sec": 0.0,
+        "qpos": [
+          0.0,
+          0.0,
+          1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "qvel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "ctrl": [
+          0.10638945000000016,
+          0.10638945000000016,
+          0.10638945000000016,
+          0.10638945000000016,
+          0.0006319533330000009,
+          -0.0006319533330000009,
+          0.0006319533330000009,
+          -0.0006319533330000009
+        ],
+        "reference": [
+          0.05,
+          0.0,
+          1.0
+        ],
+        "yaw_reference": 0.0,
+        "observation": [
+          -0.05000000074505806,
+          0.0,
+          0.0,
+          -0.20000000298023224,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "step": 0,
+        "previous_action": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "pid_i_velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "pid_i_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "actuator": {
+          "enabled": true,
+          "model": "cf21b_first_order",
+          "parameter_source": "paper_candidate",
+          "verification_status": "unverified",
+          "thrust_saturation_n": [
+            0.0,
+            0.2
+          ],
+          "motor_command_saturation": [
+            0.0,
+            1.0
+          ],
+          "randomization_enabled": false,
+          "reset_rpm_mode": "auto",
+          "reaction_torque_model": "legacy_ratio",
+          "legacy_ratio_m": 0.00594,
+          "nominal_time_constant_s": [
+            0.05,
+            0.05,
+            0.05,
+            0.05
+          ],
+          "nominal_steady_state_gain_rad_s": [
+            2900.0,
+            2900.0,
+            2900.0,
+            2900.0
+          ],
+          "sampled_time_constant_s": [
+            0.05,
+            0.05,
+            0.05,
+            0.05
+          ],
+          "sampled_steady_state_gain_rad_s": [
+            2900.0,
+            2900.0,
+            2900.0,
+            2900.0
+          ],
+          "thrust_polynomial_coefficients": [
+            -0.23,
+            0.562,
+            -0.043
+          ],
+          "thrust_omega_reference_rad_s": 2900.0,
+          "positive_branch_min_ratio": 0.0791,
+          "max_ratio": 1.0,
+          "reaction_torque_coefficients": [
+            -3.4,
+            8.7,
+            2.9
+          ],
+          "reaction_torque_scale": 0.0001,
+          "rotor_inertia_kg_m2": 5e-08,
+          "include_rotor_acceleration_torque": false
+        },
+        "mass": [
+          0.0,
+          0.04338,
+          1e-06,
+          1e-06,
+          1e-06,
+          1e-06
+        ],
+        "inertia": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            2.3951e-05,
+            2.3951e-05,
+            3.2347e-05
+          ],
+          [
+            1e-09,
+            1e-09,
+            1e-09
+          ],
+          [
+            1e-09,
+            1e-09,
+            1e-09
+          ],
+          [
+            1e-09,
+            1e-09,
+            1e-09
+          ],
+          [
+            1e-09,
+            1e-09,
+            1e-09
+          ]
+        ],
+        "_last_f": [
+          0.10638945000000016,
+          0.10638945000000016,
+          0.10638945000000016,
+          0.10638945000000016
+        ],
+        "_last_f_cmd": [
+          0.10638945000000001,
+          0.10638945000000001,
+          0.10638945000000001,
+          0.10638945000000001
+        ],
+        "_last_omega": [
+          1581.521674476,
+          1581.521674476,
+          1581.521674476,
+          1581.521674476
+        ],
+        "_last_motor_cmd": [
+          0.5453523015434483,
+          0.5453523015434483,
+          0.5453523015434483,
+          0.5453523015434483
+        ],
+        "_last_q_actual": [
+          0.0006319533330000009,
+          -0.0006319533330000009,
+          0.0006319533330000009,
+          -0.0006319533330000009
+        ],
+        "_last_wrench_cmd": [
+          0.0,
+          0.0,
+          0.0,
+          0.42555780000000004
+        ],
+        "_last_wrench_actual": [
+          0.0,
+          0.0,
+          0.0,
+          0.42555780000000065
+        ],
+        "_last_allocation_error": [
+          0.0,
+          0.0,
+          0.0,
+          -6.106226635438361e-16
+        ]
+      }
+    },
+    "step-050": {
+      "final": {
+        "position": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "quaternion": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "omega": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "time_sec": 0.0,
+        "qpos": [
+          0.0,
+          0.0,
+          1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "qvel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "ctrl": [
+          0.10638945000000016,
+          0.10638945000000016,
+          0.10638945000000016,
+          0.10638945000000016,
+          0.0006319533330000009,
+          -0.0006319533330000009,
+          0.0006319533330000009,
+          -0.0006319533330000009
+        ],
+        "reference": [
+          0.5,
+          0.0,
+          1.0
+        ],
+        "yaw_reference": 0.0,
+        "observation": [
+          -0.5,
+          0.0,
+          0.0,
+          -1.5,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "step": 0,
+        "previous_action": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "pid_i_velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "pid_i_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "actuator": {
+          "enabled": true,
+          "model": "cf21b_first_order",
+          "parameter_source": "paper_candidate",
+          "verification_status": "unverified",
+          "thrust_saturation_n": [
+            0.0,
+            0.2
+          ],
+          "motor_command_saturation": [
+            0.0,
+            1.0
+          ],
+          "randomization_enabled": false,
+          "reset_rpm_mode": "auto",
+          "reaction_torque_model": "legacy_ratio",
+          "legacy_ratio_m": 0.00594,
+          "nominal_time_constant_s": [
+            0.05,
+            0.05,
+            0.05,
+            0.05
+          ],
+          "nominal_steady_state_gain_rad_s": [
+            2900.0,
+            2900.0,
+            2900.0,
+            2900.0
+          ],
+          "sampled_time_constant_s": [
+            0.05,
+            0.05,
+            0.05,
+            0.05
+          ],
+          "sampled_steady_state_gain_rad_s": [
+            2900.0,
+            2900.0,
+            2900.0,
+            2900.0
+          ],
+          "thrust_polynomial_coefficients": [
+            -0.23,
+            0.562,
+            -0.043
+          ],
+          "thrust_omega_reference_rad_s": 2900.0,
+          "positive_branch_min_ratio": 0.0791,
+          "max_ratio": 1.0,
+          "reaction_torque_coefficients": [
+            -3.4,
+            8.7,
+            2.9
+          ],
+          "reaction_torque_scale": 0.0001,
+          "rotor_inertia_kg_m2": 5e-08,
+          "include_rotor_acceleration_torque": false
+        },
+        "mass": [
+          0.0,
+          0.04338,
+          1e-06,
+          1e-06,
+          1e-06,
+          1e-06
+        ],
+        "inertia": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            2.3951e-05,
+            2.3951e-05,
+            3.2347e-05
+          ],
+          [
+            1e-09,
+            1e-09,
+            1e-09
+          ],
+          [
+            1e-09,
+            1e-09,
+            1e-09
+          ],
+          [
+            1e-09,
+            1e-09,
+            1e-09
+          ],
+          [
+            1e-09,
+            1e-09,
+            1e-09
+          ]
+        ],
+        "_last_f": [
+          0.10638945000000016,
+          0.10638945000000016,
+          0.10638945000000016,
+          0.10638945000000016
+        ],
+        "_last_f_cmd": [
+          0.10638945000000001,
+          0.10638945000000001,
+          0.10638945000000001,
+          0.10638945000000001
+        ],
+        "_last_omega": [
+          1581.521674476,
+          1581.521674476,
+          1581.521674476,
+          1581.521674476
+        ],
+        "_last_motor_cmd": [
+          0.5453523015434483,
+          0.5453523015434483,
+          0.5453523015434483,
+          0.5453523015434483
+        ],
+        "_last_q_actual": [
+          0.0006319533330000009,
+          -0.0006319533330000009,
+          0.0006319533330000009,
+          -0.0006319533330000009
+        ],
+        "_last_wrench_cmd": [
+          0.0,
+          0.0,
+          0.0,
+          0.42555780000000004
+        ],
+        "_last_wrench_actual": [
+          0.0,
+          0.0,
+          0.0,
+          0.42555780000000065
+        ],
+        "_last_allocation_error": [
+          0.0,
+          0.0,
+          0.0,
+          -6.106226635438361e-16
+        ]
+      }
+    }
+  },
+  "actual_overrides": {
+    "hover": {
+      "episode_sec": 8.0,
+      "initial_state": {
+        "name": "hover",
+        "horizon_sec": 8.0,
+        "policy_steps": 800,
+        "initial_position": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "initial_quaternion_wxyz": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "initial_velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "initial_omega": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "yaw_reference": 0.0,
+        "floor_start": false,
+        "actuator_reset": "airborne_hover_equilibrium",
+        "first_reference": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "first_reference_velocity_world_m_s": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mission_parameters": null,
+        "source_mission_phase_boundaries": null,
+        "reference_time_offset_sec": 0.0,
+        "phase_boundaries": null,
+        "start_provenance": "explicit step initial state, no pre-hover"
+      },
+      "dist_torque_body": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "step-005": {
+      "episode_sec": 8.0,
+      "initial_state": {
+        "name": "step-005",
+        "horizon_sec": 8.0,
+        "policy_steps": 800,
+        "initial_position": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "initial_quaternion_wxyz": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "initial_velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "initial_omega": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "yaw_reference": 0.0,
+        "floor_start": false,
+        "actuator_reset": "airborne_hover_equilibrium",
+        "first_reference": [
+          0.05,
+          0.0,
+          1.0
+        ],
+        "first_reference_velocity_world_m_s": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mission_parameters": null,
+        "source_mission_phase_boundaries": null,
+        "reference_time_offset_sec": 0.0,
+        "phase_boundaries": null,
+        "start_provenance": "explicit step initial state, no pre-hover"
+      },
+      "dist_torque_body": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "step-050": {
+      "episode_sec": 8.0,
+      "initial_state": {
+        "name": "step-050",
+        "horizon_sec": 8.0,
+        "policy_steps": 800,
+        "initial_position": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "initial_quaternion_wxyz": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "initial_velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "initial_omega": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "yaw_reference": 0.0,
+        "floor_start": false,
+        "actuator_reset": "airborne_hover_equilibrium",
+        "first_reference": [
+          0.5,
+          0.0,
+          1.0
+        ],
+        "first_reference_velocity_world_m_s": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mission_parameters": null,
+        "source_mission_phase_boundaries": null,
+        "reference_time_offset_sec": 0.0,
+        "phase_boundaries": null,
+        "start_provenance": "explicit step initial state, no pre-hover"
+      },
+      "dist_torque_body": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "timing": {
+    "control": "pre-state/ref/action at t; applied reference held on [t,t+dt]",
+    "metrics": "post-state and mission.reference(t+dt); phase(t+dt)",
+    "thrust": "last physics-substep requested/actual values of [t,t+dt]",
+    "reward": "environment reward against held control reference, not post evaluation reference"
+  },
+  "termination_policy": "stop on first terminated or truncated, including floor TAKEOFF guards",
+  "limitations": [
+    "No automatic causal interpretation.",
+    "Same-model/seed repetitions are determinism checks, not independent training runs.",
+    "Ground start z=0.02 can immediately violate the unchanged min_altitude=0.2 guard.",
+    "Historical training metadata without a checkpoint hash is path-associated, not cryptographic proof."
+  ],
+  "initial_snapshots_equal": true,
+  "reference_sequences_equal": true,
+  "checkpoint_hashes_unchanged": true
+}

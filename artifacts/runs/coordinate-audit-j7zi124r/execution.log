@@ -1,0 +1,43 @@
+results: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/coordinate-audit-j7zi124r
+frame/matrix audit done
+32 rotor increments and two efficiency loss checks done
+{
+  "native_world": "right-handed Z-up; horizontal compass directions unspecified (not established NED/ENU)",
+  "native_body": "model-defined FLU: +X forward, +Y left, +Z up",
+  "front_scope": "confirmed model FPV convention; correspondence to physical hardware nose not independently measured",
+  "native_motors_to_user": [
+    4,
+    3,
+    2,
+    1
+  ],
+  "allocator_and_plant_internal_sign_order_agree": true,
+  "geometry_axis_difference_m": 5.0000000000050004e-06,
+  "FRD_user_target_roll_pitch_T_match": true,
+  "FRD_user_target_yaw_reversed": true,
+  "rotor_increment_tests": 32,
+  "efficiency_loss_tests": 2,
+  "dynamic_error_maxima": {
+    "force_map_n": 2.7755575615628914e-17,
+    "moment_map_nm": 3.3203691532368573e-19,
+    "com_force_newton_n": 3.96554589412383e-17,
+    "descendant_force_newton_n": 3.96482013181537e-17,
+    "com_moment_euler_nm": 5.082197683525802e-19,
+    "inertia_plus_relative_hinges_nm": 4.675621868843738e-19,
+    "alpha_from_com_effective_inertia_rad_s2": 1.687538997430238e-14,
+    "com_origin_acceleration_m_s2": 6.372005245496026e-15
+  },
+  "policy_samples": 8,
+  "observation_roundtrip_max_error": 0.0,
+  "policy_action_roundtrip_max_error": 0.0,
+  "motor_command_roundtrip_max_error_n": 2.3314683517128287e-15,
+  "oracle_command_roundtrip_max_error_n": 1.6653345369377348e-15,
+  "limitations": [
+    "FPV defines model front; real hardware nose/propeller spin not independently measured.",
+    "No FRD adapter or new allocator connected to any rollout.",
+    "Increment tests use direct actual force/reaction, separate from motor delay; output-loss tests reuse production loss function.",
+    "Free prop hinges are retained; locked whole-body inertia alone is insufficient for exact yaw acceleration.",
+    "Historical training source record does not hash XML content; saved configuration/path and current engine are distinguished."
+  ]
+}
+results: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/coordinate-audit-j7zi124r

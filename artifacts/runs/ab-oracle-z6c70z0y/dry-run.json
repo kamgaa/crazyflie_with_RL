@@ -1,0 +1,3396 @@
+{
+  "status": "dry_run",
+  "expected_rollouts": 40,
+  "seed": 42,
+  "deterministic": true,
+  "models": [
+    {
+      "label": "A_best",
+      "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_20261002-140542/models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_best_20261002-140542-10.zip",
+      "sha256": "a541595c4a59a989e486300f7adef2ddac6f145e9490dd0041300086da134cf4",
+      "training_manifest_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_20261002-140542/manifests/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_manifest_20261002-140542.json",
+      "training_manifest_sha256": "923ba15880893e4e141b197258a9723e4c48d9fde4e70e134dae6f4564d93479",
+      "training_manifest": {
+        "action_shape": [
+          4
+        ],
+        "actuator": {
+          "enabled": true,
+          "model": "cf21b_first_order",
+          "parameter_source": "paper_candidate",
+          "randomization": {
+            "enabled": false,
+            "steady_state_gain_rad_s": {
+              "max": 3480.0,
+              "min": 2320.0
+            },
+            "time_constant_s": {
+              "max": 0.06,
+              "min": 0.04
+            }
+          },
+          "reaction_torque": {
+            "include_rotor_acceleration_torque": false,
+            "legacy_ratio_m": 0.00594,
+            "model": "legacy_ratio",
+            "polynomial_coefficients": [
+              -3.4,
+              8.7,
+              2.9
+            ],
+            "polynomial_scale": 0.0001,
+            "rotor_inertia_kg_m2": 5e-08
+          },
+          "reset_rpm_mode": "auto",
+          "steady_state_gain_rad_s": 2900.0,
+          "thrust_polynomial_coefficients": [
+            -0.23,
+            0.562,
+            -0.043
+          ],
+          "thrust_polynomial_max_ratio": 1.0,
+          "thrust_polynomial_omega_reference_rad_s": 2900.0,
+          "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+          "time_constant_s": 0.05,
+          "verification_status": "unverified"
+        },
+        "command": [
+          "train_ppo_02.py",
+          "--config",
+          "configs/e2e_train_velocity_ab_a.yaml"
+        ],
+        "condition": "velocity-ab-a-absolute-observation-absolute-reward",
+        "config_profile": "e2e_train_velocity_ab_a",
+        "control_mode": "e2e",
+        "created_at": "2026-10-02T14:05:42.523250+09:00",
+        "description": "A control, nominal seed42, corrected physics, fresh training only",
+        "experiment_name": "crazyflie-ppo",
+        "finished_at": "2026-10-02T16:39:01.693502+09:00",
+        "git": {
+          "branch": "refactor-experiment-pipeline-v2",
+          "commit_sha": "31343f3ff5c0ad4bce218e7d7f4adc05faa05cff",
+          "dirty": true
+        },
+        "metrics": {
+          "evaluation-floor-step0000000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-floor-step0000000_20261002-140542.json",
+          "evaluation-step0020000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0020000_20261002-140542.json",
+          "evaluation-step0040000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0040000_20261002-140542.json",
+          "evaluation-step0060000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0060000_20261002-140542.json",
+          "evaluation-step0080000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0080000_20261002-140542.json",
+          "evaluation-step0100000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0100000_20261002-140542.json",
+          "evaluation-step0120000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0120000_20261002-140542.json",
+          "evaluation-step0140000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0140000_20261002-140542.json",
+          "evaluation-step0160000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0160000_20261002-140542.json",
+          "evaluation-step0180000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0180000_20261002-140542.json",
+          "evaluation-step0200000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0200000_20261002-140542.json",
+          "evaluation-step0220000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0220000_20261002-140542.json",
+          "evaluation-step0240000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0240000_20261002-140542.json",
+          "evaluation-step0260000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0260000_20261002-140542.json",
+          "evaluation-step0280000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0280000_20261002-140542.json",
+          "evaluation-step0300000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0300000_20261002-140542.json",
+          "evaluation-step0320000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0320000_20261002-140542.json",
+          "evaluation-step0340000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0340000_20261002-140542.json",
+          "evaluation-step0360000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0360000_20261002-140542.json",
+          "evaluation-step0380000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0380000_20261002-140542.json",
+          "evaluation-step0400000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0400000_20261002-140542.json",
+          "evaluation-step0420000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0420000_20261002-140542.json",
+          "evaluation-step0440000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0440000_20261002-140542.json",
+          "evaluation-step0460000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0460000_20261002-140542.json",
+          "evaluation-step0480000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0480000_20261002-140542.json",
+          "evaluation-step0500000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0500000_20261002-140542.json",
+          "evaluation-step0520000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0520000_20261002-140542.json",
+          "evaluation-step0540000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0540000_20261002-140542.json",
+          "evaluation-step0560000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0560000_20261002-140542.json",
+          "evaluation-step0580000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0580000_20261002-140542.json",
+          "evaluation-step0600000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0600000_20261002-140542.json",
+          "evaluation-step0620000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0620000_20261002-140542.json",
+          "evaluation-step0640000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0640000_20261002-140542.json",
+          "evaluation-step0660000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0660000_20261002-140542.json",
+          "evaluation-step0680000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0680000_20261002-140542.json",
+          "evaluation-step0700000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0700000_20261002-140542.json",
+          "evaluation-step0720000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0720000_20261002-140542.json",
+          "evaluation-step0740000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0740000_20261002-140542.json",
+          "evaluation-step0760000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0760000_20261002-140542.json",
+          "evaluation-step0780000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0780000_20261002-140542.json",
+          "evaluation-step0800000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0800000_20261002-140542.json",
+          "evaluation-step0820000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0820000_20261002-140542.json",
+          "evaluation-step0840000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0840000_20261002-140542.json",
+          "evaluation-step0860000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0860000_20261002-140542.json",
+          "evaluation-step0880000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0880000_20261002-140542.json",
+          "evaluation-step0900000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0900000_20261002-140542.json",
+          "evaluation-step0920000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0920000_20261002-140542.json",
+          "evaluation-step0940000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0940000_20261002-140542.json",
+          "evaluation-step0960000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0960000_20261002-140542.json",
+          "evaluation-step0980000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step0980000_20261002-140542.json",
+          "evaluation-step1000000": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_evaluation-step1000000_20261002-140542.json",
+          "training-initial-policy": "metrics/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_training-initial-policy_20261002-140542.json"
+        },
+        "mission": "hover",
+        "model_history": [
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_intermediate-step0100352_20261002-140542.zip",
+            "sha256": "315c45602bd446ec43343ffc533c8b9377f29bbdb9a26cc574d753145e32c53c",
+            "timestep": 100352
+          },
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_intermediate-step0200704_20261002-140542.zip",
+            "sha256": "123703301624a1b9c6643c40c216dad2306121de3922f7ecab924839976108d7",
+            "timestep": 200704
+          },
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_intermediate-step0301056_20261002-140542.zip",
+            "sha256": "c9588622e3391dd4df6f1d397afcb12d63deb67e21e527b1de4d14c6fa7b9f61",
+            "timestep": 301056
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_best_20261002-140542.zip",
+            "sha256": "f27030491b0ee3e1c2036cf4a1ab209d5a9dd3087261c5a15b29fd431b5e9900",
+            "timestep": 360000
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_best_20261002-140542-01.zip",
+            "sha256": "7f8a337fa2a9db306648ae8a3dfb135c2da5048001b66a37902ce86085b1d307",
+            "timestep": 380000
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_best_20261002-140542-02.zip",
+            "sha256": "819b0c8c66fd0129c5a3accf0dc71ff449ed0058630708440712df9048bf686f",
+            "timestep": 400000
+          },
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_intermediate-step0401408_20261002-140542.zip",
+            "sha256": "822484d7f25ba0ee201e0415b1b290e8063759ae1d23a306e3456cc5a70e6f90",
+            "timestep": 401408
+          },
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_intermediate-step0501760_20261002-140542.zip",
+            "sha256": "eba24815ebb000a1b7996d9b04552e67cc9369c414fe8a5c46a92f1e680b6e9c",
+            "timestep": 501760
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_best_20261002-140542-03.zip",
+            "sha256": "5cfe33ba1f109267e5048dad7acf4a317da14acfe637abee34a4449678161974",
+            "timestep": 560000
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_best_20261002-140542-04.zip",
+            "sha256": "0fc9041f9a309cee844a5e148310d4f48ed63bf841146b26be5274a46b49fcbe",
+            "timestep": 580000
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_best_20261002-140542-05.zip",
+            "sha256": "c0bb0c839ad36267816a4df1a4e9f0164eb6970ed2838dc4077e09ceb586be5e",
+            "timestep": 600000
+          },
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_intermediate-step0600064_20261002-140542.zip",
+            "sha256": "588d197509602fca27785b3e23714264121d9ebb28cb7c8d8cfe454941a2ab28",
+            "timestep": 600064
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_best_20261002-140542-06.zip",
+            "sha256": "019b38e5f0cbcfb0b32370d5863bfe835cc48b3dca920debd4c3881dea518bf5",
+            "timestep": 640000
+          },
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_intermediate-step0700416_20261002-140542.zip",
+            "sha256": "76a70021e1d239cbd0295c19cda1d0632e06e2234f60e88031f0821a99b89117",
+            "timestep": 700416
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_best_20261002-140542-07.zip",
+            "sha256": "f41d21c9fb5ab7bfcc6cfa4afd4f7b15120cdcd521c989451d2fe141da35635a",
+            "timestep": 720000
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_best_20261002-140542-08.zip",
+            "sha256": "9e9aadd547a07c07c136c32d752c1dad8a968cf8fcf4388ccd1808e66f2a1d30",
+            "timestep": 780000
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_best_20261002-140542-09.zip",
+            "sha256": "6c915d7e8c3718dafa4d76d39014120d673410c913ca62ff5d6e005b28fc30e9",
+            "timestep": 800000
+          },
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_intermediate-step0800768_20261002-140542.zip",
+            "sha256": "89ce7eb5144132a574e3e9af728d504ca154d2783ddccf7e516b12ef3766bf82",
+            "timestep": 800768
+          },
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_intermediate-step0901120_20261002-140542.zip",
+            "sha256": "322724c743224f3a647181f4d15f180f21b3b16777b6c91fb340b2eeda41b1a8",
+            "timestep": 901120
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_best_20261002-140542-10.zip",
+            "sha256": "a541595c4a59a989e486300f7adef2ddac6f145e9490dd0041300086da134cf4",
+            "timestep": 980000
+          },
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_intermediate-step1001472_20261002-140542.zip",
+            "sha256": "63da5cfb06d080384036c5072c4c63cdc6dfced4cc2d12404c75e335ab62c978",
+            "timestep": 1001472
+          },
+          {
+            "kind": "final",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_final_20261002-140542.zip",
+            "sha256": "63da5cfb06d080384036c5072c4c63cdc6dfced4cc2d12404c75e335ab62c978",
+            "timestep": 1001472
+          }
+        ],
+        "models": {
+          "best": {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_best_20261002-140542-10.zip",
+            "sha256": "a541595c4a59a989e486300f7adef2ddac6f145e9490dd0041300086da134cf4",
+            "timestep": 980000
+          },
+          "final": {
+            "kind": "final",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_final_20261002-140542.zip",
+            "sha256": "63da5cfb06d080384036c5072c4c63cdc6dfced4cc2d12404c75e335ab62c978",
+            "timestep": 1001472
+          }
+        },
+        "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+        "normalization": {
+          "enabled": false
+        },
+        "observation_contract": "position_error,absolute_velocity,wxyz,body_omega,sin_yaw_error,cos_yaw_error",
+        "observation_shape": [
+          15
+        ],
+        "payload": {
+          "mass": 0.0,
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "randomization_limits": {
+            "mass_max": 0.015,
+            "radius_max": 0.1,
+            "radius_min": 0.02,
+            "torque_fraction": 0.5
+          },
+          "randomize": false
+        },
+        "payload_physics": "com_full_inertia_setconst_no_explicit_gravity_torque_v2",
+        "ppo": {
+          "batch_size": 256,
+          "clip_range": 0.1,
+          "device": "cpu",
+          "ent_coef": 0.003,
+          "gae_lambda": 0.95,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "log_std_init": -1.5,
+          "max_grad_norm": 0.5,
+          "n_epochs": 10,
+          "n_steps": 2048,
+          "net_arch": [
+            64,
+            64
+          ],
+          "policy": "MlpPolicy",
+          "target_kl": 0.03,
+          "verbose": 0,
+          "vf_coef": 0.5
+        },
+        "residual_scale": [
+          0.0075,
+          0.0075,
+          0.001,
+          0.5
+        ],
+        "resolved_config": {
+          "actuator": {
+            "enabled": true,
+            "model": "cf21b_first_order",
+            "parameter_source": "paper_candidate",
+            "randomization": {
+              "enabled": false,
+              "steady_state_gain_rad_s": {
+                "max": 3480.0,
+                "min": 2320.0
+              },
+              "time_constant_s": {
+                "max": 0.06,
+                "min": 0.04
+              }
+            },
+            "reaction_torque": {
+              "include_rotor_acceleration_torque": false,
+              "legacy_ratio_m": 0.00594,
+              "model": "legacy_ratio",
+              "polynomial_coefficients": [
+                -3.4,
+                8.7,
+                2.9
+              ],
+              "polynomial_scale": 0.0001,
+              "rotor_inertia_kg_m2": 5e-08
+            },
+            "reset_rpm_mode": "auto",
+            "steady_state_gain_rad_s": 2900.0,
+            "thrust_polynomial_coefficients": [
+              -0.23,
+              0.562,
+              -0.043
+            ],
+            "thrust_polynomial_max_ratio": 1.0,
+            "thrust_polynomial_omega_reference_rad_s": 2900.0,
+            "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+            "time_constant_s": 0.05,
+            "verification_status": "unverified"
+          },
+          "controller": {
+            "pid": {
+              "integrator_limit": 2.0,
+              "kd_rate": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "kd_velocity": 0.0,
+              "ki_rate": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "ki_velocity": 1.0,
+              "kp_attitude": 12.0,
+              "kp_position": 4.0,
+              "kp_rate": [
+                0.0008,
+                0.0008,
+                0.0006
+              ],
+              "kp_velocity": 4.0,
+              "max_force": 1.0,
+              "max_tilt_deg": 35.0,
+              "max_torque": 0.02,
+              "velocity_limit": 1.5
+            }
+          },
+          "environment": {
+            "attitude_perturbation_deg": 0.0,
+            "control_mode": "e2e",
+            "e2e_velocity": {
+              "max_speed": 1.5,
+              "mode": "position_error",
+              "observation_mode": "absolute",
+              "position_gain": 4.0,
+              "reward_mode": "absolute"
+            },
+            "episode_sec": 8.0,
+            "initial_pose_randomization": null,
+            "payload": {
+              "mass": 0.0,
+              "offset": [
+                0.0,
+                0.0
+              ],
+              "randomization_limits": {
+                "mass_max": 0.015,
+                "radius_max": 0.1,
+                "radius_min": 0.02,
+                "torque_fraction": 0.5
+              },
+              "randomize": false
+            },
+            "policy_hz": 100.0,
+            "position_perturbation": 0.05,
+            "position_target": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "residual_scale": [
+              0.0075,
+              0.0075,
+              0.001,
+              0.5
+            ],
+            "reward": {
+              "action_rate_weight": 0.0,
+              "action_weight": 0.0,
+              "angular_velocity_weight": 0.001,
+              "crash_penalty": 10.0,
+              "position_weight": 4.0,
+              "position_xy_weight": 10.0,
+              "position_z_weight": 6.0,
+              "tilt_weight": 3.0,
+              "velocity_weight": 0.005,
+              "yaw_weight": 1.0
+            },
+            "termination": {
+              "max_altitude": 2.5,
+              "max_position_error": 1.5,
+              "max_tilt_deg": 60.0,
+              "min_altitude": 0.2
+            },
+            "yaw_target": 0.0
+          },
+          "evaluation": {
+            "deterministic": true,
+            "episode_count": 30,
+            "evaluation_interval": 20000,
+            "seed_start": 1000,
+            "tail_fraction": 0.3,
+            "tilt_limit_deg": 30.0
+          },
+          "experiment": {
+            "condition": "velocity-ab-a-absolute-observation-absolute-reward",
+            "description": "A control, nominal seed42, corrected physics, fresh training only",
+            "name": "crazyflie-ppo",
+            "timezone": "Asia/Seoul"
+          },
+          "mission": {
+            "circle": {
+              "center_xy": [
+                0.5,
+                0.0
+              ],
+              "direction": "ccw",
+              "laps": 2.0,
+              "period": 10.0,
+              "radius": 0.5,
+              "ramp_sec": 2.0,
+              "start_angle_deg": 0.0
+            },
+            "circle_presets": [
+              {
+                "description": "radius 0.5m, period 10s (slow/safe)",
+                "key": "1",
+                "period": 10.0,
+                "radius": 0.5
+              },
+              {
+                "description": "radius 1.0m, period 8s (medium)",
+                "key": "2",
+                "period": 8.0,
+                "radius": 1.0
+              },
+              {
+                "description": "radius 0.5m, period 5s (fast/aggressive)",
+                "key": "3",
+                "period": 5.0,
+                "radius": 0.5
+              }
+            ],
+            "circle_ramp_sec": 2.0,
+            "force_floor_start": false,
+            "goto_sec": 4.0,
+            "goto_xy": [
+              1.0,
+              0.0
+            ],
+            "hover": {
+              "duration": 8.0,
+              "target": [
+                0.0,
+                0.0,
+                1.0
+              ],
+              "yaw_deg": 0.0
+            },
+            "hover_altitude": 1.0,
+            "lissajous": {
+              "amplitude_xy": [
+                0.5,
+                0.5
+              ],
+              "base_period": 10.0,
+              "center_xy": [
+                0.0,
+                0.0
+              ],
+              "cycles": 2.0,
+              "frequency_ratio": [
+                1,
+                2
+              ],
+              "phase_deg": 90.0,
+              "ramp_sec": 2.0
+            },
+            "number_of_laps": 2.0,
+            "post_hold_sec": 2.0,
+            "settle_sec": 2.0,
+            "takeoff_sec": 4.0,
+            "type": "hover"
+          },
+          "paths": {
+            "artifact_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts",
+            "legacy_model_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/model",
+            "legacy_tensorboard_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/tb",
+            "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+            "project_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2"
+          },
+          "source_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/e2e_train_velocity_ab_a.yaml",
+          "training": {
+            "checkpoint_interval": 100000,
+            "ppo": {
+              "batch_size": 256,
+              "clip_range": 0.1,
+              "device": "cpu",
+              "ent_coef": 0.003,
+              "gae_lambda": 0.95,
+              "gamma": 0.99,
+              "learning_rate": 0.0003,
+              "log_std_init": -1.5,
+              "max_grad_norm": 0.5,
+              "n_epochs": 10,
+              "n_steps": 2048,
+              "net_arch": [
+                64,
+                64
+              ],
+              "policy": "MlpPolicy",
+              "target_kl": 0.03,
+              "verbose": 0,
+              "vf_coef": 0.5
+            },
+            "record_episodes": true,
+            "seed": 42,
+            "total_timesteps": 1000000
+          },
+          "vehicle": {
+            "arm_length": 0.035355,
+            "gravity": 9.81,
+            "inertia_diagonal": [
+              2.3951e-05,
+              2.3951e-05,
+              3.2347e-05
+            ],
+            "mass": 0.04338,
+            "motor_direction": [
+              1.0,
+              -1.0,
+              1.0,
+              -1.0
+            ],
+            "physics_hz": 500.0,
+            "thrust_max": 0.2,
+            "thrust_min": 0.0,
+            "torque_coefficient": 0.00594
+          },
+          "version": 1
+        },
+        "resolved_config_path": "config/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_resolved-config_20261002-140542.yaml",
+        "result": {
+          "actual_total_timesteps": 1001472,
+          "best_model": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_20261002-140542/models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_best_20261002-140542-10.zip",
+          "final_model": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_20261002-140542/models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_final_20261002-140542.zip",
+          "requested_total_timesteps": 1000000
+        },
+        "run_id": "ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_20261002-140542",
+        "schema_version": 1,
+        "seed": 42,
+        "status": "completed",
+        "timestamp": "20261002-140542",
+        "timezone": "Asia/Seoul",
+        "velocity_reward_semantics": {
+          "mode": "absolute"
+        },
+        "velocity_semantics": {
+          "mode": "absolute"
+        },
+        "versions": {
+          "gymnasium": "1.3.0",
+          "mujoco": "3.12.0",
+          "numpy": "2.2.6",
+          "python": "3.10.21",
+          "stable_baselines3": "2.9.0",
+          "torch": "2.13.0"
+        },
+        "checkpoint_sha256": "a541595c4a59a989e486300f7adef2ddac6f145e9490dd0041300086da134cf4"
+      },
+      "observation_shape": [
+        15
+      ],
+      "action_shape": [
+        4
+      ],
+      "observation_contract": "position_error,absolute_velocity,wxyz,body_omega,sin_yaw_error,cos_yaw_error",
+      "velocity_semantics": {
+        "mode": "absolute"
+      },
+      "evaluation_velocity_reward_semantics": {
+        "mode": "absolute"
+      },
+      "action_scale_verification": "matched_available_metadata",
+      "applied_action_scale": [
+        0.0075,
+        0.0075,
+        0.001,
+        0.5
+      ],
+      "normalization": {
+        "path": null,
+        "sha256": null,
+        "source": "repository training command + null PPO _last_original_obs (no VecNormalize evidence)",
+        "limitation": "PPO zip alone cannot prove absence of custom external preprocessing"
+      }
+    },
+    {
+      "label": "B_best",
+      "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_20261002-140542/models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_best_20261002-140542-10.zip",
+      "sha256": "657559be961489528f0f70c70245f531ec72172e5e3a763fa898f5d21755584f",
+      "training_manifest_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_20261002-140542/manifests/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_manifest_20261002-140542.json",
+      "training_manifest_sha256": "e30f7552d309497059c962929ebd14f28d7a040b6dfc48809d7d8fc9847f05dd",
+      "training_manifest": {
+        "action_shape": [
+          4
+        ],
+        "actuator": {
+          "enabled": true,
+          "model": "cf21b_first_order",
+          "parameter_source": "paper_candidate",
+          "randomization": {
+            "enabled": false,
+            "steady_state_gain_rad_s": {
+              "max": 3480.0,
+              "min": 2320.0
+            },
+            "time_constant_s": {
+              "max": 0.06,
+              "min": 0.04
+            }
+          },
+          "reaction_torque": {
+            "include_rotor_acceleration_torque": false,
+            "legacy_ratio_m": 0.00594,
+            "model": "legacy_ratio",
+            "polynomial_coefficients": [
+              -3.4,
+              8.7,
+              2.9
+            ],
+            "polynomial_scale": 0.0001,
+            "rotor_inertia_kg_m2": 5e-08
+          },
+          "reset_rpm_mode": "auto",
+          "steady_state_gain_rad_s": 2900.0,
+          "thrust_polynomial_coefficients": [
+            -0.23,
+            0.562,
+            -0.043
+          ],
+          "thrust_polynomial_max_ratio": 1.0,
+          "thrust_polynomial_omega_reference_rad_s": 2900.0,
+          "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+          "time_constant_s": 0.05,
+          "verification_status": "unverified"
+        },
+        "command": [
+          "train_ppo_02.py",
+          "--config",
+          "configs/e2e_train_velocity_ab_b.yaml"
+        ],
+        "condition": "velocity-ab-b-absolute-observation-error-reward",
+        "config_profile": "e2e_train_velocity_ab_b",
+        "control_mode": "e2e",
+        "created_at": "2026-10-02T14:05:42.523207+09:00",
+        "description": "B reward-only intervention, nominal seed42, fresh training only",
+        "experiment_name": "crazyflie-ppo",
+        "finished_at": "2026-10-02T16:32:46.896197+09:00",
+        "git": {
+          "branch": "refactor-experiment-pipeline-v2",
+          "commit_sha": "31343f3ff5c0ad4bce218e7d7f4adc05faa05cff",
+          "dirty": true
+        },
+        "metrics": {
+          "evaluation-floor-step0000000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-floor-step0000000_20261002-140542.json",
+          "evaluation-step0020000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0020000_20261002-140542.json",
+          "evaluation-step0040000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0040000_20261002-140542.json",
+          "evaluation-step0060000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0060000_20261002-140542.json",
+          "evaluation-step0080000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0080000_20261002-140542.json",
+          "evaluation-step0100000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0100000_20261002-140542.json",
+          "evaluation-step0120000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0120000_20261002-140542.json",
+          "evaluation-step0140000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0140000_20261002-140542.json",
+          "evaluation-step0160000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0160000_20261002-140542.json",
+          "evaluation-step0180000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0180000_20261002-140542.json",
+          "evaluation-step0200000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0200000_20261002-140542.json",
+          "evaluation-step0220000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0220000_20261002-140542.json",
+          "evaluation-step0240000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0240000_20261002-140542.json",
+          "evaluation-step0260000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0260000_20261002-140542.json",
+          "evaluation-step0280000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0280000_20261002-140542.json",
+          "evaluation-step0300000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0300000_20261002-140542.json",
+          "evaluation-step0320000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0320000_20261002-140542.json",
+          "evaluation-step0340000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0340000_20261002-140542.json",
+          "evaluation-step0360000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0360000_20261002-140542.json",
+          "evaluation-step0380000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0380000_20261002-140542.json",
+          "evaluation-step0400000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0400000_20261002-140542.json",
+          "evaluation-step0420000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0420000_20261002-140542.json",
+          "evaluation-step0440000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0440000_20261002-140542.json",
+          "evaluation-step0460000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0460000_20261002-140542.json",
+          "evaluation-step0480000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0480000_20261002-140542.json",
+          "evaluation-step0500000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0500000_20261002-140542.json",
+          "evaluation-step0520000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0520000_20261002-140542.json",
+          "evaluation-step0540000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0540000_20261002-140542.json",
+          "evaluation-step0560000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0560000_20261002-140542.json",
+          "evaluation-step0580000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0580000_20261002-140542.json",
+          "evaluation-step0600000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0600000_20261002-140542.json",
+          "evaluation-step0620000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0620000_20261002-140542.json",
+          "evaluation-step0640000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0640000_20261002-140542.json",
+          "evaluation-step0660000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0660000_20261002-140542.json",
+          "evaluation-step0680000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0680000_20261002-140542.json",
+          "evaluation-step0700000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0700000_20261002-140542.json",
+          "evaluation-step0720000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0720000_20261002-140542.json",
+          "evaluation-step0740000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0740000_20261002-140542.json",
+          "evaluation-step0760000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0760000_20261002-140542.json",
+          "evaluation-step0780000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0780000_20261002-140542.json",
+          "evaluation-step0800000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0800000_20261002-140542.json",
+          "evaluation-step0820000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0820000_20261002-140542.json",
+          "evaluation-step0840000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0840000_20261002-140542.json",
+          "evaluation-step0860000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0860000_20261002-140542.json",
+          "evaluation-step0880000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0880000_20261002-140542.json",
+          "evaluation-step0900000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0900000_20261002-140542.json",
+          "evaluation-step0920000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0920000_20261002-140542.json",
+          "evaluation-step0940000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0940000_20261002-140542.json",
+          "evaluation-step0960000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0960000_20261002-140542.json",
+          "evaluation-step0980000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step0980000_20261002-140542.json",
+          "evaluation-step1000000": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_evaluation-step1000000_20261002-140542.json",
+          "training-initial-policy": "metrics/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_training-initial-policy_20261002-140542.json"
+        },
+        "mission": "hover",
+        "model_history": [
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_intermediate-step0100352_20261002-140542.zip",
+            "sha256": "811188235d18c4be62872e409d1667c703c86175fbdafea31c9e417e4afef106",
+            "timestep": 100352
+          },
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_intermediate-step0200704_20261002-140542.zip",
+            "sha256": "3fedfd09e96550360cd1c8824af4828074ee48b91508514faa6b76c5717e44a6",
+            "timestep": 200704
+          },
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_intermediate-step0301056_20261002-140542.zip",
+            "sha256": "c4ad827e2f98ea59dd676d0934fed873df7cd9d2b85f5644098164d758f978b4",
+            "timestep": 301056
+          },
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_intermediate-step0401408_20261002-140542.zip",
+            "sha256": "b53d0f0071f49e44df34d4fa659fb9d96bad5390de48f2585074615c310ef60a",
+            "timestep": 401408
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_best_20261002-140542.zip",
+            "sha256": "4599340067aae1854962478b95a236a40358c387f3e1335cc028cdbafe5be38a",
+            "timestep": 440000
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_best_20261002-140542-01.zip",
+            "sha256": "0d42f56f0deef3072c46db7860d84bbd992086fb18f344ed36f12d3b93a2b3df",
+            "timestep": 460000
+          },
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_intermediate-step0501760_20261002-140542.zip",
+            "sha256": "08d66b2f2c9228bc7264033092b44f4bc4a1ae02ca6e99fdc3ee9fd3ecd47356",
+            "timestep": 501760
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_best_20261002-140542-02.zip",
+            "sha256": "bb89dc861dcafb86d3f77737c1e26f7160d194bbd7e88bbee47d452b72c4114a",
+            "timestep": 540000
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_best_20261002-140542-03.zip",
+            "sha256": "0a6c48cb214797a23dde2a4ec706e4a82061b279420a98dc2fabcc0f35c30911",
+            "timestep": 600000
+          },
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_intermediate-step0600064_20261002-140542.zip",
+            "sha256": "19f46308cd663a048a625532019af4573b7c7960399ca8e814f443ea190df189",
+            "timestep": 600064
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_best_20261002-140542-04.zip",
+            "sha256": "6adbfaca794522471d8208d200864eed551f496887f3d7f27e033fed4476bc8e",
+            "timestep": 640000
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_best_20261002-140542-05.zip",
+            "sha256": "3d2065f169092fd3e6188c86341a8f676ca32149d7ac2e8f2482595ccb4cadf9",
+            "timestep": 660000
+          },
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_intermediate-step0700416_20261002-140542.zip",
+            "sha256": "05cd4b7e979268f1da6c0535481f4a48b10a7fc4930724241bf6c5b3d540a398",
+            "timestep": 700416
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_best_20261002-140542-06.zip",
+            "sha256": "4a3c47580f74d1d9d24c699b21b20193bb31ea623becc719161515592000c7e1",
+            "timestep": 760000
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_best_20261002-140542-07.zip",
+            "sha256": "da07d068d6da3406f6e709673ec3fdf80837df514cdaeb8ca8050646018bf5dd",
+            "timestep": 780000
+          },
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_intermediate-step0800768_20261002-140542.zip",
+            "sha256": "512689afe712fb0b7794ceb27f4ecf1e07dc6b9d26dcec53bc5e381417e32936",
+            "timestep": 800768
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_best_20261002-140542-08.zip",
+            "sha256": "925fdc9db7581a153d0aff6a89b73f77bb341bf319d16df62c663a7dc9b77563",
+            "timestep": 840000
+          },
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_intermediate-step0901120_20261002-140542.zip",
+            "sha256": "c080f78f105b0a6911cd2217256af362b31f065009247601b3a4d7aae08803d4",
+            "timestep": 901120
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_best_20261002-140542-09.zip",
+            "sha256": "3e788143f340dc9034819fc88fc1464d2b732ace51cb9a4daa3fd06f490b6542",
+            "timestep": 920000
+          },
+          {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_best_20261002-140542-10.zip",
+            "sha256": "657559be961489528f0f70c70245f531ec72172e5e3a763fa898f5d21755584f",
+            "timestep": 960000
+          },
+          {
+            "kind": "intermediate",
+            "metadata": {
+              "optimizer_update_completed": true,
+              "requested_interval": 100000
+            },
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_intermediate-step1001472_20261002-140542.zip",
+            "sha256": "c2782cb85e79cb28920268cbbdfa598328bceed4f8af35580db4b39adf782cda",
+            "timestep": 1001472
+          },
+          {
+            "kind": "final",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_final_20261002-140542.zip",
+            "sha256": "c2782cb85e79cb28920268cbbdfa598328bceed4f8af35580db4b39adf782cda",
+            "timestep": 1001472
+          }
+        ],
+        "models": {
+          "best": {
+            "kind": "best",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_best_20261002-140542-10.zip",
+            "sha256": "657559be961489528f0f70c70245f531ec72172e5e3a763fa898f5d21755584f",
+            "timestep": 960000
+          },
+          "final": {
+            "kind": "final",
+            "normalization": {
+              "enabled": false
+            },
+            "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_final_20261002-140542.zip",
+            "sha256": "c2782cb85e79cb28920268cbbdfa598328bceed4f8af35580db4b39adf782cda",
+            "timestep": 1001472
+          }
+        },
+        "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+        "normalization": {
+          "enabled": false
+        },
+        "observation_contract": "position_error,absolute_velocity,wxyz,body_omega,sin_yaw_error,cos_yaw_error",
+        "observation_shape": [
+          15
+        ],
+        "payload": {
+          "mass": 0.0,
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "randomization_limits": {
+            "mass_max": 0.015,
+            "radius_max": 0.1,
+            "radius_min": 0.02,
+            "torque_fraction": 0.5
+          },
+          "randomize": false
+        },
+        "payload_physics": "com_full_inertia_setconst_no_explicit_gravity_torque_v2",
+        "ppo": {
+          "batch_size": 256,
+          "clip_range": 0.1,
+          "device": "cpu",
+          "ent_coef": 0.003,
+          "gae_lambda": 0.95,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "log_std_init": -1.5,
+          "max_grad_norm": 0.5,
+          "n_epochs": 10,
+          "n_steps": 2048,
+          "net_arch": [
+            64,
+            64
+          ],
+          "policy": "MlpPolicy",
+          "target_kl": 0.03,
+          "verbose": 0,
+          "vf_coef": 0.5
+        },
+        "residual_scale": [
+          0.0075,
+          0.0075,
+          0.001,
+          0.5
+        ],
+        "resolved_config": {
+          "actuator": {
+            "enabled": true,
+            "model": "cf21b_first_order",
+            "parameter_source": "paper_candidate",
+            "randomization": {
+              "enabled": false,
+              "steady_state_gain_rad_s": {
+                "max": 3480.0,
+                "min": 2320.0
+              },
+              "time_constant_s": {
+                "max": 0.06,
+                "min": 0.04
+              }
+            },
+            "reaction_torque": {
+              "include_rotor_acceleration_torque": false,
+              "legacy_ratio_m": 0.00594,
+              "model": "legacy_ratio",
+              "polynomial_coefficients": [
+                -3.4,
+                8.7,
+                2.9
+              ],
+              "polynomial_scale": 0.0001,
+              "rotor_inertia_kg_m2": 5e-08
+            },
+            "reset_rpm_mode": "auto",
+            "steady_state_gain_rad_s": 2900.0,
+            "thrust_polynomial_coefficients": [
+              -0.23,
+              0.562,
+              -0.043
+            ],
+            "thrust_polynomial_max_ratio": 1.0,
+            "thrust_polynomial_omega_reference_rad_s": 2900.0,
+            "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+            "time_constant_s": 0.05,
+            "verification_status": "unverified"
+          },
+          "controller": {
+            "pid": {
+              "integrator_limit": 2.0,
+              "kd_rate": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "kd_velocity": 0.0,
+              "ki_rate": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "ki_velocity": 1.0,
+              "kp_attitude": 12.0,
+              "kp_position": 4.0,
+              "kp_rate": [
+                0.0008,
+                0.0008,
+                0.0006
+              ],
+              "kp_velocity": 4.0,
+              "max_force": 1.0,
+              "max_tilt_deg": 35.0,
+              "max_torque": 0.02,
+              "velocity_limit": 1.5
+            }
+          },
+          "environment": {
+            "attitude_perturbation_deg": 0.0,
+            "control_mode": "e2e",
+            "e2e_velocity": {
+              "max_speed": 1.5,
+              "mode": "position_error",
+              "observation_mode": "absolute",
+              "position_gain": 4.0,
+              "reward_mode": "position_error"
+            },
+            "episode_sec": 8.0,
+            "initial_pose_randomization": null,
+            "payload": {
+              "mass": 0.0,
+              "offset": [
+                0.0,
+                0.0
+              ],
+              "randomization_limits": {
+                "mass_max": 0.015,
+                "radius_max": 0.1,
+                "radius_min": 0.02,
+                "torque_fraction": 0.5
+              },
+              "randomize": false
+            },
+            "policy_hz": 100.0,
+            "position_perturbation": 0.05,
+            "position_target": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "residual_scale": [
+              0.0075,
+              0.0075,
+              0.001,
+              0.5
+            ],
+            "reward": {
+              "action_rate_weight": 0.0,
+              "action_weight": 0.0,
+              "angular_velocity_weight": 0.001,
+              "crash_penalty": 10.0,
+              "position_weight": 4.0,
+              "position_xy_weight": 10.0,
+              "position_z_weight": 6.0,
+              "tilt_weight": 3.0,
+              "velocity_weight": 0.005,
+              "yaw_weight": 1.0
+            },
+            "termination": {
+              "max_altitude": 2.5,
+              "max_position_error": 1.5,
+              "max_tilt_deg": 60.0,
+              "min_altitude": 0.2
+            },
+            "yaw_target": 0.0
+          },
+          "evaluation": {
+            "deterministic": true,
+            "episode_count": 30,
+            "evaluation_interval": 20000,
+            "seed_start": 1000,
+            "tail_fraction": 0.3,
+            "tilt_limit_deg": 30.0
+          },
+          "experiment": {
+            "condition": "velocity-ab-b-absolute-observation-error-reward",
+            "description": "B reward-only intervention, nominal seed42, fresh training only",
+            "name": "crazyflie-ppo",
+            "timezone": "Asia/Seoul"
+          },
+          "mission": {
+            "circle": {
+              "center_xy": [
+                0.5,
+                0.0
+              ],
+              "direction": "ccw",
+              "laps": 2.0,
+              "period": 10.0,
+              "radius": 0.5,
+              "ramp_sec": 2.0,
+              "start_angle_deg": 0.0
+            },
+            "circle_presets": [
+              {
+                "description": "radius 0.5m, period 10s (slow/safe)",
+                "key": "1",
+                "period": 10.0,
+                "radius": 0.5
+              },
+              {
+                "description": "radius 1.0m, period 8s (medium)",
+                "key": "2",
+                "period": 8.0,
+                "radius": 1.0
+              },
+              {
+                "description": "radius 0.5m, period 5s (fast/aggressive)",
+                "key": "3",
+                "period": 5.0,
+                "radius": 0.5
+              }
+            ],
+            "circle_ramp_sec": 2.0,
+            "force_floor_start": false,
+            "goto_sec": 4.0,
+            "goto_xy": [
+              1.0,
+              0.0
+            ],
+            "hover": {
+              "duration": 8.0,
+              "target": [
+                0.0,
+                0.0,
+                1.0
+              ],
+              "yaw_deg": 0.0
+            },
+            "hover_altitude": 1.0,
+            "lissajous": {
+              "amplitude_xy": [
+                0.5,
+                0.5
+              ],
+              "base_period": 10.0,
+              "center_xy": [
+                0.0,
+                0.0
+              ],
+              "cycles": 2.0,
+              "frequency_ratio": [
+                1,
+                2
+              ],
+              "phase_deg": 90.0,
+              "ramp_sec": 2.0
+            },
+            "number_of_laps": 2.0,
+            "post_hold_sec": 2.0,
+            "settle_sec": 2.0,
+            "takeoff_sec": 4.0,
+            "type": "hover"
+          },
+          "paths": {
+            "artifact_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts",
+            "legacy_model_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/model",
+            "legacy_tensorboard_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/tb",
+            "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+            "project_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2"
+          },
+          "source_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/e2e_train_velocity_ab_b.yaml",
+          "training": {
+            "checkpoint_interval": 100000,
+            "ppo": {
+              "batch_size": 256,
+              "clip_range": 0.1,
+              "device": "cpu",
+              "ent_coef": 0.003,
+              "gae_lambda": 0.95,
+              "gamma": 0.99,
+              "learning_rate": 0.0003,
+              "log_std_init": -1.5,
+              "max_grad_norm": 0.5,
+              "n_epochs": 10,
+              "n_steps": 2048,
+              "net_arch": [
+                64,
+                64
+              ],
+              "policy": "MlpPolicy",
+              "target_kl": 0.03,
+              "verbose": 0,
+              "vf_coef": 0.5
+            },
+            "record_episodes": true,
+            "seed": 42,
+            "total_timesteps": 1000000
+          },
+          "vehicle": {
+            "arm_length": 0.035355,
+            "gravity": 9.81,
+            "inertia_diagonal": [
+              2.3951e-05,
+              2.3951e-05,
+              3.2347e-05
+            ],
+            "mass": 0.04338,
+            "motor_direction": [
+              1.0,
+              -1.0,
+              1.0,
+              -1.0
+            ],
+            "physics_hz": 500.0,
+            "thrust_max": 0.2,
+            "thrust_min": 0.0,
+            "torque_coefficient": 0.00594
+          },
+          "version": 1
+        },
+        "resolved_config_path": "config/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_resolved-config_20261002-140542.yaml",
+        "result": {
+          "actual_total_timesteps": 1001472,
+          "best_model": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_20261002-140542/models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_best_20261002-140542-10.zip",
+          "final_model": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_20261002-140542/models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_final_20261002-140542.zip",
+          "requested_total_timesteps": 1000000
+        },
+        "run_id": "ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_20261002-140542",
+        "schema_version": 1,
+        "seed": 42,
+        "status": "completed",
+        "timestamp": "20261002-140542",
+        "timezone": "Asia/Seoul",
+        "velocity_reward_semantics": {
+          "max_speed": 1.5,
+          "mode": "position_error",
+          "position_gain": 4.0
+        },
+        "velocity_semantics": {
+          "mode": "absolute"
+        },
+        "versions": {
+          "gymnasium": "1.3.0",
+          "mujoco": "3.12.0",
+          "numpy": "2.2.6",
+          "python": "3.10.21",
+          "stable_baselines3": "2.9.0",
+          "torch": "2.13.0"
+        },
+        "checkpoint_sha256": "657559be961489528f0f70c70245f531ec72172e5e3a763fa898f5d21755584f"
+      },
+      "observation_shape": [
+        15
+      ],
+      "action_shape": [
+        4
+      ],
+      "observation_contract": "position_error,absolute_velocity,wxyz,body_omega,sin_yaw_error,cos_yaw_error",
+      "velocity_semantics": {
+        "mode": "absolute"
+      },
+      "evaluation_velocity_reward_semantics": {
+        "mode": "absolute"
+      },
+      "action_scale_verification": "matched_available_metadata",
+      "applied_action_scale": [
+        0.0075,
+        0.0075,
+        0.001,
+        0.5
+      ],
+      "normalization": {
+        "path": null,
+        "sha256": null,
+        "source": "repository training command + null PPO _last_original_obs (no VecNormalize evidence)",
+        "limitation": "PPO zip alone cannot prove absence of custom external preprocessing"
+      }
+    }
+  ],
+  "checkpoint_timesteps": {
+    "A_best": 980000,
+    "B_best": 960000
+  },
+  "previous_results": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ab-integral-validation-lymyulpo",
+  "selection_record": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/velocity-ab-training-comparison-isygddsb/completion.json",
+  "git": {
+    "commit_sha": "31343f3ff5c0ad4bce218e7d7f4adc05faa05cff",
+    "branch": "refactor-experiment-pipeline-v2",
+    "dirty": true
+  },
+  "source_sha256": {
+    "crazyflie_rl/wrench_authority.py": "c4ec33d0423d40ece2ca061df63c756a554e31c681418a5e89410a8768aedb18",
+    "crazyflie_rl/integral_eval.py": "b7e16016f25b76ae6524c81f376554f24614f9046c2810a33294890fda86cf7d",
+    "crazyflie_rl/initial_pose.py": "b8f502e18ce44c62b660542c06cabe6bb921a29751b90a836db65b8fd1e2fb2f",
+    "crazyflie_rl/integral_controller.py": "eeb379146545d1915457e33f97735d435485ef9240da3cd744e7f062727221d7",
+    "crazyflie_rl/training_observers.py": "fedd4a6e8abc818f42761888fd5e956725190d98c03979f69b63c6c4843a7e6d",
+    "crazyflie_rl/config.py": "f1b2007b412872730e56e8ae7124feb31d27c49f3c5a3c96a08b895b149aa438",
+    "crazyflie_rl/actuators.py": "77bc31fbdd35ebb34340623cff420202d075706fe063e48f2d6851bca0133721",
+    "crazyflie_rl/reward_balance.py": "fdf6408a5966edfc99beb19c3ab2afe4e54b431765f2698ad049cae445bb6de2",
+    "crazyflie_rl/artifacts.py": "08f353cde4aa768d16974fdb84713c2cdb92611fdd1b8db2ca85d0156780c7d3",
+    "crazyflie_rl/dr_policy.py": "acfb6d5ae89deb39ec80d366e67246195d218addaaaee65227e141a53f7fa802",
+    "crazyflie_rl/interactive_eval.py": "90db1f23ef108530228c33ba0fac3836b9a66faed017a501f389d4c0ee9b1c4b",
+    "crazyflie_rl/environment.py": "791833669c668023db96d0f57eb022f20bb13168c0f7f06b24f42c87b10e0239",
+    "crazyflie_rl/plotting.py": "b89c945bff2391c995002e8926fc0ebe9563fcceb267c33773a1a1a53045829f",
+    "crazyflie_rl/training.py": "71267db570e6ba3e4338c77ee55e6bc114f6ab2d9c06622ff292da81b94a1c9d",
+    "crazyflie_rl/missions.py": "b5773c726b5c6a759c96ba3402b8c32e95a2c59f5133034139eb0aa8dbdfb49c",
+    "crazyflie_rl/oracle_allocation.py": "1178ec7cfc3807388f12a887b4c7b98b04f558d475e067350e263956008394a1",
+    "crazyflie_rl/integral_validation.py": "3ea8bd3ce738b4bfa85169d0d19e1c7e4860aad6b84e5a51c6984ed8761d0908",
+    "crazyflie_rl/motor_degradation.py": "5593a12e401e3b29091f34a1ee3e18685ef609b3c0196b0a71ccc77cd5255308",
+    "crazyflie_rl/__init__.py": "f00fc2cbec8d53b52e84a5f35edf50670862c5130ed7161a8c95deb3476e5e70",
+    "crazyflie_rl/oracle_eval.py": "d93fb4a5aa06629f0907950a9cb4b7ebee8f71769fb253fea691bd42dcb8aebd",
+    "crazyflie_rl/dr_transfer.py": "478609f5881e22614119a830053c3f06514a966ffc85d5df241b2848e481fe11",
+    "crazyflie_rl/yaw_authority.py": "c9ae47f6146542dca651ba1eafa81ed6d795c77024c4f72316632fb75c910383",
+    "crazyflie_rl/motor_study.py": "609db9ae361a6425a28bc8b4166574fa0964a8f62d88a92c0cb8f657aa4349d9",
+    "crazyflie_rl/payload_motor_eval.py": "ef1a832c06b7cdeb721429c5973a40b1021acc9508a0d06e329aab862061bdb7",
+    "crazyflie_rl/factories.py": "72465229a631a593842e0b2cca96b9f19702d4c43f559ccb1b5434c96678af99",
+    "crazyflie_rl/velocity_reference.py": "7034c9860e1e12735807d7c795564c8fff6a07947e08a334a1f1a8fccd483afe",
+    "crazyflie_rl/eval_cli.py": "2cd683d7eac6a03f1284e38e5cbc03c49d5bc58e70f85283db948cb898b367f6",
+    "crazyflie_rl/controllers.py": "a8c94dd1c72fe31cc81c09aca082b797a9ed17aff8bf1db42495717fff11e2ca",
+    "crazyflie_rl/dr_reset_audit.py": "00553ff93541d65237dfc540c50c815b3ceff2db436cb829fe45872bf6ae1fc4",
+    "crazyflie_rl/evaluation.py": "b5118376b75149cc1a61b2b97f6e3a592e32bab23123396a45f401d14d3888f2"
+  },
+  "common_resolved_config": {
+    "version": 1,
+    "paths": {
+      "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+      "project_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2",
+      "artifact_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts",
+      "legacy_model_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/model",
+      "legacy_tensorboard_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/tb"
+    },
+    "vehicle": {
+      "mass": 0.04338,
+      "gravity": 9.81,
+      "arm_length": 0.035355,
+      "motor_direction": [
+        1.0,
+        -1.0,
+        1.0,
+        -1.0
+      ],
+      "thrust_min": 0.0,
+      "thrust_max": 0.2,
+      "torque_coefficient": 0.00594,
+      "inertia_diagonal": [
+        2.3951e-05,
+        2.3951e-05,
+        3.2347e-05
+      ],
+      "physics_hz": 500.0
+    },
+    "actuator": {
+      "enabled": true,
+      "model": "cf21b_first_order",
+      "time_constant_s": 0.05,
+      "steady_state_gain_rad_s": 2900.0,
+      "thrust_polynomial_coefficients": [
+        -0.23,
+        0.562,
+        -0.043
+      ],
+      "thrust_polynomial_omega_reference_rad_s": 2900.0,
+      "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+      "thrust_polynomial_max_ratio": 1.0,
+      "parameter_source": "paper_candidate",
+      "verification_status": "unverified",
+      "reaction_torque": {
+        "model": "legacy_ratio",
+        "legacy_ratio_m": 0.00594,
+        "polynomial_coefficients": [
+          -3.4,
+          8.7,
+          2.9
+        ],
+        "polynomial_scale": 0.0001,
+        "rotor_inertia_kg_m2": 5e-08,
+        "include_rotor_acceleration_torque": false
+      },
+      "reset_rpm_mode": "auto",
+      "randomization": {
+        "enabled": false,
+        "time_constant_s": {
+          "min": 0.04,
+          "max": 0.06
+        },
+        "steady_state_gain_rad_s": {
+          "min": 2320.0,
+          "max": 3480.0
+        }
+      }
+    },
+    "controller": {
+      "pid": {
+        "kp_position": 4.0,
+        "velocity_limit": 1.5,
+        "kp_velocity": 4.0,
+        "ki_velocity": 1.0,
+        "kd_velocity": 0.0,
+        "kp_attitude": 12.0,
+        "kp_rate": [
+          0.0008,
+          0.0008,
+          0.0006
+        ],
+        "ki_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max_tilt_deg": 35.0,
+        "max_torque": 0.02,
+        "max_force": 1.0,
+        "integrator_limit": 2.0
+      }
+    },
+    "environment": {
+      "control_mode": "e2e",
+      "policy_hz": 100.0,
+      "episode_sec": 8.0,
+      "residual_scale": [
+        0.0075,
+        0.0075,
+        0.001,
+        0.5
+      ],
+      "position_target": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "yaw_target": 0.0,
+      "position_perturbation": 0.0,
+      "attitude_perturbation_deg": 0.0,
+      "payload": {
+        "randomize": false,
+        "mass": 0.0,
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "randomization_limits": {
+          "radius_min": 0.02,
+          "radius_max": 0.1,
+          "torque_fraction": 0.5,
+          "mass_max": 0.015
+        }
+      },
+      "reward": {
+        "position_weight": 4.0,
+        "velocity_weight": 0.005,
+        "tilt_weight": 3.0,
+        "angular_velocity_weight": 0.001,
+        "yaw_weight": 1.0,
+        "action_weight": 0.0,
+        "action_rate_weight": 0.0,
+        "crash_penalty": 10.0,
+        "position_xy_weight": 10.0,
+        "position_z_weight": 6.0
+      },
+      "termination": {
+        "min_altitude": 0.2,
+        "max_altitude": 2.5,
+        "max_tilt_deg": 60.0,
+        "max_position_error": 1.5
+      },
+      "initial_pose_randomization": null,
+      "e2e_velocity": {
+        "mode": "position_error",
+        "position_gain": 4.0,
+        "max_speed": 1.5,
+        "observation_mode": "absolute",
+        "reward_mode": "absolute"
+      }
+    },
+    "training": {
+      "seed": 42,
+      "total_timesteps": 1000000,
+      "ppo": {
+        "policy": "MlpPolicy",
+        "n_steps": 2048,
+        "batch_size": 256,
+        "learning_rate": 0.0003,
+        "gamma": 0.99,
+        "gae_lambda": 0.95,
+        "n_epochs": 10,
+        "ent_coef": 0.003,
+        "vf_coef": 0.5,
+        "max_grad_norm": 0.5,
+        "clip_range": 0.1,
+        "target_kl": 0.03,
+        "log_std_init": -1.5,
+        "net_arch": [
+          64,
+          64
+        ],
+        "device": "cpu",
+        "verbose": 0
+      },
+      "record_episodes": true,
+      "checkpoint_interval": 100000
+    },
+    "evaluation": {
+      "episode_count": 30,
+      "seed_start": 42,
+      "deterministic": true,
+      "tail_fraction": 0.3,
+      "tilt_limit_deg": 30.0,
+      "evaluation_interval": 20000
+    },
+    "mission": {
+      "type": "hover",
+      "hover_altitude": 1.0,
+      "goto_xy": [
+        1.0,
+        0.0
+      ],
+      "takeoff_sec": 4.0,
+      "settle_sec": 2.0,
+      "goto_sec": 4.0,
+      "circle_ramp_sec": 2.0,
+      "number_of_laps": 2.0,
+      "post_hold_sec": 2.0,
+      "force_floor_start": false,
+      "circle_presets": [
+        {
+          "key": "1",
+          "description": "radius 0.5m, period 10s (slow/safe)",
+          "radius": 0.5,
+          "period": 10.0
+        },
+        {
+          "key": "2",
+          "description": "radius 1.0m, period 8s (medium)",
+          "radius": 1.0,
+          "period": 8.0
+        },
+        {
+          "key": "3",
+          "description": "radius 0.5m, period 5s (fast/aggressive)",
+          "radius": 0.5,
+          "period": 5.0
+        }
+      ],
+      "hover": {
+        "target": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "yaw_deg": 0.0,
+        "duration": 8.0
+      },
+      "circle": {
+        "center_xy": [
+          0.5,
+          0.0
+        ],
+        "radius": 0.5,
+        "period": 10.0,
+        "laps": 2.0,
+        "start_angle_deg": 0.0,
+        "direction": "ccw",
+        "ramp_sec": 2.0
+      },
+      "lissajous": {
+        "center_xy": [
+          0.0,
+          0.0
+        ],
+        "amplitude_xy": [
+          0.5,
+          0.5
+        ],
+        "frequency_ratio": [
+          1,
+          2
+        ],
+        "phase_deg": 90.0,
+        "base_period": 10.0,
+        "cycles": 2.0,
+        "ramp_sec": 2.0
+      }
+    },
+    "experiment": {
+      "name": "crazyflie-ppo",
+      "condition": "velocity-ab-common-evaluation",
+      "description": "Same nominal evaluation for fresh A/B and separate historical reference",
+      "timezone": "Asia/Seoul"
+    },
+    "source_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/eval_velocity_ab.yaml"
+  },
+  "resolved_configs": {
+    "nominal": {
+      "version": 1,
+      "paths": {
+        "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+        "project_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2",
+        "artifact_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts",
+        "legacy_model_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/model",
+        "legacy_tensorboard_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/tb"
+      },
+      "vehicle": {
+        "mass": 0.04338,
+        "gravity": 9.81,
+        "arm_length": 0.035355,
+        "motor_direction": [
+          1.0,
+          -1.0,
+          1.0,
+          -1.0
+        ],
+        "thrust_min": 0.0,
+        "thrust_max": 0.2,
+        "torque_coefficient": 0.00594,
+        "inertia_diagonal": [
+          2.3951e-05,
+          2.3951e-05,
+          3.2347e-05
+        ],
+        "physics_hz": 500.0
+      },
+      "actuator": {
+        "enabled": true,
+        "model": "cf21b_first_order",
+        "time_constant_s": 0.05,
+        "steady_state_gain_rad_s": 2900.0,
+        "thrust_polynomial_coefficients": [
+          -0.23,
+          0.562,
+          -0.043
+        ],
+        "thrust_polynomial_omega_reference_rad_s": 2900.0,
+        "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+        "thrust_polynomial_max_ratio": 1.0,
+        "parameter_source": "paper_candidate",
+        "verification_status": "unverified",
+        "reaction_torque": {
+          "model": "legacy_ratio",
+          "legacy_ratio_m": 0.00594,
+          "polynomial_coefficients": [
+            -3.4,
+            8.7,
+            2.9
+          ],
+          "polynomial_scale": 0.0001,
+          "rotor_inertia_kg_m2": 5e-08,
+          "include_rotor_acceleration_torque": false
+        },
+        "reset_rpm_mode": "auto",
+        "randomization": {
+          "enabled": false,
+          "time_constant_s": {
+            "min": 0.04,
+            "max": 0.06
+          },
+          "steady_state_gain_rad_s": {
+            "min": 2320.0,
+            "max": 3480.0
+          }
+        }
+      },
+      "controller": {
+        "pid": {
+          "kp_position": 4.0,
+          "velocity_limit": 1.5,
+          "kp_velocity": 4.0,
+          "ki_velocity": 1.0,
+          "kd_velocity": 0.0,
+          "kp_attitude": 12.0,
+          "kp_rate": [
+            0.0008,
+            0.0008,
+            0.0006
+          ],
+          "ki_rate": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "kd_rate": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "max_tilt_deg": 35.0,
+          "max_torque": 0.02,
+          "max_force": 1.0,
+          "integrator_limit": 2.0
+        }
+      },
+      "environment": {
+        "control_mode": "e2e",
+        "policy_hz": 100.0,
+        "episode_sec": 60.0,
+        "residual_scale": [
+          0.0075,
+          0.0075,
+          0.001,
+          0.5
+        ],
+        "position_target": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "yaw_target": 0.0,
+        "position_perturbation": 0.0,
+        "attitude_perturbation_deg": 0.0,
+        "payload": {
+          "randomize": false,
+          "mass": 0.0,
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "randomization_limits": {
+            "radius_min": 0.02,
+            "radius_max": 0.1,
+            "torque_fraction": 0.5,
+            "mass_max": 0.015
+          }
+        },
+        "reward": {
+          "position_weight": 4.0,
+          "velocity_weight": 0.005,
+          "tilt_weight": 3.0,
+          "angular_velocity_weight": 0.001,
+          "yaw_weight": 1.0,
+          "action_weight": 0.0,
+          "action_rate_weight": 0.0,
+          "crash_penalty": 10.0,
+          "position_xy_weight": 10.0,
+          "position_z_weight": 6.0
+        },
+        "termination": {
+          "min_altitude": 0.2,
+          "max_altitude": 2.5,
+          "max_tilt_deg": 60.0,
+          "max_position_error": 1.5
+        },
+        "initial_pose_randomization": null,
+        "e2e_velocity": {
+          "mode": "position_error",
+          "position_gain": 4.0,
+          "max_speed": 1.5,
+          "observation_mode": "absolute",
+          "reward_mode": "absolute"
+        }
+      },
+      "training": {
+        "seed": 42,
+        "total_timesteps": 1000000,
+        "ppo": {
+          "policy": "MlpPolicy",
+          "n_steps": 2048,
+          "batch_size": 256,
+          "learning_rate": 0.0003,
+          "gamma": 0.99,
+          "gae_lambda": 0.95,
+          "n_epochs": 10,
+          "ent_coef": 0.003,
+          "vf_coef": 0.5,
+          "max_grad_norm": 0.5,
+          "clip_range": 0.1,
+          "target_kl": 0.03,
+          "log_std_init": -1.5,
+          "net_arch": [
+            64,
+            64
+          ],
+          "device": "cpu",
+          "verbose": 0
+        },
+        "record_episodes": true,
+        "checkpoint_interval": 100000
+      },
+      "evaluation": {
+        "episode_count": 30,
+        "seed_start": 42,
+        "deterministic": true,
+        "tail_fraction": 0.3,
+        "tilt_limit_deg": 30.0,
+        "evaluation_interval": 20000
+      },
+      "mission": {
+        "type": "hover",
+        "hover_altitude": 1.0,
+        "goto_xy": [
+          1.0,
+          0.0
+        ],
+        "takeoff_sec": 4.0,
+        "settle_sec": 2.0,
+        "goto_sec": 4.0,
+        "circle_ramp_sec": 2.0,
+        "number_of_laps": 2.0,
+        "post_hold_sec": 2.0,
+        "force_floor_start": false,
+        "circle_presets": [
+          {
+            "key": "1",
+            "description": "radius 0.5m, period 10s (slow/safe)",
+            "radius": 0.5,
+            "period": 10.0
+          },
+          {
+            "key": "2",
+            "description": "radius 1.0m, period 8s (medium)",
+            "radius": 1.0,
+            "period": 8.0
+          },
+          {
+            "key": "3",
+            "description": "radius 0.5m, period 5s (fast/aggressive)",
+            "radius": 0.5,
+            "period": 5.0
+          }
+        ],
+        "hover": {
+          "target": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "yaw_deg": 0.0,
+          "duration": 8.0
+        },
+        "circle": {
+          "center_xy": [
+            0.5,
+            0.0
+          ],
+          "radius": 0.5,
+          "period": 10.0,
+          "laps": 2.0,
+          "start_angle_deg": 0.0,
+          "direction": "ccw",
+          "ramp_sec": 2.0
+        },
+        "lissajous": {
+          "center_xy": [
+            0.0,
+            0.0
+          ],
+          "amplitude_xy": [
+            0.5,
+            0.5
+          ],
+          "frequency_ratio": [
+            1,
+            2
+          ],
+          "phase_deg": 90.0,
+          "base_period": 10.0,
+          "cycles": 2.0,
+          "ramp_sec": 2.0
+        }
+      },
+      "experiment": {
+        "name": "crazyflie-ppo",
+        "condition": "velocity-ab-common-evaluation",
+        "description": "Same nominal evaluation for fresh A/B and separate historical reference",
+        "timezone": "Asia/Seoul"
+      },
+      "source_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/eval_velocity_ab.yaml"
+    },
+    "combined_motor2_70": {
+      "version": 1,
+      "paths": {
+        "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+        "project_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2",
+        "artifact_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts",
+        "legacy_model_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/model",
+        "legacy_tensorboard_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/tb"
+      },
+      "vehicle": {
+        "mass": 0.04338,
+        "gravity": 9.81,
+        "arm_length": 0.035355,
+        "motor_direction": [
+          1.0,
+          -1.0,
+          1.0,
+          -1.0
+        ],
+        "thrust_min": 0.0,
+        "thrust_max": 0.2,
+        "torque_coefficient": 0.00594,
+        "inertia_diagonal": [
+          2.3951e-05,
+          2.3951e-05,
+          3.2347e-05
+        ],
+        "physics_hz": 500.0
+      },
+      "actuator": {
+        "enabled": true,
+        "model": "cf21b_first_order",
+        "time_constant_s": 0.05,
+        "steady_state_gain_rad_s": 2900.0,
+        "thrust_polynomial_coefficients": [
+          -0.23,
+          0.562,
+          -0.043
+        ],
+        "thrust_polynomial_omega_reference_rad_s": 2900.0,
+        "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+        "thrust_polynomial_max_ratio": 1.0,
+        "parameter_source": "paper_candidate",
+        "verification_status": "unverified",
+        "reaction_torque": {
+          "model": "legacy_ratio",
+          "legacy_ratio_m": 0.00594,
+          "polynomial_coefficients": [
+            -3.4,
+            8.7,
+            2.9
+          ],
+          "polynomial_scale": 0.0001,
+          "rotor_inertia_kg_m2": 5e-08,
+          "include_rotor_acceleration_torque": false
+        },
+        "reset_rpm_mode": "auto",
+        "randomization": {
+          "enabled": false,
+          "time_constant_s": {
+            "min": 0.04,
+            "max": 0.06
+          },
+          "steady_state_gain_rad_s": {
+            "min": 2320.0,
+            "max": 3480.0
+          }
+        }
+      },
+      "controller": {
+        "pid": {
+          "kp_position": 4.0,
+          "velocity_limit": 1.5,
+          "kp_velocity": 4.0,
+          "ki_velocity": 1.0,
+          "kd_velocity": 0.0,
+          "kp_attitude": 12.0,
+          "kp_rate": [
+            0.0008,
+            0.0008,
+            0.0006
+          ],
+          "ki_rate": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "kd_rate": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "max_tilt_deg": 35.0,
+          "max_torque": 0.02,
+          "max_force": 1.0,
+          "integrator_limit": 2.0
+        }
+      },
+      "environment": {
+        "control_mode": "e2e",
+        "policy_hz": 100.0,
+        "episode_sec": 60.0,
+        "residual_scale": [
+          0.0075,
+          0.0075,
+          0.001,
+          0.5
+        ],
+        "position_target": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "yaw_target": 0.0,
+        "position_perturbation": 0.0,
+        "attitude_perturbation_deg": 0.0,
+        "payload": {
+          "randomize": false,
+          "mass": 0.005,
+          "offset": [
+            0.0,
+            -0.03
+          ],
+          "randomization_limits": {
+            "radius_min": 0.02,
+            "radius_max": 0.1,
+            "torque_fraction": 0.5,
+            "mass_max": 0.015
+          }
+        },
+        "reward": {
+          "position_weight": 4.0,
+          "velocity_weight": 0.005,
+          "tilt_weight": 3.0,
+          "angular_velocity_weight": 0.001,
+          "yaw_weight": 1.0,
+          "action_weight": 0.0,
+          "action_rate_weight": 0.0,
+          "crash_penalty": 10.0,
+          "position_xy_weight": 10.0,
+          "position_z_weight": 6.0
+        },
+        "termination": {
+          "min_altitude": 0.2,
+          "max_altitude": 2.5,
+          "max_tilt_deg": 60.0,
+          "max_position_error": 1.5
+        },
+        "initial_pose_randomization": null,
+        "e2e_velocity": {
+          "mode": "position_error",
+          "position_gain": 4.0,
+          "max_speed": 1.5,
+          "observation_mode": "absolute",
+          "reward_mode": "absolute"
+        }
+      },
+      "training": {
+        "seed": 42,
+        "total_timesteps": 1000000,
+        "ppo": {
+          "policy": "MlpPolicy",
+          "n_steps": 2048,
+          "batch_size": 256,
+          "learning_rate": 0.0003,
+          "gamma": 0.99,
+          "gae_lambda": 0.95,
+          "n_epochs": 10,
+          "ent_coef": 0.003,
+          "vf_coef": 0.5,
+          "max_grad_norm": 0.5,
+          "clip_range": 0.1,
+          "target_kl": 0.03,
+          "log_std_init": -1.5,
+          "net_arch": [
+            64,
+            64
+          ],
+          "device": "cpu",
+          "verbose": 0
+        },
+        "record_episodes": true,
+        "checkpoint_interval": 100000
+      },
+      "evaluation": {
+        "episode_count": 30,
+        "seed_start": 42,
+        "deterministic": true,
+        "tail_fraction": 0.3,
+        "tilt_limit_deg": 30.0,
+        "evaluation_interval": 20000
+      },
+      "mission": {
+        "type": "hover",
+        "hover_altitude": 1.0,
+        "goto_xy": [
+          1.0,
+          0.0
+        ],
+        "takeoff_sec": 4.0,
+        "settle_sec": 2.0,
+        "goto_sec": 4.0,
+        "circle_ramp_sec": 2.0,
+        "number_of_laps": 2.0,
+        "post_hold_sec": 2.0,
+        "force_floor_start": false,
+        "circle_presets": [
+          {
+            "key": "1",
+            "description": "radius 0.5m, period 10s (slow/safe)",
+            "radius": 0.5,
+            "period": 10.0
+          },
+          {
+            "key": "2",
+            "description": "radius 1.0m, period 8s (medium)",
+            "radius": 1.0,
+            "period": 8.0
+          },
+          {
+            "key": "3",
+            "description": "radius 0.5m, period 5s (fast/aggressive)",
+            "radius": 0.5,
+            "period": 5.0
+          }
+        ],
+        "hover": {
+          "target": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "yaw_deg": 0.0,
+          "duration": 8.0
+        },
+        "circle": {
+          "center_xy": [
+            0.5,
+            0.0
+          ],
+          "radius": 0.5,
+          "period": 10.0,
+          "laps": 2.0,
+          "start_angle_deg": 0.0,
+          "direction": "ccw",
+          "ramp_sec": 2.0
+        },
+        "lissajous": {
+          "center_xy": [
+            0.0,
+            0.0
+          ],
+          "amplitude_xy": [
+            0.5,
+            0.5
+          ],
+          "frequency_ratio": [
+            1,
+            2
+          ],
+          "phase_deg": 90.0,
+          "base_period": 10.0,
+          "cycles": 2.0,
+          "ramp_sec": 2.0
+        }
+      },
+      "experiment": {
+        "name": "crazyflie-ppo",
+        "condition": "velocity-ab-common-evaluation",
+        "description": "Same nominal evaluation for fresh A/B and separate historical reference",
+        "timezone": "Asia/Seoul"
+      },
+      "source_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/eval_velocity_ab.yaml"
+    },
+    "combined_motor3_70": {
+      "version": 1,
+      "paths": {
+        "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+        "project_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2",
+        "artifact_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts",
+        "legacy_model_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/model",
+        "legacy_tensorboard_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/tb"
+      },
+      "vehicle": {
+        "mass": 0.04338,
+        "gravity": 9.81,
+        "arm_length": 0.035355,
+        "motor_direction": [
+          1.0,
+          -1.0,
+          1.0,
+          -1.0
+        ],
+        "thrust_min": 0.0,
+        "thrust_max": 0.2,
+        "torque_coefficient": 0.00594,
+        "inertia_diagonal": [
+          2.3951e-05,
+          2.3951e-05,
+          3.2347e-05
+        ],
+        "physics_hz": 500.0
+      },
+      "actuator": {
+        "enabled": true,
+        "model": "cf21b_first_order",
+        "time_constant_s": 0.05,
+        "steady_state_gain_rad_s": 2900.0,
+        "thrust_polynomial_coefficients": [
+          -0.23,
+          0.562,
+          -0.043
+        ],
+        "thrust_polynomial_omega_reference_rad_s": 2900.0,
+        "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+        "thrust_polynomial_max_ratio": 1.0,
+        "parameter_source": "paper_candidate",
+        "verification_status": "unverified",
+        "reaction_torque": {
+          "model": "legacy_ratio",
+          "legacy_ratio_m": 0.00594,
+          "polynomial_coefficients": [
+            -3.4,
+            8.7,
+            2.9
+          ],
+          "polynomial_scale": 0.0001,
+          "rotor_inertia_kg_m2": 5e-08,
+          "include_rotor_acceleration_torque": false
+        },
+        "reset_rpm_mode": "auto",
+        "randomization": {
+          "enabled": false,
+          "time_constant_s": {
+            "min": 0.04,
+            "max": 0.06
+          },
+          "steady_state_gain_rad_s": {
+            "min": 2320.0,
+            "max": 3480.0
+          }
+        }
+      },
+      "controller": {
+        "pid": {
+          "kp_position": 4.0,
+          "velocity_limit": 1.5,
+          "kp_velocity": 4.0,
+          "ki_velocity": 1.0,
+          "kd_velocity": 0.0,
+          "kp_attitude": 12.0,
+          "kp_rate": [
+            0.0008,
+            0.0008,
+            0.0006
+          ],
+          "ki_rate": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "kd_rate": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "max_tilt_deg": 35.0,
+          "max_torque": 0.02,
+          "max_force": 1.0,
+          "integrator_limit": 2.0
+        }
+      },
+      "environment": {
+        "control_mode": "e2e",
+        "policy_hz": 100.0,
+        "episode_sec": 60.0,
+        "residual_scale": [
+          0.0075,
+          0.0075,
+          0.001,
+          0.5
+        ],
+        "position_target": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "yaw_target": 0.0,
+        "position_perturbation": 0.0,
+        "attitude_perturbation_deg": 0.0,
+        "payload": {
+          "randomize": false,
+          "mass": 0.005,
+          "offset": [
+            -0.03,
+            0.0
+          ],
+          "randomization_limits": {
+            "radius_min": 0.02,
+            "radius_max": 0.1,
+            "torque_fraction": 0.5,
+            "mass_max": 0.015
+          }
+        },
+        "reward": {
+          "position_weight": 4.0,
+          "velocity_weight": 0.005,
+          "tilt_weight": 3.0,
+          "angular_velocity_weight": 0.001,
+          "yaw_weight": 1.0,
+          "action_weight": 0.0,
+          "action_rate_weight": 0.0,
+          "crash_penalty": 10.0,
+          "position_xy_weight": 10.0,
+          "position_z_weight": 6.0
+        },
+        "termination": {
+          "min_altitude": 0.2,
+          "max_altitude": 2.5,
+          "max_tilt_deg": 60.0,
+          "max_position_error": 1.5
+        },
+        "initial_pose_randomization": null,
+        "e2e_velocity": {
+          "mode": "position_error",
+          "position_gain": 4.0,
+          "max_speed": 1.5,
+          "observation_mode": "absolute",
+          "reward_mode": "absolute"
+        }
+      },
+      "training": {
+        "seed": 42,
+        "total_timesteps": 1000000,
+        "ppo": {
+          "policy": "MlpPolicy",
+          "n_steps": 2048,
+          "batch_size": 256,
+          "learning_rate": 0.0003,
+          "gamma": 0.99,
+          "gae_lambda": 0.95,
+          "n_epochs": 10,
+          "ent_coef": 0.003,
+          "vf_coef": 0.5,
+          "max_grad_norm": 0.5,
+          "clip_range": 0.1,
+          "target_kl": 0.03,
+          "log_std_init": -1.5,
+          "net_arch": [
+            64,
+            64
+          ],
+          "device": "cpu",
+          "verbose": 0
+        },
+        "record_episodes": true,
+        "checkpoint_interval": 100000
+      },
+      "evaluation": {
+        "episode_count": 30,
+        "seed_start": 42,
+        "deterministic": true,
+        "tail_fraction": 0.3,
+        "tilt_limit_deg": 30.0,
+        "evaluation_interval": 20000
+      },
+      "mission": {
+        "type": "hover",
+        "hover_altitude": 1.0,
+        "goto_xy": [
+          1.0,
+          0.0
+        ],
+        "takeoff_sec": 4.0,
+        "settle_sec": 2.0,
+        "goto_sec": 4.0,
+        "circle_ramp_sec": 2.0,
+        "number_of_laps": 2.0,
+        "post_hold_sec": 2.0,
+        "force_floor_start": false,
+        "circle_presets": [
+          {
+            "key": "1",
+            "description": "radius 0.5m, period 10s (slow/safe)",
+            "radius": 0.5,
+            "period": 10.0
+          },
+          {
+            "key": "2",
+            "description": "radius 1.0m, period 8s (medium)",
+            "radius": 1.0,
+            "period": 8.0
+          },
+          {
+            "key": "3",
+            "description": "radius 0.5m, period 5s (fast/aggressive)",
+            "radius": 0.5,
+            "period": 5.0
+          }
+        ],
+        "hover": {
+          "target": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "yaw_deg": 0.0,
+          "duration": 8.0
+        },
+        "circle": {
+          "center_xy": [
+            0.5,
+            0.0
+          ],
+          "radius": 0.5,
+          "period": 10.0,
+          "laps": 2.0,
+          "start_angle_deg": 0.0,
+          "direction": "ccw",
+          "ramp_sec": 2.0
+        },
+        "lissajous": {
+          "center_xy": [
+            0.0,
+            0.0
+          ],
+          "amplitude_xy": [
+            0.5,
+            0.5
+          ],
+          "frequency_ratio": [
+            1,
+            2
+          ],
+          "phase_deg": 90.0,
+          "base_period": 10.0,
+          "cycles": 2.0,
+          "ramp_sec": 2.0
+        }
+      },
+      "experiment": {
+        "name": "crazyflie-ppo",
+        "condition": "velocity-ab-common-evaluation",
+        "description": "Same nominal evaluation for fresh A/B and separate historical reference",
+        "timezone": "Asia/Seoul"
+      },
+      "source_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/eval_velocity_ab.yaml"
+    },
+    "motor1_70_restore": {
+      "version": 1,
+      "paths": {
+        "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+        "project_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2",
+        "artifact_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts",
+        "legacy_model_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/model",
+        "legacy_tensorboard_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/tb"
+      },
+      "vehicle": {
+        "mass": 0.04338,
+        "gravity": 9.81,
+        "arm_length": 0.035355,
+        "motor_direction": [
+          1.0,
+          -1.0,
+          1.0,
+          -1.0
+        ],
+        "thrust_min": 0.0,
+        "thrust_max": 0.2,
+        "torque_coefficient": 0.00594,
+        "inertia_diagonal": [
+          2.3951e-05,
+          2.3951e-05,
+          3.2347e-05
+        ],
+        "physics_hz": 500.0
+      },
+      "actuator": {
+        "enabled": true,
+        "model": "cf21b_first_order",
+        "time_constant_s": 0.05,
+        "steady_state_gain_rad_s": 2900.0,
+        "thrust_polynomial_coefficients": [
+          -0.23,
+          0.562,
+          -0.043
+        ],
+        "thrust_polynomial_omega_reference_rad_s": 2900.0,
+        "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+        "thrust_polynomial_max_ratio": 1.0,
+        "parameter_source": "paper_candidate",
+        "verification_status": "unverified",
+        "reaction_torque": {
+          "model": "legacy_ratio",
+          "legacy_ratio_m": 0.00594,
+          "polynomial_coefficients": [
+            -3.4,
+            8.7,
+            2.9
+          ],
+          "polynomial_scale": 0.0001,
+          "rotor_inertia_kg_m2": 5e-08,
+          "include_rotor_acceleration_torque": false
+        },
+        "reset_rpm_mode": "auto",
+        "randomization": {
+          "enabled": false,
+          "time_constant_s": {
+            "min": 0.04,
+            "max": 0.06
+          },
+          "steady_state_gain_rad_s": {
+            "min": 2320.0,
+            "max": 3480.0
+          }
+        }
+      },
+      "controller": {
+        "pid": {
+          "kp_position": 4.0,
+          "velocity_limit": 1.5,
+          "kp_velocity": 4.0,
+          "ki_velocity": 1.0,
+          "kd_velocity": 0.0,
+          "kp_attitude": 12.0,
+          "kp_rate": [
+            0.0008,
+            0.0008,
+            0.0006
+          ],
+          "ki_rate": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "kd_rate": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "max_tilt_deg": 35.0,
+          "max_torque": 0.02,
+          "max_force": 1.0,
+          "integrator_limit": 2.0
+        }
+      },
+      "environment": {
+        "control_mode": "e2e",
+        "policy_hz": 100.0,
+        "episode_sec": 60.0,
+        "residual_scale": [
+          0.0075,
+          0.0075,
+          0.001,
+          0.5
+        ],
+        "position_target": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "yaw_target": 0.0,
+        "position_perturbation": 0.0,
+        "attitude_perturbation_deg": 0.0,
+        "payload": {
+          "randomize": false,
+          "mass": 0.0,
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "randomization_limits": {
+            "radius_min": 0.02,
+            "radius_max": 0.1,
+            "torque_fraction": 0.5,
+            "mass_max": 0.015
+          }
+        },
+        "reward": {
+          "position_weight": 4.0,
+          "velocity_weight": 0.005,
+          "tilt_weight": 3.0,
+          "angular_velocity_weight": 0.001,
+          "yaw_weight": 1.0,
+          "action_weight": 0.0,
+          "action_rate_weight": 0.0,
+          "crash_penalty": 10.0,
+          "position_xy_weight": 10.0,
+          "position_z_weight": 6.0
+        },
+        "termination": {
+          "min_altitude": 0.2,
+          "max_altitude": 2.5,
+          "max_tilt_deg": 60.0,
+          "max_position_error": 1.5
+        },
+        "initial_pose_randomization": null,
+        "e2e_velocity": {
+          "mode": "position_error",
+          "position_gain": 4.0,
+          "max_speed": 1.5,
+          "observation_mode": "absolute",
+          "reward_mode": "absolute"
+        }
+      },
+      "training": {
+        "seed": 42,
+        "total_timesteps": 1000000,
+        "ppo": {
+          "policy": "MlpPolicy",
+          "n_steps": 2048,
+          "batch_size": 256,
+          "learning_rate": 0.0003,
+          "gamma": 0.99,
+          "gae_lambda": 0.95,
+          "n_epochs": 10,
+          "ent_coef": 0.003,
+          "vf_coef": 0.5,
+          "max_grad_norm": 0.5,
+          "clip_range": 0.1,
+          "target_kl": 0.03,
+          "log_std_init": -1.5,
+          "net_arch": [
+            64,
+            64
+          ],
+          "device": "cpu",
+          "verbose": 0
+        },
+        "record_episodes": true,
+        "checkpoint_interval": 100000
+      },
+      "evaluation": {
+        "episode_count": 30,
+        "seed_start": 42,
+        "deterministic": true,
+        "tail_fraction": 0.3,
+        "tilt_limit_deg": 30.0,
+        "evaluation_interval": 20000
+      },
+      "mission": {
+        "type": "hover",
+        "hover_altitude": 1.0,
+        "goto_xy": [
+          1.0,
+          0.0
+        ],
+        "takeoff_sec": 4.0,
+        "settle_sec": 2.0,
+        "goto_sec": 4.0,
+        "circle_ramp_sec": 2.0,
+        "number_of_laps": 2.0,
+        "post_hold_sec": 2.0,
+        "force_floor_start": false,
+        "circle_presets": [
+          {
+            "key": "1",
+            "description": "radius 0.5m, period 10s (slow/safe)",
+            "radius": 0.5,
+            "period": 10.0
+          },
+          {
+            "key": "2",
+            "description": "radius 1.0m, period 8s (medium)",
+            "radius": 1.0,
+            "period": 8.0
+          },
+          {
+            "key": "3",
+            "description": "radius 0.5m, period 5s (fast/aggressive)",
+            "radius": 0.5,
+            "period": 5.0
+          }
+        ],
+        "hover": {
+          "target": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "yaw_deg": 0.0,
+          "duration": 8.0
+        },
+        "circle": {
+          "center_xy": [
+            0.5,
+            0.0
+          ],
+          "radius": 0.5,
+          "period": 10.0,
+          "laps": 2.0,
+          "start_angle_deg": 0.0,
+          "direction": "ccw",
+          "ramp_sec": 2.0
+        },
+        "lissajous": {
+          "center_xy": [
+            0.0,
+            0.0
+          ],
+          "amplitude_xy": [
+            0.5,
+            0.5
+          ],
+          "frequency_ratio": [
+            1,
+            2
+          ],
+          "phase_deg": 90.0,
+          "base_period": 10.0,
+          "cycles": 2.0,
+          "ramp_sec": 2.0
+        }
+      },
+      "experiment": {
+        "name": "crazyflie-ppo",
+        "condition": "velocity-ab-common-evaluation",
+        "description": "Same nominal evaluation for fresh A/B and separate historical reference",
+        "timezone": "Asia/Seoul"
+      },
+      "source_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/eval_velocity_ab.yaml"
+    },
+    "combined_motor1_70_restore": {
+      "version": 1,
+      "paths": {
+        "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+        "project_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2",
+        "artifact_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts",
+        "legacy_model_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/model",
+        "legacy_tensorboard_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/tb"
+      },
+      "vehicle": {
+        "mass": 0.04338,
+        "gravity": 9.81,
+        "arm_length": 0.035355,
+        "motor_direction": [
+          1.0,
+          -1.0,
+          1.0,
+          -1.0
+        ],
+        "thrust_min": 0.0,
+        "thrust_max": 0.2,
+        "torque_coefficient": 0.00594,
+        "inertia_diagonal": [
+          2.3951e-05,
+          2.3951e-05,
+          3.2347e-05
+        ],
+        "physics_hz": 500.0
+      },
+      "actuator": {
+        "enabled": true,
+        "model": "cf21b_first_order",
+        "time_constant_s": 0.05,
+        "steady_state_gain_rad_s": 2900.0,
+        "thrust_polynomial_coefficients": [
+          -0.23,
+          0.562,
+          -0.043
+        ],
+        "thrust_polynomial_omega_reference_rad_s": 2900.0,
+        "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+        "thrust_polynomial_max_ratio": 1.0,
+        "parameter_source": "paper_candidate",
+        "verification_status": "unverified",
+        "reaction_torque": {
+          "model": "legacy_ratio",
+          "legacy_ratio_m": 0.00594,
+          "polynomial_coefficients": [
+            -3.4,
+            8.7,
+            2.9
+          ],
+          "polynomial_scale": 0.0001,
+          "rotor_inertia_kg_m2": 5e-08,
+          "include_rotor_acceleration_torque": false
+        },
+        "reset_rpm_mode": "auto",
+        "randomization": {
+          "enabled": false,
+          "time_constant_s": {
+            "min": 0.04,
+            "max": 0.06
+          },
+          "steady_state_gain_rad_s": {
+            "min": 2320.0,
+            "max": 3480.0
+          }
+        }
+      },
+      "controller": {
+        "pid": {
+          "kp_position": 4.0,
+          "velocity_limit": 1.5,
+          "kp_velocity": 4.0,
+          "ki_velocity": 1.0,
+          "kd_velocity": 0.0,
+          "kp_attitude": 12.0,
+          "kp_rate": [
+            0.0008,
+            0.0008,
+            0.0006
+          ],
+          "ki_rate": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "kd_rate": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "max_tilt_deg": 35.0,
+          "max_torque": 0.02,
+          "max_force": 1.0,
+          "integrator_limit": 2.0
+        }
+      },
+      "environment": {
+        "control_mode": "e2e",
+        "policy_hz": 100.0,
+        "episode_sec": 60.0,
+        "residual_scale": [
+          0.0075,
+          0.0075,
+          0.001,
+          0.5
+        ],
+        "position_target": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "yaw_target": 0.0,
+        "position_perturbation": 0.0,
+        "attitude_perturbation_deg": 0.0,
+        "payload": {
+          "randomize": false,
+          "mass": 0.005,
+          "offset": [
+            0.03,
+            0.0
+          ],
+          "randomization_limits": {
+            "radius_min": 0.02,
+            "radius_max": 0.1,
+            "torque_fraction": 0.5,
+            "mass_max": 0.015
+          }
+        },
+        "reward": {
+          "position_weight": 4.0,
+          "velocity_weight": 0.005,
+          "tilt_weight": 3.0,
+          "angular_velocity_weight": 0.001,
+          "yaw_weight": 1.0,
+          "action_weight": 0.0,
+          "action_rate_weight": 0.0,
+          "crash_penalty": 10.0,
+          "position_xy_weight": 10.0,
+          "position_z_weight": 6.0
+        },
+        "termination": {
+          "min_altitude": 0.2,
+          "max_altitude": 2.5,
+          "max_tilt_deg": 60.0,
+          "max_position_error": 1.5
+        },
+        "initial_pose_randomization": null,
+        "e2e_velocity": {
+          "mode": "position_error",
+          "position_gain": 4.0,
+          "max_speed": 1.5,
+          "observation_mode": "absolute",
+          "reward_mode": "absolute"
+        }
+      },
+      "training": {
+        "seed": 42,
+        "total_timesteps": 1000000,
+        "ppo": {
+          "policy": "MlpPolicy",
+          "n_steps": 2048,
+          "batch_size": 256,
+          "learning_rate": 0.0003,
+          "gamma": 0.99,
+          "gae_lambda": 0.95,
+          "n_epochs": 10,
+          "ent_coef": 0.003,
+          "vf_coef": 0.5,
+          "max_grad_norm": 0.5,
+          "clip_range": 0.1,
+          "target_kl": 0.03,
+          "log_std_init": -1.5,
+          "net_arch": [
+            64,
+            64
+          ],
+          "device": "cpu",
+          "verbose": 0
+        },
+        "record_episodes": true,
+        "checkpoint_interval": 100000
+      },
+      "evaluation": {
+        "episode_count": 30,
+        "seed_start": 42,
+        "deterministic": true,
+        "tail_fraction": 0.3,
+        "tilt_limit_deg": 30.0,
+        "evaluation_interval": 20000
+      },
+      "mission": {
+        "type": "hover",
+        "hover_altitude": 1.0,
+        "goto_xy": [
+          1.0,
+          0.0
+        ],
+        "takeoff_sec": 4.0,
+        "settle_sec": 2.0,
+        "goto_sec": 4.0,
+        "circle_ramp_sec": 2.0,
+        "number_of_laps": 2.0,
+        "post_hold_sec": 2.0,
+        "force_floor_start": false,
+        "circle_presets": [
+          {
+            "key": "1",
+            "description": "radius 0.5m, period 10s (slow/safe)",
+            "radius": 0.5,
+            "period": 10.0
+          },
+          {
+            "key": "2",
+            "description": "radius 1.0m, period 8s (medium)",
+            "radius": 1.0,
+            "period": 8.0
+          },
+          {
+            "key": "3",
+            "description": "radius 0.5m, period 5s (fast/aggressive)",
+            "radius": 0.5,
+            "period": 5.0
+          }
+        ],
+        "hover": {
+          "target": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "yaw_deg": 0.0,
+          "duration": 8.0
+        },
+        "circle": {
+          "center_xy": [
+            0.5,
+            0.0
+          ],
+          "radius": 0.5,
+          "period": 10.0,
+          "laps": 2.0,
+          "start_angle_deg": 0.0,
+          "direction": "ccw",
+          "ramp_sec": 2.0
+        },
+        "lissajous": {
+          "center_xy": [
+            0.0,
+            0.0
+          ],
+          "amplitude_xy": [
+            0.5,
+            0.5
+          ],
+          "frequency_ratio": [
+            1,
+            2
+          ],
+          "phase_deg": 90.0,
+          "base_period": 10.0,
+          "cycles": 2.0,
+          "ramp_sec": 2.0
+        }
+      },
+      "experiment": {
+        "name": "crazyflie-ppo",
+        "condition": "velocity-ab-common-evaluation",
+        "description": "Same nominal evaluation for fresh A/B and separate historical reference",
+        "timezone": "Asia/Seoul"
+      },
+      "source_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/eval_velocity_ab.yaml"
+    }
+  },
+  "scenarios": {
+    "nominal": {
+      "name": "nominal",
+      "mass": 0.0,
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "motor_number": null,
+      "restore": false,
+      "target_after30": null,
+      "events": []
+    },
+    "combined_motor2_70": {
+      "name": "combined_motor2_70",
+      "mass": 0.005,
+      "offset": [
+        0.0,
+        -0.03
+      ],
+      "motor_number": 2,
+      "restore": false,
+      "target_after30": null,
+      "events": [
+        {
+          "time": 5.0,
+          "kind": "fault",
+          "motor_number": 2,
+          "effectiveness": 0.7,
+          "target": null
+        }
+      ]
+    },
+    "combined_motor3_70": {
+      "name": "combined_motor3_70",
+      "mass": 0.005,
+      "offset": [
+        -0.03,
+        0.0
+      ],
+      "motor_number": 3,
+      "restore": false,
+      "target_after30": null,
+      "events": [
+        {
+          "time": 5.0,
+          "kind": "fault",
+          "motor_number": 3,
+          "effectiveness": 0.7,
+          "target": null
+        }
+      ]
+    },
+    "motor1_70_restore": {
+      "name": "motor1_70_restore",
+      "mass": 0.0,
+      "offset": [
+        0.0,
+        0.0
+      ],
+      "motor_number": 1,
+      "restore": true,
+      "target_after30": null,
+      "events": [
+        {
+          "time": 5.0,
+          "kind": "fault",
+          "motor_number": 1,
+          "effectiveness": 0.7,
+          "target": null
+        },
+        {
+          "time": 30.0,
+          "kind": "restore",
+          "motor_number": 1,
+          "effectiveness": 1.0,
+          "target": null
+        }
+      ]
+    },
+    "combined_motor1_70_restore": {
+      "name": "combined_motor1_70_restore",
+      "mass": 0.005,
+      "offset": [
+        0.03,
+        0.0
+      ],
+      "motor_number": 1,
+      "restore": true,
+      "target_after30": null,
+      "events": [
+        {
+          "time": 5.0,
+          "kind": "fault",
+          "motor_number": 1,
+          "effectiveness": 0.7,
+          "target": null
+        },
+        {
+          "time": 30.0,
+          "kind": "restore",
+          "motor_number": 1,
+          "effectiveness": 1.0,
+          "target": null
+        }
+      ]
+    }
+  },
+  "configurations": [
+    {
+      "allocator": "existing",
+      "integral": {
+        "name": "no_integral",
+        "k_xy": 0.0,
+        "k_z": 0.0,
+        "xy_limit_m": 0.4,
+        "z_limit_m": 0.15
+      }
+    },
+    {
+      "allocator": "existing",
+      "integral": {
+        "name": "integral_020",
+        "k_xy": 0.2,
+        "k_z": 0.2,
+        "xy_limit_m": 0.4,
+        "z_limit_m": 0.15
+      }
+    },
+    {
+      "allocator": "oracle",
+      "integral": {
+        "name": "no_integral",
+        "k_xy": 0.0,
+        "k_z": 0.0,
+        "xy_limit_m": 0.4,
+        "z_limit_m": 0.15
+      }
+    },
+    {
+      "allocator": "oracle",
+      "integral": {
+        "name": "integral_020",
+        "k_xy": 0.2,
+        "k_z": 0.2,
+        "xy_limit_m": 0.4,
+        "z_limit_m": 0.15
+      }
+    }
+  ],
+  "thresholds": {
+    "position_band_m": 0.005,
+    "speed_band_m_s": 0.02,
+    "minimum_settle_sec": 1.0,
+    "tail_sec": 2.0
+  },
+  "timing": {
+    "input": "state/target/xi at t AFTER scheduled event; update integral once AFTER physics using that pre-state error",
+    "post_state": "t+dt BEFORE events at that boundary; reference is the LEFT limit there",
+    "windows": "(start,end] post-state samples; t=5 and t=30 belong to preceding interval",
+    "event_snapshot": "same physical time with before/after target, command, xi and effectiveness",
+    "recovery": "event RIGHT-limit sample + (event,next_event] LEFT-limit post-states; suffix through interval end, hold>=1s",
+    "reference_velocity": "zero throughout; target jump is regulation, no velocity impulse"
+  },
+  "normalization_order": "native raw observation -> copy position error only -> existing frozen normalization/clipping -> deterministic policy",
+  "runs": {},
+  "oracle_contract": "only pinv(B0*eta) replaces B0 inverse; exact B0 inverse retained at all-ones; no division afterward",
+  "diagnostic_wrench_contract": "body-origin body-frame XML rotor wrench, excluding gravity/external torque; preserve old B0-based fields separately",
+  "static_contract": "full subtree mass/COM; XML matrix is distinguished from B0 allocator geometry; no computed trim in any rollout",
+  "limitations": [
+    "Oracle efficiency is diagnostic privileged information, not an estimator.",
+    "One deterministic rollout per fixed combination; no stability or success-probability claim."
+  ]
+}

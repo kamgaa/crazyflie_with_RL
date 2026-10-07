@@ -1,0 +1,156 @@
+[
+  {
+    "quantity": "world",
+    "frame_or_order": "right-handed Z-up, compass axes unspecified",
+    "units": "m",
+    "meaning": "gravity [0,0,-9.81]; no NED/ENU conversion",
+    "evidence": "engine opt.gravity; XML ground plane"
+  },
+  {
+    "quantity": "body",
+    "frame_or_order": "FLU in model FPV basis",
+    "units": "m",
+    "meaning": "+X forward / +Y left / +Z up",
+    "evidence": "fpv_cam optical -Z and up +Y expressed in drone frame"
+  },
+  {
+    "quantity": "initial_pose",
+    "frame_or_order": "body axes aligned with world at identity wxyz",
+    "units": "m,rad",
+    "meaning": "evaluation p=[0,0,1], q=[1,0,0,0], v/omega=0",
+    "evidence": "dr_transfer.EvaluationAdapter; FaultObserver nominal rotor reset"
+  },
+  {
+    "quantity": "position",
+    "frame_or_order": "world, drone freejoint/body origin O",
+    "units": "m",
+    "meaning": "qpos[:3], not whole-aircraft COM",
+    "evidence": "environment._read_state"
+  },
+  {
+    "quantity": "linear_velocity",
+    "frame_or_order": "world, velocity of O",
+    "units": "m/s",
+    "meaning": "qvel[:3], not COM velocity if offset and rotating",
+    "evidence": "environment._read_state; Jacobian check"
+  },
+  {
+    "quantity": "quaternion",
+    "frame_or_order": "wxyz, R_world_from_native_body",
+    "units": "unit quaternion",
+    "meaning": "normalized; canonical w>=0; body vector world=R@body",
+    "evidence": "controllers.rotmat_from_quat_wxyz; environment._read_state"
+  },
+  {
+    "quantity": "angular_velocity",
+    "frame_or_order": "native body/IMU frame",
+    "units": "rad/s",
+    "meaning": "gyro site has identity orientation; qvel[3:6] agrees locally",
+    "evidence": "imu_gyro; state_frames.json"
+  },
+  {
+    "quantity": "position_error_observation",
+    "frame_or_order": "world",
+    "units": "m",
+    "meaning": "p-p_target; integral wrapper copies only first three raw channels",
+    "evidence": "environment._obs; integral_controller.prepare_observation"
+  },
+  {
+    "quantity": "velocity_observation_AB",
+    "frame_or_order": "world absolute actual velocity",
+    "units": "m/s",
+    "meaning": "both A and B observe v; only B training reward uses velocity error",
+    "evidence": "saved training manifests; velocity_reference.py"
+  },
+  {
+    "quantity": "yaw_error",
+    "frame_or_order": "wrapped world-heading yaw of native body +X",
+    "units": "rad",
+    "meaning": "atan2(...)-yaw_target; +yaw about world +Z is CCW at level",
+    "evidence": "environment._yaw_err; quaternion definition"
+  },
+  {
+    "quantity": "integral_xi",
+    "frame_or_order": "world",
+    "units": "m",
+    "meaning": "p_cmd=p_target+xi; integrate e_true in world; no FRD rotation while world remains unchanged",
+    "evidence": "integral_controller.py"
+  },
+  {
+    "quantity": "PPO_action",
+    "frame_or_order": "[body tau_x,body tau_y,body tau_z,delta positive T]",
+    "units": "normalized [-1,1]",
+    "meaning": "scale [0.0075,0.0075,0.001,0.5] => [Nm,Nm,Nm,N]",
+    "evidence": "environment.step"
+  },
+  {
+    "quantity": "hover_bias",
+    "frame_or_order": "native body +Z force / positive T",
+    "units": "N",
+    "meaning": "nominal mass*g=0.42555780000000004; not payload or fault trim",
+    "evidence": "environment.step"
+  },
+  {
+    "quantity": "allocator_wrench",
+    "frame_or_order": "native body, moment about O; [tau_x,tau_y,tau_z,T]",
+    "units": "Nm,Nm,Nm,N",
+    "meaning": "native Fz=+T; under FRD Fz=-T; do not rename T by changing its sign",
+    "evidence": "controllers.build_allocation_matrix; site gears"
+  },
+  {
+    "quantity": "motor_command_pipeline",
+    "frame_or_order": "native array order 0..3",
+    "units": "N -> rad/s -> ESC[0,1] -> rad/s -> N",
+    "meaning": "pinv(B or B_eta) -> rotor clip[0,.20] -> inverse thrust -> ESC clip -> 0.05s lag -> nominal force/reaction -> eta once",
+    "evidence": "environment._apply_control; actuators.apply/_advance; apply_motor_effectiveness"
+  },
+  {
+    "quantity": "rotor_force_application",
+    "frame_or_order": "motor site local +Z; sites parented to drone",
+    "units": "N",
+    "meaning": "MuJoCo site transmission creates force at site and r cross F about O",
+    "evidence": "XML motor*_force gears; independent engine differential"
+  },
+  {
+    "quantity": "rotor_reaction_application",
+    "frame_or_order": "torque site local +Z times signed ctrl",
+    "units": "Nm",
+    "meaning": "free couple; coefficients +,-,+,-; scales with same eta once",
+    "evidence": "XML motor*_torque; actuators._legacy_reaction_torque"
+  },
+  {
+    "quantity": "external_torque",
+    "frame_or_order": "configured body torque rotated to world before engine application",
+    "units": "Nm",
+    "meaning": "dist_torque_body retained; no separate payload gravity torque in step",
+    "evidence": "environment.step; _set_com_bias"
+  },
+  {
+    "quantity": "legacy_wrench_log",
+    "frame_or_order": "native body, about O; last physics interval",
+    "units": "Nm,Nm,Nm,N",
+    "meaning": "B0@actual thrust with explicit reaction sum; approximate arm geometry",
+    "evidence": "environment._record_actuator_output"
+  },
+  {
+    "quantity": "oracle_XML_wrench_log",
+    "frame_or_order": "native body, about O; excludes gravity/external torque",
+    "units": "Nm,Nm,Nm,N",
+    "meaning": "actual XML site geometry and rotor reaction; more exact than legacy B0 log",
+    "evidence": "oracle_allocation.allocation_diagnostics"
+  },
+  {
+    "quantity": "freejoint_qacc",
+    "frame_or_order": "world origin translation + local-body angular tangent acceleration",
+    "units": "m/s2,rad/s2",
+    "meaning": "not directly whole COM acceleration; audit uses subtree COM Jacobian at zero velocities",
+    "evidence": "MuJoCo docs + isolated nonzero-COM tests"
+  },
+  {
+    "quantity": "rotor_visual_joint",
+    "frame_or_order": "prop* hinge local +Z, independent of Python RPM state",
+    "units": "rad,rad/s",
+    "meaning": "no hinge motor actuators; no code prescribing alternating spin; passive relative joint motion is not commanded RPM",
+    "evidence": "XML eight site actuators; source scan; visual_state.json"
+  }
+]

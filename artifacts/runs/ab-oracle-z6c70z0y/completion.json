@@ -1,0 +1,9 @@
+{
+  "status": "failed",
+  "expected_rollouts": 40,
+  "completed_rollouts": null,
+  "flights_completed": null,
+  "error": "TypeError: Object of type ndarray is not JSON serializable",
+  "protected_files_unchanged": null,
+  "policy_parameters_unchanged": null
+}

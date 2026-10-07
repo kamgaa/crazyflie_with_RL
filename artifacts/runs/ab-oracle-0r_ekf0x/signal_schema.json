@@ -1,0 +1,28 @@
+{
+  "wrench_order": [
+    "Mx_Nm",
+    "My_Nm",
+    "Mz_Nm",
+    "Fz_N"
+  ],
+  "wrench_frame_and_origin": "drone body frame, body origin; rotor wrench excludes gravity and externally applied torque",
+  "geometry": "B0 allocator uses 0.035355 m XY offsets; physical XML sites use 0.03536 m; neither changed",
+  "time": "policy pre-state / raw observation / action / xi_t, after current boundary event",
+  "time_post": "post physical state and true-reference errors, before any event at the next boundary",
+  "motor_sample_time": "last physics interval start, after advancing first-order rotor model and before applying force to engine",
+  "motor_sample_time_post": "end of that physics interval",
+  "motor_thrust_unclipped": "N, active allocator pseudoinverse result before clipping",
+  "baseline_unclipped_motor_command": "N, B0 pseudoinverse times desired wrench, diagnostic only",
+  "allocator_unclipped_motor_command": "N, active pseudoinverse times desired wrench",
+  "allocator_clipped_motor_command": "N, rotor thrust commands clipped to existing allocator limits",
+  "motor_command": "dimensionless ESC input, [0,1]",
+  "motor_omega": "rad/s, actuator internal rotor speed",
+  "motor_thrust_nominal": "N, after actuator lag, before efficiency",
+  "motor_thrust_actual": "N, after exactly one plant efficiency multiplication",
+  "allocation_residual_xml": "desired wrench - B_xml @ (plant_eta * final clipped thrust commands)",
+  "actuator_response_residual_xml": "static predicted rotor wrench - actual rotor wrench after lag",
+  "allocation_residual_b0": "same static diagnostic using preserved allocator geometry, to distinguish tiny XML rounding discrepancy",
+  "limits": "clipping and boundary dwell use every physics interval; integral freezes once per control interval if any constituent interval hits a boundary",
+  "event_recovery": "right-limit event sample plus subsequent post states through next event left limit; 5mm/0.02m/s for >=1s through interval end",
+  "partial": "unobserved fixed windows null; observed pre-termination metrics stored separately"
+}

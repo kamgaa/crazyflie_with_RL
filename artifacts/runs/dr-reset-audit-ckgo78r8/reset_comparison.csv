@@ -1,0 +1,3 @@
+display_name,sampler,bound_m,theoretical_norm_max_m,theoretical_norm_rms_m,sample_norm_max_m,sample_norm_mean_m,sample_norm_rms_m,sample_norm_p50_m,sample_norm_p95_m,attitude_randomized,training_seed,checkpoint_num_timesteps
+baseline (legacy position reset),legacy,0.05,0.08660254037844387,0.05,0.08501975941117146,0.047991503420085804,0.04996930344796235,0.049284546558132705,0.06911064654956264,False,,980000
+POS-only DR (new reset),new,0.15,0.15,0.08660254037844387,0.14996666846943557,0.07474856272330276,0.08641349908394606,0.07529037338182051,0.14263466684522566,False,,980000

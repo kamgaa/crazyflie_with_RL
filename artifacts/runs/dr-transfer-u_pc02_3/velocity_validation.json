@@ -1,0 +1,50 @@
+{
+  "preserved_before_and_after_sha256": {
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-x4ib_6hk/summary.json": "82926bfae021a77b766ae8879862301985dc24f4a4722479be17c9cb14161558",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-x4ib_6hk/circle-air-comparison.png": "81d8aece3b94d180a0d568c4e9a11c9ef92177103a87b9648381d96cd3d1c7ae",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-x4ib_6hk/circle-air-reference.npz": "a1c526b73b349cb898bb994236f137e16aa937611e4e96f5d399b63116122777",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-x4ib_6hk/manifest.json": "9de54fd507b045253c84ee69ffcf62f81f085c9dd7a171a9a4f74043ed22cc70",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-x4ib_6hk/circle-air-posdr.csv": "3ad6ef7ff006f4aaf8bfdedff2795e39ea08e3129619f896119deffca322e42a",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-x4ib_6hk/circle-air-baseline.csv": "1e554e39df58efd4e62f4359fdebd719502cce37940c804895991ac560303aa1",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-x4ib_6hk/summary.csv": "275ec2648f842797c3823c219cc0ae64a7c98a1becdfbf61034df3f0b6bb4b54",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/step-050-posdr.csv": "8d310f75ec1fdc72574c32cb62013e7c694705465bb4c4c969323e32f5e5d797",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/step-005-baseline.csv": "f2230cb9b177a733e846abdcf3e1445c8bff7df885b5a5bd618435efddd0f7ea",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/summary.json": "a3371f956e75b4922308a75848858749eec7eea6a3ebe743d3facafe8e8d2bc8",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/circle-reference.npz": "5ab4e74dc333856be06895538c42685b202e52c874a14228e4e037d2a4d90e1b",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/step-050-comparison.png": "b56d07615c9ed534fcf62d521a8e4488cb75a7aa9b19a648480a5d1a1990fd72",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/circle-baseline.csv": "a6a60843e38ebcad217580c5210c5c990949b5a15955ab00d802656f25ba5c17",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/step-005-reference.npz": "1e8297094567df069ed88c30ab4b2549fb46904c584c5574bd8320c3872076fc",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/circle-comparison.png": "b2db71f46eca05c17804dad675cfd83f805bedfda3e5297b8ce34787acae58a9",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/step-050-baseline.csv": "b026d01e62806c1c3bb0a0653b99d7e95462e4a2b6ca27918f58485ec9131940",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/circle-posdr.csv": "88458282f4c3b71ba856dd0f7df64136b261bf0e2c55ff4e2d854ccbec754054",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/step-005-posdr.csv": "4ff070c85b9c4bc620948978fd93b1691b7fc406a7ee625d53fde97b480f55af",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/manifest.json": "59d01766547572425366f6c866a428789c8b3144e2b0d55596a4af6286d88248",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/summary.csv": "8cc8c7f798065fb2b5686df1cc06fafd4f22fd27e1e94aeb75039676824f46b6",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/step-005-comparison.png": "6363d87b03f57a3cb72cf66f2a759b42a406be8474c034db0907384c906d8cdd",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/step-050-reference.npz": "b4eff5c3191bcc857693b8dea2f166416226911297e8a52729dc7b4bb939be07",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_nominal_seedunset_20260928-120033/models/ppo_e2e_hover_nominal_seedunset_best_20260928-120033-13.zip": "c054ba76c7813256a84e038040b905d23c7962c1063de3f464cc27365169108b",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_position-only-dr_seedunset_20260929-132036/models/ppo_e2e_hover_position-only-dr_seedunset_best_20260929-132036-04.zip": "a9c4521a7249c1049107f3d8aeb43c4c0b80111782493b014a7fd53db0a7d925"
+  },
+  "all_preserved_hashes_unchanged": true,
+  "absolute_common_csv_columns_exactly_reproduce_previous_runs": true,
+  "absolute_existing_summary_metrics_exactly_reproduce_previous_runs": true,
+  "step_005_modes_all_columns_equal_except_observation_velocity_mode": true,
+  "all_four_initial_snapshots_equal_per_case": true,
+  "position_and_velocity_reference_sequences_equal": true,
+  "raw_policy_observations_match_declared_transform_every_step": true,
+  "focused_unit_and_regression_tests": {
+    "passed": 68,
+    "deselected_unneeded_checkpoint_cases": 2
+  },
+  "actual_output_validation_tests": {
+    "passed": 1,
+    "test": "tests/test_velocity_input.py::test_saved_actual_comparison"
+  },
+  "dry_run_combinations": 8,
+  "source_hashes_match_evaluation": true,
+  "notes": [
+    "reset distribution audit not rerun",
+    "not a full repository test run",
+    "POS-only DR error mode terminated in HOLD at 12.16 s; no termination limits changed"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "verified_rollouts": 14,
+  "control_samples": 28000,
+  "physics_samples": 140000,
+  "maximum_csv_metric_difference_m": 0.0,
+  "maximum_bias_variance_identity_residual_m2": 1.7824283715661693e-16,
+  "nominal_first8s_matches_prior_ab_evaluation": true,
+  "protected_files_checked": 451,
+  "protected_files_unchanged": true,
+  "allocator_clipping_intervals": {
+    "nominal-A_best": [],
+    "nominal-B_best": [],
+    "centered_payload-A_best": [],
+    "centered_payload-B_best": [],
+    "offset_payload-A_best": [],
+    "offset_payload-B_best": [],
+    "motor_80-A_best": [],
+    "motor_80-B_best": [],
+    "motor_70-A_best": [],
+    "motor_70-B_best": [],
+    "combined_80-A_best": [],
+    "combined_80-B_best": [],
+    "combined_70-A_best": [
+      [
+        5.049999999999666,
+        5.269999999999642
+      ],
+      [
+        5.439999999999623,
+        5.73999999999959
+      ]
+    ],
+    "combined_70-B_best": [
+      [
+        5.069999999999664,
+        5.1899999999996504
+      ],
+      [
+        5.489999999999617,
+        5.659999999999599
+      ]
+    ]
+  }
+}

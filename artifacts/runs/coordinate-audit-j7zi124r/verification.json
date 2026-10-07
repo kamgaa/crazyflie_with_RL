@@ -1,0 +1,15 @@
+{
+  "pre_task_protected_files": 1371,
+  "modified_pre_task_files": [],
+  "existing_tracked_diff_unchanged": true,
+  "focused_tests_passed": 29,
+  "full_repository_tests_run": false,
+  "learning_optimizer_guard": "PPO.learn, PPO.train, torch.optim.Adam.step patched to raise during audit inference",
+  "added_files": {
+    "audit_coordinate_contracts.py": "ad83da37d967fd830e10eb948ca5a045b4054722f0201097579ca13d186a319f",
+    "tests/test_coordinate_audit.py": "f1206995aae410712ad516118fee867970aa82565d046a3925ec4a1b38c341ae"
+  },
+  "production_adapter_connected": false,
+  "physics_allocator_policy_config_modified": false,
+  "commit_push": false
+}

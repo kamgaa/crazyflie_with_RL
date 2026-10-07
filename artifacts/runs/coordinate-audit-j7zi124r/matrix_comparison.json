@@ -1,0 +1,254 @@
+{
+  "wrench_order": [
+    "tau_x_Nm",
+    "tau_y_Nm",
+    "tau_z_Nm",
+    "positive_total_thrust_N"
+  ],
+  "moment_origin": "drone body origin O for every matrix in this comparison",
+  "allocator_native": [
+    [
+      -0.035355,
+      -0.035355,
+      0.035355,
+      0.035355
+    ],
+    [
+      -0.035355,
+      0.035355,
+      0.035355,
+      -0.035355
+    ],
+    [
+      0.00594,
+      -0.00594,
+      0.00594,
+      -0.00594
+    ],
+    [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  ],
+  "physical_native_independent": [
+    [
+      -0.03536,
+      -0.03536,
+      0.03536,
+      0.03536
+    ],
+    [
+      -0.03536,
+      0.03536,
+      0.03536,
+      -0.03536
+    ],
+    [
+      0.00594,
+      -0.00594,
+      0.00594,
+      -0.00594
+    ],
+    [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  ],
+  "physical_user_frd": [
+    [
+      0.03536,
+      0.03536,
+      -0.03536,
+      -0.03536
+    ],
+    [
+      0.03536,
+      -0.03536,
+      -0.03536,
+      0.03536
+    ],
+    [
+      0.00594,
+      -0.00594,
+      0.00594,
+      -0.00594
+    ],
+    [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  ],
+  "allocator_user_frd": [
+    [
+      0.035355,
+      0.035355,
+      -0.035355,
+      -0.035355
+    ],
+    [
+      0.035355,
+      -0.035355,
+      -0.035355,
+      0.035355
+    ],
+    [
+      0.00594,
+      -0.00594,
+      0.00594,
+      -0.00594
+    ],
+    [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  ],
+  "user_target": [
+    [
+      0.03536,
+      0.03536,
+      -0.03536,
+      -0.03536
+    ],
+    [
+      0.03536,
+      -0.03536,
+      -0.03536,
+      0.03536
+    ],
+    [
+      -0.00594,
+      0.00594,
+      -0.00594,
+      0.00594
+    ],
+    [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  ],
+  "allocator_minus_physical_native": [
+    [
+      5.0000000000050004e-06,
+      5.0000000000050004e-06,
+      -5.0000000000050004e-06,
+      -5.0000000000050004e-06
+    ],
+    [
+      5.0000000000050004e-06,
+      -5.0000000000050004e-06,
+      -5.0000000000050004e-06,
+      5.0000000000050004e-06
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "physical_user_minus_target": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.01188,
+      -0.01188,
+      0.01188,
+      -0.01188
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "source_axis_arm_m": 0.035355,
+  "xml_axis_arm_m": 0.03536,
+  "xml_radial_arm_m": 0.05000659156551265,
+  "axis_arm_difference_m": 5.0000000000050004e-06,
+  "axis_arm_relative_difference_percent": 0.014142271248784866,
+  "torque_per_thrust_m": 0.00594,
+  "native_positive_T_equals_body_Fz": true,
+  "frd_body_Fz_equals_negative_T": true,
+  "physical_user_signed_Fz": [
+    [
+      0.03536,
+      0.03536,
+      -0.03536,
+      -0.03536
+    ],
+    [
+      0.03536,
+      -0.03536,
+      -0.03536,
+      0.03536
+    ],
+    [
+      0.00594,
+      -0.00594,
+      0.00594,
+      -0.00594
+    ],
+    [
+      -1.0,
+      -1.0,
+      -1.0,
+      -1.0
+    ]
+  ],
+  "translation_only_transform": "world axes untouched; body vectors S, R_world_from_FRD=R_world_from_native@S.T",
+  "matrix_identity": "B_user = blockdiag(S,1) @ B_native @ P",
+  "motor_command_equivalence_max_n": 2.3314683517128287e-15,
+  "oracle_equivalence_max_n": 1.6653345369377348e-15,
+  "offline_samples": 256,
+  "naive_target_allocator_only": {
+    "desired_frd_wrench": [
+      0.0,
+      0.0,
+      0.0001,
+      0.4
+    ],
+    "hypothetical_user_motor_commands_n": [
+      0.09579124579124579,
+      0.10420875420875422,
+      0.0957912457912458,
+      0.10420875420875421
+    ],
+    "actual_existing_plant_frd_wrench": [
+      0.0,
+      -8.673617379884035e-19,
+      -9.999999999999983e-05,
+      0.4
+    ],
+    "note": "algebra only; never connected to plant or evaluation; positive desired yaw would become negative yaw"
+  },
+  "internal_sign_and_order_match": true,
+  "target_roll_pitch_T_match": true,
+  "target_yaw_reversed": true
+}

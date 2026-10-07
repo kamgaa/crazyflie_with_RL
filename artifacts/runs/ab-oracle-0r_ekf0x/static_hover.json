@@ -1,0 +1,4353 @@
+[
+  {
+    "total_mass_kg": 0.043384000000000006,
+    "composite_com_body_m": [
+      0.0,
+      0.0,
+      1.1063986724568764e-06
+    ],
+    "body_mass_kg": 0.04338,
+    "body_ipos_m": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "descendant_bodies": [
+      {
+        "name": "drone",
+        "mass_kg": 0.04338,
+        "com_body_m": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "prop0",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          0.03536,
+          -0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop1",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          -0.03536,
+          -0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop2",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          -0.03536,
+          0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop3",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          0.03536,
+          0.03536,
+          0.01200000000000001
+        ]
+      }
+    ],
+    "efficiency": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "rotors": [
+      {
+        "number": 1,
+        "allocator_index": 0,
+        "force_actuator": "motor0_force",
+        "torque_actuator": "motor0_torque",
+        "site": "motor0",
+        "position_body_m": [
+          0.03536,
+          -0.03536,
+          0.0
+        ],
+        "motor_direction": 1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 2,
+        "allocator_index": 1,
+        "force_actuator": "motor1_force",
+        "torque_actuator": "motor1_torque",
+        "site": "motor1",
+        "position_body_m": [
+          -0.03536,
+          -0.03536,
+          0.0
+        ],
+        "motor_direction": -1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 3,
+        "allocator_index": 2,
+        "force_actuator": "motor2_force",
+        "torque_actuator": "motor2_torque",
+        "site": "motor2",
+        "position_body_m": [
+          -0.03536,
+          0.03536,
+          0.0
+        ],
+        "motor_direction": 1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 4,
+        "allocator_index": 3,
+        "force_actuator": "motor3_force",
+        "torque_actuator": "motor3_torque",
+        "site": "motor3",
+        "position_body_m": [
+          0.03536,
+          0.03536,
+          0.0
+        ],
+        "motor_direction": -1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    ],
+    "actuator": {
+      "enabled": true,
+      "model": "cf21b_first_order",
+      "parameter_source": "paper_candidate",
+      "verification_status": "unverified",
+      "thrust_saturation_n": [
+        0.0,
+        0.2
+      ],
+      "motor_command_saturation": [
+        0.0,
+        1.0
+      ],
+      "randomization_enabled": false,
+      "reset_rpm_mode": "auto",
+      "reaction_torque_model": "legacy_ratio",
+      "legacy_ratio_m": 0.00594,
+      "nominal_time_constant_s": [
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "nominal_steady_state_gain_rad_s": [
+        2900.0,
+        2900.0,
+        2900.0,
+        2900.0
+      ],
+      "sampled_time_constant_s": [
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "sampled_steady_state_gain_rad_s": [
+        2900.0,
+        2900.0,
+        2900.0,
+        2900.0
+      ],
+      "thrust_polynomial_coefficients": [
+        -0.23,
+        0.562,
+        -0.043
+      ],
+      "thrust_omega_reference_rad_s": 2900.0,
+      "positive_branch_min_ratio": 0.0791,
+      "max_ratio": 1.0,
+      "reaction_torque_coefficients": [
+        -3.4,
+        8.7,
+        2.9
+      ],
+      "reaction_torque_scale": 0.0001,
+      "rotor_inertia_kg_m2": 5e-08,
+      "include_rotor_acceleration_torque": false
+    },
+    "moment_reference": "drone body origin, body frame; wrench order [Mx,My,Mz,Fz], units [Nm,Nm,Nm,N]",
+    "B0_allocator": [
+      [
+        -0.035355,
+        -0.035355,
+        0.035355,
+        0.035355
+      ],
+      [
+        -0.035355,
+        0.035355,
+        0.035355,
+        -0.035355
+      ],
+      [
+        0.00594,
+        -0.00594,
+        0.00594,
+        -0.00594
+      ],
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "B0_plant_xml": [
+      [
+        -0.03536,
+        -0.03536,
+        0.03536,
+        0.03536
+      ],
+      [
+        -0.03536,
+        0.03536,
+        0.03536,
+        -0.03536
+      ],
+      [
+        0.00594,
+        -0.00594,
+        0.00594,
+        -0.00594
+      ],
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "matrix_difference": [
+      [
+        -5.0000000000050004e-06,
+        -5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        5.0000000000050004e-06
+      ],
+      [
+        -5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        -5.0000000000050004e-06
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "gravity_force_body_n": [
+      0.0,
+      0.0,
+      -0.4255970400000001
+    ],
+    "gravity_moment_about_body_origin_nm": [
+      -0.0,
+      0.0,
+      0.0
+    ],
+    "required_rotor_wrench": [
+      0.0,
+      -0.0,
+      -0.0,
+      0.4255970400000001
+    ],
+    "required_actual_thrust_n": [
+      0.10639926000000005,
+      0.10639926000000002,
+      0.10639926000000002,
+      0.10639926000000002
+    ],
+    "required_nominal_thrust_n": [
+      0.10639926000000005,
+      0.10639926000000002,
+      0.10639926000000002,
+      0.10639926000000002
+    ],
+    "nominal_lower_n": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "nominal_upper_n": [
+      0.2,
+      0.2,
+      0.2,
+      0.2
+    ],
+    "nominal_lower_margin_n": [
+      0.10639926000000005,
+      0.10639926000000002,
+      0.10639926000000002,
+      0.10639926000000002
+    ],
+    "allocator_command_bounds_n": [
+      0.0,
+      0.2
+    ],
+    "esc_input_bounds": [
+      0.0,
+      1.0
+    ],
+    "steady_omega_at_esc1_rad_s": [
+      2900.0,
+      2900.0,
+      2900.0,
+      2900.0
+    ],
+    "thrust_mapping_max_speed_ratio": 1.0,
+    "thrust_mapping_reference_speed_rad_s": 2900.0,
+    "nominal_upper_margin_n": [
+      0.09360073999999996,
+      0.09360073999999999,
+      0.09360073999999999,
+      0.09360073999999999
+    ],
+    "nominal_upper_utilization": [
+      0.5319963000000002,
+      0.5319963000000001,
+      0.5319963000000001,
+      0.5319963000000001
+    ],
+    "actual_upper_n": [
+      0.2,
+      0.2,
+      0.2,
+      0.2
+    ],
+    "actual_upper_margin_n": [
+      0.09360073999999996,
+      0.09360073999999999,
+      0.09360073999999999,
+      0.09360073999999999
+    ],
+    "bottleneck_motor": 1,
+    "feasible_static_equilibrium": true,
+    "nominal_command_using_allocator_geometry": [
+      0.10639926000000004,
+      0.10639926000000001,
+      0.10639926000000004,
+      0.10639926000000001
+    ],
+    "allocator_geometry_equilibrium_residual": [
+      -1.3779753587073162e-19,
+      1.140754157802349e-19,
+      4.336808689942018e-19,
+      0.0
+    ],
+    "required_esc": [
+      0.5453791952998233,
+      0.5453791952998233,
+      0.5453791952998233,
+      0.5453791952998233
+    ],
+    "required_omega_rad_s": [
+      1581.5996663694875,
+      1581.5996663694875,
+      1581.5996663694875,
+      1581.5996663694875
+    ],
+    "required_rpm": [
+      15103.164293711789,
+      15103.164293711789,
+      15103.164293711789,
+      15103.164293711789
+    ],
+    "force_balance_residual_n": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "moment_balance_residual_nm": [
+      -8.673617379884035e-19,
+      -8.673617379884035e-19,
+      2.168404344971009e-19
+    ],
+    "policy_action_scale": [
+      0.0075,
+      0.0075,
+      0.001,
+      0.5
+    ],
+    "policy_hover_bias": [
+      0.0,
+      0.0,
+      0.0,
+      0.42555780000000004
+    ],
+    "physical_wrench_action": [
+      0.0,
+      -0.0,
+      -0.0,
+      7.848000000010291e-05
+    ],
+    "physical_wrench_in_policy_range": true,
+    "equilibrium_commands": {
+      "existing": {
+        "required_policy_wrench": [
+          -8.673617379884035e-19,
+          -8.673617379884035e-19,
+          2.168404344971009e-19,
+          0.4255970400000001
+        ],
+        "required_action": [
+          -1.1564823173178715e-16,
+          -1.1564823173178715e-16,
+          2.1684043449710089e-16,
+          7.848000000010291e-05
+        ],
+        "expressible": true
+      },
+      "oracle": {
+        "required_policy_wrench": [
+          -8.673617379884035e-19,
+          -8.673617379884035e-19,
+          2.168404344971009e-19,
+          0.4255970400000001
+        ],
+        "required_action": [
+          -1.1564823173178715e-16,
+          -1.1564823173178715e-16,
+          2.1684043449710089e-16,
+          7.848000000010291e-05
+        ],
+        "expressible": true
+      }
+    },
+    "probe_uses": "isolated MjData with steady clipped/inverted actuator outputs, zero external torque",
+    "probe_linear_acceleration_m_s2": [
+      0.0,
+      0.0,
+      -2.942920151020952e-14
+    ],
+    "probe_angular_acceleration_rad_s2": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "probe_all_generalized_acceleration": [
+      0.0,
+      0.0,
+      -2.942920151020952e-14,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "external_torque_applied_nm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "id": "static_00",
+    "payload_mass_kg": 0.0,
+    "payload_offset_body_xy_m": [
+      0.0,
+      0.0
+    ],
+    "scenario_stages": [
+      {
+        "scenario": "nominal",
+        "stage": "initial",
+        "time_s": 0.0
+      },
+      {
+        "scenario": "motor1_70_restore",
+        "stage": "initial",
+        "time_s": 0.0
+      },
+      {
+        "scenario": "motor1_70_restore",
+        "stage": "restore",
+        "time_s": 30.0
+      }
+    ]
+  },
+  {
+    "total_mass_kg": 0.048384,
+    "composite_com_body_m": [
+      0.0,
+      -0.003100198412698412,
+      9.920634920224103e-07
+    ],
+    "body_mass_kg": 0.04838,
+    "body_ipos_m": [
+      0.0,
+      -0.0031004547333608927,
+      0.0
+    ],
+    "descendant_bodies": [
+      {
+        "name": "drone",
+        "mass_kg": 0.04838,
+        "com_body_m": [
+          0.0,
+          -0.0031004547333608927,
+          0.0
+        ]
+      },
+      {
+        "name": "prop0",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          0.03536,
+          -0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop1",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          -0.03536,
+          -0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop2",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          -0.03536,
+          0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop3",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          0.03536,
+          0.03536,
+          0.01200000000000001
+        ]
+      }
+    ],
+    "efficiency": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "rotors": [
+      {
+        "number": 1,
+        "allocator_index": 0,
+        "force_actuator": "motor0_force",
+        "torque_actuator": "motor0_torque",
+        "site": "motor0",
+        "position_body_m": [
+          0.03536,
+          -0.03536,
+          0.0
+        ],
+        "motor_direction": 1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 2,
+        "allocator_index": 1,
+        "force_actuator": "motor1_force",
+        "torque_actuator": "motor1_torque",
+        "site": "motor1",
+        "position_body_m": [
+          -0.03536,
+          -0.03536,
+          0.0
+        ],
+        "motor_direction": -1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 3,
+        "allocator_index": 2,
+        "force_actuator": "motor2_force",
+        "torque_actuator": "motor2_torque",
+        "site": "motor2",
+        "position_body_m": [
+          -0.03536,
+          0.03536,
+          0.0
+        ],
+        "motor_direction": 1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 4,
+        "allocator_index": 3,
+        "force_actuator": "motor3_force",
+        "torque_actuator": "motor3_torque",
+        "site": "motor3",
+        "position_body_m": [
+          0.03536,
+          0.03536,
+          0.0
+        ],
+        "motor_direction": -1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    ],
+    "actuator": {
+      "enabled": true,
+      "model": "cf21b_first_order",
+      "parameter_source": "paper_candidate",
+      "verification_status": "unverified",
+      "thrust_saturation_n": [
+        0.0,
+        0.2
+      ],
+      "motor_command_saturation": [
+        0.0,
+        1.0
+      ],
+      "randomization_enabled": false,
+      "reset_rpm_mode": "auto",
+      "reaction_torque_model": "legacy_ratio",
+      "legacy_ratio_m": 0.00594,
+      "nominal_time_constant_s": [
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "nominal_steady_state_gain_rad_s": [
+        2900.0,
+        2900.0,
+        2900.0,
+        2900.0
+      ],
+      "sampled_time_constant_s": [
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "sampled_steady_state_gain_rad_s": [
+        2900.0,
+        2900.0,
+        2900.0,
+        2900.0
+      ],
+      "thrust_polynomial_coefficients": [
+        -0.23,
+        0.562,
+        -0.043
+      ],
+      "thrust_omega_reference_rad_s": 2900.0,
+      "positive_branch_min_ratio": 0.0791,
+      "max_ratio": 1.0,
+      "reaction_torque_coefficients": [
+        -3.4,
+        8.7,
+        2.9
+      ],
+      "reaction_torque_scale": 0.0001,
+      "rotor_inertia_kg_m2": 5e-08,
+      "include_rotor_acceleration_torque": false
+    },
+    "moment_reference": "drone body origin, body frame; wrench order [Mx,My,Mz,Fz], units [Nm,Nm,Nm,N]",
+    "B0_allocator": [
+      [
+        -0.035355,
+        -0.035355,
+        0.035355,
+        0.035355
+      ],
+      [
+        -0.035355,
+        0.035355,
+        0.035355,
+        -0.035355
+      ],
+      [
+        0.00594,
+        -0.00594,
+        0.00594,
+        -0.00594
+      ],
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "B0_plant_xml": [
+      [
+        -0.03536,
+        -0.03536,
+        0.03536,
+        0.03536
+      ],
+      [
+        -0.03536,
+        0.03536,
+        0.03536,
+        -0.03536
+      ],
+      [
+        0.00594,
+        -0.00594,
+        0.00594,
+        -0.00594
+      ],
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "matrix_difference": [
+      [
+        -5.0000000000050004e-06,
+        -5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        5.0000000000050004e-06
+      ],
+      [
+        -5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        -5.0000000000050004e-06
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "gravity_force_body_n": [
+      0.0,
+      0.0,
+      -0.4746470400000001
+    ],
+    "gravity_moment_about_body_origin_nm": [
+      0.0014715,
+      0.0,
+      0.0
+    ],
+    "required_rotor_wrench": [
+      -0.0014715,
+      -0.0,
+      -0.0,
+      0.4746470400000001
+    ],
+    "required_actual_thrust_n": [
+      0.12906546475113126,
+      0.12906546475113126,
+      0.10825805524886879,
+      0.10825805524886879
+    ],
+    "required_nominal_thrust_n": [
+      0.12906546475113126,
+      0.12906546475113126,
+      0.10825805524886879,
+      0.10825805524886879
+    ],
+    "nominal_lower_n": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "nominal_upper_n": [
+      0.2,
+      0.2,
+      0.2,
+      0.2
+    ],
+    "nominal_lower_margin_n": [
+      0.12906546475113126,
+      0.12906546475113126,
+      0.10825805524886879,
+      0.10825805524886879
+    ],
+    "allocator_command_bounds_n": [
+      0.0,
+      0.2
+    ],
+    "esc_input_bounds": [
+      0.0,
+      1.0
+    ],
+    "steady_omega_at_esc1_rad_s": [
+      2900.0,
+      2900.0,
+      2900.0,
+      2900.0
+    ],
+    "thrust_mapping_max_speed_ratio": 1.0,
+    "thrust_mapping_reference_speed_rad_s": 2900.0,
+    "nominal_upper_margin_n": [
+      0.07093453524886875,
+      0.07093453524886875,
+      0.09174194475113122,
+      0.09174194475113122
+    ],
+    "nominal_upper_utilization": [
+      0.6453273237556563,
+      0.6453273237556563,
+      0.5412902762443439,
+      0.5412902762443439
+    ],
+    "actual_upper_n": [
+      0.2,
+      0.2,
+      0.2,
+      0.2
+    ],
+    "actual_upper_margin_n": [
+      0.07093453524886875,
+      0.07093453524886875,
+      0.09174194475113122,
+      0.09174194475113122
+    ],
+    "bottleneck_motor": 1,
+    "feasible_static_equilibrium": true,
+    "nominal_command_using_allocator_geometry": [
+      0.12906693607127706,
+      0.12906693607127706,
+      0.108256583928723,
+      0.10825658392872295
+    ],
+    "allocator_geometry_equilibrium_residual": [
+      -2.081035214240943e-07,
+      1.951563910473908e-18,
+      4.336808689942018e-19,
+      0.0
+    ],
+    "required_esc": [
+      0.6057977408153644,
+      0.6057977408153644,
+      0.5504618769049898,
+      0.5504618769049898
+    ],
+    "required_omega_rad_s": [
+      1756.8134483645567,
+      1756.8134483645567,
+      1596.3394430244705,
+      1596.3394430244705
+    ],
+    "required_rpm": [
+      16776.33266385225,
+      16776.33266385225,
+      15243.918792594452,
+      15243.918792594452
+    ],
+    "force_balance_residual_n": [
+      0.0,
+      0.0,
+      5.551115123125783e-17
+    ],
+    "moment_balance_residual_nm": [
+      -6.505213034913027e-19,
+      0.0,
+      0.0
+    ],
+    "policy_action_scale": [
+      0.0075,
+      0.0075,
+      0.001,
+      0.5
+    ],
+    "policy_hover_bias": [
+      0.0,
+      0.0,
+      0.0,
+      0.42555780000000004
+    ],
+    "physical_wrench_action": [
+      -0.19619999999999999,
+      -0.0,
+      -0.0,
+      0.09817848000000007
+    ],
+    "physical_wrench_in_policy_range": true,
+    "equilibrium_commands": {
+      "existing": {
+        "required_policy_wrench": [
+          -0.0014712919259049781,
+          0.0,
+          0.0,
+          0.47464704000000013
+        ],
+        "required_action": [
+          -0.1961722567873304,
+          0.0,
+          0.0,
+          0.09817848000000018
+        ],
+        "expressible": true
+      },
+      "oracle": {
+        "required_policy_wrench": [
+          -0.0014712919259049781,
+          0.0,
+          0.0,
+          0.47464704000000013
+        ],
+        "required_action": [
+          -0.1961722567873304,
+          0.0,
+          0.0,
+          0.09817848000000018
+        ],
+        "expressible": true
+      }
+    },
+    "probe_uses": "isolated MjData with steady clipped/inverted actuator outputs, zero external torque",
+    "probe_linear_acceleration_m_s2": [
+      7.084239078604773e-35,
+      1.870885759481708e-18,
+      -7.921128636356229e-15
+    ],
+    "probe_angular_acceleration_rad_s2": [
+      1.8858528455575604e-12,
+      -7.05081513111135e-29,
+      -2.8831315239121604e-34
+    ],
+    "probe_all_generalized_acceleration": [
+      7.084239078604773e-35,
+      1.870885759481708e-18,
+      -7.921128636356229e-15,
+      1.8858528455575604e-12,
+      -7.05081513111135e-29,
+      -2.8831315239121604e-34,
+      9.749659531147568e-29,
+      -9.749601868517091e-29,
+      -9.7496018685171e-29,
+      9.749659531147577e-29
+    ],
+    "external_torque_applied_nm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "id": "static_01",
+    "payload_mass_kg": 0.005,
+    "payload_offset_body_xy_m": [
+      0.0,
+      -0.03
+    ],
+    "scenario_stages": [
+      {
+        "scenario": "combined_motor2_70",
+        "stage": "initial",
+        "time_s": 0.0
+      }
+    ]
+  },
+  {
+    "total_mass_kg": 0.048384,
+    "composite_com_body_m": [
+      0.0,
+      -0.003100198412698412,
+      9.920634920224103e-07
+    ],
+    "body_mass_kg": 0.04838,
+    "body_ipos_m": [
+      0.0,
+      -0.0031004547333608927,
+      0.0
+    ],
+    "descendant_bodies": [
+      {
+        "name": "drone",
+        "mass_kg": 0.04838,
+        "com_body_m": [
+          0.0,
+          -0.0031004547333608927,
+          0.0
+        ]
+      },
+      {
+        "name": "prop0",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          0.03536,
+          -0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop1",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          -0.03536,
+          -0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop2",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          -0.03536,
+          0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop3",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          0.03536,
+          0.03536,
+          0.01200000000000001
+        ]
+      }
+    ],
+    "efficiency": [
+      1.0,
+      0.7,
+      1.0,
+      1.0
+    ],
+    "rotors": [
+      {
+        "number": 1,
+        "allocator_index": 0,
+        "force_actuator": "motor0_force",
+        "torque_actuator": "motor0_torque",
+        "site": "motor0",
+        "position_body_m": [
+          0.03536,
+          -0.03536,
+          0.0
+        ],
+        "motor_direction": 1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 2,
+        "allocator_index": 1,
+        "force_actuator": "motor1_force",
+        "torque_actuator": "motor1_torque",
+        "site": "motor1",
+        "position_body_m": [
+          -0.03536,
+          -0.03536,
+          0.0
+        ],
+        "motor_direction": -1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 3,
+        "allocator_index": 2,
+        "force_actuator": "motor2_force",
+        "torque_actuator": "motor2_torque",
+        "site": "motor2",
+        "position_body_m": [
+          -0.03536,
+          0.03536,
+          0.0
+        ],
+        "motor_direction": 1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 4,
+        "allocator_index": 3,
+        "force_actuator": "motor3_force",
+        "torque_actuator": "motor3_torque",
+        "site": "motor3",
+        "position_body_m": [
+          0.03536,
+          0.03536,
+          0.0
+        ],
+        "motor_direction": -1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    ],
+    "actuator": {
+      "enabled": true,
+      "model": "cf21b_first_order",
+      "parameter_source": "paper_candidate",
+      "verification_status": "unverified",
+      "thrust_saturation_n": [
+        0.0,
+        0.2
+      ],
+      "motor_command_saturation": [
+        0.0,
+        1.0
+      ],
+      "randomization_enabled": false,
+      "reset_rpm_mode": "auto",
+      "reaction_torque_model": "legacy_ratio",
+      "legacy_ratio_m": 0.00594,
+      "nominal_time_constant_s": [
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "nominal_steady_state_gain_rad_s": [
+        2900.0,
+        2900.0,
+        2900.0,
+        2900.0
+      ],
+      "sampled_time_constant_s": [
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "sampled_steady_state_gain_rad_s": [
+        2900.0,
+        2900.0,
+        2900.0,
+        2900.0
+      ],
+      "thrust_polynomial_coefficients": [
+        -0.23,
+        0.562,
+        -0.043
+      ],
+      "thrust_omega_reference_rad_s": 2900.0,
+      "positive_branch_min_ratio": 0.0791,
+      "max_ratio": 1.0,
+      "reaction_torque_coefficients": [
+        -3.4,
+        8.7,
+        2.9
+      ],
+      "reaction_torque_scale": 0.0001,
+      "rotor_inertia_kg_m2": 5e-08,
+      "include_rotor_acceleration_torque": false
+    },
+    "moment_reference": "drone body origin, body frame; wrench order [Mx,My,Mz,Fz], units [Nm,Nm,Nm,N]",
+    "B0_allocator": [
+      [
+        -0.035355,
+        -0.035355,
+        0.035355,
+        0.035355
+      ],
+      [
+        -0.035355,
+        0.035355,
+        0.035355,
+        -0.035355
+      ],
+      [
+        0.00594,
+        -0.00594,
+        0.00594,
+        -0.00594
+      ],
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "B0_plant_xml": [
+      [
+        -0.03536,
+        -0.03536,
+        0.03536,
+        0.03536
+      ],
+      [
+        -0.03536,
+        0.03536,
+        0.03536,
+        -0.03536
+      ],
+      [
+        0.00594,
+        -0.00594,
+        0.00594,
+        -0.00594
+      ],
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "matrix_difference": [
+      [
+        -5.0000000000050004e-06,
+        -5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        5.0000000000050004e-06
+      ],
+      [
+        -5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        -5.0000000000050004e-06
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "gravity_force_body_n": [
+      0.0,
+      0.0,
+      -0.4746470400000001
+    ],
+    "gravity_moment_about_body_origin_nm": [
+      0.0014715,
+      0.0,
+      0.0
+    ],
+    "required_rotor_wrench": [
+      -0.0014715,
+      -0.0,
+      -0.0,
+      0.4746470400000001
+    ],
+    "required_actual_thrust_n": [
+      0.12906546475113126,
+      0.12906546475113126,
+      0.10825805524886879,
+      0.10825805524886879
+    ],
+    "required_nominal_thrust_n": [
+      0.12906546475113126,
+      0.18437923535875894,
+      0.10825805524886879,
+      0.10825805524886879
+    ],
+    "nominal_lower_n": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "nominal_upper_n": [
+      0.2,
+      0.2,
+      0.2,
+      0.2
+    ],
+    "nominal_lower_margin_n": [
+      0.12906546475113126,
+      0.18437923535875894,
+      0.10825805524886879,
+      0.10825805524886879
+    ],
+    "allocator_command_bounds_n": [
+      0.0,
+      0.2
+    ],
+    "esc_input_bounds": [
+      0.0,
+      1.0
+    ],
+    "steady_omega_at_esc1_rad_s": [
+      2900.0,
+      2900.0,
+      2900.0,
+      2900.0
+    ],
+    "thrust_mapping_max_speed_ratio": 1.0,
+    "thrust_mapping_reference_speed_rad_s": 2900.0,
+    "nominal_upper_margin_n": [
+      0.07093453524886875,
+      0.01562076464124107,
+      0.09174194475113122,
+      0.09174194475113122
+    ],
+    "nominal_upper_utilization": [
+      0.6453273237556563,
+      0.9218961767937947,
+      0.5412902762443439,
+      0.5412902762443439
+    ],
+    "actual_upper_n": [
+      0.2,
+      0.13999999999999999,
+      0.2,
+      0.2
+    ],
+    "actual_upper_margin_n": [
+      0.07093453524886875,
+      0.010934535248868726,
+      0.09174194475113122,
+      0.09174194475113122
+    ],
+    "bottleneck_motor": 2,
+    "feasible_static_equilibrium": true,
+    "nominal_command_using_allocator_geometry": [
+      0.12906693607127703,
+      0.18438133724468156,
+      0.10825658392872298,
+      0.10825658392872298
+    ],
+    "allocator_geometry_equilibrium_residual": [
+      -2.0810352142496165e-07,
+      2.6020852139652106e-18,
+      -4.336808689942018e-19,
+      0.0
+    ],
+    "required_esc": [
+      0.6057977408153644,
+      0.7440123595224869,
+      0.5504618769049898,
+      0.5504618769049898
+    ],
+    "required_omega_rad_s": [
+      1756.8134483645567,
+      2157.635842615212,
+      1596.3394430244705,
+      1596.3394430244705
+    ],
+    "required_rpm": [
+      16776.33266385225,
+      20603.904584667463,
+      15243.918792594452,
+      15243.918792594452
+    ],
+    "force_balance_residual_n": [
+      0.0,
+      0.0,
+      5.551115123125783e-17
+    ],
+    "moment_balance_residual_nm": [
+      -6.505213034913027e-19,
+      0.0,
+      0.0
+    ],
+    "policy_action_scale": [
+      0.0075,
+      0.0075,
+      0.001,
+      0.5
+    ],
+    "policy_hover_bias": [
+      0.0,
+      0.0,
+      0.0,
+      0.42555780000000004
+    ],
+    "physical_wrench_action": [
+      -0.19619999999999999,
+      -0.0,
+      -0.0,
+      0.09817848000000007
+    ],
+    "physical_wrench_in_policy_range": true,
+    "equilibrium_commands": {
+      "existing": {
+        "required_policy_wrench": [
+          -0.003426910285737655,
+          0.001955618359832677,
+          -0.0003285637974093083,
+          0.5299608106076278
+        ],
+        "required_action": [
+          -0.4569213714316873,
+          0.2607491146443569,
+          -0.3285637974093083,
+          0.2088060212152555
+        ],
+        "expressible": true
+      },
+      "oracle": {
+        "required_policy_wrench": [
+          -0.0014712919259049781,
+          0.0,
+          0.0,
+          0.47464704000000013
+        ],
+        "required_action": [
+          -0.1961722567873304,
+          0.0,
+          0.0,
+          0.09817848000000018
+        ],
+        "expressible": true
+      }
+    },
+    "probe_uses": "isolated MjData with steady clipped/inverted actuator outputs, zero external torque",
+    "probe_linear_acceleration_m_s2": [
+      1.1970711948762013e-16,
+      1.5879171851289104e-18,
+      -4.216189886296534e-15
+    ],
+    "probe_angular_acceleration_rad_s2": [
+      1.6006205226099406e-12,
+      3.6199510214979634e-13,
+      -3.8728566894614685e-14
+    ],
+    "probe_all_generalized_acceleration": [
+      1.1970711948762013e-16,
+      1.5879171851289104e-18,
+      -4.216189886296534e-15,
+      1.6006205226099406e-12,
+      3.6199510214979634e-13,
+      -3.8728566894614685e-14,
+      3.872856689461475e-14,
+      3.8728566894614584e-14,
+      3.872856689461462e-14,
+      3.8728566894614786e-14
+    ],
+    "external_torque_applied_nm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "id": "static_02",
+    "payload_mass_kg": 0.005,
+    "payload_offset_body_xy_m": [
+      0.0,
+      -0.03
+    ],
+    "scenario_stages": [
+      {
+        "scenario": "combined_motor2_70",
+        "stage": "fault",
+        "time_s": 5.0
+      }
+    ]
+  },
+  {
+    "total_mass_kg": 0.048384,
+    "composite_com_body_m": [
+      -0.003100198412698412,
+      0.0,
+      9.920634920224103e-07
+    ],
+    "body_mass_kg": 0.04838,
+    "body_ipos_m": [
+      -0.0031004547333608927,
+      0.0,
+      0.0
+    ],
+    "descendant_bodies": [
+      {
+        "name": "drone",
+        "mass_kg": 0.04838,
+        "com_body_m": [
+          -0.0031004547333608927,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "prop0",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          0.03536,
+          -0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop1",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          -0.03536,
+          -0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop2",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          -0.03536,
+          0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop3",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          0.03536,
+          0.03536,
+          0.01200000000000001
+        ]
+      }
+    ],
+    "efficiency": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "rotors": [
+      {
+        "number": 1,
+        "allocator_index": 0,
+        "force_actuator": "motor0_force",
+        "torque_actuator": "motor0_torque",
+        "site": "motor0",
+        "position_body_m": [
+          0.03536,
+          -0.03536,
+          0.0
+        ],
+        "motor_direction": 1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 2,
+        "allocator_index": 1,
+        "force_actuator": "motor1_force",
+        "torque_actuator": "motor1_torque",
+        "site": "motor1",
+        "position_body_m": [
+          -0.03536,
+          -0.03536,
+          0.0
+        ],
+        "motor_direction": -1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 3,
+        "allocator_index": 2,
+        "force_actuator": "motor2_force",
+        "torque_actuator": "motor2_torque",
+        "site": "motor2",
+        "position_body_m": [
+          -0.03536,
+          0.03536,
+          0.0
+        ],
+        "motor_direction": 1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 4,
+        "allocator_index": 3,
+        "force_actuator": "motor3_force",
+        "torque_actuator": "motor3_torque",
+        "site": "motor3",
+        "position_body_m": [
+          0.03536,
+          0.03536,
+          0.0
+        ],
+        "motor_direction": -1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    ],
+    "actuator": {
+      "enabled": true,
+      "model": "cf21b_first_order",
+      "parameter_source": "paper_candidate",
+      "verification_status": "unverified",
+      "thrust_saturation_n": [
+        0.0,
+        0.2
+      ],
+      "motor_command_saturation": [
+        0.0,
+        1.0
+      ],
+      "randomization_enabled": false,
+      "reset_rpm_mode": "auto",
+      "reaction_torque_model": "legacy_ratio",
+      "legacy_ratio_m": 0.00594,
+      "nominal_time_constant_s": [
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "nominal_steady_state_gain_rad_s": [
+        2900.0,
+        2900.0,
+        2900.0,
+        2900.0
+      ],
+      "sampled_time_constant_s": [
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "sampled_steady_state_gain_rad_s": [
+        2900.0,
+        2900.0,
+        2900.0,
+        2900.0
+      ],
+      "thrust_polynomial_coefficients": [
+        -0.23,
+        0.562,
+        -0.043
+      ],
+      "thrust_omega_reference_rad_s": 2900.0,
+      "positive_branch_min_ratio": 0.0791,
+      "max_ratio": 1.0,
+      "reaction_torque_coefficients": [
+        -3.4,
+        8.7,
+        2.9
+      ],
+      "reaction_torque_scale": 0.0001,
+      "rotor_inertia_kg_m2": 5e-08,
+      "include_rotor_acceleration_torque": false
+    },
+    "moment_reference": "drone body origin, body frame; wrench order [Mx,My,Mz,Fz], units [Nm,Nm,Nm,N]",
+    "B0_allocator": [
+      [
+        -0.035355,
+        -0.035355,
+        0.035355,
+        0.035355
+      ],
+      [
+        -0.035355,
+        0.035355,
+        0.035355,
+        -0.035355
+      ],
+      [
+        0.00594,
+        -0.00594,
+        0.00594,
+        -0.00594
+      ],
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "B0_plant_xml": [
+      [
+        -0.03536,
+        -0.03536,
+        0.03536,
+        0.03536
+      ],
+      [
+        -0.03536,
+        0.03536,
+        0.03536,
+        -0.03536
+      ],
+      [
+        0.00594,
+        -0.00594,
+        0.00594,
+        -0.00594
+      ],
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "matrix_difference": [
+      [
+        -5.0000000000050004e-06,
+        -5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        5.0000000000050004e-06
+      ],
+      [
+        -5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        -5.0000000000050004e-06
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "gravity_force_body_n": [
+      0.0,
+      0.0,
+      -0.4746470400000001
+    ],
+    "gravity_moment_about_body_origin_nm": [
+      -0.0,
+      -0.0014715,
+      -0.0
+    ],
+    "required_rotor_wrench": [
+      0.0,
+      0.0014715,
+      0.0,
+      0.4746470400000001
+    ],
+    "required_actual_thrust_n": [
+      0.10825805524886878,
+      0.12906546475113126,
+      0.12906546475113126,
+      0.10825805524886879
+    ],
+    "required_nominal_thrust_n": [
+      0.10825805524886878,
+      0.12906546475113126,
+      0.12906546475113126,
+      0.10825805524886879
+    ],
+    "nominal_lower_n": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "nominal_upper_n": [
+      0.2,
+      0.2,
+      0.2,
+      0.2
+    ],
+    "nominal_lower_margin_n": [
+      0.10825805524886878,
+      0.12906546475113126,
+      0.12906546475113126,
+      0.10825805524886879
+    ],
+    "allocator_command_bounds_n": [
+      0.0,
+      0.2
+    ],
+    "esc_input_bounds": [
+      0.0,
+      1.0
+    ],
+    "steady_omega_at_esc1_rad_s": [
+      2900.0,
+      2900.0,
+      2900.0,
+      2900.0
+    ],
+    "thrust_mapping_max_speed_ratio": 1.0,
+    "thrust_mapping_reference_speed_rad_s": 2900.0,
+    "nominal_upper_margin_n": [
+      0.09174194475113123,
+      0.07093453524886875,
+      0.07093453524886875,
+      0.09174194475113122
+    ],
+    "nominal_upper_utilization": [
+      0.5412902762443439,
+      0.6453273237556563,
+      0.6453273237556563,
+      0.5412902762443439
+    ],
+    "actual_upper_n": [
+      0.2,
+      0.2,
+      0.2,
+      0.2
+    ],
+    "actual_upper_margin_n": [
+      0.09174194475113123,
+      0.07093453524886875,
+      0.07093453524886875,
+      0.09174194475113122
+    ],
+    "bottleneck_motor": 2,
+    "feasible_static_equilibrium": true,
+    "nominal_command_using_allocator_geometry": [
+      0.10825658392872298,
+      0.12906693607127703,
+      0.12906693607127712,
+      0.10825658392872295
+    ],
+    "allocator_geometry_equilibrium_residual": [
+      2.4936649967166602e-18,
+      2.0810352142669637e-07,
+      6.505213034913027e-19,
+      0.0
+    ],
+    "required_esc": [
+      0.5504618769049898,
+      0.6057977408153644,
+      0.6057977408153644,
+      0.5504618769049898
+    ],
+    "required_omega_rad_s": [
+      1596.3394430244705,
+      1756.8134483645567,
+      1756.8134483645567,
+      1596.3394430244705
+    ],
+    "required_rpm": [
+      15243.918792594452,
+      16776.33266385225,
+      16776.33266385225,
+      15243.918792594452
+    ],
+    "force_balance_residual_n": [
+      0.0,
+      0.0,
+      5.551115123125783e-17
+    ],
+    "moment_balance_residual_nm": [
+      0.0,
+      1.5178830414797062e-18,
+      -1.0842021724855044e-19
+    ],
+    "policy_action_scale": [
+      0.0075,
+      0.0075,
+      0.001,
+      0.5
+    ],
+    "policy_hover_bias": [
+      0.0,
+      0.0,
+      0.0,
+      0.42555780000000004
+    ],
+    "physical_wrench_action": [
+      0.0,
+      0.19619999999999999,
+      0.0,
+      0.09817848000000007
+    ],
+    "physical_wrench_in_policy_range": true,
+    "equilibrium_commands": {
+      "existing": {
+        "required_policy_wrench": [
+          4.336808689942018e-19,
+          0.0014712919259049786,
+          0.0,
+          0.47464704000000013
+        ],
+        "required_action": [
+          5.782411586589357e-17,
+          0.1961722567873305,
+          0.0,
+          0.09817848000000018
+        ],
+        "expressible": true
+      },
+      "oracle": {
+        "required_policy_wrench": [
+          4.336808689942018e-19,
+          0.0014712919259049786,
+          0.0,
+          0.47464704000000013
+        ],
+        "required_action": [
+          5.782411586589357e-17,
+          0.1961722567873305,
+          0.0,
+          0.09817848000000018
+        ],
+        "expressible": true
+      }
+    },
+    "probe_uses": "isolated MjData with steady clipped/inverted actuator outputs, zero external torque",
+    "probe_linear_acceleration_m_s2": [
+      1.870885759481708e-18,
+      0.0,
+      -7.921128636356229e-15
+    ],
+    "probe_angular_acceleration_rad_s2": [
+      0.0,
+      -1.8858528455575604e-12,
+      0.0
+    ],
+    "probe_all_generalized_acceleration": [
+      1.870885759481708e-18,
+      0.0,
+      -7.921128636356229e-15,
+      0.0,
+      -1.8858528455575604e-12,
+      0.0,
+      9.749630699832336e-29,
+      9.74963069983233e-29,
+      -9.74963069983233e-29,
+      -9.749630699832336e-29
+    ],
+    "external_torque_applied_nm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "id": "static_03",
+    "payload_mass_kg": 0.005,
+    "payload_offset_body_xy_m": [
+      -0.03,
+      0.0
+    ],
+    "scenario_stages": [
+      {
+        "scenario": "combined_motor3_70",
+        "stage": "initial",
+        "time_s": 0.0
+      }
+    ]
+  },
+  {
+    "total_mass_kg": 0.048384,
+    "composite_com_body_m": [
+      -0.003100198412698412,
+      0.0,
+      9.920634920224103e-07
+    ],
+    "body_mass_kg": 0.04838,
+    "body_ipos_m": [
+      -0.0031004547333608927,
+      0.0,
+      0.0
+    ],
+    "descendant_bodies": [
+      {
+        "name": "drone",
+        "mass_kg": 0.04838,
+        "com_body_m": [
+          -0.0031004547333608927,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "prop0",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          0.03536,
+          -0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop1",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          -0.03536,
+          -0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop2",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          -0.03536,
+          0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop3",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          0.03536,
+          0.03536,
+          0.01200000000000001
+        ]
+      }
+    ],
+    "efficiency": [
+      1.0,
+      1.0,
+      0.7,
+      1.0
+    ],
+    "rotors": [
+      {
+        "number": 1,
+        "allocator_index": 0,
+        "force_actuator": "motor0_force",
+        "torque_actuator": "motor0_torque",
+        "site": "motor0",
+        "position_body_m": [
+          0.03536,
+          -0.03536,
+          0.0
+        ],
+        "motor_direction": 1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 2,
+        "allocator_index": 1,
+        "force_actuator": "motor1_force",
+        "torque_actuator": "motor1_torque",
+        "site": "motor1",
+        "position_body_m": [
+          -0.03536,
+          -0.03536,
+          0.0
+        ],
+        "motor_direction": -1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 3,
+        "allocator_index": 2,
+        "force_actuator": "motor2_force",
+        "torque_actuator": "motor2_torque",
+        "site": "motor2",
+        "position_body_m": [
+          -0.03536,
+          0.03536,
+          0.0
+        ],
+        "motor_direction": 1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 4,
+        "allocator_index": 3,
+        "force_actuator": "motor3_force",
+        "torque_actuator": "motor3_torque",
+        "site": "motor3",
+        "position_body_m": [
+          0.03536,
+          0.03536,
+          0.0
+        ],
+        "motor_direction": -1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    ],
+    "actuator": {
+      "enabled": true,
+      "model": "cf21b_first_order",
+      "parameter_source": "paper_candidate",
+      "verification_status": "unverified",
+      "thrust_saturation_n": [
+        0.0,
+        0.2
+      ],
+      "motor_command_saturation": [
+        0.0,
+        1.0
+      ],
+      "randomization_enabled": false,
+      "reset_rpm_mode": "auto",
+      "reaction_torque_model": "legacy_ratio",
+      "legacy_ratio_m": 0.00594,
+      "nominal_time_constant_s": [
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "nominal_steady_state_gain_rad_s": [
+        2900.0,
+        2900.0,
+        2900.0,
+        2900.0
+      ],
+      "sampled_time_constant_s": [
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "sampled_steady_state_gain_rad_s": [
+        2900.0,
+        2900.0,
+        2900.0,
+        2900.0
+      ],
+      "thrust_polynomial_coefficients": [
+        -0.23,
+        0.562,
+        -0.043
+      ],
+      "thrust_omega_reference_rad_s": 2900.0,
+      "positive_branch_min_ratio": 0.0791,
+      "max_ratio": 1.0,
+      "reaction_torque_coefficients": [
+        -3.4,
+        8.7,
+        2.9
+      ],
+      "reaction_torque_scale": 0.0001,
+      "rotor_inertia_kg_m2": 5e-08,
+      "include_rotor_acceleration_torque": false
+    },
+    "moment_reference": "drone body origin, body frame; wrench order [Mx,My,Mz,Fz], units [Nm,Nm,Nm,N]",
+    "B0_allocator": [
+      [
+        -0.035355,
+        -0.035355,
+        0.035355,
+        0.035355
+      ],
+      [
+        -0.035355,
+        0.035355,
+        0.035355,
+        -0.035355
+      ],
+      [
+        0.00594,
+        -0.00594,
+        0.00594,
+        -0.00594
+      ],
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "B0_plant_xml": [
+      [
+        -0.03536,
+        -0.03536,
+        0.03536,
+        0.03536
+      ],
+      [
+        -0.03536,
+        0.03536,
+        0.03536,
+        -0.03536
+      ],
+      [
+        0.00594,
+        -0.00594,
+        0.00594,
+        -0.00594
+      ],
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "matrix_difference": [
+      [
+        -5.0000000000050004e-06,
+        -5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        5.0000000000050004e-06
+      ],
+      [
+        -5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        -5.0000000000050004e-06
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "gravity_force_body_n": [
+      0.0,
+      0.0,
+      -0.4746470400000001
+    ],
+    "gravity_moment_about_body_origin_nm": [
+      -0.0,
+      -0.0014715,
+      -0.0
+    ],
+    "required_rotor_wrench": [
+      0.0,
+      0.0014715,
+      0.0,
+      0.4746470400000001
+    ],
+    "required_actual_thrust_n": [
+      0.10825805524886878,
+      0.12906546475113126,
+      0.12906546475113126,
+      0.10825805524886879
+    ],
+    "required_nominal_thrust_n": [
+      0.1082580552488688,
+      0.12906546475113123,
+      0.18437923535875897,
+      0.10825805524886878
+    ],
+    "nominal_lower_n": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "nominal_upper_n": [
+      0.2,
+      0.2,
+      0.2,
+      0.2
+    ],
+    "nominal_lower_margin_n": [
+      0.1082580552488688,
+      0.12906546475113123,
+      0.18437923535875897,
+      0.10825805524886878
+    ],
+    "allocator_command_bounds_n": [
+      0.0,
+      0.2
+    ],
+    "esc_input_bounds": [
+      0.0,
+      1.0
+    ],
+    "steady_omega_at_esc1_rad_s": [
+      2900.0,
+      2900.0,
+      2900.0,
+      2900.0
+    ],
+    "thrust_mapping_max_speed_ratio": 1.0,
+    "thrust_mapping_reference_speed_rad_s": 2900.0,
+    "nominal_upper_margin_n": [
+      0.0917419447511312,
+      0.07093453524886878,
+      0.015620764641241042,
+      0.09174194475113123
+    ],
+    "nominal_upper_utilization": [
+      0.541290276244344,
+      0.6453273237556562,
+      0.9218961767937948,
+      0.5412902762443439
+    ],
+    "actual_upper_n": [
+      0.2,
+      0.2,
+      0.13999999999999999,
+      0.2
+    ],
+    "actual_upper_margin_n": [
+      0.09174194475113123,
+      0.07093453524886875,
+      0.010934535248868726,
+      0.09174194475113122
+    ],
+    "bottleneck_motor": 3,
+    "feasible_static_equilibrium": true,
+    "nominal_command_using_allocator_geometry": [
+      0.10825658392872295,
+      0.12906693607127706,
+      0.1843813372446816,
+      0.10825658392872295
+    ],
+    "allocator_geometry_equilibrium_residual": [
+      2.4936649967166602e-18,
+      2.081035214284311e-07,
+      4.336808689942018e-19,
+      0.0
+    ],
+    "required_esc": [
+      0.5504618769049898,
+      0.6057977408153644,
+      0.7440123595224869,
+      0.5504618769049898
+    ],
+    "required_omega_rad_s": [
+      1596.3394430244705,
+      1756.8134483645567,
+      2157.635842615212,
+      1596.3394430244705
+    ],
+    "required_rpm": [
+      15243.918792594452,
+      16776.33266385225,
+      20603.904584667463,
+      15243.918792594452
+    ],
+    "force_balance_residual_n": [
+      0.0,
+      0.0,
+      5.551115123125783e-17
+    ],
+    "moment_balance_residual_nm": [
+      0.0,
+      1.5178830414797062e-18,
+      -1.0842021724855044e-19
+    ],
+    "policy_action_scale": [
+      0.0075,
+      0.0075,
+      0.001,
+      0.5
+    ],
+    "policy_hover_bias": [
+      0.0,
+      0.0,
+      0.0,
+      0.42555780000000004
+    ],
+    "physical_wrench_action": [
+      0.0,
+      0.19619999999999999,
+      0.0,
+      0.09817848000000007
+    ],
+    "physical_wrench_in_policy_range": true,
+    "equilibrium_commands": {
+      "existing": {
+        "required_policy_wrench": [
+          0.0019556183598326777,
+          0.003426910285737655,
+          0.00032856379740930897,
+          0.5299608106076278
+        ],
+        "required_action": [
+          0.260749114644357,
+          0.4569213714316873,
+          0.32856379740930897,
+          0.2088060212152555
+        ],
+        "expressible": true
+      },
+      "oracle": {
+        "required_policy_wrench": [
+          8.673617379884035e-19,
+          0.0014712919259049781,
+          4.336808689942018e-19,
+          0.4746470400000001
+        ],
+        "required_action": [
+          1.1564823173178715e-16,
+          0.1961722567873304,
+          4.3368086899420177e-16,
+          0.09817848000000007
+        ],
+        "expressible": true
+      }
+    },
+    "probe_uses": "isolated MjData with steady clipped/inverted actuator outputs, zero external torque",
+    "probe_linear_acceleration_m_s2": [
+      1.5879171851289104e-18,
+      1.2043454220548932e-16,
+      -4.216189886296534e-15
+    ],
+    "probe_angular_acceleration_rad_s2": [
+      3.619955832233368e-13,
+      -1.6006205226099406e-12,
+      3.873152734717117e-14
+    ],
+    "probe_all_generalized_acceleration": [
+      1.5879171851289104e-18,
+      1.2043454220548932e-16,
+      -4.216189886296534e-15,
+      3.619955832233368e-13,
+      -1.6006205226099406e-12,
+      3.873152734717117e-14,
+      -3.873152734717107e-14,
+      -3.87315273471711e-14,
+      -3.8731527347171265e-14,
+      -3.8731527347171234e-14
+    ],
+    "external_torque_applied_nm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "id": "static_04",
+    "payload_mass_kg": 0.005,
+    "payload_offset_body_xy_m": [
+      -0.03,
+      0.0
+    ],
+    "scenario_stages": [
+      {
+        "scenario": "combined_motor3_70",
+        "stage": "fault",
+        "time_s": 5.0
+      }
+    ]
+  },
+  {
+    "total_mass_kg": 0.043384000000000006,
+    "composite_com_body_m": [
+      0.0,
+      0.0,
+      1.1063986724568764e-06
+    ],
+    "body_mass_kg": 0.04338,
+    "body_ipos_m": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "descendant_bodies": [
+      {
+        "name": "drone",
+        "mass_kg": 0.04338,
+        "com_body_m": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "prop0",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          0.03536,
+          -0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop1",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          -0.03536,
+          -0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop2",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          -0.03536,
+          0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop3",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          0.03536,
+          0.03536,
+          0.01200000000000001
+        ]
+      }
+    ],
+    "efficiency": [
+      0.7,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "rotors": [
+      {
+        "number": 1,
+        "allocator_index": 0,
+        "force_actuator": "motor0_force",
+        "torque_actuator": "motor0_torque",
+        "site": "motor0",
+        "position_body_m": [
+          0.03536,
+          -0.03536,
+          0.0
+        ],
+        "motor_direction": 1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 2,
+        "allocator_index": 1,
+        "force_actuator": "motor1_force",
+        "torque_actuator": "motor1_torque",
+        "site": "motor1",
+        "position_body_m": [
+          -0.03536,
+          -0.03536,
+          0.0
+        ],
+        "motor_direction": -1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 3,
+        "allocator_index": 2,
+        "force_actuator": "motor2_force",
+        "torque_actuator": "motor2_torque",
+        "site": "motor2",
+        "position_body_m": [
+          -0.03536,
+          0.03536,
+          0.0
+        ],
+        "motor_direction": 1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 4,
+        "allocator_index": 3,
+        "force_actuator": "motor3_force",
+        "torque_actuator": "motor3_torque",
+        "site": "motor3",
+        "position_body_m": [
+          0.03536,
+          0.03536,
+          0.0
+        ],
+        "motor_direction": -1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    ],
+    "actuator": {
+      "enabled": true,
+      "model": "cf21b_first_order",
+      "parameter_source": "paper_candidate",
+      "verification_status": "unverified",
+      "thrust_saturation_n": [
+        0.0,
+        0.2
+      ],
+      "motor_command_saturation": [
+        0.0,
+        1.0
+      ],
+      "randomization_enabled": false,
+      "reset_rpm_mode": "auto",
+      "reaction_torque_model": "legacy_ratio",
+      "legacy_ratio_m": 0.00594,
+      "nominal_time_constant_s": [
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "nominal_steady_state_gain_rad_s": [
+        2900.0,
+        2900.0,
+        2900.0,
+        2900.0
+      ],
+      "sampled_time_constant_s": [
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "sampled_steady_state_gain_rad_s": [
+        2900.0,
+        2900.0,
+        2900.0,
+        2900.0
+      ],
+      "thrust_polynomial_coefficients": [
+        -0.23,
+        0.562,
+        -0.043
+      ],
+      "thrust_omega_reference_rad_s": 2900.0,
+      "positive_branch_min_ratio": 0.0791,
+      "max_ratio": 1.0,
+      "reaction_torque_coefficients": [
+        -3.4,
+        8.7,
+        2.9
+      ],
+      "reaction_torque_scale": 0.0001,
+      "rotor_inertia_kg_m2": 5e-08,
+      "include_rotor_acceleration_torque": false
+    },
+    "moment_reference": "drone body origin, body frame; wrench order [Mx,My,Mz,Fz], units [Nm,Nm,Nm,N]",
+    "B0_allocator": [
+      [
+        -0.035355,
+        -0.035355,
+        0.035355,
+        0.035355
+      ],
+      [
+        -0.035355,
+        0.035355,
+        0.035355,
+        -0.035355
+      ],
+      [
+        0.00594,
+        -0.00594,
+        0.00594,
+        -0.00594
+      ],
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "B0_plant_xml": [
+      [
+        -0.03536,
+        -0.03536,
+        0.03536,
+        0.03536
+      ],
+      [
+        -0.03536,
+        0.03536,
+        0.03536,
+        -0.03536
+      ],
+      [
+        0.00594,
+        -0.00594,
+        0.00594,
+        -0.00594
+      ],
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "matrix_difference": [
+      [
+        -5.0000000000050004e-06,
+        -5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        5.0000000000050004e-06
+      ],
+      [
+        -5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        -5.0000000000050004e-06
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "gravity_force_body_n": [
+      0.0,
+      0.0,
+      -0.4255970400000001
+    ],
+    "gravity_moment_about_body_origin_nm": [
+      -0.0,
+      0.0,
+      0.0
+    ],
+    "required_rotor_wrench": [
+      0.0,
+      -0.0,
+      -0.0,
+      0.4255970400000001
+    ],
+    "required_actual_thrust_n": [
+      0.10639926000000005,
+      0.10639926000000002,
+      0.10639926000000002,
+      0.10639926000000002
+    ],
+    "required_nominal_thrust_n": [
+      0.15199894285714294,
+      0.10639926000000002,
+      0.10639926000000002,
+      0.10639926000000002
+    ],
+    "nominal_lower_n": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "nominal_upper_n": [
+      0.2,
+      0.2,
+      0.2,
+      0.2
+    ],
+    "nominal_lower_margin_n": [
+      0.15199894285714294,
+      0.10639926000000002,
+      0.10639926000000002,
+      0.10639926000000002
+    ],
+    "allocator_command_bounds_n": [
+      0.0,
+      0.2
+    ],
+    "esc_input_bounds": [
+      0.0,
+      1.0
+    ],
+    "steady_omega_at_esc1_rad_s": [
+      2900.0,
+      2900.0,
+      2900.0,
+      2900.0
+    ],
+    "thrust_mapping_max_speed_ratio": 1.0,
+    "thrust_mapping_reference_speed_rad_s": 2900.0,
+    "nominal_upper_margin_n": [
+      0.04800105714285707,
+      0.09360073999999999,
+      0.09360073999999999,
+      0.09360073999999999
+    ],
+    "nominal_upper_utilization": [
+      0.7599947142857146,
+      0.5319963000000001,
+      0.5319963000000001,
+      0.5319963000000001
+    ],
+    "actual_upper_n": [
+      0.13999999999999999,
+      0.2,
+      0.2,
+      0.2
+    ],
+    "actual_upper_margin_n": [
+      0.033600739999999935,
+      0.09360073999999999,
+      0.09360073999999999,
+      0.09360073999999999
+    ],
+    "bottleneck_motor": 1,
+    "feasible_static_equilibrium": true,
+    "nominal_command_using_allocator_geometry": [
+      0.1519989428571429,
+      0.10639926000000001,
+      0.10639926000000004,
+      0.10639926000000001
+    ],
+    "allocator_geometry_equilibrium_residual": [
+      -1.3779753587073162e-19,
+      1.140754157802349e-19,
+      4.336808689942018e-19,
+      0.0
+    ],
+    "required_esc": [
+      0.6642531115836948,
+      0.5453791952998233,
+      0.5453791952998233,
+      0.5453791952998233
+    ],
+    "required_omega_rad_s": [
+      1926.334023592715,
+      1581.5996663694875,
+      1581.5996663694875,
+      1581.5996663694875
+    ],
+    "required_rpm": [
+      18395.134914052822,
+      15103.164293711789,
+      15103.164293711789,
+      15103.164293711789
+    ],
+    "force_balance_residual_n": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "moment_balance_residual_nm": [
+      -8.673617379884035e-19,
+      -8.673617379884035e-19,
+      2.168404344971009e-19
+    ],
+    "policy_action_scale": [
+      0.0075,
+      0.0075,
+      0.001,
+      0.5
+    ],
+    "policy_hover_bias": [
+      0.0,
+      0.0,
+      0.0,
+      0.42555780000000004
+    ],
+    "physical_wrench_action": [
+      0.0,
+      -0.0,
+      -0.0,
+      7.848000000010291e-05
+    ],
+    "physical_wrench_in_policy_range": true,
+    "equilibrium_commands": {
+      "existing": {
+        "required_policy_wrench": [
+          -0.0016121767874142873,
+          -0.0016121767874142873,
+          0.000270862116171429,
+          0.47119672285714304
+        ],
+        "required_action": [
+          -0.21495690498857165,
+          -0.21495690498857165,
+          0.27086211617142897,
+          0.09127784571428599
+        ],
+        "expressible": true
+      },
+      "oracle": {
+        "required_policy_wrench": [
+          -8.673617379884035e-19,
+          -8.673617379884035e-19,
+          0.0,
+          0.4255970400000001
+        ],
+        "required_action": [
+          -1.1564823173178715e-16,
+          -1.1564823173178715e-16,
+          0.0,
+          7.848000000010291e-05
+        ],
+        "expressible": true
+      }
+    },
+    "probe_uses": "isolated MjData with steady clipped/inverted actuator outputs, zero external torque",
+    "probe_linear_acceleration_m_s2": [
+      1.281635733173063e-18,
+      -1.281635733173063e-18,
+      -1.151577450399503e-14
+    ],
+    "probe_angular_acceleration_rad_s2": [
+      -1.1583850968329192e-12,
+      -1.1583850968329192e-12,
+      1.440822375922251e-13
+    ],
+    "probe_all_generalized_acceleration": [
+      1.281635733173063e-18,
+      -1.281635733173063e-18,
+      -1.151577450399503e-14,
+      -1.1583850968329192e-12,
+      -1.1583850968329192e-12,
+      1.440822375922251e-13,
+      -1.440822375922251e-13,
+      -1.440822375922251e-13,
+      -1.440822375922251e-13,
+      -1.440822375922251e-13
+    ],
+    "external_torque_applied_nm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "id": "static_05",
+    "payload_mass_kg": 0.0,
+    "payload_offset_body_xy_m": [
+      0.0,
+      0.0
+    ],
+    "scenario_stages": [
+      {
+        "scenario": "motor1_70_restore",
+        "stage": "fault",
+        "time_s": 5.0
+      }
+    ]
+  },
+  {
+    "total_mass_kg": 0.048384,
+    "composite_com_body_m": [
+      0.003100198412698412,
+      0.0,
+      9.920634920224103e-07
+    ],
+    "body_mass_kg": 0.04838,
+    "body_ipos_m": [
+      0.0031004547333608927,
+      0.0,
+      0.0
+    ],
+    "descendant_bodies": [
+      {
+        "name": "drone",
+        "mass_kg": 0.04838,
+        "com_body_m": [
+          0.0031004547333608927,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "prop0",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          0.03536,
+          -0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop1",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          -0.03536,
+          -0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop2",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          -0.03536,
+          0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop3",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          0.03536,
+          0.03536,
+          0.01200000000000001
+        ]
+      }
+    ],
+    "efficiency": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "rotors": [
+      {
+        "number": 1,
+        "allocator_index": 0,
+        "force_actuator": "motor0_force",
+        "torque_actuator": "motor0_torque",
+        "site": "motor0",
+        "position_body_m": [
+          0.03536,
+          -0.03536,
+          0.0
+        ],
+        "motor_direction": 1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 2,
+        "allocator_index": 1,
+        "force_actuator": "motor1_force",
+        "torque_actuator": "motor1_torque",
+        "site": "motor1",
+        "position_body_m": [
+          -0.03536,
+          -0.03536,
+          0.0
+        ],
+        "motor_direction": -1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 3,
+        "allocator_index": 2,
+        "force_actuator": "motor2_force",
+        "torque_actuator": "motor2_torque",
+        "site": "motor2",
+        "position_body_m": [
+          -0.03536,
+          0.03536,
+          0.0
+        ],
+        "motor_direction": 1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 4,
+        "allocator_index": 3,
+        "force_actuator": "motor3_force",
+        "torque_actuator": "motor3_torque",
+        "site": "motor3",
+        "position_body_m": [
+          0.03536,
+          0.03536,
+          0.0
+        ],
+        "motor_direction": -1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    ],
+    "actuator": {
+      "enabled": true,
+      "model": "cf21b_first_order",
+      "parameter_source": "paper_candidate",
+      "verification_status": "unverified",
+      "thrust_saturation_n": [
+        0.0,
+        0.2
+      ],
+      "motor_command_saturation": [
+        0.0,
+        1.0
+      ],
+      "randomization_enabled": false,
+      "reset_rpm_mode": "auto",
+      "reaction_torque_model": "legacy_ratio",
+      "legacy_ratio_m": 0.00594,
+      "nominal_time_constant_s": [
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "nominal_steady_state_gain_rad_s": [
+        2900.0,
+        2900.0,
+        2900.0,
+        2900.0
+      ],
+      "sampled_time_constant_s": [
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "sampled_steady_state_gain_rad_s": [
+        2900.0,
+        2900.0,
+        2900.0,
+        2900.0
+      ],
+      "thrust_polynomial_coefficients": [
+        -0.23,
+        0.562,
+        -0.043
+      ],
+      "thrust_omega_reference_rad_s": 2900.0,
+      "positive_branch_min_ratio": 0.0791,
+      "max_ratio": 1.0,
+      "reaction_torque_coefficients": [
+        -3.4,
+        8.7,
+        2.9
+      ],
+      "reaction_torque_scale": 0.0001,
+      "rotor_inertia_kg_m2": 5e-08,
+      "include_rotor_acceleration_torque": false
+    },
+    "moment_reference": "drone body origin, body frame; wrench order [Mx,My,Mz,Fz], units [Nm,Nm,Nm,N]",
+    "B0_allocator": [
+      [
+        -0.035355,
+        -0.035355,
+        0.035355,
+        0.035355
+      ],
+      [
+        -0.035355,
+        0.035355,
+        0.035355,
+        -0.035355
+      ],
+      [
+        0.00594,
+        -0.00594,
+        0.00594,
+        -0.00594
+      ],
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "B0_plant_xml": [
+      [
+        -0.03536,
+        -0.03536,
+        0.03536,
+        0.03536
+      ],
+      [
+        -0.03536,
+        0.03536,
+        0.03536,
+        -0.03536
+      ],
+      [
+        0.00594,
+        -0.00594,
+        0.00594,
+        -0.00594
+      ],
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "matrix_difference": [
+      [
+        -5.0000000000050004e-06,
+        -5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        5.0000000000050004e-06
+      ],
+      [
+        -5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        -5.0000000000050004e-06
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "gravity_force_body_n": [
+      0.0,
+      0.0,
+      -0.4746470400000001
+    ],
+    "gravity_moment_about_body_origin_nm": [
+      -0.0,
+      0.0014715,
+      0.0
+    ],
+    "required_rotor_wrench": [
+      0.0,
+      -0.0014715,
+      -0.0,
+      0.4746470400000001
+    ],
+    "required_actual_thrust_n": [
+      0.12906546475113123,
+      0.10825805524886879,
+      0.10825805524886879,
+      0.12906546475113126
+    ],
+    "required_nominal_thrust_n": [
+      0.12906546475113123,
+      0.10825805524886879,
+      0.10825805524886879,
+      0.12906546475113126
+    ],
+    "nominal_lower_n": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "nominal_upper_n": [
+      0.2,
+      0.2,
+      0.2,
+      0.2
+    ],
+    "nominal_lower_margin_n": [
+      0.12906546475113123,
+      0.10825805524886879,
+      0.10825805524886879,
+      0.12906546475113126
+    ],
+    "allocator_command_bounds_n": [
+      0.0,
+      0.2
+    ],
+    "esc_input_bounds": [
+      0.0,
+      1.0
+    ],
+    "steady_omega_at_esc1_rad_s": [
+      2900.0,
+      2900.0,
+      2900.0,
+      2900.0
+    ],
+    "thrust_mapping_max_speed_ratio": 1.0,
+    "thrust_mapping_reference_speed_rad_s": 2900.0,
+    "nominal_upper_margin_n": [
+      0.07093453524886878,
+      0.09174194475113122,
+      0.09174194475113122,
+      0.07093453524886875
+    ],
+    "nominal_upper_utilization": [
+      0.6453273237556562,
+      0.5412902762443439,
+      0.5412902762443439,
+      0.6453273237556563
+    ],
+    "actual_upper_n": [
+      0.2,
+      0.2,
+      0.2,
+      0.2
+    ],
+    "actual_upper_margin_n": [
+      0.07093453524886878,
+      0.09174194475113122,
+      0.09174194475113122,
+      0.07093453524886875
+    ],
+    "bottleneck_motor": 4,
+    "feasible_static_equilibrium": true,
+    "nominal_command_using_allocator_geometry": [
+      0.12906693607127706,
+      0.10825658392872295,
+      0.108256583928723,
+      0.12906693607127706
+    ],
+    "allocator_geometry_equilibrium_residual": [
+      2.4936649967166602e-18,
+      -2.0810352142452797e-07,
+      4.336808689942018e-19,
+      0.0
+    ],
+    "required_esc": [
+      0.6057977408153644,
+      0.5504618769049898,
+      0.5504618769049898,
+      0.6057977408153644
+    ],
+    "required_omega_rad_s": [
+      1756.8134483645567,
+      1596.3394430244705,
+      1596.3394430244705,
+      1756.8134483645567
+    ],
+    "required_rpm": [
+      16776.33266385225,
+      15243.918792594452,
+      15243.918792594452,
+      16776.33266385225
+    ],
+    "force_balance_residual_n": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "moment_balance_residual_nm": [
+      0.0,
+      2.168404344971009e-19,
+      -2.168404344971009e-19
+    ],
+    "policy_action_scale": [
+      0.0075,
+      0.0075,
+      0.001,
+      0.5
+    ],
+    "policy_hover_bias": [
+      0.0,
+      0.0,
+      0.0,
+      0.42555780000000004
+    ],
+    "physical_wrench_action": [
+      0.0,
+      -0.19619999999999999,
+      -0.0,
+      0.09817848000000007
+    ],
+    "physical_wrench_in_policy_range": true,
+    "equilibrium_commands": {
+      "existing": {
+        "required_policy_wrench": [
+          8.673617379884035e-19,
+          -0.0014712919259049773,
+          0.0,
+          0.4746470400000001
+        ],
+        "required_action": [
+          1.1564823173178715e-16,
+          -0.1961722567873303,
+          0.0,
+          0.09817848000000007
+        ],
+        "expressible": true
+      },
+      "oracle": {
+        "required_policy_wrench": [
+          8.673617379884035e-19,
+          -0.0014712919259049773,
+          0.0,
+          0.4746470400000001
+        ],
+        "required_action": [
+          1.1564823173178715e-16,
+          -0.1961722567873303,
+          0.0,
+          0.09817848000000007
+        ],
+        "expressible": true
+      }
+    },
+    "probe_uses": "isolated MjData with steady clipped/inverted actuator outputs, zero external torque",
+    "probe_linear_acceleration_m_s2": [
+      -1.870885759481708e-18,
+      9.221090529090521e-52,
+      -7.921128636356229e-15
+    ],
+    "probe_angular_acceleration_rad_s2": [
+      1.847252424324732e-54,
+      1.8858528455575604e-12,
+      -2.9743549551522306e-49
+    ],
+    "probe_all_generalized_acceleration": [
+      -1.870885759481708e-18,
+      9.221090529090521e-52,
+      -7.921128636356229e-15,
+      1.847252424324732e-54,
+      1.8858528455575604e-12,
+      -2.9743549551522306e-49,
+      -9.74963069983233e-29,
+      -9.749630699832336e-29,
+      9.749630699832336e-29,
+      9.74963069983233e-29
+    ],
+    "external_torque_applied_nm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "id": "static_06",
+    "payload_mass_kg": 0.005,
+    "payload_offset_body_xy_m": [
+      0.03,
+      0.0
+    ],
+    "scenario_stages": [
+      {
+        "scenario": "combined_motor1_70_restore",
+        "stage": "initial",
+        "time_s": 0.0
+      },
+      {
+        "scenario": "combined_motor1_70_restore",
+        "stage": "restore",
+        "time_s": 30.0
+      }
+    ]
+  },
+  {
+    "total_mass_kg": 0.048384,
+    "composite_com_body_m": [
+      0.003100198412698412,
+      0.0,
+      9.920634920224103e-07
+    ],
+    "body_mass_kg": 0.04838,
+    "body_ipos_m": [
+      0.0031004547333608927,
+      0.0,
+      0.0
+    ],
+    "descendant_bodies": [
+      {
+        "name": "drone",
+        "mass_kg": 0.04838,
+        "com_body_m": [
+          0.0031004547333608927,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "prop0",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          0.03536,
+          -0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop1",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          -0.03536,
+          -0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop2",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          -0.03536,
+          0.03536,
+          0.01200000000000001
+        ]
+      },
+      {
+        "name": "prop3",
+        "mass_kg": 1e-06,
+        "com_body_m": [
+          0.03536,
+          0.03536,
+          0.01200000000000001
+        ]
+      }
+    ],
+    "efficiency": [
+      0.7,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "rotors": [
+      {
+        "number": 1,
+        "allocator_index": 0,
+        "force_actuator": "motor0_force",
+        "torque_actuator": "motor0_torque",
+        "site": "motor0",
+        "position_body_m": [
+          0.03536,
+          -0.03536,
+          0.0
+        ],
+        "motor_direction": 1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 2,
+        "allocator_index": 1,
+        "force_actuator": "motor1_force",
+        "torque_actuator": "motor1_torque",
+        "site": "motor1",
+        "position_body_m": [
+          -0.03536,
+          -0.03536,
+          0.0
+        ],
+        "motor_direction": -1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 3,
+        "allocator_index": 2,
+        "force_actuator": "motor2_force",
+        "torque_actuator": "motor2_torque",
+        "site": "motor2",
+        "position_body_m": [
+          -0.03536,
+          0.03536,
+          0.0
+        ],
+        "motor_direction": 1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "number": 4,
+        "allocator_index": 3,
+        "force_actuator": "motor3_force",
+        "torque_actuator": "motor3_torque",
+        "site": "motor3",
+        "position_body_m": [
+          0.03536,
+          0.03536,
+          0.0
+        ],
+        "motor_direction": -1.0,
+        "force_gear": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_gear": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    ],
+    "actuator": {
+      "enabled": true,
+      "model": "cf21b_first_order",
+      "parameter_source": "paper_candidate",
+      "verification_status": "unverified",
+      "thrust_saturation_n": [
+        0.0,
+        0.2
+      ],
+      "motor_command_saturation": [
+        0.0,
+        1.0
+      ],
+      "randomization_enabled": false,
+      "reset_rpm_mode": "auto",
+      "reaction_torque_model": "legacy_ratio",
+      "legacy_ratio_m": 0.00594,
+      "nominal_time_constant_s": [
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "nominal_steady_state_gain_rad_s": [
+        2900.0,
+        2900.0,
+        2900.0,
+        2900.0
+      ],
+      "sampled_time_constant_s": [
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "sampled_steady_state_gain_rad_s": [
+        2900.0,
+        2900.0,
+        2900.0,
+        2900.0
+      ],
+      "thrust_polynomial_coefficients": [
+        -0.23,
+        0.562,
+        -0.043
+      ],
+      "thrust_omega_reference_rad_s": 2900.0,
+      "positive_branch_min_ratio": 0.0791,
+      "max_ratio": 1.0,
+      "reaction_torque_coefficients": [
+        -3.4,
+        8.7,
+        2.9
+      ],
+      "reaction_torque_scale": 0.0001,
+      "rotor_inertia_kg_m2": 5e-08,
+      "include_rotor_acceleration_torque": false
+    },
+    "moment_reference": "drone body origin, body frame; wrench order [Mx,My,Mz,Fz], units [Nm,Nm,Nm,N]",
+    "B0_allocator": [
+      [
+        -0.035355,
+        -0.035355,
+        0.035355,
+        0.035355
+      ],
+      [
+        -0.035355,
+        0.035355,
+        0.035355,
+        -0.035355
+      ],
+      [
+        0.00594,
+        -0.00594,
+        0.00594,
+        -0.00594
+      ],
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "B0_plant_xml": [
+      [
+        -0.03536,
+        -0.03536,
+        0.03536,
+        0.03536
+      ],
+      [
+        -0.03536,
+        0.03536,
+        0.03536,
+        -0.03536
+      ],
+      [
+        0.00594,
+        -0.00594,
+        0.00594,
+        -0.00594
+      ],
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "matrix_difference": [
+      [
+        -5.0000000000050004e-06,
+        -5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        5.0000000000050004e-06
+      ],
+      [
+        -5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        5.0000000000050004e-06,
+        -5.0000000000050004e-06
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "gravity_force_body_n": [
+      0.0,
+      0.0,
+      -0.4746470400000001
+    ],
+    "gravity_moment_about_body_origin_nm": [
+      -0.0,
+      0.0014715,
+      0.0
+    ],
+    "required_rotor_wrench": [
+      0.0,
+      -0.0014715,
+      -0.0,
+      0.4746470400000001
+    ],
+    "required_actual_thrust_n": [
+      0.12906546475113123,
+      0.10825805524886879,
+      0.10825805524886879,
+      0.12906546475113126
+    ],
+    "required_nominal_thrust_n": [
+      0.18437923535875891,
+      0.10825805524886879,
+      0.10825805524886879,
+      0.12906546475113126
+    ],
+    "nominal_lower_n": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "nominal_upper_n": [
+      0.2,
+      0.2,
+      0.2,
+      0.2
+    ],
+    "nominal_lower_margin_n": [
+      0.18437923535875891,
+      0.10825805524886879,
+      0.10825805524886879,
+      0.12906546475113126
+    ],
+    "allocator_command_bounds_n": [
+      0.0,
+      0.2
+    ],
+    "esc_input_bounds": [
+      0.0,
+      1.0
+    ],
+    "steady_omega_at_esc1_rad_s": [
+      2900.0,
+      2900.0,
+      2900.0,
+      2900.0
+    ],
+    "thrust_mapping_max_speed_ratio": 1.0,
+    "thrust_mapping_reference_speed_rad_s": 2900.0,
+    "nominal_upper_margin_n": [
+      0.015620764641241097,
+      0.09174194475113122,
+      0.09174194475113122,
+      0.07093453524886875
+    ],
+    "nominal_upper_utilization": [
+      0.9218961767937945,
+      0.5412902762443439,
+      0.5412902762443439,
+      0.6453273237556563
+    ],
+    "actual_upper_n": [
+      0.13999999999999999,
+      0.2,
+      0.2,
+      0.2
+    ],
+    "actual_upper_margin_n": [
+      0.010934535248868754,
+      0.09174194475113122,
+      0.09174194475113122,
+      0.07093453524886875
+    ],
+    "bottleneck_motor": 1,
+    "feasible_static_equilibrium": true,
+    "nominal_command_using_allocator_geometry": [
+      0.18438133724468153,
+      0.10825658392872295,
+      0.108256583928723,
+      0.12906693607127706
+    ],
+    "allocator_geometry_equilibrium_residual": [
+      2.4936649967166602e-18,
+      -2.0810352142452797e-07,
+      4.336808689942018e-19,
+      0.0
+    ],
+    "required_esc": [
+      0.7440123595224869,
+      0.5504618769049898,
+      0.5504618769049898,
+      0.6057977408153644
+    ],
+    "required_omega_rad_s": [
+      2157.635842615212,
+      1596.3394430244705,
+      1596.3394430244705,
+      1756.8134483645567
+    ],
+    "required_rpm": [
+      20603.904584667463,
+      15243.918792594452,
+      15243.918792594452,
+      16776.33266385225
+    ],
+    "force_balance_residual_n": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "moment_balance_residual_nm": [
+      0.0,
+      2.168404344971009e-19,
+      -2.168404344971009e-19
+    ],
+    "policy_action_scale": [
+      0.0075,
+      0.0075,
+      0.001,
+      0.5
+    ],
+    "policy_hover_bias": [
+      0.0,
+      0.0,
+      0.0,
+      0.42555780000000004
+    ],
+    "physical_wrench_action": [
+      0.0,
+      -0.19619999999999999,
+      -0.0,
+      0.09817848000000007
+    ],
+    "physical_wrench_in_policy_range": true,
+    "equilibrium_commands": {
+      "existing": {
+        "required_policy_wrench": [
+          -0.001955618359832676,
+          -0.003426910285737654,
+          0.0003285637974093083,
+          0.5299608106076278
+        ],
+        "required_action": [
+          -0.2607491146443568,
+          -0.4569213714316872,
+          0.3285637974093083,
+          0.2088060212152555
+        ],
+        "expressible": true
+      },
+      "oracle": {
+        "required_policy_wrench": [
+          8.673617379884035e-19,
+          -0.0014712919259049773,
+          0.0,
+          0.4746470400000001
+        ],
+        "required_action": [
+          1.1564823173178715e-16,
+          -0.1961722567873303,
+          0.0,
+          0.09817848000000007
+        ],
+        "expressible": true
+      }
+    },
+    "probe_uses": "isolated MjData with steady clipped/inverted actuator outputs, zero external torque",
+    "probe_linear_acceleration_m_s2": [
+      -1.5940156457830654e-18,
+      -1.2043454220548932e-16,
+      -3.0498283105242525e-15
+    ],
+    "probe_angular_acceleration_rad_s2": [
+      -3.619955832233368e-13,
+      1.606767770949329e-12,
+      3.873152734717117e-14
+    ],
+    "probe_all_generalized_acceleration": [
+      -1.5940156457830654e-18,
+      -1.2043454220548932e-16,
+      -3.0498283105242525e-15,
+      -3.619955832233368e-13,
+      1.606767770949329e-12,
+      3.873152734717117e-14,
+      -3.8731527347171265e-14,
+      -3.8731527347171234e-14,
+      -3.873152734717107e-14,
+      -3.87315273471711e-14
+    ],
+    "external_torque_applied_nm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "id": "static_07",
+    "payload_mass_kg": 0.005,
+    "payload_offset_body_xy_m": [
+      0.03,
+      0.0
+    ],
+    "scenario_stages": [
+      {
+        "scenario": "combined_motor1_70_restore",
+        "stage": "fault",
+        "time_s": 5.0
+      }
+    ]
+  }
+]

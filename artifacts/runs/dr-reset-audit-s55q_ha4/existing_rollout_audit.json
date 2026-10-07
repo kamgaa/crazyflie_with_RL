@@ -1,0 +1,218 @@
+{
+  "baseline": {
+    "display_name": "baseline (legacy position reset)",
+    "sources": {
+      "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/step-005-baseline.csv": "f2230cb9b177a733e846abdcf3e1445c8bff7df885b5a5bd618435efddd0f7ea",
+      "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/step-050-baseline.csv": "b026d01e62806c1c3bb0a0653b99d7e95462e4a2b6ca27918f58485ec9131940",
+      "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/summary.json": "a3371f956e75b4922308a75848858749eec7eea6a3ebe743d3facafe8e8d2bc8"
+    },
+    "step_005_tail": {
+      "window": "post-state (6,8] seconds",
+      "sample_count": 200,
+      "mean_error_xyz_m": [
+        -0.001976351477028477,
+        -0.0006748934483658264,
+        0.0003007270157081754
+      ],
+      "std_error_xyz_m": [
+        5.829496461646542e-06,
+        4.082572094608917e-06,
+        1.6041391703396213e-06
+      ],
+      "position_rmse_total_m": 0.002109961205582437,
+      "mean_offset_mse_m2": 4.451883065376503e-06,
+      "fluctuation_mse_m2": 5.322368638184689e-11,
+      "mean_offset_fraction_of_mse": 0.999988044822988
+    },
+    "step_050_final_transition": {
+      "control_time_s": 0.39,
+      "post_time_s": 0.4,
+      "pre_control_state": {
+        "position_m": [
+          0.32690421412823223,
+          0.12853254756861984,
+          0.9774425874682431
+        ],
+        "position_error_m": [
+          -0.17309578587176777,
+          0.12853254756861984,
+          -0.022557412531756915
+        ],
+        "rpy_deg": [
+          35.13249206033644,
+          -31.474484179514974,
+          -9.774506798636427
+        ],
+        "omega_body_rad_s": [
+          14.83983640557525,
+          -18.441525229992738,
+          -1.596300916512607
+        ]
+      },
+      "post_state": {
+        "position_m": [
+          0.34285039973325804,
+          0.13554665671890645,
+          0.9790466840548834
+        ],
+        "position_error_m": [
+          -0.15714960026674196,
+          0.13554665671890645,
+          -0.020953315945116624
+        ],
+        "rpy_deg": [
+          50.377707215260614,
+          -39.325670070867474,
+          -20.14035978808032
+        ],
+        "omega_body_rad_s": [
+          16.319995570473875,
+          -20.46249627789179,
+          -1.546494819128154
+        ]
+      },
+      "action": [
+        0.17026984691619873,
+        -0.42888811230659485,
+        0.6558051705360413,
+        -0.1999669224023819
+      ],
+      "motor_thrust_command_N": [
+        0.1227102486372479,
+        0.02201690305784932,
+        0.0952793761944833,
+        0.08556781090922856
+      ],
+      "motor_thrust_actual_N": [
+        0.12842158806509937,
+        0.0463480670226393,
+        0.1147519638632305,
+        0.15910841440446133
+      ],
+      "wrench_command": [
+        0.0012770238518714904,
+        -0.003216660842299461,
+        0.0006558051705360413,
+        0.3255743387988091
+      ],
+      "wrench_actual": [
+        0.003503352518027243,
+        -0.004469931645341392,
+        0.00022403939877730153,
+        0.4486300333554305
+      ],
+      "terminated": "True",
+      "truncated": "False",
+      "allocator_saturation": "unmeasured: no pre-clipping allocation or saturation flag in CSV",
+      "thrust_timing": "last physics substep of final control interval, not interval mean"
+    }
+  },
+  "posdr": {
+    "display_name": "POS-only DR (new reset)",
+    "sources": {
+      "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/step-005-posdr.csv": "4ff070c85b9c4bc620948978fd93b1691b7fc406a7ee625d53fde97b480f55af",
+      "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/step-050-posdr.csv": "8d310f75ec1fdc72574c32cb62013e7c694705465bb4c4c969323e32f5e5d797",
+      "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-8rfoihws/summary.json": "a3371f956e75b4922308a75848858749eec7eea6a3ebe743d3facafe8e8d2bc8"
+    },
+    "step_005_tail": {
+      "window": "post-state (6,8] seconds",
+      "sample_count": 200,
+      "mean_error_xyz_m": [
+        -0.011744111325269474,
+        -0.002730044198848827,
+        0.012249600761964026
+      ],
+      "std_error_xyz_m": [
+        0.0001158241281233928,
+        0.00013951436671817517,
+        0.00012377763345623863
+      ],
+      "position_rmse_total_m": 0.017189479671159944,
+      "mean_offset_mse_m2": 0.0002954300109755005,
+      "fluctuation_mse_m2": 4.820038972034454e-08,
+      "mean_offset_fraction_of_mse": 0.9998368732858588
+    },
+    "step_050_final_transition": {
+      "control_time_s": 0.22,
+      "post_time_s": 0.23,
+      "pre_control_state": {
+        "position_m": [
+          0.02744931907998578,
+          0.007026886893170091,
+          0.9857382841539831
+        ],
+        "position_error_m": [
+          -0.47255068092001423,
+          0.007026886893170091,
+          -0.014261715846016876
+        ],
+        "rpy_deg": [
+          -16.734423677347127,
+          55.60359479303521,
+          -8.163856545089105
+        ],
+        "omega_body_rad_s": [
+          -2.5669009170361354,
+          11.95442595406068,
+          -0.00467704200541659
+        ]
+      },
+      "post_state": {
+        "position_m": [
+          0.03250842005297446,
+          0.008173150212727891,
+          0.9822617941723966
+        ],
+        "position_error_m": [
+          -0.46749157994702556,
+          0.008173150212727891,
+          -0.017738205827603437
+        ],
+        "rpy_deg": [
+          -22.322301164292305,
+          62.398730183336426,
+          -12.822696577653094
+        ],
+        "omega_body_rad_s": [
+          -2.815377904106195,
+          12.717471798529067,
+          0.01681608243944306
+        ]
+      },
+      "action": [
+        -0.06643259525299072,
+        0.05291677638888359,
+        0.19602274894714355,
+        -0.2677108347415924
+      ],
+      "motor_thrust_command_N": [
+        0.08189250276569926,
+        0.07100499691260485,
+        0.08045891994175984,
+        0.058345963009139884
+      ],
+      "motor_thrust_actual_N": [
+        0.07304062156100266,
+        0.08943417162116979,
+        0.0883273656750227,
+        0.05773417559252825
+      ],
+      "wrench_command": [
+        -0.0004982444643974304,
+        0.0003968758229166269,
+        0.00019602274894714355,
+        0.29170238262920384
+      ],
+      "wrench_actual": [
+        -0.0005802905214414432,
+        0.0016612161977438001,
+        8.434586173262427e-05,
+        0.3085363344497234
+      ],
+      "terminated": "True",
+      "truncated": "False",
+      "allocator_saturation": "unmeasured: no pre-clipping allocation or saturation flag in CSV",
+      "thrust_timing": "last physics substep of final control interval, not interval mean"
+    }
+  }
+}
