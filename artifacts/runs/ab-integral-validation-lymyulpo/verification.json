@@ -1,0 +1,25 @@
+{
+  "focused_tests": {
+    "passed": 72,
+    "log": "tests.log",
+    "command": "PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 MPLCONFIGDIR=/tmp/crazyflie-dr-mpl python -m pytest -q tests/test_integral_validation.py tests/test_integral_eval.py tests/test_payload_motor_eval.py tests/test_dr_transfer.py",
+    "full_repository_suite_run": false
+  },
+  "independent_csv_audit": "independent_csv_verification.json",
+  "rollouts_executed": 52,
+  "flights_completed_60s": 46,
+  "physical_terminations": 6,
+  "plots": 39,
+  "protected_files_unchanged": 740,
+  "policy_parameters_unchanged": true,
+  "new_training_or_optimizer_updates": false,
+  "gain_tuning": false,
+  "commit_or_push": false,
+  "source_sha256": {
+    "validate_ab_integral.py": "3fa8011690727bd0685a7bff26c22feaf8b52517528cdc7e0d61f5986044e4cc",
+    "crazyflie_rl/integral_validation.py": "3ea8bd3ce738b4bfa85169d0d19e1c7e4860aad6b84e5a51c6984ed8761d0908",
+    "crazyflie_rl/integral_eval.py": "b7e16016f25b76ae6524c81f376554f24614f9046c2810a33294890fda86cf7d",
+    "crazyflie_rl/dr_transfer.py": "478609f5881e22614119a830053c3f06514a966ffc85d5df241b2848e481fe11",
+    "tests/test_integral_validation.py": "bbc6cc0cc5603e9cb95d4679253d0d213eb3a0d5fe15f8184d3a52ecba3734bd"
+  }
+}
