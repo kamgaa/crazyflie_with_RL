@@ -22,7 +22,7 @@ from .plotting import save_transfer_comparison_plot, quaternion_to_euler_deg
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CASES = ('step-005', 'step-050', 'circle')
-CASE_NAMES = (*DEFAULT_CASES, 'circle-air')
+CASE_NAMES = (*DEFAULT_CASES, 'circle-air', 'hover')
 SCALE = (0.0075, 0.0075, 0.001, 0.5)
 
 
@@ -62,6 +62,10 @@ class Case:
         # A step target is a regulation command, not a differentiated jump.
         return (self.mission.reference_velocity(t + self.reference_time_offset_sec)
                 if self.mission else np.zeros(3))
+
+    def post_reference(self, t):
+        """Same-time evaluation reference; event cases can declare a left limit."""
+        return self.reference(t)
 
     def initial_position(self):
         if self.name == 'circle-air':
@@ -118,7 +122,9 @@ def make_cases(config, names):
     for name in names:
         if name not in CASE_NAMES:
             raise ValueError(f'unknown case: {name}')
-        if name.startswith('step-'):
+        if name == 'hover':
+            result.append(Case(name, 8., (0.,0.,1.)))
+        elif name.startswith('step-'):
             result.append(Case(name, 8., (.05 if name == 'step-005' else .5, 0., 1.)))
         else:
             mission = mission_from_experiment(config, mission_type='circle')
@@ -212,29 +218,41 @@ def termination_reasons(env, state, control_reference):
     return [k for k, hit in tests.items() if hit]
 
 
-def run_case(config, case, policy, seed, velocity_input='absolute'):
-    env = CrazyflieResidualEnv(config=config, episode_sec=case.horizon)
+def run_case(config, case, policy, seed, velocity_input='absolute', *, env_factory=None, observer=None,
+             observation_transform=None):
+    from .velocity_reference import velocity_semantics, desired_velocity_semantics, velocity_reward_semantics
+    if velocity_input != 'absolute' and velocity_semantics(config)['mode'] != 'absolute':
+        raise ValueError('new position-generated velocity error cannot use an additional v_ref intervention')
+    env = (env_factory or CrazyflieResidualEnv)(config=config, episode_sec=case.horizon)
     adapter = EvaluationAdapter(env)
     rows, initial, error, reasons = [], None, None, []
     try:
         policy.bind(env)
         adapter.reset_to_case_initial_state(case, seed)
+        if observer is not None:
+            observer.on_reset(adapter)
         initial = adapter.snapshot()
         for k in range(round(case.horizon / adapter.control_dt)):
             t = k * adapter.control_dt
+            if observer is not None:
+                observer.before_step(adapter, k, t)
             reference, phase = case.reference(t)
             adapter.set_reference(reference)
             before = adapter.read_state()
             obs = adapter.current_observation()
             reference_velocity = case.reference_velocity(t)
-            policy_obs = policy_raw_observation(obs, reference_velocity, velocity_input)
+            policy_obs = policy_raw_observation(obs, reference_velocity, velocity_input, config=config)
+            if observation_transform is not None:
+                # Evaluation-only intervention, before frozen normalization. The
+                # environment observation, reference, reward and state stay native.
+                policy_obs = observation_transform(policy_obs, before['position'], reference, adapter.control_dt)
             action = np.asarray(policy.predict(policy_obs))
             if action.shape != (4,) or not np.all(np.isfinite(action)):
                 raise ValueError('policy returned a non-finite or wrong-shape action')
             _, reward, terminated, truncated, info = env.step(action)
             after = adapter.read_state()
             post_time = (k + 1) * adapter.control_dt
-            post_reference, post_phase = case.reference(post_time)
+            post_reference, post_phase = case.post_reference(post_time)
             post_reference_velocity = case.reference_velocity(post_time)
             row = dict(time=t, time_post=post_time, phase=phase, phase_post=post_phase,
                        reference=np.asarray(reference).copy(), reference_post=np.asarray(post_reference).copy(),
@@ -246,13 +264,27 @@ def run_case(config, case, policy, seed, velocity_input='absolute'):
                        velocity_error=after['velocity'] - post_reference_velocity,
                        policy_raw_observation=policy_obs.copy(), policy_raw_velocity=policy_obs[VELOCITY_SLICE].copy())
             row.update({f'{key}_before': value for key, value in before.items()})
+            row.update(desired_velocity_before=env.desired_velocity(before['position']),
+                       internal_velocity_reference_mode=desired_velocity_semantics(config)['mode'],
+                       environment_observation_velocity_mode=velocity_semantics(config)['mode'],
+                       environment_reward_velocity_mode=velocity_reward_semantics(config)['mode'],
+                       desired_velocity=env.desired_velocity(after['position']),
+                       internal_velocity_error=after['velocity']-env.desired_velocity(after['position']))
             row.update(after)
             for key, attr in (('motor_thrust_command', '_last_f_cmd'), ('motor_thrust', '_last_f'),
                               ('wrench_command', '_last_wrench_cmd'), ('wrench_actual', '_last_wrench_actual'),
-                              ('motor_omega', '_last_omega')):
+                              ('motor_omega', '_last_omega'), ('motor_command', '_last_motor_cmd')):
                 row[key] = np.asarray(getattr(env, attr)).copy()
+            row['motor_thrust_unclipped'] = env.B_pinv @ env._last_wrench_cmd
+            row['motor_allocation_clipped'] = (np.abs(row['motor_thrust_unclipped']-row['motor_thrust_command']) > 1e-12)
+            row['motor_command_at_lower_bound'] = row['motor_command'] <= 1e-9
+            row['motor_command_at_upper_bound'] = row['motor_command'] >= 1-1e-9
+            row['motor_actual_at_thrust_lower_bound'] = row['motor_thrust'] <= env.thrust_min+1e-9
+            row['motor_actual_at_thrust_upper_bound'] = row['motor_thrust'] >= env.thrust_max-1e-9
             row.update({f'{group}_{key}': value for group, values in info.items()
                         if group.startswith('reward_') for key, value in values.items()})
+            if observer is not None:
+                observer.after_step(env, row)
             rows.append(row)
             if not all(np.all(np.isfinite(v)) for v in after.values()):
                 raise ValueError('non-finite simulator state')
@@ -287,12 +319,20 @@ def summarize(rows, case, thresholds, error=None, reasons=()):
     duration = float(times[-1]) if n else 0.
     completed = bool(not error and not terminated and n and abs(duration - case.horizon) < 1e-8)
     result = dict(case=case.name, sample_count=n, expected_duration_sec=case.horizon,
+                  internal_velocity_reference_mode=rows[0].get('internal_velocity_reference_mode','absolute') if n else None,
                   actual_duration_sec=duration, completed=completed, terminated=terminated, truncated=truncated,
                   partial=not completed, metric_scope='full' if completed else 'partial_observed_only',
                   termination_reasons=list(reasons), error=error,
                   end_reason=error or (';'.join(reasons) if terminated else 'horizon' if completed else 'early_truncation' if truncated else 'no_samples'),
                   **rmse(errors))
     result.update(motion_metrics(rows, case))
+    result.update(actuation_metrics(rows))
+    result['completed_count'] = int(completed)
+    result['trial_count'] = 1
+    result['actual_speed_rms_m_s'] = float(np.sqrt(np.mean(np.sum(speeds**2, axis=1)))) if n else None
+    result['internal_velocity_error_rmse_m_s'] = (float(np.sqrt(np.mean([
+        np.dot(r['internal_velocity_error'], r['internal_velocity_error']) for r in rows])))
+        if n and 'internal_velocity_error' in rows[0] else None)
     if case.name in ('circle', 'circle-air'):
         phases = np.asarray([r['phase_post'] for r in rows])
         # Evaluate at t+dt with phase(t+dt), including phase boundaries.
@@ -306,6 +346,7 @@ def summarize(rows, case, thresholds, error=None, reasons=()):
         return result
     result.update(last_2s_position_rmse_xy=None, last_2s_position_rmse_z=None,
                   last_2s_position_rmse_total=None, last_2s_speed_rms=None,
+                  last_2s_internal_velocity_error_rms_m_s=None,
                   last_2s_position_std_x=None, last_2s_position_std_y=None, last_2s_position_std_z=None,
                   first_position_entry_s=None, settling_time_s=None, settled=False, overshoot_m=None)
     if n and np.all(np.isfinite(errors)) and np.all(np.isfinite(speeds)):
@@ -324,6 +365,9 @@ def summarize(rows, case, thresholds, error=None, reasons=()):
             tail = times > case.horizon - thresholds.tail_sec + 1e-9
             result.update({f'last_2s_{key}': value for key, value in rmse(errors[tail]).items()})
             result['last_2s_speed_rms'] = float(np.sqrt(np.mean(np.sum(speeds[tail]**2, axis=1))))
+            if all('internal_velocity_error' in r for r in rows):
+                velocity_errors=np.array([r['internal_velocity_error'] for r in rows])
+                result['last_2s_internal_velocity_error_rms_m_s'] = float(np.sqrt(np.mean(np.sum(velocity_errors[tail]**2,axis=1))))
             for axis, std in zip('xyz', np.std(positions[tail], axis=0, ddof=0)):
                 result[f'last_2s_position_std_{axis}'] = float(std)
             good = within_position & (np.linalg.norm(event_speeds, axis=1) <= thresholds.speed_band_m_s)
@@ -354,6 +398,30 @@ def motion_metrics(rows, case):
     return dict(zip(keys, map(float, (np.sqrt(np.mean(np.sum((velocity-reference)**2, axis=1))),
                                     np.sqrt(np.mean(np.sum(velocity[:, :2]**2, axis=1))),
                                     np.sqrt(np.mean(rpy[:, 0]**2)), np.sqrt(np.mean(rpy[:, 1]**2))))))
+
+
+def actuation_metrics(rows):
+    """Last-physics-substep signals; lag/tracking error is NOT called saturation."""
+    result = {'roll_max_abs_deg': None, 'pitch_max_abs_deg': None, 'tilt_max_deg': None,
+              'motor_saturation_sample_convention': 'last physics substep of each control interval',
+              'motor_allocation_clip_tolerance_n': 1e-12, 'motor_command_bound_tolerance': 1e-9}
+    if rows:
+        rpy = np.array([quaternion_to_euler_deg(r['quaternion']) for r in rows])
+        q = np.array([r['quaternion'] for r in rows])
+        result.update(roll_max_abs_deg=float(np.max(np.abs(rpy[:,0]))),
+                      pitch_max_abs_deg=float(np.max(np.abs(rpy[:,1]))),
+                      tilt_max_deg=float(np.max(np.degrees(np.arccos(np.clip(1-2*(q[:,1]**2+q[:,2]**2),-1,1))))))
+    for key in ('motor_allocation_clipped', 'motor_command_at_lower_bound', 'motor_command_at_upper_bound',
+                'motor_actual_at_thrust_lower_bound', 'motor_actual_at_thrust_upper_bound'):
+        available = bool(rows) and all(key in r for r in rows)
+        values = np.array([r[key] for r in rows], dtype=bool) if available else None
+        result[f'{key}_fraction_any_motor'] = float(np.mean(np.any(values,axis=1))) if available else None
+        result[f'{key}_fraction_per_motor'] = np.mean(values,axis=0).tolist() if available else None
+    if rows and all('motor_thrust' in r for r in rows):
+        force=np.array([r['motor_thrust'] for r in rows])
+        result.update(motor_thrust_min_n_per_motor=force.min(axis=0).tolist(),
+                      motor_thrust_max_n_per_motor=force.max(axis=0).tolist())
+    return result
 
 
 def write_json(path, data):
@@ -407,7 +475,7 @@ def build_parser():
     p.add_argument('--normalization', action='append', default=[], metavar='LABEL=PATH_OR_none', help='saved VecNormalize statistics or explicit declaration of raw observations')
     p.add_argument('--cases', nargs='+', choices=CASE_NAMES, default=list(DEFAULT_CASES))
     p.add_argument('--velocity-inputs', nargs='+', choices=VELOCITY_INPUTS, default=['absolute'],
-                   help='evaluation-only raw velocity semantics; error is an inference intervention')
+                   help='absolute: native environment input unchanged; error: v_ref subtraction on legacy absolute inputs only')
     p.add_argument('--seed', type=int, default=42)
     p.add_argument('--output-dir', type=Path, help='parent for a unique run directory; never overwritten')
     p.add_argument('--dry-run', action='store_true')
@@ -426,11 +494,14 @@ def main(argv=None):
         if len(set(args.velocity_inputs)) != len(args.velocity_inputs):
             raise ValueError('duplicate velocity input modes')
         config = load_config(args.config)
+        from .velocity_reference import observation_contract, velocity_semantics, velocity_reward_semantics
+        if velocity_semantics(config)['mode'] != 'absolute' and args.velocity_inputs != ['absolute']:
+            raise ValueError('new velocity-error policies require native inputs; --velocity-inputs error would double-subtract')
         validate_common_config(config)
         thresholds = Thresholds(args.position_band, args.speed_band, args.settle_hold_sec)
         paths, manifests, normalizations = labeled(args.model), labeled(args.manifest), labeled(args.normalization)
-        if len(paths) < 2:
-            raise ValueError('at least two unique model labels are required')
+        if not paths:
+            raise ValueError('at least one model label is required')
         if (manifests.keys() | normalizations.keys()) - paths.keys():
             raise ValueError('manifest/normalization label has no matching model')
         cases = make_cases(config, args.cases)
@@ -447,12 +518,15 @@ def main(argv=None):
                     git=_git_metadata(ROOT),
                     source_sha256={name: sha256(ROOT/name) for name in
                                    ('crazyflie_rl/dr_transfer.py', 'crazyflie_rl/dr_policy.py',
-                                    'crazyflie_rl/missions.py', 'crazyflie_rl/environment.py', 'crazyflie_rl/plotting.py')},
+                                    'crazyflie_rl/missions.py', 'crazyflie_rl/environment.py', 'crazyflie_rl/plotting.py',
+                                    'crazyflie_rl/velocity_reference.py','crazyflie_rl/config.py')},
                     velocity_inputs=args.velocity_inputs,
                     rollouts=[dict(model_label=label, observation_velocity_mode=mode, case=c.name)
                               for c in cases for label in paths for mode in args.velocity_inputs],
-                    policy_input_contract=dict(environment_raw=OBSERVATION_CONTRACT, velocity_slice=[3, 6],
-                        velocity_frame='world', velocity_unit='m/s', absolute='v_world', error='v_world-v_ref_world',
+                    velocity_reward_semantics=velocity_reward_semantics(config),
+                    policy_input_contract=dict(environment_raw=observation_contract(config), velocity_semantics=velocity_semantics(config), velocity_slice=[3, 6],
+                        internal_reference='norm_clip(-Kp*(p-p_target),v_max); recompute at each state; no target differentiation',
+                        velocity_frame='world', velocity_unit='m/s', absolute='native environment input unchanged', error='v_world-v_ref_world (legacy only)',
                         error_mode_interpretation='inference input intervention on an absolute-velocity-trained policy',
                         order=['environment raw observation', 'copy and replace velocity in error mode only',
                                'frozen saved observation normalization and clipping if present', 'deterministic policy predict'],
@@ -517,8 +591,10 @@ def main(argv=None):
                     result = dict(label=label, display_name=display_name(label), observation_velocity_mode=mode,
                                   **summarize(rows, case, thresholds, error, reasons))
                     summaries.append(result)
-                    plotted[f'{display_name(label)} / {mode}'] = rows
-                    print(f"{case.name} {display_name(label)} / {mode}: completed={result['completed']} duration={result['actual_duration_sec']:.2f}s reason={result['end_reason']}")
+                    input_label = ('position velocity error (native)'
+                                   if velocity_semantics(config)['mode'] == 'position_error' else mode)
+                    plotted[f'{display_name(label)} / {input_label}'] = rows
+                    print(f"{case.name} {display_name(label)} / {input_label}: completed={result['completed']} duration={result['actual_duration_sec']:.2f}s reason={result['end_reason']}")
                     if sha256(policy.provenance['path']) != policy.provenance['sha256']:
                         raise RuntimeError('checkpoint changed during evaluation')
                     write_summary(directory, summaries)

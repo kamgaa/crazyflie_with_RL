@@ -54,6 +54,10 @@ def reward_balance_metrics(
     if errors.shape != (n,):
         raise ValueError('position_error must contain one norm per sample')
     velocity = vector('linear_velocity')
+    from .velocity_reference import velocity_reward_semantics
+    velocity_cost_signal = (vector('velocity_error')
+        if velocity_reward_semantics(config)['mode'] != 'absolute' and getattr(trace,'control_mode',None) != 'residual'
+        else velocity)
     omega = vector('angular_velocity')
     attitude = np.deg2rad(vector('attitude_deg'))
     cos_tilt = np.clip(np.cos(attitude[:, 0]) * np.cos(attitude[:, 1]), -1.0, 1.0)
@@ -115,6 +119,12 @@ def reward_balance_metrics(
             reduce(xy_weight * raw['position']) if xy_weight == z_weight
             else reduce(xy_weight * position_sq_xy + z_weight * position_sq_z)
         )
+        error_signal = vector('velocity_error') if getattr(trace, 'velocity_error', None) is not None else velocity_cost_signal
+        result['velocity_error_rms_mps'] = reduce(np.linalg.norm(error_signal,axis=1),lambda x: np.sqrt(np.mean(x*x)))
+        result['velocity_reward_sq_mean'] = reduce(np.sum(velocity_cost_signal**2,axis=1))
+        result['velocity_reward_signal'] = ('velocity_error' if velocity_reward_semantics(config)['mode'] != 'absolute'
+            and getattr(trace,'control_mode',None) != 'residual' else 'absolute_velocity')
+        costs['velocity'] = reduce(weights['velocity']*np.sum(velocity_cost_signal**2,axis=1))
         total = _finite(sum(costs.values())) if all(v is not None for v in costs.values()) else None
         result['mean_cost'] = {**costs, 'total': total}
         result['cost_fraction'] = {

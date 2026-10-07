@@ -10,6 +10,27 @@ from .environment import CrazyflieResidualEnv
 from .plotting import quaternion_to_euler_deg
 
 
+def apply_motor_effectiveness(env, effectiveness):
+    """Scale fresh post-actuator outputs once, leaving allocator/RPM state intact.
+
+    Call only immediately after the production _apply_control. This is a rotor
+    output-loss model: both generated force and signed reaction torque scale.
+    """
+    lam = np.asarray(effectiveness, dtype=float)
+    if lam.shape != (4,) or not np.all(np.isfinite(lam)) or np.any((lam < 0) | (lam > 1)):
+        raise ValueError('motor effectiveness must be four finite values in [0,1]')
+    nominal = env._last_f.copy()
+    nominal_torque = env._last_q_actual.copy()
+    if np.any(lam != 1):
+        env._last_f *= lam
+        env._last_q_actual *= lam
+        env._last_wrench_actual = env.B @ env._last_f
+        env._last_wrench_actual[2] = np.sum(env._last_q_actual)
+        env._last_allocation_error = env._last_wrench_cmd - env._last_wrench_actual
+        env._write_applied_motor_controls()
+    return nominal, nominal_torque
+
+
 @dataclass(frozen=True)
 class Settings:
     motor_index: int = 0
@@ -73,14 +94,7 @@ class DiagnosticEnv(CrazyflieResidualEnv):
         lam = np.ones(4)
         if self.condition in ('B','C') and t >= s.activation_sec:
             lam[s.motor_index] = s.effectiveness
-        nominal = self._last_f.copy()
-        if np.any(lam != 1):
-            self._last_f *= lam
-            self._last_q_actual *= lam
-            self._last_wrench_actual = self.B @ self._last_f
-            self._last_wrench_actual[2] = np.sum(self._last_q_actual)
-            self._last_allocation_error = self._last_wrench_cmd - self._last_wrench_actual
-            self._write_applied_motor_controls()
+        nominal, _ = apply_motor_effectiveness(self, lam)
         self.dist_torque_body[:] = 0.
         if self.condition in ('A','C') and s.disturbance_start <= t < s.disturbance_start + s.disturbance_duration:
             axis = ('roll','pitch','yaw').index(s.disturbance_axis.lstrip('+-'))

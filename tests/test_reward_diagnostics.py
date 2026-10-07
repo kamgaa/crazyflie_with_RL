@@ -17,7 +17,7 @@ BASELINE = '9a5419e5a3dc73921121bdc8f08ea8241354bebd'
 COMPONENTS = ('position', 'velocity', 'tilt', 'angular_velocity', 'yaw',
               'action', 'action_rate', 'crash')
 RAW = ('position_sq', 'position_sq_xy', 'position_sq_z', 'velocity_sq', 'tilt_error', 'angular_velocity_sq',
-       'yaw_error_sq', 'action_sq', 'action_rate_sq')
+       'yaw_error_sq', 'action_sq', 'action_rate_sq', 'velocity_error_sq', 'desired_velocity_sq', 'velocity_reward_sq')
 COSTS = ('position_xy', 'position_z')
 TAGS = ({f'reward_terms/{key}' for key in (*COMPONENTS, 'total')}
         | {f'reward_raw/{key}' for key in RAW}
@@ -45,7 +45,11 @@ def make_env(mode, cls=CrazyflieResidualEnv):
         pytest.skip('MuJoCo XML unavailable')
     # Test-only nonzero weights also check that E2E overrides the config.
     config = replace(config, environment=replace(
-        config.environment, reward=replace(config.environment.reward,
+        config.environment,
+        # Isolate reward instrumentation from the intentional payload physics
+        # correction (the old residual profile carried 10 g).
+        payload=replace(config.environment.payload,mass=0.,offset=(0.,0.),randomize=False),
+        reward=replace(config.environment.reward,
                                            action_weight=0.001, action_rate_weight=0.25)))
     return cls(config=config, seed=314159)
 
@@ -79,7 +83,8 @@ def test_fixed_trajectory_exact_equivalence(reference_class, mode, dtype):
             assert terms['total'] == actual[1]
             assert sum(terms[n] for n in COMPONENTS) == pytest.approx(actual[1], rel=1e-14, abs=1e-14)
             assert terms['crash'] == (-current.crash_penalty if actual[2] else 0.0)
-            assert all(type(v) is float and np.isfinite(v) for group in actual[4].values() for v in group.values())
+            assert all(type(v) is float and np.isfinite(v) for key,group in actual[4].items()
+                       if key.startswith('reward_') for v in group.values())
             assert all(terms[n] <= 0 for n in COMPONENTS)
             clipped = np.clip(action, -1, 1)
             delta = clipped - prev

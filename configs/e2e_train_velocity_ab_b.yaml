@@ -1,0 +1,10 @@
+extends: e2e_train_velocity_ab_a.yaml
+
+# B differs from A only in the velocity reward, never in the policy input.
+environment:
+  e2e_velocity:
+    reward_mode: position_error
+
+experiment:
+  condition: velocity-ab-b-absolute-observation-error-reward
+  description: B reward-only intervention, nominal seed42, fresh training only

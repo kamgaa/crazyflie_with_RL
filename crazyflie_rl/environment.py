@@ -255,6 +255,7 @@ class CrazyflieResidualEnv(_GymEnv):
             "torque_coefficient",
             positive=True,
         )
+        self.reaction_torque_layout = getattr(configured_vehicle, "reaction_torque_layout", "legacy")
         self.motor_direction = _finite_vector(
             getattr(configured_vehicle, "motor_direction", MOTOR_DIR),
             ACTION_DIM,
@@ -489,6 +490,9 @@ class CrazyflieResidualEnv(_GymEnv):
         self._m0 = float(self.model.body_mass[self.drone_bid])
         self._ipos0 = self.model.body_ipos[self.drone_bid].copy()
         self._J0 = self.model.body_inertia[self.drone_bid].copy()
+        self._iquat0 = self.model.body_iquat[self.drone_bid].copy()
+        self.e2e_velocity = (getattr(configured_environment, 'e2e_velocity', None)
+                             if self.mode == 'e2e' else None)
 
         self.pid = CascadePID(self.dt_phys, config=config)
         self.dist_torque_body = np.zeros(3)
@@ -517,11 +521,34 @@ class CrazyflieResidualEnv(_GymEnv):
         self.model.body_mass[self.drone_bid] = total_mass
         self.model.body_ipos[self.drone_bid] = new_ipos
 
-        reduced_mass = (self._m0 * mass) / total_mass
-        x, y = r_w[0], r_w[1]
-        self.model.body_inertia[self.drone_bid] = self._J0 + reduced_mass * np.array(
-            [y * y, x * x, x * x + y * y]
-        )
+        # Combine the full inertia tensors about the new COM (point payload).
+        rotation = rotmat_from_quat_wxyz(self._iquat0)
+        tensor = rotation @ np.diag(self._J0) @ rotation.T
+        for weight, delta in ((self._m0, self._ipos0-new_ipos), (mass, r_w-new_ipos)):
+            tensor += weight * (np.dot(delta, delta)*np.eye(3)-np.outer(delta, delta))
+        if mass == 0:
+            principal, quaternion = self._J0.copy(), self._iquat0.copy()
+        else:
+            principal, axes = np.linalg.eigh(tensor)
+            if np.linalg.det(axes) < 0:
+                axes[:, 0] *= -1
+            quaternion = np.empty(4)
+            mujoco.mju_mat2Quat(quaternion, axes.ravel())
+        self.model.body_inertia[self.drone_bid] = principal
+        self.model.body_iquat[self.drone_bid] = quaternion
+        # Recompute sameframe/subtree mass and all dependent model constants.
+        # setConst temporarily works at qpos0; preserve the caller's state.
+        qpos = self.data.qpos.copy()
+        mujoco.mj_setConst(self.model, self.data)
+        self.data.qpos[:] = qpos
+
+    def desired_velocity(self, position):
+        from .velocity_reference import desired_velocity
+        return desired_velocity(np.asarray(position)-self.pos_des, getattr(self, 'e2e_velocity', None))
+
+    def velocity_channel_mode(self, channel):
+        from .velocity_reference import velocity_mode
+        return velocity_mode(getattr(self, 'e2e_velocity', None), channel)
 
     def _make_actuator_model(self, configured_actuator: Any | None):
         """Build a plant actuator without changing the preserved allocator."""
@@ -832,7 +859,8 @@ class CrazyflieResidualEnv(_GymEnv):
         return np.concatenate(
             [
                 np.asarray(position) - self.pos_des,
-                np.asarray(velocity),
+                (np.asarray(velocity) - self.desired_velocity(position)
+                 if self.velocity_channel_mode('observation') == 'position_error' else np.asarray(velocity)),
                 np.asarray(quaternion),
                 np.asarray(omega_body),
                 [np.sin(yaw_error), np.cos(yaw_error)],
@@ -934,12 +962,8 @@ class CrazyflieResidualEnv(_GymEnv):
             self._apply_control(wrench)
 
             rotation = rotmat_from_quat_wxyz(quaternion)
-            torque_com_world = np.cross(
-                rotation @ self._com_off3,
-                np.array([0.0, 0.0, -self._com_mw * self.gravity]),
-            )
             self.data.xfrc_applied[self.drone_bid, 3:6] = (
-                rotation @ self.dist_torque_body + torque_com_world
+                rotation @ self.dist_torque_body
             )
             mujoco.mj_step(self.model, self.data)
 
@@ -947,6 +971,9 @@ class CrazyflieResidualEnv(_GymEnv):
         observation = self._obs(position, quaternion, velocity, omega_body)
 
         position_error = position - self.pos_des
+        desired_velocity = self.desired_velocity(position)
+        velocity_error = velocity - desired_velocity
+        velocity_reward = velocity_error if self.velocity_channel_mode('reward') == 'position_error' else velocity
         tilt_error = 2.0 * (quaternion[1] ** 2 + quaternion[2] ** 2)
         yaw_error = self._yaw_err(quaternion)
         action_delta = action_array - self._prev_action
@@ -965,7 +992,7 @@ class CrazyflieResidualEnv(_GymEnv):
 
         cost = (
             position_cost
-            + self.velocity_weight * (velocity @ velocity)
+            + self.velocity_weight * (velocity_reward @ velocity_reward)
             + self.tilt_weight * tilt_error
             + self.angular_velocity_weight * (omega_body @ omega_body)
             + self.yaw_weight * yaw_error**2
@@ -999,6 +1026,9 @@ class CrazyflieResidualEnv(_GymEnv):
             "position_sq_xy": position_sq_xy,
             "position_sq_z": position_sq_z,
             "velocity_sq": velocity @ velocity,
+            "velocity_error_sq": velocity_error @ velocity_error,
+            "velocity_reward_sq": velocity_reward @ velocity_reward,
+            "desired_velocity_sq": desired_velocity @ desired_velocity,
             "tilt_error": tilt_error,
             "angular_velocity_sq": omega_body @ omega_body,
             "yaw_error_sq": yaw_error**2,
@@ -1007,7 +1037,7 @@ class CrazyflieResidualEnv(_GymEnv):
         }
         terms = {
             "position": float(-position_cost),
-            "velocity": float(-(self.velocity_weight * raw["velocity_sq"])),
+            "velocity": float(-(self.velocity_weight * raw["velocity_reward_sq"])),
             "tilt": float(-(self.tilt_weight * raw["tilt_error"])),
             "angular_velocity": float(-(
                 self.angular_velocity_weight * raw["angular_velocity_sq"]
@@ -1019,6 +1049,8 @@ class CrazyflieResidualEnv(_GymEnv):
             "total": float(reward),
         }
         info = {
+            "desired_velocity": desired_velocity.copy(),
+            "velocity_error": velocity_error.copy(),
             "reward_terms": terms,
             "reward_raw": {name: float(value) for name, value in raw.items()},
             # Positive subcosts are separate from reward_terms to avoid counting

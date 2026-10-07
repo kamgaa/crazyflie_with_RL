@@ -41,6 +41,14 @@ class VehicleConfig:
     torque_coefficient: float
     inertia_diagonal: tuple[float, float, float]
     physics_hz: float
+    reaction_torque_layout: str = 'legacy'
+
+    def __post_init__(self):
+        # Single resolved sign vector shared by plant and allocator. Existing
+        # YAMLs retain their original directions; only an explicit profile opts in.
+        from .motor_layout import reaction_directions
+        object.__setattr__(self, 'motor_direction',
+                           reaction_directions(self.reaction_torque_layout, self.motor_direction))
 
 
 @dataclass(frozen=True)
@@ -192,6 +200,16 @@ class InitialPoseRandomizationConfig:
 
 
 @dataclass(frozen=True)
+class E2EVelocityConfig:
+    mode: str = 'absolute'
+    position_gain: float = 4.0
+    max_speed: float = 1.5
+    # Optional overrides; absent fields retain the original coupled `mode`.
+    observation_mode: str | None = None
+    reward_mode: str | None = None
+
+
+@dataclass(frozen=True)
 class EnvironmentConfig:
     control_mode: str
     policy_hz: float
@@ -205,6 +223,7 @@ class EnvironmentConfig:
     reward: RewardConfig
     termination: TerminationConfig
     initial_pose_randomization: InitialPoseRandomizationConfig | None = None
+    e2e_velocity: E2EVelocityConfig | None = None
 
 
 @dataclass(frozen=True)
@@ -232,6 +251,8 @@ class TrainingConfig:
     seed: int | None
     total_timesteps: int
     ppo: PPOConfig
+    record_episodes: bool = False
+    checkpoint_interval: int = 0
 
 
 @dataclass(frozen=True)
@@ -361,6 +382,20 @@ class ExperimentConfig:
 
     def resolved_dict(self) -> dict[str, Any]:
         payload = _serializable(asdict(self))
+        # Archived comparison CLIs check resolved dictionaries for exact equality.
+        # Omitted legacy selector retains their historic serialized contract.
+        if self.vehicle.reaction_torque_layout == 'legacy':
+            payload['vehicle'].pop('reaction_torque_layout', None)
+        if not self.training.record_episodes:
+            payload['training'].pop('record_episodes', None)
+        if not self.training.checkpoint_interval:
+            payload['training'].pop('checkpoint_interval', None)
+        if self.environment.e2e_velocity is None:
+            payload['environment'].pop('e2e_velocity', None)
+        else:
+            for key in ('observation_mode', 'reward_mode'):
+                if payload['environment']['e2e_velocity'][key] is None:
+                    payload['environment']['e2e_velocity'].pop(key)
         reward = self.environment.reward
         payload["environment"]["reward"].update(
             position_xy_weight=reward.effective_position_xy_weight,
@@ -594,7 +629,10 @@ def _build_config(data: Mapping[str, Any], source_path: Path) -> ExperimentConfi
 
     raw_vehicle = _mapping(data["vehicle"], "vehicle")
     vehicle_keys = {"mass", "gravity", "arm_length", "motor_direction", "thrust_min", "thrust_max", "torque_coefficient", "inertia_diagonal", "physics_hz"}
-    _keys(raw_vehicle, vehicle_keys, "vehicle")
+    _keys(raw_vehicle, vehicle_keys | {"reaction_torque_layout"}, "vehicle", required=vehicle_keys)
+    layout = raw_vehicle.get('reaction_torque_layout', 'legacy')
+    if layout not in ('legacy', 'user_frd'):
+        raise ConfigError('vehicle.reaction_torque_layout must be legacy or user_frd')
     vehicle = VehicleConfig(
         mass=_number(raw_vehicle["mass"], "vehicle.mass", positive=True),
         gravity=_number(raw_vehicle["gravity"], "vehicle.gravity", positive=True),
@@ -605,6 +643,7 @@ def _build_config(data: Mapping[str, Any], source_path: Path) -> ExperimentConfi
         torque_coefficient=_number(raw_vehicle["torque_coefficient"], "vehicle.torque_coefficient", positive=True),
         inertia_diagonal=_numbers(raw_vehicle["inertia_diagonal"], 3, "vehicle.inertia_diagonal", positive=True),  # type: ignore[arg-type]
         physics_hz=_number(raw_vehicle["physics_hz"], "vehicle.physics_hz", positive=True),
+        reaction_torque_layout=layout,
     )
     if vehicle.thrust_max <= vehicle.thrust_min:
         raise ConfigError("vehicle.thrust_max must exceed vehicle.thrust_min")
@@ -806,7 +845,22 @@ def _build_config(data: Mapping[str, Any], source_path: Path) -> ExperimentConfi
 
     raw_environment = _mapping(data["environment"], "environment")
     environment_keys = {"control_mode", "policy_hz", "episode_sec", "residual_scale", "position_target", "yaw_target", "position_perturbation", "attitude_perturbation_deg", "payload", "reward", "termination"}
-    _keys(raw_environment, environment_keys | {"initial_pose_randomization"}, "environment", required=environment_keys)
+    _keys(raw_environment, environment_keys | {"initial_pose_randomization", "e2e_velocity"}, "environment", required=environment_keys)
+    raw_velocity = raw_environment.get('e2e_velocity')
+    velocity_settings = None
+    if raw_velocity is not None:
+        raw_velocity = _mapping(raw_velocity, 'environment.e2e_velocity')
+        _keys(raw_velocity, {'mode', 'position_gain', 'max_speed', 'observation_mode', 'reward_mode'},
+              'environment.e2e_velocity', required={'mode', 'position_gain', 'max_speed'})
+        velocity_settings = E2EVelocityConfig(
+            mode=_text(raw_velocity['mode'], 'environment.e2e_velocity.mode', choices={'absolute','position_error'}),
+            position_gain=_number(raw_velocity['position_gain'], 'environment.e2e_velocity.position_gain', positive=True),
+            max_speed=_number(raw_velocity['max_speed'], 'environment.e2e_velocity.max_speed', positive=True),
+            **{key: (_text(raw_velocity[key], f'environment.e2e_velocity.{key}',
+                          choices={'absolute','position_error'}) if key in raw_velocity else None)
+               for key in ('observation_mode', 'reward_mode')})
+        if raw_environment['control_mode'] != 'e2e':
+            raise ConfigError('environment.e2e_velocity is only supported for E2E')
     raw_payload = _mapping(raw_environment["payload"], "environment.payload")
     _keys(raw_payload, {"randomize", "mass", "offset", "randomization_limits"}, "environment.payload")
     raw_limits = _mapping(raw_payload["randomization_limits"], "environment.payload.randomization_limits")
@@ -857,13 +911,15 @@ def _build_config(data: Mapping[str, Any], source_path: Path) -> ExperimentConfi
         reward=reward,
         termination=termination,
         initial_pose_randomization=_initial_pose_config(raw_environment.get("initial_pose_randomization")),
+        e2e_velocity=velocity_settings,
     )
     substeps = round(vehicle.physics_hz / environment.policy_hz)
     if substeps < 1:
         raise ConfigError("environment.policy_hz is too high for vehicle.physics_hz")
 
     raw_training = _mapping(data["training"], "training")
-    _keys(raw_training, {"seed", "total_timesteps", "ppo"}, "training")
+    _keys(raw_training, {"seed", "total_timesteps", "ppo", "record_episodes", "checkpoint_interval"},
+          "training", required={"seed", "total_timesteps", "ppo"})
     seed_value = raw_training["seed"]
     seed = None if seed_value is None else _integer(seed_value, "training.seed")
     raw_ppo = _mapping(raw_training["ppo"], "training.ppo")
@@ -899,6 +955,8 @@ def _build_config(data: Mapping[str, Any], source_path: Path) -> ExperimentConfi
         seed=seed,
         total_timesteps=_integer(raw_training["total_timesteps"], "training.total_timesteps", minimum=1),
         ppo=ppo,
+        record_episodes=_boolean(raw_training.get('record_episodes', False), 'training.record_episodes'),
+        checkpoint_interval=_integer(raw_training.get('checkpoint_interval', 0), 'training.checkpoint_interval', minimum=0),
     )
 
     raw_evaluation = _mapping(data["evaluation"], "evaluation")

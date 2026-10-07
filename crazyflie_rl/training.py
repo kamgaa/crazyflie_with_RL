@@ -90,6 +90,7 @@ def _make_reward_diagnostics_callback() -> Any:
         "reward_raw": (
             "position_sq", "position_sq_xy", "position_sq_z",
             "velocity_sq", "tilt_error", "angular_velocity_sq",
+            "velocity_error_sq", "desired_velocity_sq", "velocity_reward_sq",
             "yaw_error_sq", "action_sq", "action_rate_sq",
         ),
         "reward_costs": ("position_xy", "position_z"),
@@ -182,7 +183,7 @@ class PPOTrainer:
         from stable_baselines3 import PPO
 
         ppo = self.config.training.ppo
-        return PPO(
+        model = PPO(
             policy=ppo.policy,
             env=vector_environment,
             learning_rate=ppo.learning_rate,
@@ -205,6 +206,11 @@ class PPOTrainer:
             device=ppo.device,
             verbose=ppo.verbose,
         )
+        from .velocity_reference import observation_contract, velocity_semantics, velocity_reward_semantics
+        model.observation_contract = observation_contract(self.config)
+        model.velocity_semantics = velocity_semantics(self.config)
+        model.velocity_reward_semantics = velocity_reward_semantics(self.config)
+        return model
 
     def _write_floor_metrics(
         self,
@@ -335,6 +341,8 @@ class PPOTrainer:
         print(
             f"[config] position_xy_weight={reward.effective_position_xy_weight:g} "
             f"position_z_weight={reward.effective_position_z_weight:g} "
+            f"velocity_weight={reward.velocity_weight:g} "
+            f"e2e_velocity={self.config.environment.e2e_velocity} "
             f"action_scale={self.config.environment.residual_scale}"
         )
         artifacts = self.artifact_manager
@@ -343,7 +351,14 @@ class PPOTrainer:
         try:
             from stable_baselines3.common.vec_env import DummyVecEnv
 
-            vector_environment = DummyVecEnv([self.environment_factory.make])
+            def make_training_environment():
+                env = self.environment_factory.make()
+                if getattr(self.config.training, 'record_episodes', False):
+                    from .training_observers import EpisodeCSVRecorder
+                    env = EpisodeCSVRecorder(env, artifacts.path('metrics', 'training-episodes', '.csv'))
+                return env
+
+            vector_environment = DummyVecEnv([make_training_environment])
             model = self._build_model(vector_environment)
 
             floor_result = self.evaluator.evaluate(None)
@@ -363,6 +378,10 @@ class PPOTrainer:
             # SB3 converts a callback list into CallbackList. Keep the original
             # evaluation handle for the unchanged best/final selection below.
             callbacks = [_make_reward_diagnostics_callback()]
+            checkpoint_interval = getattr(self.config.training, 'checkpoint_interval', 0)
+            if checkpoint_interval:
+                from .training_observers import make_periodic_checkpoint_callback
+                callbacks.append(make_periodic_checkpoint_callback(artifacts, checkpoint_interval))
             if callback is not None:
                 callbacks.append(callback)
             model.learn(

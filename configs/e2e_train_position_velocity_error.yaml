@@ -1,0 +1,31 @@
+extends: e2e_train.yaml
+
+# Nominal baseline: preserve legacy independent xyz Uniform(-.05,.05).
+# The current split_equal file has drifted to POS DR; do not inherit that sampler.
+environment:
+  control_mode: e2e
+  residual_scale: [0.0075, 0.0075, 0.001, 0.5]
+  e2e_velocity:
+    mode: position_error
+    position_gain: 4.0       # 1/s; independent of controller/PID gains
+    max_speed: 1.5           # m/s; vector norm limit
+  reward:
+    position_xy_weight: 10.0
+    position_z_weight: 6.0
+    velocity_weight: 0.005   # unchanged from current nominal baseline
+  payload:
+    randomize: false
+    mass: 0.0
+    offset: [0.0, 0.0]
+
+actuator:
+  randomization:
+    enabled: false
+
+training:
+  seed: 42
+  total_timesteps: 1000000
+
+experiment:
+  condition: position-velocity-error-nominal
+  description: Stateless position-generated velocity error observation and reward, corrected payload physics

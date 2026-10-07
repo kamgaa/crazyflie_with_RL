@@ -119,6 +119,7 @@ class _FakeModel:
         self.opt = SimpleNamespace(timestep=None)
         self.body_mass = np.array([MASS])
         self.body_ipos = np.zeros((1, 3))
+        self.body_iquat = np.array([[1.,0.,0.,0.]])
         self.body_inertia = np.array([[2.3951e-5, 2.3951e-5, 3.2347e-5]])
         self.sensor_adr = np.array([0])
 
@@ -223,6 +224,7 @@ def _step_only_env(
     env._step = 0
     env.max_steps = 100
     env.position_weight = 3.0
+    env.position_xy_weight = env.position_z_weight = 3.0
     env.velocity_weight = 0.01
     env.tilt_weight = 3.0
     env.angular_velocity_weight = 0.001
@@ -270,10 +272,10 @@ def test_action_clip_scale_control_composition_and_payload_torque(
         )
         assert reward == pytest.approx(0.0)
 
-    # identity attitude: [x,y,0] x [0,0,-mg] = [-mgy, mgx, 0]
+    # Payload gravity is handled by the engine COM, never an extra pure torque.
     np.testing.assert_allclose(
         env.data.xfrc_applied[0, 3:6],
-        np.array([0.01 * GRAV * 0.2, 0.01 * GRAV * 0.1, 0.0]),
+        np.zeros(3),
     )
     assert observation.shape == (15,)
     assert terminated is False
@@ -617,17 +619,11 @@ def test_pid_hover_and_integrator_contract() -> None:
     assert np.all(np.isfinite(pid._i_rate))
 
 
-def test_com_mass_offset_and_diagonal_inertia_update() -> None:
-    env = CrazyflieResidualEnv.__new__(CrazyflieResidualEnv)
-    env.drone_bid = 0
+def test_com_mass_offset_and_full_inertia_update() -> None:
+    env = CrazyflieResidualEnv(config=load_config(CONFIGS/'e2e_train.yaml'))
     env._m0 = MASS
     env._ipos0 = np.array([0.01, -0.02, 0.0])
     env._J0 = np.array([2.0e-5, 3.0e-5, 4.0e-5])
-    env.model = SimpleNamespace(
-        body_mass=np.zeros(1),
-        body_ipos=np.zeros((1, 3)),
-        body_inertia=np.zeros((1, 3)),
-    )
     payload_mass = 0.01
     offset = np.array([0.03, -0.04])
 
@@ -638,12 +634,14 @@ def test_com_mass_offset_and_diagonal_inertia_update() -> None:
     expected_ipos = (
         MASS * env._ipos0 + payload_mass * np.array([0.03, -0.04, 0.0])
     ) / total
-    expected_inertia = env._J0 + reduced * np.array(
-        [0.04**2, 0.03**2, 0.03**2 + 0.04**2]
-    )
-    assert env.model.body_mass[0] == pytest.approx(total)
-    np.testing.assert_allclose(env.model.body_ipos[0], expected_ipos)
-    np.testing.assert_allclose(env.model.body_inertia[0], expected_inertia)
+    delta=np.r_[offset,0]-env._ipos0
+    expected_inertia = np.diag(env._J0)+reduced*(np.dot(delta,delta)*np.eye(3)-np.outer(delta,delta))
+    b=env.drone_bid
+    rotation=env_module.rotmat_from_quat_wxyz(env.model.body_iquat[b])
+    assert env.model.body_mass[b] == pytest.approx(total)
+    np.testing.assert_allclose(env.model.body_ipos[b], expected_ipos)
+    np.testing.assert_allclose(rotation@np.diag(env.model.body_inertia[b])@rotation.T, expected_inertia,atol=1e-16)
+    env.close()
 
 
 def test_payload_randomization_preserves_master_rng_draw_order(monkeypatch) -> None:

@@ -1,0 +1,13 @@
+extends: eval_dr_transfer.yaml
+
+# Fixed payload example for view_e2e_interactive.py only.
+# Units: mass in kg; offset [x, y] in metres, relative to the drone body origin.
+# Current payload model supports horizontal offsets only (z=0).
+environment:
+  payload:
+    randomize: false
+    mass: 0.005             # 5 g; set 0.0 for no added mass
+    offset: [0.02, 0.0]    # 2 cm along body +X, not world +X
+
+experiment:
+  description: Interactive E2E motor degradation with a fixed off-centre payload

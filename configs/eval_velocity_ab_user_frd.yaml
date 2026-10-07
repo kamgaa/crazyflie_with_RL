@@ -1,0 +1,10 @@
+extends: eval_velocity_ab.yaml
+
+# Evaluation-only physical intervention. PPO observations/actions stay native;
+# only body reaction signs and the matching allocator yaw row change.
+vehicle:
+  reaction_torque_layout: user_frd
+
+experiment:
+  condition: velocity-ab-user-frd-reaction-layout
+  description: Frozen native PPO with user FRD motor numbering and reaction layout

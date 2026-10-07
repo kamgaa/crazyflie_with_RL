@@ -1,0 +1,20 @@
+extends: e2e_train_velocity_ab_a.yaml
+
+# One common nominal plant, raw absolute-velocity observation and reference.
+# Evaluation reward is A's definition for every model; returns are not ranked.
+environment:
+  position_perturbation: 0.0
+  attitude_perturbation_deg: 0.0
+  initial_pose_randomization: null
+
+evaluation:
+  deterministic: true
+  seed_start: 42
+
+mission:
+  type: hover
+  force_floor_start: false
+
+experiment:
+  condition: velocity-ab-common-evaluation
+  description: Same nominal evaluation for fresh A/B and separate historical reference

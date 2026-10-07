@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from datetime import datetime
 import importlib.metadata
+import hashlib
 import json
 from pathlib import Path
 import platform
@@ -246,12 +247,15 @@ class ArtifactManager:
         timestep: int | None = None,
         metadata: Mapping[str, Any] | None = None,
     ) -> Path:
-        if kind not in {"best", "final"}:
-            raise ValueError("model kind must be 'best' or 'final'")
+        if kind not in {"best", "final", "intermediate"}:
+            raise ValueError("model kind must be 'best', 'final', or 'intermediate'")
+        if kind == 'intermediate' and (timestep is None or timestep < 0):
+            raise ValueError('intermediate checkpoints require a nonnegative timestep')
+        file_kind = f'intermediate-step{timestep:07d}' if kind == 'intermediate' else kind
         # A callback may discover several progressively better checkpoints.
         # Preserve every one with a suffix instead of silently replacing the
         # earlier archive; manifest.models[kind] always points at the latest.
-        target = self._collision_safe_path(self.path("models", kind, ".zip"))
+        target = self._collision_safe_path(self.path("models", file_kind, ".zip"))
         save_argument = target.with_suffix("")
         model.save(str(save_argument))
         if not target.is_file():
@@ -267,17 +271,28 @@ class ArtifactManager:
             "kind": kind,
             "path": target.relative_to(self.run_dir).as_posix(),
             "timestep": timestep,
+            "sha256": hashlib.sha256(target.read_bytes()).hexdigest(),
         }
+        normalizer = getattr(model, 'get_vec_normalize_env', lambda: None)()
+        normalization = {'enabled': normalizer is not None}
+        if normalizer is not None:
+            norm_path = target.with_suffix('.vecnormalize.pkl')
+            normalizer.save(str(norm_path))
+            normalization.update(path='../'+norm_path.relative_to(self.run_dir).as_posix(),
+                                 sha256=hashlib.sha256(norm_path.read_bytes()).hexdigest())
+        record['normalization'] = normalization
+        self.manifest['normalization'] = normalization
         if metadata:
             # Caller data is namespaced so it cannot falsify the archive path,
             # kind, or timestep recorded by the manager.
             record["metadata"] = dict(metadata)
         sidecar = self._collision_safe_path(
-            self.path("manifests", f"{kind}-model", ".json")
+            self.path("manifests", f"{file_kind}-model", ".json")
         )
         _write_json_new(sidecar, record)
         self.manifest["model_history"].append(record)
-        self.manifest["models"][kind] = record
+        if kind != 'intermediate':
+            self.manifest["models"][kind] = record
         self._write_manifest()
         return target
 
@@ -330,6 +345,7 @@ class ArtifactManager:
         self._write_manifest()
 
     def _initial_manifest(self, resolved_path: Path) -> dict[str, Any]:
+        from .velocity_reference import observation_contract, velocity_semantics, velocity_reward_semantics
         env = self.config.environment
         payload = env.payload
         return {
@@ -347,6 +363,10 @@ class ArtifactManager:
             "command": list(self.command),
             "control_mode": self.config.control_mode,
             "observation_shape": list(self.config.observation_shape),
+            "observation_contract": observation_contract(self.config),
+            "velocity_semantics": velocity_semantics(self.config),
+            "velocity_reward_semantics": velocity_reward_semantics(self.config),
+            "payload_physics": "com_full_inertia_setconst_no_explicit_gravity_torque_v2",
             "action_shape": list(self.config.action_shape),
             "residual_scale": list(env.residual_scale),
             # Keep the complete mandatory BLDC actuator contract alongside

@@ -123,7 +123,7 @@ def test_determinism_component_switches_and_zero_direction_fallback():
 
 
 @pytest.mark.parametrize('mode',['e2e','residual'])
-def test_legacy_reset_rng_payload_actuator_and_trajectory_exact(legacy_class,mode):
+def test_legacy_reset_rng_payload_actuator_preserved_with_corrected_com(legacy_class,mode):
     c=load_config(ROOT/f'configs/{mode}_train.yaml')
     c=replace(c,environment=replace(c.environment,position_perturbation=.05,attitude_perturbation_deg=10,
                                   payload=replace(c.environment.payload,randomize=True)),
@@ -138,15 +138,20 @@ def test_legacy_reset_rng_payload_actuator_and_trajectory_exact(legacy_class,mod
             assert old._rng.bit_generator.state==new._rng.bit_generator.state
             assert old._actuator_rng.bit_generator.state==new._actuator_rng.bit_generator.state
             assert old._com_mw==new._com_mw
+            bid=new.drone_bid
+            np.testing.assert_allclose(new.data.xipos[bid],new.data.xpos[bid]+
+                new.data.xmat[bid].reshape(3,3)@new.model.body_ipos[bid],atol=1e-12)
+            assert new.model.body_subtreemass[bid]==pytest.approx(new.model.body_mass.sum())
+            for field in ('qpos','qvel','ctrl'):
+                assert np.array_equal(getattr(old.data,field),getattr(new.data,field))
+            assert np.array_equal(old._last_f,new._last_f)
+            assert np.array_equal(old._last_omega,new._last_omega)
             for k in range(5):
                 action=(.02*np.sin(k+np.arange(4))).astype(np.float32)
                 oa=old.step(action); ob=new.step(action)
-                for x,y in zip(oa[:4],ob[:4]):
-                    assert np.array_equal(x,y)
-                for field in ('qpos','qvel','ctrl'):
-                    assert np.array_equal(getattr(old.data,field),getattr(new.data,field))
-                assert np.array_equal(old._last_f,new._last_f)
-                assert np.array_equal(old._last_omega,new._last_omega)
+                # Payload physics intentionally changed: preserve reset RNG,
+                # not the previous stale-COM trajectories/rewards.
+                assert np.isfinite(oa[0]).all() and np.isfinite(ob[0]).all()
     finally:
         old.close(); new.close()
 

@@ -11,16 +11,19 @@ import zipfile
 import numpy as np
 
 from .eval_cli import _load_policy
+from .velocity_reference import (ABSOLUTE_CONTRACT, VELOCITY_SLICE,
+    observation_contract, velocity_semantics, velocity_reward_semantics, validate_velocity_metadata)
 
-OBSERVATION_CONTRACT = 'position_error,absolute_velocity,wxyz,body_omega,sin_yaw_error,cos_yaw_error'
-VELOCITY_SLICE = slice(3, 6)
+OBSERVATION_CONTRACT = ABSOLUTE_CONTRACT
 VELOCITY_INPUTS = ('absolute', 'error')
 
 
-def policy_raw_observation(observation, reference_velocity, mode='absolute'):
+def policy_raw_observation(observation, reference_velocity, mode='absolute', *, config=None):
     """Evaluation intervention before frozen normalization; never mutate raw state."""
     if mode not in VELOCITY_INPUTS:
         raise ValueError(f'unknown velocity input: {mode}')
+    if config is not None and velocity_semantics(config)['mode'] != 'absolute' and mode != 'absolute':
+        raise ValueError('reference velocity intervention would double-subtract the new velocity error input')
     if mode == 'absolute':
         return observation  # Preserve the original inference path and dtype.
     reference_velocity = np.asarray(reference_velocity)
@@ -64,15 +67,21 @@ def training_manifest(checkpoint, explicit=None):
     for path in sorted((run / 'manifests').glob('*manifest*.json')):
         data = json.loads(path.read_text())
         records = list(data.get('models', {}).values()) + data.get('model_history', [])
-        if any(isinstance(r, dict) and r.get('path') and
-               (run / r['path']).resolve() == checkpoint for r in records):
-            return path, data
+        for record in records:
+            if isinstance(record, dict) and record.get('path') and (run / record['path']).resolve() == checkpoint:
+                data = dict(data)
+                if 'normalization' in record:
+                    data['normalization'] = record['normalization']
+                if 'sha256' in record:
+                    data['checkpoint_sha256'] = record['sha256']
+                return path, data
     return None, None
 
 
 def validate_metadata(data, config):
     """Check each available source; absence is not a successful verification."""
     env = data.get('resolved_config', {}).get('environment', {})
+    validate_velocity_metadata(data, config)
     for source in (data, env):
         mode = source.get('control_mode')
         if mode is not None and mode != 'e2e':
@@ -83,7 +92,7 @@ def validate_metadata(data, config):
         for key in ('residual_scale', 'action_scale'):
             if key in source and not np.array_equal(source[key], config.environment.residual_scale):
                 raise ValueError(f'checkpoint action scale mismatch: {source[key]}')
-        if source.get('observation_contract', OBSERVATION_CONTRACT) != OBSERVATION_CONTRACT:
+        if source.get('observation_contract', observation_contract(config)) != observation_contract(config):
             raise ValueError('unsupported checkpoint observation contract')
         if source.get('velocity_input', 'absolute') != 'absolute':
             raise ValueError('checkpoint velocity input must be absolute, not error')
@@ -183,9 +192,18 @@ def load_frozen_policy(label, checkpoint, config, *, manifest=None, normalizatio
         'training_manifest_sha256': sha256(mp) if mp else None,
         'training_manifest': md or None,
         'observation_shape': list(model.observation_space.shape), 'action_shape': list(model.action_space.shape),
-        'observation_contract': OBSERVATION_CONTRACT,
+        'observation_contract': observation_contract(config),
+        'velocity_semantics': velocity_semantics(config),
+        'evaluation_velocity_reward_semantics': velocity_reward_semantics(config),
         'action_scale_verification': 'matched_available_metadata' if scale_known else 'unknown_no_training_scale_metadata',
         'applied_action_scale': list(config.environment.residual_scale),
+        'evaluation_reaction_torque_layout': config.vehicle.reaction_torque_layout,
+        'physical_layout_intervention': {
+            'training_layout': md.get('resolved_config', {}).get('vehicle', {}).get('reaction_torque_layout', 'legacy'),
+            'evaluation_layout': config.vehicle.reaction_torque_layout,
+            'authorization': 'explicit evaluation vehicle.reaction_torque_layout; observation/action checks unchanged',
+            'observation_transformed': False,
+        },
         'normalization': {'path': str(norm_path) if norm_path else None,
                           'sha256': sha256(norm_path) if norm_path else None,
                           'source': 'saved VecNormalize statistics' if norm_path else norm_source,

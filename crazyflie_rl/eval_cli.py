@@ -131,6 +131,9 @@ class RolloutTrace:
     allocation_error: np.ndarray | None = None
     actuator: Mapping[str, Any] | None = None
     episode_mass_kg: float | None = None
+    desired_velocity: np.ndarray | None = None
+    velocity_error: np.ndarray | None = None
+    time_post: np.ndarray | None = None
 
     @property
     def sample_count(self) -> int:
@@ -234,6 +237,12 @@ def _load_policy(path: Path, config: ExperimentConfig):
     from stable_baselines3 import PPO
 
     policy = PPO.load(str(path), device=config.training.ppo.device)
+    from .velocity_reference import validate_velocity_metadata
+    from .dr_policy import training_manifest
+    validate_velocity_metadata(vars(policy), config)
+    _, metadata = training_manifest(path)
+    if metadata:
+        validate_velocity_metadata(metadata, config)
     observed = tuple(getattr(policy.observation_space, "shape", ()))
     action = tuple(getattr(policy.action_space, "shape", ()))
     if observed != config.observation_shape:
@@ -787,6 +796,8 @@ class EvaluationRunner:
         wrench_actuals: list[np.ndarray] = []
         allocation_errors: list[np.ndarray] = []
         linear_velocities: list[np.ndarray] = []
+        desired_velocities: list[np.ndarray] = []
+        velocity_errors: list[np.ndarray] = []
         angular_velocities: list[np.ndarray] = []
         terminated_at: float | None = None
         truncated_at: float | None = None
@@ -845,6 +856,8 @@ class EvaluationRunner:
 
                 wall_start = time.time()
                 try:
+                    if getattr(env, 'e2e_velocity', None) is not None:
+                        observation = env._obs(*env._read_state())
                     action = (
                         policy.predict(
                             observation,
@@ -859,7 +872,7 @@ class EvaluationRunner:
                     # Keep the environment's preserved dtype/clipping behavior;
                     # ``applied_action`` is the equivalent normalized signal
                     # recorded for diagnostics.
-                    observation, _reward, terminated, truncated, _ = env.step(
+                    observation, _reward, terminated, truncated, info = env.step(
                         action
                     )
                     thrust = np.asarray(
@@ -887,6 +900,9 @@ class EvaluationRunner:
                 position_error = np.asarray(observation[0:3], dtype=float)
                 actual_position = position_error + np.asarray(env.pos_des, dtype=float)
                 linear_velocity = np.asarray(observation[3:6], dtype=float)
+                v_des = np.asarray(info.get('desired_velocity', np.zeros(3)))
+                if getattr(env, 'e2e_velocity', None) is not None:
+                    linear_velocity = env._read_state()[2]
                 attitude = quaternion_to_euler_deg(observation[6:10])
                 angular_velocity = np.asarray(observation[10:13], dtype=float)
                 error_norm = float(np.linalg.norm(position_error))
@@ -925,6 +941,8 @@ class EvaluationRunner:
                 wrench_actuals.append(wrench_actual)
                 allocation_errors.append(allocation_error)
                 linear_velocities.append(linear_velocity.copy())
+                desired_velocities.append(v_des.copy())
+                velocity_errors.append(linear_velocity-v_des)
                 angular_velocities.append(angular_velocity.copy())
                 step_index += 1
 
@@ -966,6 +984,9 @@ class EvaluationRunner:
             control_input=np.asarray(control_inputs, dtype=float).reshape((-1, 4)),
             motor_thrust=np.asarray(motor_thrusts, dtype=float).reshape((-1, 4)),
             linear_velocity=np.asarray(linear_velocities, dtype=float).reshape((-1, 3)),
+            desired_velocity=np.asarray(desired_velocities, dtype=float).reshape((-1, 3)),
+            velocity_error=np.asarray(velocity_errors, dtype=float).reshape((-1, 3)),
+            time_post=np.asarray(times, dtype=float)+dt,
             angular_velocity=np.asarray(angular_velocities, dtype=float).reshape((-1, 3)),
             control_mode=control_mode,
             motor_thrust_command=np.asarray(
@@ -1110,6 +1131,10 @@ def trace_metrics(trace: RolloutTrace, tail_fraction: float) -> dict[str, Any]:
         "force_floor_start_error": trace.force_floor_start_error,
         "error": trace.error,
     }
+    for name, signal in (('actual_speed_rms_m_s',trace.linear_velocity),
+                         ('velocity_error_rmse_m_s',trace.velocity_error)):
+        values = np.asarray(signal,dtype=float) if signal is not None else np.empty((0,3))
+        result[name] = float(np.sqrt(np.mean(np.sum(values**2,axis=1)))) if values.size and np.isfinite(values).all() else None
     control = (
         np.asarray(trace.control_input, dtype=float).reshape((-1, 4))
         if trace.control_input is not None
@@ -2002,6 +2027,12 @@ def run_evaluation_cli(
             metrics["policies"][policy_key] = policy_metrics
             metrics["policy_control_modes"][policy_key] = trace.control_mode
             traces.append(trace)
+            if config.environment.e2e_velocity is not None:
+                from dataclasses import fields
+                signals = {f.name: getattr(trace,f.name) for f in fields(trace)
+                           if isinstance(getattr(trace,f.name),np.ndarray)}
+                np.savez(artifacts.run_dir/f'{policy_key}-trace.npz',**signals)
+                policy_metrics['trace_time_convention'] = 'time_sec: control interval start; time_post: returned state and desired_velocity/velocity_error'
             if trace.sample_count:
                 plot_path = (
                     _save_policy_report(
@@ -2032,6 +2063,10 @@ def run_evaluation_cli(
         if rollout_failure is not None:
             raise RuntimeError(rollout_failure)
         metrics["status"] = "completed"
+        from .velocity_reference import velocity_semantics, velocity_reward_semantics, observation_contract
+        metrics['velocity_semantics'] = velocity_semantics(config)
+        metrics['velocity_reward_semantics'] = velocity_reward_semantics(config)
+        metrics['observation_contract'] = observation_contract(config)
         metrics_path = artifacts.write_metrics("evaluation", metrics)
         if unified:
             # Post-processing only: both existing rollouts and plots are done.

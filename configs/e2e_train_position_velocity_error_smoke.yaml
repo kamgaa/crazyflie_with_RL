@@ -1,0 +1,9 @@
+extends: e2e_train_position_velocity_error.yaml
+training:
+  total_timesteps: 2048
+evaluation:
+  episode_count: 3
+  evaluation_interval: 0
+experiment:
+  condition: position-velocity-error-smoke
+  description: Separate training/save/reload smoke run; not the reference model

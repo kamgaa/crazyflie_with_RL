@@ -486,6 +486,10 @@ def save_policy_trace(
             lw=line_width,
             label=f"v{name}",
         )
+        desired = _rollout_value(rollout, 'desired_velocity', default=None)
+        if desired is not None:
+            linear_velocity_axis.plot(trace.time_sec, np.asarray(desired)[:, index],
+                color=color, ls='--', lw=1., label=f'v{name} desired')
 
     angle_names = ("roll", "pitch", "yaw")
     omega_names = ("wx", "wy", "wz")
@@ -1301,6 +1305,11 @@ def save_transfer_comparison_plot(path, rollouts, reference, case_name):
             for row, array in enumerate(values):
                 for column in range(3):
                     axes[row, column].plot(times, array[:, column], label=label, **style(label, rows))
+            if rows[0].get('internal_velocity_reference_mode') == 'position_error':
+                desired=np.array([r['desired_velocity'] for r in rows])
+                for column in range(3):
+                    axes[1,column].plot(times,desired[:,column],color=style(label,rows)['color'],
+                                        ls='--',lw=1.,label=f'{label} internal desired')
         units = ('position [m]', 'absolute velocity [m/s]', 'attitude [deg]', 'body omega [rad/s]')
         for row, unit in enumerate(units):
             for column, axis in enumerate(axes[row]):
@@ -1336,6 +1345,38 @@ def save_transfer_comparison_plot(path, rollouts, reference, case_name):
         axis.legend(fontsize=8)
         fig.tight_layout()
         fig.savefig(xy_target, dpi=140)
+    finally:
+        plt.close(fig)
+    return target
+
+
+def save_interactive_motor_plot(path, rows, events):
+    """Supplement the standard single-policy report with output-loss signals."""
+    target = _new_path(path)
+    plt = _pyplot()
+    fig, axes = plt.subplots(2, 4, figsize=(16, 9), sharex=True)
+    try:
+        t = np.array([r['time_post'] for r in rows])
+        for i in range(4):
+            axes[0,i].step([*[r['time_sec'] for r in rows], t[-1]],
+                [*[r['motor_effectiveness'][i]*100 for r in rows], rows[-1]['motor_effectiveness'][i]*100],
+                where='post',label='effectiveness')
+            axes[0,i].set(title=f'Motor {i+1}',ylabel='effectiveness [%]',ylim=(-2,102))
+            for key,label in (('motor_thrust_command','clipped command'),
+                              ('motor_thrust_before_effectiveness','post-actuator nominal'),
+                              ('motor_thrust_applied','applied force')):
+                axes[1,i].plot(t,[r[key][i] for r in rows],label=label)
+            axes[1,i].set(ylabel='thrust [N]',xlabel='post-state time [s]')
+            for event in events:
+                if event['event_type'] in ('degrade','restore'):
+                    for ax in axes[:,i]:
+                        ax.axvline(event['simulation_time'],color='gray',alpha=.3,linestyle=':')
+            for ax in axes[:,i]:
+                ax.grid(alpha=.25)
+                ax.legend(fontsize=7)
+        fig.suptitle('E2E interactive: rotor effectiveness and last-substep thrust; dotted lines = fault/restore events')
+        fig.tight_layout()
+        fig.savefig(target,dpi=140)
     finally:
         plt.close(fig)
     return target
