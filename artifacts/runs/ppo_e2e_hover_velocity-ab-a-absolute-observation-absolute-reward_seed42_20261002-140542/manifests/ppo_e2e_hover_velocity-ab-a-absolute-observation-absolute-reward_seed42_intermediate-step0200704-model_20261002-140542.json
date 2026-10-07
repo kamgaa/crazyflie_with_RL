@@ -1,0 +1,13 @@
+{
+  "kind": "intermediate",
+  "metadata": {
+    "optimizer_update_completed": true,
+    "requested_interval": 100000
+  },
+  "normalization": {
+    "enabled": false
+  },
+  "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_intermediate-step0200704_20261002-140542.zip",
+  "sha256": "123703301624a1b9c6643c40c216dad2306121de3922f7ecab924839976108d7",
+  "timestep": 200704
+}

@@ -1,0 +1,207 @@
+{
+  "control_mode": "e2e",
+  "policies": {
+    "e2e": {
+      "actual_duration_sec": 0.1,
+      "actuator": {
+        "enabled": true,
+        "include_rotor_acceleration_torque": false,
+        "legacy_ratio_m": 0.00594,
+        "max_ratio": 1.0,
+        "model": "cf21b_first_order",
+        "motor_command_saturation": [
+          0.0,
+          1.0
+        ],
+        "nominal_steady_state_gain_rad_s": [
+          2900.0,
+          2900.0,
+          2900.0,
+          2900.0
+        ],
+        "nominal_time_constant_s": [
+          0.05,
+          0.05,
+          0.05,
+          0.05
+        ],
+        "parameter_source": "paper_candidate",
+        "positive_branch_min_ratio": 0.0791,
+        "randomization_enabled": false,
+        "reaction_torque_coefficients": [
+          -3.4,
+          8.7,
+          2.9
+        ],
+        "reaction_torque_model": "legacy_ratio",
+        "reaction_torque_scale": 0.0001,
+        "reset_rpm_mode": "auto",
+        "rotor_inertia_kg_m2": 5e-08,
+        "sampled_steady_state_gain_rad_s": [
+          2900.0,
+          2900.0,
+          2900.0,
+          2900.0
+        ],
+        "sampled_time_constant_s": [
+          0.05,
+          0.05,
+          0.05,
+          0.05
+        ],
+        "thrust_omega_reference_rad_s": 2900.0,
+        "thrust_polynomial_coefficients": [
+          -0.23,
+          0.562,
+          -0.043
+        ],
+        "thrust_saturation_n": [
+          0.0,
+          0.2
+        ],
+        "verification_status": "unverified"
+      },
+      "allocation_error_final": [
+        -1.1121572498675768e-06,
+        1.9524198631172377e-06,
+        -4.602825533636859e-06,
+        0.0003064689557667477
+      ],
+      "checkpoint_hash_unchanged": true,
+      "completed_sample_count": 10,
+      "control_input_abs_max": [
+        0.0008283127099275589,
+        0.0020880945958197117,
+        0.009224709123373032,
+        0.001195959746837616
+      ],
+      "control_mode": "e2e",
+      "control_steps": 10,
+      "diverged_at": null,
+      "duration_sec": 0.09,
+      "end_reason": "duration",
+      "error": null,
+      "force_floor_start_applied": false,
+      "force_floor_start_error": null,
+      "force_floor_start_requested": false,
+      "guard_boundary_crossed_at": null,
+      "label": "E2E interactive",
+      "max_position_error": 3.36566585196386e-05,
+      "mean_position_error": 1.1554725222264132e-05,
+      "motor_command_max": [
+        0.5461916155225169,
+        0.5462309507583571,
+        0.5458215859543532,
+        0.5457667235516908
+      ],
+      "motor_command_min": [
+        0.5445774272040182,
+        0.5434542031728916,
+        0.5448625908731772,
+        0.5442995652798674
+      ],
+      "motor_omega_rad_s_max": [
+        1582.467065541879,
+        1581.749312978425,
+        1582.0971290706339,
+        1580.9682712178496
+      ],
+      "motor_omega_rad_s_min": [
+        1580.5722419673998,
+        1579.1171813221704,
+        1580.9856005505844,
+        1579.7310218073378
+      ],
+      "motor_thrust_command_n_max": [
+        0.10669573194499875,
+        0.10671009253997747,
+        0.10656066878524245,
+        0.10654064797697202
+      ],
+      "motor_thrust_command_n_mean": [
+        0.10636270916200274,
+        0.10622650308332673,
+        0.10638189247090135,
+        0.10617891234171258
+      ],
+      "motor_thrust_command_n_min": [
+        0.10610691559135763,
+        0.1056977632767945,
+        0.10621086589378038,
+        0.10600565611954556
+      ],
+      "motor_thrust_n_max": [
+        0.10650838156551662,
+        0.10641808364727037,
+        0.10646183832383864,
+        0.10631984938081193
+      ],
+      "motor_thrust_n_mean": [
+        0.10641658514549272,
+        0.10621339663073011,
+        0.10641232579405221,
+        0.10622287915695239
+      ],
+      "motor_thrust_n_min": [
+        0.10627004974029922,
+        0.10608713925201636,
+        0.10632202865730839,
+        0.10616429152437241
+      ],
+      "phases": {
+        "HOVER": {
+          "count": 10,
+          "end_position_error": 3.36566585196386e-05,
+          "max_position_error": 3.36566585196386e-05,
+          "mean_position_error": 1.1554725222264132e-05,
+          "position_rmse_xy": 2.6563449909952047e-06,
+          "position_rmse_z": 1.5771063109627894e-05,
+          "rmse": 1.5993204817016856e-05
+        }
+      },
+      "plot": "plots/ppo.png",
+      "position_rmse": 1.5993204817016856e-05,
+      "position_rmse_xy": 2.6563449909952047e-06,
+      "position_rmse_z": 1.5771063109627894e-05,
+      "reaction_torque_nm_max": [
+        0.0006326597864991687,
+        -0.0006301576071569772,
+        0.0006323833196436016,
+        -0.0006306158916547721
+      ],
+      "reaction_torque_nm_min": [
+        0.0006312440954573773,
+        -0.000632123416864786,
+        0.0006315528502244118,
+        -0.0006315399053220228
+      ],
+      "requested_duration_sec": 0.1,
+      "sample_count": 10,
+      "tail_mean_position_error": 2.653915783851071e-05,
+      "tail_position_rmse_xy": 4.745311302813914e-06,
+      "tail_position_rmse_z": 2.672478670151861e-05,
+      "terminated": false,
+      "terminated_at": null,
+      "training_boundary_crossed_at": null,
+      "trajectory_phase_rmse": 1.5993204817016856e-05,
+      "trajectory_phase_rmse_xy": 2.6563449909952047e-06,
+      "trajectory_phase_rmse_z": 1.5771063109627894e-05,
+      "truncated": true,
+      "truncated_at": 0.09,
+      "wrench_actual_final": [
+        -2.620709357738834e-06,
+        6.296138579456757e-06,
+        -7.008274234449356e-07,
+        0.4253021412099366
+      ],
+      "wrench_command_final": [
+        -3.7328666076064108e-06,
+        8.248558442573994e-06,
+        -5.303652957081795e-06,
+        0.42560861016570334
+      ]
+    }
+  },
+  "selected_policy": "e2e",
+  "status": "completed"
+}

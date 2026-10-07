@@ -1,0 +1,64 @@
+results: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/oracle-recovery-m3dh3vij
+1 A_best-combined_motor2_70-eta070: physical_termination, end=5.84s, position_recovery=None, joint=None
+2 B_best-combined_motor3_70-eta070: physical_termination, end=5.39s, position_recovery=None, joint=None
+3 A_best-combined_motor3_70-eta070: position_attitude_recovered, end=60.00s, position_recovery=7.050000000000001, joint=7.050000000000001
+4 A_best-combined_motor2_70-eta100: position_attitude_recovered, end=60.00s, position_recovery=None, joint=None
+5 A_best-combined_motor2_70-eta095: position_attitude_recovered, end=60.00s, position_recovery=7.34, joint=7.34
+6 A_best-combined_motor2_70-eta090: position_attitude_recovered, end=60.00s, position_recovery=7.33, joint=7.33
+7 A_best-combined_motor2_70-eta085: position_attitude_recovered, end=60.00s, position_recovery=7.33, joint=7.33
+8 A_best-combined_motor2_70-eta080: position_attitude_recovered, end=60.00s, position_recovery=7.34, joint=7.34
+9 A_best-combined_motor2_70-eta075: position_attitude_recovered, end=60.00s, position_recovery=7.359999999999999, joint=7.359999999999999
+10 B_best-combined_motor3_70-eta100: position_attitude_recovered, end=60.00s, position_recovery=None, joint=None
+11 B_best-combined_motor3_70-eta095: position_attitude_recovered, end=60.00s, position_recovery=7.4399999999999995, joint=7.4399999999999995
+12 B_best-combined_motor3_70-eta090: position_attitude_recovered, end=60.00s, position_recovery=7.4, joint=7.4
+13 B_best-combined_motor3_70-eta085: position_attitude_recovered, end=60.00s, position_recovery=7.370000000000001, joint=7.370000000000001
+14 B_best-combined_motor3_70-eta080: position_attitude_recovered, end=60.00s, position_recovery=7.359999999999999, joint=7.359999999999999
+15 B_best-combined_motor3_70-eta075: position_attitude_recovered, end=60.00s, position_recovery=7.01, joint=7.01
+16 A_best-combined_motor3_70-eta100: position_attitude_recovered, end=60.00s, position_recovery=None, joint=None
+17 A_best-combined_motor3_70-eta095: position_attitude_recovered, end=60.00s, position_recovery=7.07, joint=7.07
+18 A_best-combined_motor3_70-eta090: position_attitude_recovered, end=60.00s, position_recovery=7.040000000000001, joint=7.040000000000001
+19 A_best-combined_motor3_70-eta085: position_attitude_recovered, end=60.00s, position_recovery=7.02, joint=7.02
+20 A_best-combined_motor3_70-eta080: position_attitude_recovered, end=60.00s, position_recovery=7.0, joint=7.0
+21 A_best-combined_motor3_70-eta075: position_attitude_recovered, end=60.00s, position_recovery=7.02, joint=7.02
+22 A_best-combined_motor3_70-eta068: position_attitude_recovered, end=60.00s, position_recovery=8.05, joint=8.05
+23 A_best-combined_motor3_70-eta066: position_attitude_recovered, end=60.00s, position_recovery=9.38, joint=9.38
+24 A_best-combined_motor2_70-eta074: position_attitude_recovered, end=60.00s, position_recovery=7.370000000000001, joint=7.370000000000001
+25 A_best-combined_motor2_70-eta073: position_attitude_recovered, end=60.00s, position_recovery=8.200000000000001, joint=8.200000000000001
+26 A_best-combined_motor2_70-eta072: position_attitude_recovered, end=60.00s, position_recovery=8.25, joint=8.25
+27 A_best-combined_motor2_70-eta071: position_attitude_recovered, end=60.00s, position_recovery=9.13, joint=9.13
+28 B_best-combined_motor3_70-eta074: position_attitude_recovered, end=60.00s, position_recovery=6.93, joint=6.93
+29 B_best-combined_motor3_70-eta073: position_attitude_recovered, end=60.00s, position_recovery=6.9, joint=6.9
+30 B_best-combined_motor3_70-eta072: physical_termination, end=5.66s, position_recovery=None, joint=None
+31 B_best-combined_motor3_70-eta071: physical_termination, end=5.47s, position_recovery=None, joint=None
+CSV verified: A_best-combined_motor2_70-eta070
+CSV verified: B_best-combined_motor3_70-eta070
+CSV verified: A_best-combined_motor3_70-eta070
+CSV verified: A_best-combined_motor2_70-eta100
+CSV verified: A_best-combined_motor2_70-eta095
+CSV verified: A_best-combined_motor2_70-eta090
+CSV verified: A_best-combined_motor2_70-eta085
+CSV verified: A_best-combined_motor2_70-eta080
+CSV verified: A_best-combined_motor2_70-eta075
+CSV verified: B_best-combined_motor3_70-eta100
+CSV verified: B_best-combined_motor3_70-eta095
+CSV verified: B_best-combined_motor3_70-eta090
+CSV verified: B_best-combined_motor3_70-eta085
+CSV verified: B_best-combined_motor3_70-eta080
+CSV verified: B_best-combined_motor3_70-eta075
+CSV verified: A_best-combined_motor3_70-eta100
+CSV verified: A_best-combined_motor3_70-eta095
+CSV verified: A_best-combined_motor3_70-eta090
+CSV verified: A_best-combined_motor3_70-eta085
+CSV verified: A_best-combined_motor3_70-eta080
+CSV verified: A_best-combined_motor3_70-eta075
+CSV verified: A_best-combined_motor3_70-eta068
+CSV verified: A_best-combined_motor3_70-eta066
+CSV verified: A_best-combined_motor2_70-eta074
+CSV verified: A_best-combined_motor2_70-eta073
+CSV verified: A_best-combined_motor2_70-eta072
+CSV verified: A_best-combined_motor2_70-eta071
+CSV verified: B_best-combined_motor3_70-eta074
+CSV verified: B_best-combined_motor3_70-eta073
+CSV verified: B_best-combined_motor3_70-eta072
+CSV verified: B_best-combined_motor3_70-eta071
+results: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/oracle-recovery-m3dh3vij

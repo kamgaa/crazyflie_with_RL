@@ -1,0 +1,425 @@
+{
+  "actual_torque_definition": "Signed sum of motor reaction torques; excludes external body torques.",
+  "comparisons": {
+    "overall": {
+      "pid_tau_z_p95_over_e2e_action_scale": 1.3819413936328448e-14,
+      "pid_tau_z_p99_over_e2e_action_scale": 1.9961743464096204e-14
+    },
+    "phases": {
+      "HOVER": {
+        "pid_tau_z_p95_over_e2e_action_scale": 1.3819413936328448e-14,
+        "pid_tau_z_p99_over_e2e_action_scale": 1.9961743464096204e-14
+      }
+    }
+  },
+  "config": {
+    "actuator": {
+      "enabled": true,
+      "model": "cf21b_first_order",
+      "parameter_source": "paper_candidate",
+      "randomization": {
+        "enabled": false,
+        "steady_state_gain_rad_s": {
+          "max": 3480.0,
+          "min": 2320.0
+        },
+        "time_constant_s": {
+          "max": 0.06,
+          "min": 0.04
+        }
+      },
+      "reaction_torque": {
+        "include_rotor_acceleration_torque": false,
+        "legacy_ratio_m": 0.00594,
+        "model": "legacy_ratio",
+        "polynomial_coefficients": [
+          -3.4,
+          8.7,
+          2.9
+        ],
+        "polynomial_scale": 0.0001,
+        "rotor_inertia_kg_m2": 5e-08
+      },
+      "reset_rpm_mode": "auto",
+      "steady_state_gain_rad_s": 2900.0,
+      "thrust_polynomial_coefficients": [
+        -0.23,
+        0.562,
+        -0.043
+      ],
+      "thrust_polynomial_max_ratio": 1.0,
+      "thrust_polynomial_omega_reference_rad_s": 2900.0,
+      "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+      "time_constant_s": 0.05,
+      "verification_status": "unverified"
+    },
+    "controller": {
+      "pid": {
+        "integrator_limit": 2.0,
+        "kd_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd_velocity": 0.0,
+        "ki_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "ki_velocity": 1.0,
+        "kp_attitude": 12.0,
+        "kp_position": 4.0,
+        "kp_rate": [
+          0.0008,
+          0.0008,
+          0.0006
+        ],
+        "kp_velocity": 4.0,
+        "max_force": 1.0,
+        "max_tilt_deg": 35.0,
+        "max_torque": 0.02,
+        "velocity_limit": 1.5
+      }
+    },
+    "environment": {
+      "attitude_perturbation_deg": 0.0,
+      "control_mode": "e2e",
+      "episode_sec": 8.0,
+      "payload": {
+        "mass": 0.0,
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "randomization_limits": {
+          "mass_max": 0.015,
+          "radius_max": 0.1,
+          "radius_min": 0.02,
+          "torque_fraction": 0.5
+        },
+        "randomize": false
+      },
+      "policy_hz": 100.0,
+      "position_perturbation": 0.0,
+      "position_target": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "residual_scale": [
+        0.006,
+        0.006,
+        0.0001,
+        0.3
+      ],
+      "reward": {
+        "action_rate_weight": 0.0,
+        "action_weight": 0.0,
+        "angular_velocity_weight": 0.001,
+        "crash_penalty": 10.0,
+        "position_weight": 3.0,
+        "tilt_weight": 3.0,
+        "velocity_weight": 0.005,
+        "yaw_weight": 1.0
+      },
+      "termination": {
+        "max_altitude": 2.5,
+        "max_position_error": 1.5,
+        "max_tilt_deg": 60.0,
+        "min_altitude": 0.2
+      },
+      "yaw_target": 0.0
+    },
+    "evaluation": {
+      "deterministic": true,
+      "episode_count": 1,
+      "evaluation_interval": 0,
+      "seed_start": 42,
+      "tail_fraction": 0.3,
+      "tilt_limit_deg": 30.0
+    },
+    "experiment": {
+      "condition": "x0-y0-z1-dur8",
+      "description": "Unified PID-floor versus E2E-PPO hover defaults",
+      "name": "crazyflie-ppo",
+      "timezone": "Asia/Seoul"
+    },
+    "mission": {
+      "circle": {
+        "center_xy": [
+          0.5,
+          0.0
+        ],
+        "direction": "ccw",
+        "laps": 2.0,
+        "period": 10.0,
+        "radius": 0.5,
+        "ramp_sec": 2.0,
+        "start_angle_deg": 0.0
+      },
+      "circle_presets": [
+        {
+          "description": "radius 0.5m, period 10s (slow/safe)",
+          "key": "1",
+          "period": 10.0,
+          "radius": 0.5
+        },
+        {
+          "description": "radius 1.0m, period 8s (medium)",
+          "key": "2",
+          "period": 8.0,
+          "radius": 1.0
+        },
+        {
+          "description": "radius 0.5m, period 5s (fast/aggressive)",
+          "key": "3",
+          "period": 5.0,
+          "radius": 0.5
+        }
+      ],
+      "circle_ramp_sec": 2.0,
+      "force_floor_start": false,
+      "goto_sec": 4.0,
+      "goto_xy": [
+        1.0,
+        0.0
+      ],
+      "hover": {
+        "duration": 8.0,
+        "target": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "yaw_deg": 0.0
+      },
+      "hover_altitude": 1.0,
+      "lissajous": {
+        "amplitude_xy": [
+          0.5,
+          0.5
+        ],
+        "base_period": 10.0,
+        "center_xy": [
+          0.0,
+          0.0
+        ],
+        "cycles": 2.0,
+        "frequency_ratio": [
+          1,
+          2
+        ],
+        "phase_deg": 90.0,
+        "ramp_sec": 2.0
+      },
+      "number_of_laps": 2.0,
+      "post_hold_sec": 2.0,
+      "settle_sec": 2.0,
+      "takeoff_sec": 4.0,
+      "type": "hover"
+    },
+    "paths": {
+      "artifact_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts",
+      "legacy_model_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/model",
+      "legacy_tensorboard_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/tb",
+      "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+      "project_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2"
+    },
+    "source_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/view_live_hover_eval.yaml",
+    "training": {
+      "ppo": {
+        "batch_size": 256,
+        "clip_range": 0.1,
+        "device": "cpu",
+        "ent_coef": 0.003,
+        "gae_lambda": 0.95,
+        "gamma": 0.99,
+        "learning_rate": 0.0003,
+        "log_std_init": -1.5,
+        "max_grad_norm": 0.5,
+        "n_epochs": 10,
+        "n_steps": 2048,
+        "net_arch": [
+          64,
+          64
+        ],
+        "policy": "MlpPolicy",
+        "target_kl": 0.03,
+        "verbose": 0,
+        "vf_coef": 0.5
+      },
+      "seed": null,
+      "total_timesteps": 1000000
+    },
+    "vehicle": {
+      "arm_length": 0.035355,
+      "gravity": 9.81,
+      "inertia_diagonal": [
+        2.3951e-05,
+        2.3951e-05,
+        3.2347e-05
+      ],
+      "mass": 0.04338,
+      "motor_direction": [
+        1.0,
+        -1.0,
+        1.0,
+        -1.0
+      ],
+      "physics_hz": 500.0,
+      "thrust_max": 0.2,
+      "thrust_min": 0.0,
+      "torque_coefficient": 0.00594
+    },
+    "version": 1
+  },
+  "configured_tau_z_action_scale_nm": 0.0001,
+  "correlation_std_epsilon": 1e-12,
+  "floor": {
+    "control_mode": "residual",
+    "label": "floor (PID)",
+    "normalized_yaw_action_applicable": false,
+    "overall": {
+      "sample_count": 800,
+      "tau_z_actual_abs_max_nm": 3.2526065174565133e-18,
+      "tau_z_actual_abs_mean_nm": 4.747450262770903e-19,
+      "tau_z_actual_abs_p95_nm": 1.3010426069826053e-18,
+      "tau_z_actual_abs_p99_nm": 1.951563910473908e-18,
+      "tau_z_actual_rms_nm": 6.444964100306848e-19,
+      "tau_z_actual_vs_cmd_correlation": null,
+      "tau_z_cmd_abs_max_nm": 2.507400856872884e-18,
+      "tau_z_cmd_abs_mean_nm": 5.734267320138277e-19,
+      "tau_z_cmd_abs_p95_nm": 1.3819413936328449e-18,
+      "tau_z_cmd_abs_p99_nm": 1.9961743464096206e-18,
+      "tau_z_cmd_rms_nm": 7.2022713146959155e-19,
+      "tau_z_tracking_error_abs_max_nm": 2.2600505147884267e-18,
+      "tau_z_tracking_error_abs_p95_nm": 1.4035289290638507e-18,
+      "tau_z_tracking_error_rms_nm": 7.206807908054699e-19,
+      "u_tau_z_abs_max": null,
+      "u_tau_z_abs_mean": null,
+      "u_tau_z_abs_p95": null,
+      "u_tau_z_abs_p99": null,
+      "u_tau_z_fraction_gt_0p8": null,
+      "u_tau_z_fraction_gt_0p9": null,
+      "u_tau_z_fraction_gt_0p95": null,
+      "u_tau_z_fraction_gt_0p99": null,
+      "u_tau_z_rms": null,
+      "u_tau_z_vs_tau_z_actual_correlation": null,
+      "yaw_mean_abs_deg": 3.033795465415379e-15,
+      "yaw_peak_abs_deg": 1.2517344882539491e-14,
+      "yaw_rms_deg": 3.764849905624048e-15
+    },
+    "phases": {
+      "HOVER": {
+        "sample_count": 800,
+        "tau_z_actual_abs_max_nm": 3.2526065174565133e-18,
+        "tau_z_actual_abs_mean_nm": 4.747450262770903e-19,
+        "tau_z_actual_abs_p95_nm": 1.3010426069826053e-18,
+        "tau_z_actual_abs_p99_nm": 1.951563910473908e-18,
+        "tau_z_actual_rms_nm": 6.444964100306848e-19,
+        "tau_z_actual_vs_cmd_correlation": null,
+        "tau_z_cmd_abs_max_nm": 2.507400856872884e-18,
+        "tau_z_cmd_abs_mean_nm": 5.734267320138277e-19,
+        "tau_z_cmd_abs_p95_nm": 1.3819413936328449e-18,
+        "tau_z_cmd_abs_p99_nm": 1.9961743464096206e-18,
+        "tau_z_cmd_rms_nm": 7.2022713146959155e-19,
+        "tau_z_tracking_error_abs_max_nm": 2.2600505147884267e-18,
+        "tau_z_tracking_error_abs_p95_nm": 1.4035289290638507e-18,
+        "tau_z_tracking_error_rms_nm": 7.206807908054699e-19,
+        "u_tau_z_abs_max": null,
+        "u_tau_z_abs_mean": null,
+        "u_tau_z_abs_p95": null,
+        "u_tau_z_abs_p99": null,
+        "u_tau_z_fraction_gt_0p8": null,
+        "u_tau_z_fraction_gt_0p9": null,
+        "u_tau_z_fraction_gt_0p95": null,
+        "u_tau_z_fraction_gt_0p99": null,
+        "u_tau_z_rms": null,
+        "u_tau_z_vs_tau_z_actual_correlation": null,
+        "yaw_mean_abs_deg": 3.033795465415379e-15,
+        "yaw_peak_abs_deg": 1.2517344882539491e-14,
+        "yaw_rms_deg": 3.764849905624048e-15
+      }
+    },
+    "terminated_at": null,
+    "tracking_error_source": "allocation_error[:,2]",
+    "truncated_at": 7.99
+  },
+  "model": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_nominal_seedunset_20260921-221954/models/ppo_e2e_hover_nominal_seedunset_best_20260921-221954-20.zip",
+  "plot": "plots/ppo_e2e_hover_h-T8_seed42_yaw_authority_20260922-003308.png",
+  "policy_tau_z_max_abs_nm": 0.0001,
+  "ppo": {
+    "control_mode": "e2e",
+    "label": "E2E PPO",
+    "normalized_yaw_action_applicable": true,
+    "overall": {
+      "sample_count": 800,
+      "tau_z_actual_abs_max_nm": 2.5345861574582913e-06,
+      "tau_z_actual_abs_mean_nm": 5.973515835865578e-08,
+      "tau_z_actual_abs_p95_nm": 1.4558962038695575e-07,
+      "tau_z_actual_abs_p99_nm": 1.5229001631781722e-06,
+      "tau_z_actual_rms_nm": 2.6052875449572995e-07,
+      "tau_z_actual_vs_cmd_correlation": 0.735952164822146,
+      "tau_z_cmd_abs_max_nm": 4.665270447731018e-06,
+      "tau_z_cmd_abs_mean_nm": 7.785321725532413e-08,
+      "tau_z_cmd_abs_p95_nm": 1.8349688034504626e-07,
+      "tau_z_cmd_abs_p99_nm": 1.8010174073278904e-06,
+      "tau_z_cmd_rms_nm": 3.9594396769352064e-07,
+      "tau_z_tracking_error_abs_max_nm": 3.818969498085729e-06,
+      "tau_z_tracking_error_abs_p95_nm": 1.0581685119733143e-07,
+      "tau_z_tracking_error_rms_nm": 2.6983861401971653e-07,
+      "u_tau_z_abs_max": 0.04665270447731018,
+      "u_tau_z_abs_mean": 0.0007785321725532413,
+      "u_tau_z_abs_p95": 0.0018349688034504626,
+      "u_tau_z_abs_p99": 0.0180101740732789,
+      "u_tau_z_fraction_gt_0p8": 0.0,
+      "u_tau_z_fraction_gt_0p9": 0.0,
+      "u_tau_z_fraction_gt_0p95": 0.0,
+      "u_tau_z_fraction_gt_0p99": 0.0,
+      "u_tau_z_rms": 0.003959439676935207,
+      "u_tau_z_vs_tau_z_actual_correlation": 0.7359521648221454,
+      "yaw_mean_abs_deg": 0.28777787753273737,
+      "yaw_peak_abs_deg": 0.3245736431650645,
+      "yaw_rms_deg": 0.29680742827510287
+    },
+    "phases": {
+      "HOVER": {
+        "sample_count": 800,
+        "tau_z_actual_abs_max_nm": 2.5345861574582913e-06,
+        "tau_z_actual_abs_mean_nm": 5.973515835865578e-08,
+        "tau_z_actual_abs_p95_nm": 1.4558962038695575e-07,
+        "tau_z_actual_abs_p99_nm": 1.5229001631781722e-06,
+        "tau_z_actual_rms_nm": 2.6052875449572995e-07,
+        "tau_z_actual_vs_cmd_correlation": 0.735952164822146,
+        "tau_z_cmd_abs_max_nm": 4.665270447731018e-06,
+        "tau_z_cmd_abs_mean_nm": 7.785321725532413e-08,
+        "tau_z_cmd_abs_p95_nm": 1.8349688034504626e-07,
+        "tau_z_cmd_abs_p99_nm": 1.8010174073278904e-06,
+        "tau_z_cmd_rms_nm": 3.9594396769352064e-07,
+        "tau_z_tracking_error_abs_max_nm": 3.818969498085729e-06,
+        "tau_z_tracking_error_abs_p95_nm": 1.0581685119733143e-07,
+        "tau_z_tracking_error_rms_nm": 2.6983861401971653e-07,
+        "u_tau_z_abs_max": 0.04665270447731018,
+        "u_tau_z_abs_mean": 0.0007785321725532413,
+        "u_tau_z_abs_p95": 0.0018349688034504626,
+        "u_tau_z_abs_p99": 0.0180101740732789,
+        "u_tau_z_fraction_gt_0p8": 0.0,
+        "u_tau_z_fraction_gt_0p9": 0.0,
+        "u_tau_z_fraction_gt_0p95": 0.0,
+        "u_tau_z_fraction_gt_0p99": 0.0,
+        "u_tau_z_rms": 0.003959439676935207,
+        "u_tau_z_vs_tau_z_actual_correlation": 0.7359521648221454,
+        "yaw_mean_abs_deg": 0.28777787753273737,
+        "yaw_peak_abs_deg": 0.3245736431650645,
+        "yaw_rms_deg": 0.29680742827510287
+      }
+    },
+    "terminated_at": null,
+    "tracking_error_source": "allocation_error[:,2]",
+    "truncated_at": 7.99
+  },
+  "ratio_denominator_epsilon_nm": 1e-12,
+  "sampling": "Final physics substep per policy step; correlations have zero sample lag.",
+  "yaw_target_rad": 0.0
+}

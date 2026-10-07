@@ -1,0 +1,4 @@
+[config] position_xy_weight=10 position_z_weight=6 velocity_weight=0.005 e2e_velocity=E2EVelocityConfig(mode='position_error', position_gain=4.0, max_speed=1.5) action_scale=(0.0075, 0.0075, 0.001, 0.5)
+[floor] open-loop-hover (n=3 avg) = 0.0394 m, surv=800
+[learned] e2e=0.4938 m | delta=-0.4545 m (-1154.9%)
+done.

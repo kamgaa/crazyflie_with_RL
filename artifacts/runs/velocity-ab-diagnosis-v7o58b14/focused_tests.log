@@ -1,0 +1,9 @@
+........................................................................ [ 68%]
+........s........................                                        [100%]
+=============================== warnings summary ===============================
+tests/test_interactive_eval.py: 10 warnings
+  /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/plotting.py:675: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+    fig.tight_layout(rect=(0.0, 0.025, 1.0, 0.955))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+104 passed, 1 skipped, 10 warnings in 60.69s (0:01:00)

@@ -1,0 +1,928 @@
+{
+  "comparisons": {
+    "overall": {
+      "ppo_over_pid": {
+        "angular_velocity_cost": 1.59630589734048,
+        "angular_velocity_rms": 1.2634499979581622,
+        "position_cost": 8.634273659556415,
+        "position_error_rms": 2.9384134595996554,
+        "tilt_cost": 0.2678463083207019,
+        "tilt_rms": 0.5173913177867322,
+        "velocity_cost": 0.330325910290167,
+        "velocity_rms": 0.5747398631469433,
+        "yaw_cost": 599.4579106797097
+      }
+    },
+    "phases": {
+      "CIRCLE": {
+        "ppo_over_pid": {
+          "angular_velocity_cost": 0.5698284544300286,
+          "angular_velocity_rms": 0.7548698261488722,
+          "position_cost": 7.320810358538082,
+          "position_error_rms": 2.705699606116333,
+          "tilt_cost": 0.21871117230429377,
+          "tilt_rms": 0.467562998805981,
+          "velocity_cost": 0.25551124388769103,
+          "velocity_rms": 0.5054812003306266,
+          "yaw_cost": 843.1118280021967
+        }
+      },
+      "GOTO": {
+        "ppo_over_pid": {
+          "angular_velocity_cost": 1.5973712328583793,
+          "angular_velocity_rms": 1.2638715254559614,
+          "position_cost": 21.12489833249245,
+          "position_error_rms": 4.596183017732481,
+          "tilt_cost": 0.2567995125619962,
+          "tilt_rms": 0.5067385583325804,
+          "velocity_cost": 0.49989895637112736,
+          "velocity_rms": 0.7070353289412965,
+          "yaw_cost": null
+        }
+      },
+      "HOLD": {
+        "ppo_over_pid": {
+          "angular_velocity_cost": 0.056482935522155324,
+          "angular_velocity_rms": 0.23766138837041942,
+          "position_cost": 24.472777327402127,
+          "position_error_rms": 4.946996798806537,
+          "tilt_cost": 0.07975870638899345,
+          "tilt_rms": 0.2821348509931281,
+          "velocity_cost": 0.6872478897722927,
+          "velocity_rms": 0.8290041554614141,
+          "yaw_cost": 9.952535877579889
+        }
+      },
+      "SETTLE1": {
+        "ppo_over_pid": {
+          "angular_velocity_cost": null,
+          "angular_velocity_rms": null,
+          "position_cost": 397.40374253691334,
+          "position_error_rms": 19.93498789909122,
+          "tilt_cost": null,
+          "tilt_rms": null,
+          "velocity_cost": 25.599078861381134,
+          "velocity_rms": 5.0595532274481645,
+          "yaw_cost": null
+        }
+      },
+      "SETTLE2": {
+        "ppo_over_pid": {
+          "angular_velocity_cost": 0.8300180129099624,
+          "angular_velocity_rms": 0.9110532437294553,
+          "position_cost": 1484.0765117431793,
+          "position_error_rms": 38.523713628662264,
+          "tilt_cost": 0.630436174209893,
+          "tilt_rms": 0.7939815047792879,
+          "velocity_cost": 41.78179801481402,
+          "velocity_rms": 6.46388412758258,
+          "yaw_cost": null
+        }
+      },
+      "TAKEOFF": {
+        "ppo_over_pid": {
+          "angular_velocity_cost": null,
+          "angular_velocity_rms": null,
+          "position_cost": 7.331409962589405,
+          "position_error_rms": 2.707657652397992,
+          "tilt_cost": null,
+          "tilt_rms": null,
+          "velocity_cost": 0.8393173049106706,
+          "velocity_rms": 0.9161426225815883,
+          "yaw_cost": null
+        }
+      }
+    }
+  },
+  "config": {
+    "actuator": {
+      "enabled": true,
+      "model": "cf21b_first_order",
+      "parameter_source": "paper_candidate",
+      "randomization": {
+        "enabled": false,
+        "steady_state_gain_rad_s": {
+          "max": 3480.0,
+          "min": 2320.0
+        },
+        "time_constant_s": {
+          "max": 0.06,
+          "min": 0.04
+        }
+      },
+      "reaction_torque": {
+        "include_rotor_acceleration_torque": false,
+        "legacy_ratio_m": 0.00594,
+        "model": "legacy_ratio",
+        "polynomial_coefficients": [
+          -3.4,
+          8.7,
+          2.9
+        ],
+        "polynomial_scale": 0.0001,
+        "rotor_inertia_kg_m2": 5e-08
+      },
+      "reset_rpm_mode": "auto",
+      "steady_state_gain_rad_s": 2900.0,
+      "thrust_polynomial_coefficients": [
+        -0.23,
+        0.562,
+        -0.043
+      ],
+      "thrust_polynomial_max_ratio": 1.0,
+      "thrust_polynomial_omega_reference_rad_s": 2900.0,
+      "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+      "time_constant_s": 0.05,
+      "verification_status": "unverified"
+    },
+    "controller": {
+      "pid": {
+        "integrator_limit": 2.0,
+        "kd_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd_velocity": 0.0,
+        "ki_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "ki_velocity": 1.0,
+        "kp_attitude": 12.0,
+        "kp_position": 4.0,
+        "kp_rate": [
+          0.0008,
+          0.0008,
+          0.0006
+        ],
+        "kp_velocity": 4.0,
+        "max_force": 1.0,
+        "max_tilt_deg": 35.0,
+        "max_torque": 0.02,
+        "velocity_limit": 1.5
+      }
+    },
+    "environment": {
+      "attitude_perturbation_deg": 0.0,
+      "control_mode": "e2e",
+      "episode_sec": 26.0,
+      "payload": {
+        "mass": 0.0,
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "randomization_limits": {
+          "mass_max": 0.015,
+          "radius_max": 0.1,
+          "radius_min": 0.02,
+          "torque_fraction": 0.5
+        },
+        "randomize": false
+      },
+      "policy_hz": 100.0,
+      "position_perturbation": 0.0,
+      "position_target": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "residual_scale": [
+        0.0065,
+        0.0065,
+        0.0001,
+        0.35
+      ],
+      "reward": {
+        "action_rate_weight": 0.0,
+        "action_weight": 0.0,
+        "angular_velocity_weight": 0.001,
+        "crash_penalty": 10.0,
+        "position_weight": 3.0,
+        "tilt_weight": 3.0,
+        "velocity_weight": 0.005,
+        "yaw_weight": 1.0
+      },
+      "termination": {
+        "max_altitude": 2.5,
+        "max_position_error": 1.5,
+        "max_tilt_deg": 60.0,
+        "min_altitude": 0.2
+      },
+      "yaw_target": 0.0
+    },
+    "evaluation": {
+      "deterministic": true,
+      "episode_count": 1,
+      "evaluation_interval": 0,
+      "seed_start": 42,
+      "tail_fraction": 0.3,
+      "tilt_limit_deg": 30.0
+    },
+    "experiment": {
+      "condition": "cx0p5-cy0-r0p5-T10-laps2",
+      "description": "Unified PID-floor versus E2E-PPO circle preset-1 defaults",
+      "name": "crazyflie-ppo",
+      "timezone": "Asia/Seoul"
+    },
+    "mission": {
+      "circle": {
+        "center_xy": [
+          0.5,
+          0.0
+        ],
+        "direction": "ccw",
+        "laps": 2.0,
+        "period": 5.0,
+        "radius": 0.5,
+        "ramp_sec": 2.0,
+        "start_angle_deg": 0.0
+      },
+      "circle_presets": [
+        {
+          "description": "radius 0.5m, period 10s (slow/safe)",
+          "key": "1",
+          "period": 10.0,
+          "radius": 0.5
+        },
+        {
+          "description": "radius 1.0m, period 8s (medium)",
+          "key": "2",
+          "period": 8.0,
+          "radius": 1.0
+        },
+        {
+          "description": "radius 0.5m, period 5s (fast/aggressive)",
+          "key": "3",
+          "period": 5.0,
+          "radius": 0.5
+        }
+      ],
+      "circle_ramp_sec": 2.0,
+      "force_floor_start": true,
+      "goto_sec": 4.0,
+      "goto_xy": [
+        1.0,
+        0.0
+      ],
+      "hover": {
+        "duration": 8.0,
+        "target": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "yaw_deg": 0.0
+      },
+      "hover_altitude": 1.0,
+      "lissajous": {
+        "amplitude_xy": [
+          0.5,
+          0.5
+        ],
+        "base_period": 10.0,
+        "center_xy": [
+          0.0,
+          0.0
+        ],
+        "cycles": 2.0,
+        "frequency_ratio": [
+          1,
+          2
+        ],
+        "phase_deg": 90.0,
+        "ramp_sec": 2.0
+      },
+      "number_of_laps": 2.0,
+      "post_hold_sec": 2.0,
+      "settle_sec": 2.0,
+      "takeoff_sec": 4.0,
+      "type": "circle"
+    },
+    "paths": {
+      "artifact_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts",
+      "legacy_model_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/model",
+      "legacy_tensorboard_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/tb",
+      "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+      "project_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2"
+    },
+    "source_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/view_live_circle_eval.yaml",
+    "training": {
+      "ppo": {
+        "batch_size": 256,
+        "clip_range": 0.1,
+        "device": "cpu",
+        "ent_coef": 0.003,
+        "gae_lambda": 0.95,
+        "gamma": 0.99,
+        "learning_rate": 0.0003,
+        "log_std_init": -1.5,
+        "max_grad_norm": 0.5,
+        "n_epochs": 10,
+        "n_steps": 2048,
+        "net_arch": [
+          64,
+          64
+        ],
+        "policy": "MlpPolicy",
+        "target_kl": 0.03,
+        "verbose": 0,
+        "vf_coef": 0.5
+      },
+      "seed": null,
+      "total_timesteps": 1000000
+    },
+    "vehicle": {
+      "arm_length": 0.035355,
+      "gravity": 9.81,
+      "inertia_diagonal": [
+        2.3951e-05,
+        2.3951e-05,
+        3.2347e-05
+      ],
+      "mass": 0.04338,
+      "motor_direction": [
+        1.0,
+        -1.0,
+        1.0,
+        -1.0
+      ],
+      "physics_hz": 500.0,
+      "thrust_max": 0.2,
+      "thrust_min": 0.0,
+      "torque_coefficient": 0.00594
+    },
+    "version": 1
+  },
+  "excluded_components": [
+    "action",
+    "action_rate",
+    "crash"
+  ],
+  "floor": {
+    "control_mode": "residual",
+    "diverged_at": null,
+    "label": "floor (PID)",
+    "overall": {
+      "angular_velocity_peak_radps": 1.2950839493470805,
+      "angular_velocity_rms_radps": 0.14350098026908886,
+      "angular_velocity_sq_mean": 0.02059253133818943,
+      "cost_fraction": {
+        "angular_velocity": 0.0004972216351088439,
+        "position": 0.8384970576400406,
+        "tilt": 0.1357520233281587,
+        "velocity": 0.025112106360533393,
+        "yaw": 0.00014159101201274886
+      },
+      "mean_cost": {
+        "angular_velocity": 2.059253133818943e-05,
+        "position": 0.034726519759447703,
+        "tilt": 0.00562219661659692,
+        "total": 0.041415195726920484,
+        "velocity": 0.0010400228000618473,
+        "yaw": 5.864019475822335e-06
+      },
+      "mean_error_delta_m_per_step": -6.446233294566091e-06,
+      "mean_error_reduction_rate_mps": 0.000644623329456609,
+      "position_error_mean_m": 0.08818447807248449,
+      "position_error_peak_m": 0.1637916129309564,
+      "position_error_rms_m": 0.10758952823803332,
+      "position_sq_mean": 0.011575506586482568,
+      "progress_fraction": 0.5,
+      "progress_pair_count": 2600,
+      "regress_fraction": 0.5,
+      "sample_count": 2601,
+      "tilt_error_mean": 0.0018740655388656399,
+      "tilt_mean_deg": 2.587187119148967,
+      "tilt_peak_deg": 11.047438963578058,
+      "tilt_rms_deg": 3.5092637994008724,
+      "velocity_peak_mps": 0.8569812178611755,
+      "velocity_rms_mps": 0.4560751692565267,
+      "velocity_sq_mean": 0.20800456001236947,
+      "yaw_error_sq_mean": 5.864019475822335e-06
+    },
+    "phases": {
+      "CIRCLE": {
+        "angular_velocity_peak_radps": 0.20750314650663562,
+        "angular_velocity_rms_radps": 0.11303397390001654,
+        "angular_velocity_sq_mean": 0.012776679255629622,
+        "cost_fraction": {
+          "angular_velocity": 0.00016906634783855247,
+          "position": 0.8460188657986881,
+          "tilt": 0.12844051890018907,
+          "velocity": 0.025293904923155024,
+          "yaw": 7.764401689684715e-05
+        },
+        "mean_cost": {
+          "angular_velocity": 1.2776679255629622e-05,
+          "position": 0.06393532379869943,
+          "tilt": 0.009706504779895294,
+          "total": 0.07557198353667322,
+          "velocity": 0.001911510566456143,
+          "yaw": 5.867712366727355e-06
+        },
+        "mean_error_delta_m_per_step": 0.00012688509500856683,
+        "mean_error_reduction_rate_mps": -0.01268850950085668,
+        "position_error_mean_m": 0.14098863203267722,
+        "position_error_peak_m": 0.1637916129309564,
+        "position_error_rms_m": 0.14598552873338672,
+        "position_sq_mean": 0.02131177459956648,
+        "progress_fraction": 0.3761467889908257,
+        "progress_pair_count": 1199,
+        "regress_fraction": 0.6238532110091743,
+        "sample_count": 1200,
+        "tilt_error_mean": 0.0032355015932984312,
+        "tilt_mean_deg": 4.46863934153283,
+        "tilt_peak_deg": 5.6302460141322355,
+        "tilt_rms_deg": 4.610385572918909,
+        "velocity_peak_mps": 0.6894193440336666,
+        "velocity_rms_mps": 0.618305841223604,
+        "velocity_sq_mean": 0.3823021132912286,
+        "yaw_error_sq_mean": 5.867712366727355e-06
+      },
+      "GOTO": {
+        "angular_velocity_peak_radps": 0.08976583182811737,
+        "angular_velocity_rms_radps": 0.034814245153579546,
+        "angular_velocity_sq_mean": 0.0012120316656135369,
+        "cost_fraction": {
+          "angular_velocity": 8.460556138311192e-05,
+          "position": 0.9227053004126136,
+          "tilt": 0.0494017530822877,
+          "velocity": 0.02780834087391087,
+          "yaw": 2.2736617876989928e-30
+        },
+        "mean_cost": {
+          "angular_velocity": 1.2120316656135369e-06,
+          "position": 0.013218375055339706,
+          "tilt": 0.0007077133948845324,
+          "total": 0.014325673699398966,
+          "velocity": 0.0003983732175091146,
+          "yaw": 3.257173687564156e-32
+        },
+        "mean_error_delta_m_per_step": -4.869990057691435e-06,
+        "mean_error_reduction_rate_mps": 0.0004869990057691435,
+        "position_error_mean_m": 0.059422676619067624,
+        "position_error_peak_m": 0.09339161086874427,
+        "position_error_rms_m": 0.0663786488145591,
+        "position_sq_mean": 0.004406125018446568,
+        "progress_fraction": 0.48370927318295737,
+        "progress_pair_count": 399,
+        "regress_fraction": 0.5162907268170426,
+        "sample_count": 400,
+        "tilt_error_mean": 0.0002359044649615108,
+        "tilt_mean_deg": 1.0556093676411362,
+        "tilt_peak_deg": 2.2765516606493073,
+        "tilt_rms_deg": 1.244578496747599,
+        "velocity_peak_mps": 0.3987794762000269,
+        "velocity_rms_mps": 0.2822669720350274,
+        "velocity_sq_mean": 0.07967464350182292,
+        "yaw_error_sq_mean": 3.257173687564156e-32
+      },
+      "HOLD": {
+        "angular_velocity_peak_radps": 1.2950839493470805,
+        "angular_velocity_rms_radps": 0.4312686216329782,
+        "angular_velocity_sq_mean": 0.1859926240052089,
+        "cost_fraction": {
+          "angular_velocity": 0.009321525474199248,
+          "position": 0.3114243450652734,
+          "tilt": 0.6590559997707255,
+          "velocity": 0.018150768632456692,
+          "yaw": 0.002047361007227584
+        },
+        "mean_cost": {
+          "angular_velocity": 0.00018599262400520892,
+          "position": 0.006213857514858059,
+          "tilt": 0.013150160357660087,
+          "total": 0.01995302426740027,
+          "velocity": 0.0003621627270135267,
+          "yaw": 4.0851043863388405e-05
+        },
+        "mean_error_delta_m_per_step": -0.0007273489208574376,
+        "mean_error_reduction_rate_mps": 0.07273489208574375,
+        "position_error_mean_m": 0.03388303221463153,
+        "position_error_peak_m": 0.15387710428286655,
+        "position_error_rms_m": 0.04551138141482875,
+        "position_sq_mean": 0.0020712858382860196,
+        "progress_fraction": 0.595,
+        "progress_pair_count": 200,
+        "regress_fraction": 0.405,
+        "sample_count": 201,
+        "tilt_error_mean": 0.0043833867858866955,
+        "tilt_mean_deg": 4.205992473683422,
+        "tilt_peak_deg": 11.047438963578058,
+        "tilt_rms_deg": 5.370339045981165,
+        "velocity_peak_mps": 0.6602858122051962,
+        "velocity_rms_mps": 0.2691329511648571,
+        "velocity_sq_mean": 0.07243254540270534,
+        "yaw_error_sq_mean": 4.0851043863388405e-05
+      },
+      "SETTLE1": {
+        "angular_velocity_peak_radps": 3.4848877880669804e-14,
+        "angular_velocity_rms_radps": 1.5769534703866148e-14,
+        "angular_velocity_sq_mean": 2.486782247764388e-28,
+        "cost_fraction": {
+          "angular_velocity": 2.6311145134110017e-27,
+          "position": 0.9794460570189342,
+          "tilt": 0.0,
+          "velocity": 0.020553932400668173,
+          "yaw": 8.454437886969064e-29
+        },
+        "mean_cost": {
+          "angular_velocity": 2.4867822477643882e-31,
+          "position": 9.25717620735514e-05,
+          "tilt": 0.0,
+          "total": 9.451440478086053e-05,
+          "velocity": 1.9426427073091283e-06,
+          "yaw": 7.990661730980752e-33
+        },
+        "mean_error_delta_m_per_step": -6.870490653281236e-06,
+        "mean_error_reduction_rate_mps": 0.0006870490653281235,
+        "position_error_mean_m": 0.004995944040165341,
+        "position_error_peak_m": 0.00887317769229412,
+        "position_error_rms_m": 0.005554930604833613,
+        "position_sq_mean": 3.085725402451713e-05,
+        "progress_fraction": 0.5979899497487438,
+        "progress_pair_count": 199,
+        "regress_fraction": 0.4020100502512563,
+        "sample_count": 200,
+        "tilt_error_mean": 0.0,
+        "tilt_mean_deg": 0.0,
+        "tilt_peak_deg": 0.0,
+        "tilt_rms_deg": 0.0,
+        "velocity_peak_mps": 0.07374437898397446,
+        "velocity_rms_mps": 0.01971112735136744,
+        "velocity_sq_mean": 0.00038852854146182564,
+        "yaw_error_sq_mean": 7.990661730980752e-33
+      },
+      "SETTLE2": {
+        "angular_velocity_peak_radps": 0.09131650626659393,
+        "angular_velocity_rms_radps": 0.04241631835642757,
+        "angular_velocity_sq_mean": 0.0017991440629138145,
+        "cost_fraction": {
+          "angular_velocity": 0.005849022671018163,
+          "position": 0.18635857869386405,
+          "tilt": 0.8007232323358537,
+          "velocity": 0.007069163048261115,
+          "yaw": 2.8234502865047414e-29
+        },
+        "mean_cost": {
+          "angular_velocity": 1.7991440629138145e-06,
+          "position": 5.7323410984788987e-05,
+          "tilt": 0.00024630037025372587,
+          "total": 0.00030759738135048255,
+          "velocity": 2.174456049053877e-06,
+          "yaw": 8.684859173255784e-33
+        },
+        "mean_error_delta_m_per_step": -4.939899644763347e-07,
+        "mean_error_reduction_rate_mps": 4.939899644763346e-05,
+        "position_error_mean_m": 0.0037522967439885847,
+        "position_error_peak_m": 0.008257599474633113,
+        "position_error_rms_m": 0.004371247380507803,
+        "position_sq_mean": 1.910780366159633e-05,
+        "progress_fraction": 0.5527638190954773,
+        "progress_pair_count": 199,
+        "regress_fraction": 0.4472361809045226,
+        "sample_count": 200,
+        "tilt_error_mean": 8.210012341790863e-05,
+        "tilt_mean_deg": 0.4962912640012169,
+        "tilt_peak_deg": 1.8148210538515035,
+        "tilt_rms_deg": 0.7342137360060843,
+        "velocity_peak_mps": 0.07317817691250206,
+        "velocity_rms_mps": 0.020854045406366012,
+        "velocity_sq_mean": 0.0004348912098107754,
+        "yaw_error_sq_mean": 8.684859173255784e-33
+      },
+      "TAKEOFF": {
+        "angular_velocity_peak_radps": 4.934623626562577e-12,
+        "angular_velocity_rms_radps": 9.157268011416877e-13,
+        "angular_velocity_sq_mean": 8.38555574329188e-25,
+        "cost_fraction": {
+          "angular_velocity": 4.650056185266828e-26,
+          "position": 0.9752790880865343,
+          "tilt": 0.0,
+          "velocity": 0.02472091185801258,
+          "yaw": 3.824725297875719e-31
+        },
+        "mean_cost": {
+          "angular_velocity": 8.385555743291882e-28,
+          "position": 0.01758743729662532,
+          "tilt": 0.0,
+          "total": 0.01803323531744746,
+          "velocity": 0.000445798020822139,
+          "yaw": 6.897217132501188e-33
+        },
+        "mean_error_delta_m_per_step": -4.753319051742255e-05,
+        "mean_error_reduction_rate_mps": 0.004753319051742254,
+        "position_error_mean_m": 0.0696306518693018,
+        "position_error_peak_m": 0.11013945192098618,
+        "position_error_rms_m": 0.07656682766626227,
+        "position_sq_mean": 0.005862479098875106,
+        "progress_fraction": 0.7669172932330827,
+        "progress_pair_count": 399,
+        "regress_fraction": 0.23308270676691728,
+        "sample_count": 400,
+        "tilt_error_mean": 0.0,
+        "tilt_mean_deg": 0.0,
+        "tilt_peak_deg": 0.0,
+        "tilt_rms_deg": 0.0,
+        "velocity_peak_mps": 0.8569812178611755,
+        "velocity_rms_mps": 0.29859605517224735,
+        "velocity_sq_mean": 0.0891596041644278,
+        "yaw_error_sq_mean": 6.897217132501188e-33
+      }
+    },
+    "terminated_at": 0.0,
+    "truncated_at": null
+  },
+  "fraction_epsilon": 1e-12,
+  "model": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_nominal_seedunset_20260922-134306/models/ppo_e2e_hover_nominal_seedunset_best_20260922-134306-13.zip",
+  "ppo": {
+    "control_mode": "e2e",
+    "diverged_at": null,
+    "label": "E2E PPO",
+    "overall": {
+      "angular_velocity_peak_radps": 2.206205919080613,
+      "angular_velocity_rms_radps": 0.18130631322797458,
+      "angular_velocity_sq_mean": 0.03287197921632043,
+      "cost_fraction": {
+        "angular_velocity": 0.0001076937176297957,
+        "position": 0.982316832627864,
+        "tilt": 0.0049335122395215225,
+        "velocity": 0.0011255117061082407,
+        "yaw": 0.01151644970560058
+      },
+      "mean_cost": {
+        "angular_velocity": 3.287197921632043e-05,
+        "position": 0.2998382748470647,
+        "tilt": 0.0015058846084086254,
+        "total": 0.30523581077600415,
+        "velocity": 0.00034354647815295806,
+        "yaw": 0.003515232863161583
+      },
+      "mean_error_delta_m_per_step": 2.4068541607146305e-05,
+      "mean_error_reduction_rate_mps": -0.0024068541607146308,
+      "position_error_mean_m": 0.27809923599310754,
+      "position_error_peak_m": 0.5351465217681711,
+      "position_error_rms_m": 0.3161425178866143,
+      "position_sq_mean": 0.09994609161568824,
+      "progress_fraction": 0.55,
+      "progress_pair_count": 2600,
+      "regress_fraction": 0.45,
+      "sample_count": 2601,
+      "tilt_error_mean": 0.0005019615361362084,
+      "tilt_mean_deg": 1.4713223822478532,
+      "tilt_peak_deg": 8.493525768279364,
+      "tilt_rms_deg": 1.815662621633292,
+      "velocity_peak_mps": 0.8569384349619534,
+      "velocity_rms_mps": 0.2621245803632151,
+      "velocity_sq_mean": 0.06870929563059161,
+      "yaw_error_sq_mean": 0.003515232863161583
+    },
+    "phases": {
+      "CIRCLE": {
+        "angular_velocity_peak_radps": 0.13051068926546242,
+        "angular_velocity_rms_radps": 0.08532593622682165,
+        "angular_velocity_sq_mean": 0.007280515392983636,
+        "cost_fraction": {
+          "angular_velocity": 1.5307287617290184e-05,
+          "position": 0.9840930028945128,
+          "tilt": 0.004463442652703939,
+          "velocity": 0.001026887429016773,
+          "yaw": 0.010401359734046677
+        },
+        "mean_cost": {
+          "angular_velocity": 7.280515392983636e-06,
+          "position": 0.4680583807420051,
+          "tilt": 0.0021229210393881306,
+          "total": 0.4756241324390285,
+          "velocity": 0.000488412442539674,
+          "yaw": 0.004947137699702596
+        },
+        "mean_error_delta_m_per_step": 0.00029511518877902007,
+        "mean_error_reduction_rate_mps": -0.029511518877902,
+        "position_error_mean_m": 0.3753846413815238,
+        "position_error_peak_m": 0.5351465217681711,
+        "position_error_rms_m": 0.3949929875926091,
+        "position_sq_mean": 0.15601946024733504,
+        "progress_fraction": 0.4195162635529608,
+        "progress_pair_count": 1199,
+        "regress_fraction": 0.5804837364470392,
+        "sample_count": 1200,
+        "tilt_error_mean": 0.0007076403464627102,
+        "tilt_mean_deg": 2.0407616213093713,
+        "tilt_peak_deg": 3.029533134756789,
+        "tilt_rms_deg": 2.1556457041257957,
+        "velocity_peak_mps": 0.40835029694626235,
+        "velocity_rms_mps": 0.31254197879314516,
+        "velocity_sq_mean": 0.09768248850793479,
+        "yaw_error_sq_mean": 0.004947137699702596
+      },
+      "GOTO": {
+        "angular_velocity_peak_radps": 0.06464681416416011,
+        "angular_velocity_rms_radps": 0.04400073312985239,
+        "angular_velocity_sq_mean": 0.0019360645159644902,
+        "cost_fraction": {
+          "angular_velocity": 6.829494464946873e-06,
+          "position": 0.9850117924610176,
+          "tilt": 0.0006410919781606523,
+          "velocity": 0.0007024915350750203,
+          "yaw": 0.013637794527754304
+        },
+        "mean_cost": {
+          "angular_velocity": 1.9360645159644903e-06,
+          "position": 0.2792368291648055,
+          "tilt": 0.00018174045483994344,
+          "total": 0.28348577276030074,
+          "velocity": 0.00019914635567901451,
+          "yaw": 0.0038661207204602668
+        },
+        "mean_error_delta_m_per_step": 0.0006327242171364297,
+        "mean_error_reduction_rate_mps": -0.06327242171364296,
+        "position_error_mean_m": 0.26519546055070703,
+        "position_error_peak_m": 0.43492690200786993,
+        "position_error_rms_m": 0.3050884184215048,
+        "position_sq_mean": 0.09307894305493518,
+        "progress_fraction": 0.38345864661654133,
+        "progress_pair_count": 399,
+        "regress_fraction": 0.6165413533834586,
+        "sample_count": 400,
+        "tilt_error_mean": 6.058015161331448e-05,
+        "tilt_mean_deg": 0.5691159705014163,
+        "tilt_peak_deg": 0.9472397264500945,
+        "tilt_rms_deg": 0.6306759131736085,
+        "velocity_peak_mps": 0.29174727436725034,
+        "velocity_rms_mps": 0.19957272142204932,
+        "velocity_sq_mean": 0.0398292711358029,
+        "yaw_error_sq_mean": 0.0038661207204602668
+      },
+      "HOLD": {
+        "angular_velocity_peak_radps": 0.22282479269102046,
+        "angular_velocity_rms_radps": 0.10249589937789069,
+        "angular_velocity_sq_mean": 0.010505409389282693,
+        "cost_fraction": {
+          "angular_velocity": 6.831224252826693e-05,
+          "position": 0.9888492998974374,
+          "tilt": 0.006820162327513018,
+          "velocity": 0.0016184628227978513,
+          "yaw": 0.002643762703220892
+        },
+        "mean_cost": {
+          "angular_velocity": 1.0505409389282694e-05,
+          "position": 0.15207035130532562,
+          "tilt": 0.0010488397789347919,
+          "total": 0.15378516354323088,
+          "velocity": 0.00024889556989422514,
+          "yaw": 0.00040657147968696283
+        },
+        "mean_error_delta_m_per_step": -0.001624871016738199,
+        "mean_error_reduction_rate_mps": 0.1624871016738199,
+        "position_error_mean_m": 0.20576625223935058,
+        "position_error_peak_m": 0.4127199493793429,
+        "position_error_rms_m": 0.22514465816842114,
+        "position_sq_mean": 0.050690117101775206,
+        "progress_fraction": 1.0,
+        "progress_pair_count": 200,
+        "regress_fraction": 0.0,
+        "sample_count": 201,
+        "tilt_error_mean": 0.00034961325964493064,
+        "tilt_mean_deg": 1.3370841913538254,
+        "tilt_peak_deg": 2.896476398844022,
+        "tilt_rms_deg": 1.5151598065204734,
+        "velocity_peak_mps": 0.4031361064009833,
+        "velocity_rms_mps": 0.22311233488726037,
+        "velocity_sq_mean": 0.049779113978845026,
+        "yaw_error_sq_mean": 0.00040657147968696283
+      },
+      "SETTLE1": {
+        "angular_velocity_peak_radps": 0.06453243154385215,
+        "angular_velocity_rms_radps": 0.03305287089313401,
+        "angular_velocity_sq_mean": 0.0010924922742781853,
+        "cost_fraction": {
+          "angular_velocity": 2.8193074857906236e-05,
+          "position": 0.9493679217164405,
+          "tilt": 0.0019112388967691303,
+          "velocity": 0.0012833388460477338,
+          "yaw": 0.047409307440078624
+        },
+        "mean_cost": {
+          "angular_velocity": 1.0924922742781854e-06,
+          "position": 0.03678836470126602,
+          "tilt": 7.406122743063237e-05,
+          "total": 0.03875037681261016,
+          "velocity": 4.9729863863893326e-05,
+          "yaw": 0.0018371285277753386
+        },
+        "mean_error_delta_m_per_step": -0.0006468784785079879,
+        "mean_error_reduction_rate_mps": 0.06468784785079879,
+        "position_error_mean_m": 0.10476635738766499,
+        "position_error_peak_m": 0.1845078901068295,
+        "position_error_rms_m": 0.11073747438764955,
+        "position_sq_mean": 0.012262788233755342,
+        "progress_fraction": 1.0,
+        "progress_pair_count": 199,
+        "regress_fraction": 0.0,
+        "sample_count": 200,
+        "tilt_error_mean": 2.468707581021079e-05,
+        "tilt_mean_deg": 0.34522919466829705,
+        "tilt_peak_deg": 0.7267674203262755,
+        "tilt_rms_deg": 0.40260034933055067,
+        "velocity_peak_mps": 0.19664551699024835,
+        "velocity_rms_mps": 0.09972949800725292,
+        "velocity_sq_mean": 0.009945972772778665,
+        "yaw_error_sq_mean": 0.0018371285277753386
+      },
+      "SETTLE2": {
+        "angular_velocity_peak_radps": 0.04564738723024479,
+        "angular_velocity_rms_radps": 0.038643524425684576,
+        "angular_velocity_sq_mean": 0.0014933219800384806,
+        "cost_fraction": {
+          "angular_velocity": 1.6648059233733357e-05,
+          "position": 0.9484151251747919,
+          "tilt": 0.0017310768340297379,
+          "velocity": 0.0010128564874590646,
+          "yaw": 0.048824293433337156
+        },
+        "mean_cost": {
+          "angular_velocity": 1.4933219800384806e-06,
+          "position": 0.08507232781552629,
+          "tilt": 0.00015527666312923906,
+          "total": 0.08969946340627911,
+          "velocity": 9.085268343365962e-05,
+          "yaw": 0.004379512922209884
+        },
+        "mean_error_delta_m_per_step": -0.0012273466331310249,
+        "mean_error_reduction_rate_mps": 0.12273466331310247,
+        "position_error_mean_m": 0.1531919050699869,
+        "position_error_peak_m": 0.30554325839352914,
+        "position_error_rms_m": 0.1683966822867227,
+        "position_sq_mean": 0.028357442605175427,
+        "progress_fraction": 1.0,
+        "progress_pair_count": 199,
+        "regress_fraction": 0.0,
+        "sample_count": 200,
+        "tilt_error_mean": 5.175888770974635e-05,
+        "tilt_mean_deg": 0.5471347813746144,
+        "tilt_peak_deg": 0.8822258919844955,
+        "tilt_rms_deg": 0.5829521269437337,
+        "velocity_peak_mps": 0.2352026348589936,
+        "velocity_rms_mps": 0.13479813309809568,
+        "velocity_sq_mean": 0.018170536686731922,
+        "yaw_error_sq_mean": 0.004379512922209884
+      },
+      "TAKEOFF": {
+        "angular_velocity_peak_radps": 2.206205919080613,
+        "angular_velocity_rms_radps": 0.42825291454225417,
+        "angular_velocity_sq_mean": 0.18340055881393527,
+        "cost_fraction": {
+          "angular_velocity": 0.001379618302163601,
+          "position": 0.9699477946906796,
+          "tilt": 0.019556820897873254,
+          "velocity": 0.0028146383840928772,
+          "yaw": 0.0063011277176679625
+        },
+        "mean_cost": {
+          "angular_velocity": 0.00018340055881393527,
+          "position": 0.12894071301289534,
+          "tilt": 0.0025998001589780826,
+          "total": 0.13293572470366316,
+          "velocity": 0.00037416599337094874,
+          "yaw": 0.0008376449796048308
+        },
+        "mean_error_delta_m_per_step": 0.0004027531964196933,
+        "mean_error_reduction_rate_mps": -0.04027531964196933,
+        "position_error_mean_m": 0.18461422437080358,
+        "position_error_peak_m": 0.2922029857472134,
+        "position_error_rms_m": 0.20731675685039333,
+        "position_sq_mean": 0.04298023767096511,
+        "progress_fraction": 0.42857142857142855,
+        "progress_pair_count": 399,
+        "regress_fraction": 0.5714285714285714,
+        "sample_count": 400,
+        "tilt_error_mean": 0.0008666000529926942,
+        "tilt_mean_deg": 1.7578061619603826,
+        "tilt_peak_deg": 8.493525768279364,
+        "tilt_rms_deg": 2.3861286996134496,
+        "velocity_peak_mps": 0.8569384349619534,
+        "velocity_rms_mps": 0.27355657307801934,
+        "velocity_sq_mean": 0.07483319867418975,
+        "yaw_error_sq_mean": 0.0008376449796048308
+      }
+    },
+    "terminated_at": 0.0,
+    "truncated_at": null
+  },
+  "precision": "Reconstructed from float32-observation-derived trace; not exact environment reward.",
+  "progress_rate_definition": "-sum(adjacent_error_delta)/sum(adjacent_time_delta); no phase-gap bridging",
+  "ratio_denominator_epsilon": 1e-12,
+  "reward_weights": {
+    "angular_velocity": 0.001,
+    "position": 3.0,
+    "tilt": 3.0,
+    "velocity": 0.005,
+    "yaw": 1.0
+  },
+  "scope": "continuous_state_cost_only",
+  "yaw_target_rad": 0.0
+}

@@ -1,0 +1,14 @@
+{
+  "control_mode": "e2e",
+  "floor_disqualifications": 0,
+  "floor_episode_count": 30,
+  "floor_mean_episode_length": 800.0,
+  "floor_score": 0.051869120862102144,
+  "improvement_percent": -217.74250013241308,
+  "policy_disqualifications": 26,
+  "policy_episode_count": 30,
+  "policy_mean_episode_length": 643.0666666666667,
+  "policy_score": 0.1648102414239464,
+  "saved_as_best": false,
+  "timestep": 320000
+}

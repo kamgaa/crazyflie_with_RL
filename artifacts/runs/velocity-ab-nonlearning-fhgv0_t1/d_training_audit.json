@@ -1,0 +1,198 @@
+{
+  "run": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_position-velocity-error-nominal_seed42_20261001-210046",
+  "manifest_status": "completed",
+  "result": {
+    "actual_total_timesteps": 1001472,
+    "best_model": null,
+    "final_model": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_position-velocity-error-nominal_seed42_20261001-210046/models/ppo_e2e_hover_position-velocity-error-nominal_seed42_final_20261001-210046.zip",
+    "requested_total_timesteps": 1000000
+  },
+  "evaluation_settings": {
+    "deterministic": true,
+    "episode_count": 30,
+    "evaluation_interval": 20000,
+    "seed_start": 1000,
+    "tail_fraction": 0.3,
+    "tilt_limit_deg": 30.0
+  },
+  "termination_settings": {
+    "max_altitude": 2.5,
+    "max_position_error": 1.5,
+    "max_tilt_deg": 60.0,
+    "min_altitude": 0.2
+  },
+  "evaluation_count": 50,
+  "first_evaluation": {
+    "control_mode": "e2e",
+    "floor_disqualifications": 0,
+    "floor_episode_count": 30,
+    "floor_mean_episode_length": 800.0,
+    "floor_position_rmse_xy": 0.03996551062693144,
+    "floor_position_rmse_z": 0.03308815567591759,
+    "floor_score": 0.051869120862102144,
+    "floor_tail_position_rmse_xy": 0.039965510400369,
+    "floor_tail_position_rmse_z": 0.03796924580831356,
+    "improvement_percent": -44.41386280614047,
+    "policy_disqualifications": 30,
+    "policy_episode_count": 30,
+    "policy_mean_episode_length": 42.666666666666664,
+    "policy_position_rmse_xy": 0.05188319533095499,
+    "policy_position_rmse_z": 0.031329799762612895,
+    "policy_score": 0.07490620104054738,
+    "policy_tail_position_rmse_xy": 0.07288152767538691,
+    "policy_tail_position_rmse_z": 0.03403711407344019,
+    "saved_as_best": false,
+    "timestep": 20000
+  },
+  "last_evaluation": {
+    "control_mode": "e2e",
+    "floor_disqualifications": 0,
+    "floor_episode_count": 30,
+    "floor_mean_episode_length": 800.0,
+    "floor_position_rmse_xy": 0.03996551062693144,
+    "floor_position_rmse_z": 0.03308815567591759,
+    "floor_score": 0.051869120862102144,
+    "floor_tail_position_rmse_xy": 0.039965510400369,
+    "floor_tail_position_rmse_z": 0.03796924580831356,
+    "improvement_percent": -78.08551792365036,
+    "policy_disqualifications": 30,
+    "policy_episode_count": 30,
+    "policy_mean_episode_length": 275.2,
+    "policy_position_rmse_xy": 0.056970825181621894,
+    "policy_position_rmse_z": 0.03847306044953717,
+    "policy_score": 0.09237139252971878,
+    "policy_tail_position_rmse_xy": 0.0891285228842063,
+    "policy_tail_position_rmse_z": 0.03581621667851457,
+    "saved_as_best": false,
+    "timestep": 1000000
+  },
+  "best_mean_survival_record": {
+    "control_mode": "e2e",
+    "floor_disqualifications": 0,
+    "floor_episode_count": 30,
+    "floor_mean_episode_length": 800.0,
+    "floor_position_rmse_xy": 0.03996551062693144,
+    "floor_position_rmse_z": 0.03308815567591759,
+    "floor_score": 0.051869120862102144,
+    "floor_tail_position_rmse_xy": 0.039965510400369,
+    "floor_tail_position_rmse_z": 0.03796924580831356,
+    "improvement_percent": -328.9919906323831,
+    "policy_disqualifications": 30,
+    "policy_episode_count": 30,
+    "policy_mean_episode_length": 297.96666666666664,
+    "policy_position_rmse_xy": 0.18785082812893036,
+    "policy_position_rmse_z": 0.06274725202353848,
+    "policy_score": 0.2225143741098487,
+    "policy_tail_position_rmse_xy": 0.327729514179661,
+    "policy_tail_position_rmse_z": 0.07693666914947375,
+    "saved_as_best": false,
+    "timestep": 880000
+  },
+  "min_disqualifications_record": {
+    "control_mode": "e2e",
+    "floor_disqualifications": 0,
+    "floor_episode_count": 30,
+    "floor_mean_episode_length": 800.0,
+    "floor_position_rmse_xy": 0.03996551062693144,
+    "floor_position_rmse_z": 0.03308815567591759,
+    "floor_score": 0.051869120862102144,
+    "floor_tail_position_rmse_xy": 0.039965510400369,
+    "floor_tail_position_rmse_z": 0.03796924580831356,
+    "improvement_percent": -1009.4101958771724,
+    "policy_disqualifications": 20,
+    "policy_episode_count": 30,
+    "policy_mean_episode_length": 259.8,
+    "policy_position_rmse_xy": 0.39569208383979654,
+    "policy_position_rmse_z": 0.09766915618392398,
+    "policy_score": 0.5754413153560147,
+    "policy_tail_position_rmse_xy": 0.6405139032834214,
+    "policy_tail_position_rmse_z": 0.11016489074807476,
+    "saved_as_best": false,
+    "timestep": 840000
+  },
+  "zero_disqualification_evaluations": 0,
+  "full_mean_horizon_evaluations": 0,
+  "saved_as_best_count": 0,
+  "best_rule": "strict score improvement AND zero tail-tilt disqualifications; beating floor or full horizon is not an extra gate",
+  "checkpoints": [
+    {
+      "path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_position-velocity-error-nominal_seed42_20261001-210046/models/ppo_e2e_hover_position-velocity-error-nominal_seed42_final_20261001-210046.zip",
+      "sha256": "badb391d8eeaafeb19cbc6d981ea4aabc2cec3ab1d41d7366295b224c8206be9"
+    }
+  ],
+  "scalar_summary": {
+    "train/approx_kl": {
+      "count": 488,
+      "first": 0.0017341380007565022,
+      "last": 0.0044947159476578236,
+      "minimum": 0.0014266009675338864,
+      "maximum": 0.0058794473297894
+    },
+    "train/clip_fraction": {
+      "count": 488,
+      "first": 0.09721679985523224,
+      "last": 0.12661132216453552,
+      "minimum": 0.04990234225988388,
+      "maximum": 0.19819335639476776
+    },
+    "train/clip_range": {
+      "count": 488,
+      "first": 0.10000000149011612,
+      "last": 0.10000000149011612,
+      "minimum": 0.10000000149011612,
+      "maximum": 0.10000000149011612
+    },
+    "train/entropy_loss": {
+      "count": 488,
+      "first": 0.3151794672012329,
+      "last": -1.9806997776031494,
+      "minimum": -2.456982374191284,
+      "maximum": 0.3151794672012329
+    },
+    "train/explained_variance": {
+      "count": 488,
+      "first": -0.014757871627807617,
+      "last": 0.8184181451797485,
+      "minimum": -0.18300414085388184,
+      "maximum": 0.8493872880935669
+    },
+    "train/learning_rate": {
+      "count": 488,
+      "first": 0.0003000000142492354,
+      "last": 0.0003000000142492354,
+      "minimum": 0.0003000000142492354,
+      "maximum": 0.0003000000142492354
+    },
+    "train/loss": {
+      "count": 488,
+      "first": 78.521240234375,
+      "last": 0.5498532652854919,
+      "minimum": 0.18356995284557343,
+      "maximum": 398.4937744140625
+    },
+    "train/policy_gradient_loss": {
+      "count": 488,
+      "first": -0.0057767946273088455,
+      "last": -0.006539888679981232,
+      "minimum": -0.009823944419622421,
+      "maximum": -0.0012681072112172842
+    },
+    "train/std": {
+      "count": 488,
+      "first": 0.22403153777122498,
+      "last": 0.3990461826324463,
+      "minimum": 0.22403153777122498,
+      "maximum": 0.44967880845069885
+    },
+    "train/value_loss": {
+      "count": 488,
+      "first": 221.4264373779297,
+      "last": 1.2204794883728027,
+      "minimum": 0.41927844285964966,
+      "maximum": 536.3131103515625
+    }
+  },
+  "training_episode_length_recorded": false,
+  "termination_cause_history": "not recorded in training/evaluation aggregates; final test max_tilt does not establish historical causes",
+  "policy_std_definition": "SB3 mean exp(log_std), not measured realized action std or motor saturation"
+}

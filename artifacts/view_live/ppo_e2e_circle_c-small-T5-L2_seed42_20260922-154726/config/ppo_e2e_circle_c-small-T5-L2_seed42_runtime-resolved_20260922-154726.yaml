@@ -1,0 +1,66 @@
+mode: circle
+path_preset: small
+mission:
+  center_xy:
+  - 0.5
+  - 0.0
+  radius: 0.5
+  period: 5.0
+  laps: 2.0
+  start_angle_deg: 0.0
+  direction: ccw
+  ramp_sec: 2.0
+  altitude: 1.0
+  takeoff_sec: 4.0
+  settle_sec: 2.0
+  goto_sec: 4.0
+  post_hold_sec: 2.0
+  force_floor_start_requested: true
+  legacy_hold: false
+control_mode: e2e
+policy_control_modes:
+  floor: residual
+  residual: e2e
+policy: both
+model: /artifacts/runs/ppo_e2e_hover_nominal_seedunset_20260921-221954/models/ppo_e2e_hover_nominal_seedunset_best_20260921-221954-20
+seed: 42
+headless: false
+realtime: true
+camera_tracking: true
+position_perturbation: 0.0
+attitude_perturbation_deg: 0.0
+force_floor_start_requested: true
+actuator:
+  enabled: true
+  model: cf21b_first_order
+  time_constant_s: 0.05
+  steady_state_gain_rad_s: 2900.0
+  thrust_polynomial_coefficients:
+  - -0.23
+  - 0.562
+  - -0.043
+  thrust_polynomial_omega_reference_rad_s: 2900.0
+  thrust_polynomial_positive_branch_min_ratio: 0.0791
+  thrust_polynomial_max_ratio: 1.0
+  parameter_source: paper_candidate
+  verification_status: unverified
+  reaction_torque:
+    model: legacy_ratio
+    legacy_ratio_m: 0.00594
+    polynomial_coefficients:
+    - -3.4
+    - 8.7
+    - 2.9
+    polynomial_scale: 0.0001
+    rotor_inertia_kg_m2: 5.0e-08
+    include_rotor_acceleration_torque: false
+  reset_rpm_mode: auto
+  randomization:
+    enabled: false
+    time_constant_s:
+      min: 0.04
+      max: 0.06
+    steady_state_gain_rad_s:
+      min: 2320.0
+      max: 3480.0
+preflight_error: 'FileNotFoundError: PPO model is unavailable: /artifacts/runs/ppo_e2e_hover_nominal_seedunset_20260921-221954/models/ppo_e2e_hover_nominal_seedunset_best_20260921-221954-20'

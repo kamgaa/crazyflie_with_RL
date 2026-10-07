@@ -1,0 +1,11 @@
+hover A_final / absolute: completed=True duration=8.00s reason=horizon
+hover A_best / absolute: completed=True duration=8.00s reason=horizon
+hover B_final / absolute: completed=True duration=8.00s reason=horizon
+hover B_best / absolute: completed=True duration=8.00s reason=horizon
+hover historical_nominal / absolute: completed=True duration=8.00s reason=horizon
+step-005 A_final / absolute: completed=True duration=8.00s reason=horizon
+step-005 A_best / absolute: completed=True duration=8.00s reason=horizon
+step-005 B_final / absolute: completed=True duration=8.00s reason=horizon
+step-005 B_best / absolute: completed=True duration=8.00s reason=horizon
+step-005 historical_nominal / absolute: completed=True duration=8.00s reason=horizon
+results: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-a7_icqln

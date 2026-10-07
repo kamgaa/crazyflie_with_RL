@@ -1,0 +1,22 @@
+{
+  "control_mode": "e2e",
+  "floor_disqualifications": 0,
+  "floor_episode_count": 30,
+  "floor_mean_episode_length": 401.1333333333333,
+  "floor_position_rmse_xy": 0.6326722204492257,
+  "floor_position_rmse_z": 0.023666987465836155,
+  "floor_score": 1.0472749086096644,
+  "floor_tail_position_rmse_xy": 1.0535132628023158,
+  "floor_tail_position_rmse_z": 0.027761541987623817,
+  "improvement_percent": 96.29316850901374,
+  "policy_disqualifications": 0,
+  "policy_episode_count": 30,
+  "policy_mean_episode_length": 800.0,
+  "policy_position_rmse_xy": 0.017611217863188033,
+  "policy_position_rmse_z": 0.030878858654551717,
+  "policy_score": 0.03882071610954073,
+  "policy_tail_position_rmse_xy": 0.017892817599339566,
+  "policy_tail_position_rmse_z": 0.03447491821078971,
+  "saved_as_best": true,
+  "timestep": 1000000
+}

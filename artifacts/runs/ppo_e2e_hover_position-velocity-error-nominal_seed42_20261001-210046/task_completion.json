@@ -1,0 +1,26 @@
+{
+  "training_result": {
+    "actual_total_timesteps": 1001472,
+    "best_model": null,
+    "final_model": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_position-velocity-error-nominal_seed42_20261001-210046/models/ppo_e2e_hover_position-velocity-error-nominal_seed42_final_20261001-210046.zip",
+    "requested_total_timesteps": 1000000
+  },
+  "checkpoints": {
+    "final": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_position-velocity-error-nominal_seed42_20261001-210046/models/ppo_e2e_hover_position-velocity-error-nominal_seed42_final_20261001-210046.zip"
+  },
+  "evaluation_dir": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-l3pneew4",
+  "command": [
+    "/home/kenneth/miniconda3/envs/crazyflie_rl/bin/python",
+    "compare_dr_policies.py",
+    "--config",
+    "configs/eval_position_velocity_error.yaml",
+    "--model",
+    "final=/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_position-velocity-error-nominal_seed42_20261001-210046/models/ppo_e2e_hover_position-velocity-error-nominal_seed42_final_20261001-210046.zip",
+    "--cases",
+    "hover",
+    "step-005",
+    "step-050",
+    "--seed",
+    "42"
+  ]
+}

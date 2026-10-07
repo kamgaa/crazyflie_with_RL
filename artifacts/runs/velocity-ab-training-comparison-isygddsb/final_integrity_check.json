@@ -1,0 +1,18 @@
+{
+  "historical_file_count": 169,
+  "historical_files_unchanged": true,
+  "training": {
+    "a": {
+      "source_hashes_match": true,
+      "all_checkpoint_hashes_match": true,
+      "checkpoint_count": 22,
+      "periodic_evaluation_count": 50
+    },
+    "b": {
+      "source_hashes_match": true,
+      "all_checkpoint_hashes_match": true,
+      "checkpoint_count": 22,
+      "periodic_evaluation_count": 50
+    }
+  }
+}

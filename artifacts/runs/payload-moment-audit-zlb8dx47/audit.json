@@ -1,0 +1,470 @@
+{
+  "mujoco_version": "3.12.0",
+  "git_head": "31343f3ff5c0ad4bce218e7d7f4adc05faa05cff",
+  "git_status": " M crazyflie_rl/motor_degradation.py\n M crazyflie_rl/plotting.py\n?? configs/eval_e2e_interactive_payload.yaml\n?? crazyflie_rl/interactive_eval.py\n?? docs/E2E_INTERACTIVE_EVALUATION.md\n?? tests/test_interactive_eval.py\n?? view_e2e_interactive.py\n",
+  "source_sha256": {
+    "crazyflie_rl/environment.py": "9556b05b6dc5984eea0f09cfec90acd31ee3b816b11ca2da082f7b9b46e1e63b",
+    "crazyflie_rl/interactive_eval.py": "220100527ea556118b933c7095186d8c0c0f8cea46d5e22aef1606737eab5865",
+    "resources/mujoco/cf21B_500.xml": "5c9ce180e043ec612c6c81e88d00506f895d66050011e4896eccc8594d71f9f7"
+  },
+  "original_run": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-141021",
+  "original_resolved_payload": {
+    "randomize": false,
+    "mass": 0.005,
+    "offset": [
+      0.02,
+      0.0
+    ]
+  },
+  "archived_runtime_payload": {
+    "randomize": false,
+    "mass_kg": 0.005,
+    "offset_body_xy_m": [
+      0.02,
+      0.0
+    ],
+    "offset_reference": "drone body origin; z=0",
+    "total_mass_kg": 0.04838,
+    "center_of_mass_body_m": [
+      0.0020669698222405956,
+      0.0,
+      0.0
+    ],
+    "inertia_diagonal_kg_m2": [
+      2.3951e-05,
+      2.5744303017775944e-05,
+      3.414030301777594e-05
+    ],
+    "model": "existing _set_com_bias mass/COM/diagonal-inertia approximation",
+    "policy_hover_mass_kg": 0.04338
+  },
+  "reset_2cm": {
+    "body_mass": 0.04838,
+    "body_ipos": [
+      0.0020669698222405956,
+      0.0,
+      0.0
+    ],
+    "world_inertial_minus_body_origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "body_sameframe": 1,
+    "body_subtreemass": 0.043384000000000006,
+    "sum_body_masses": 0.048384,
+    "body_inertia": [
+      2.3951e-05,
+      2.5744303017775944e-05,
+      3.414030301777594e-05
+    ],
+    "dist_torque_body": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "initial_motor_thrust": [
+      0.11865194999999987,
+      0.11865194999999987,
+      0.11865194999999987,
+      0.11865194999999987
+    ]
+  },
+  "action_replay_first_10_max_position_error_m": 0.0,
+  "replayed_xfrc": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      -8.311934570101966e-10,
+      0.0009809988641431117,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      -6.55815790060634e-09,
+      0.0009809777512125692,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      -2.1337191046274418e-08,
+      0.000980889757062071,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      -4.8386840135478066e-08,
+      0.000980691275339032,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      -8.949908956910948e-08,
+      0.0009803811744225589,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      -1.4344946154367703e-07,
+      0.000980016629955313,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      -2.039282778856661e-07,
+      0.0009796944036327886,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      -2.585998360736748e-07,
+      0.0009795080602687516,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      -2.9029902168689554e-07,
+      0.000979504729405729,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      -2.797772599466235e-07,
+      0.0009796654905207451,
+      0.0
+    ]
+  ],
+  "original_log_comparison": {
+    "run": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-141021",
+    "sample_filter": "speed<.02m/s, angular speed<.1rad/s, |roll,pitch|<2deg, all effectiveness=1",
+    "selected_samples": 1347,
+    "time_extent_s": [
+      0.8,
+      14.72
+    ],
+    "expected_physical_pitch_moment_origin_nm": -0.000981,
+    "mean_rotor_forces_n": [
+      0.12560905624105803,
+      0.1117391465121527,
+      0.11173325983073719,
+      0.12561749242363618
+    ],
+    "mean_pitch_moment_xml_origin_nm": -0.0009813864724990099,
+    "mean_pitch_moment_logged_allocator_origin_nm": -0.0009812477017874005,
+    "mean_total_thrust_n": 0.47469895500758413,
+    "mean_rpy_deg": [
+      -0.0021914457301213564,
+      -0.00010263235523882164,
+      -1.064821301759936
+    ],
+    "limitation": "CSV thrust is last substep, attitude is post-step; filter is near-static only; xfrc is absent in original CSV"
+  },
+  "probe_3cm_resets": {
+    "False": {
+      "body_mass": 0.04838,
+      "body_ipos": [
+        0.0031004547333608927,
+        0.0,
+        0.0
+      ],
+      "world_inertial_minus_body_origin": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "body_sameframe": 1,
+      "body_subtreemass": 0.043384000000000006,
+      "sum_body_masses": 0.048384,
+      "body_inertia": [
+        2.3951e-05,
+        2.7985931789995867e-05,
+        3.6381931789995866e-05
+      ],
+      "dist_torque_body": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "initial_motor_thrust": [
+        0.11865194999999987,
+        0.11865194999999987,
+        0.11865194999999987,
+        0.11865194999999987
+      ]
+    },
+    "True": {
+      "body_mass": 0.04838,
+      "body_ipos": [
+        0.0031004547333608927,
+        0.0,
+        0.0
+      ],
+      "world_inertial_minus_body_origin": [
+        0.0031004547333608927,
+        0.0,
+        0.0
+      ],
+      "body_sameframe": 3,
+      "body_subtreemass": 0.048384,
+      "sum_body_masses": 0.048384,
+      "body_inertia": [
+        2.3951e-05,
+        2.7985931789995867e-05,
+        3.6381931789995866e-05
+      ],
+      "dist_torque_body": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "initial_motor_thrust": [
+        0.11865194999999987,
+        0.11865194999999987,
+        0.11865194999999987,
+        0.11865194999999987
+      ]
+    }
+  },
+  "static_probes": [
+    {
+      "rebuilt_constants": false,
+      "case": "equal_no_extra",
+      "rotor_forces_n": [
+        0.11866176000000002,
+        0.11866176000000002,
+        0.11866176000000002,
+        0.11866176000000002
+      ],
+      "gravity_pitch_origin_nm": -0.0,
+      "rotor_pitch_origin_nm": 0.0,
+      "external_pitch_nm": 0,
+      "residual_pitch_origin_nm": 0.0,
+      "pitch_accel_rad_s2": 0.0,
+      "contact_count": 0
+    },
+    {
+      "rebuilt_constants": false,
+      "case": "equal_with_extra",
+      "rotor_forces_n": [
+        0.11866176000000002,
+        0.11866176000000002,
+        0.11866176000000002,
+        0.11866176000000002
+      ],
+      "gravity_pitch_origin_nm": -0.0,
+      "rotor_pitch_origin_nm": 0.0,
+      "external_pitch_nm": 0.0014715,
+      "residual_pitch_origin_nm": 0.0014715,
+      "pitch_accel_rad_s2": 52.56200188414011,
+      "contact_count": 0
+    },
+    {
+      "rebuilt_constants": false,
+      "case": "physical_trim_no_extra",
+      "rotor_forces_n": [
+        0.12906546475113123,
+        0.10825805524886879,
+        0.10825805524886879,
+        0.12906546475113123
+      ],
+      "gravity_pitch_origin_nm": -0.0,
+      "rotor_pitch_origin_nm": -0.0014714999999999989,
+      "external_pitch_nm": 0,
+      "residual_pitch_origin_nm": -0.0014714999999999989,
+      "pitch_accel_rad_s2": -52.562001884140074,
+      "contact_count": 0
+    },
+    {
+      "rebuilt_constants": false,
+      "case": "physical_trim_with_extra",
+      "rotor_forces_n": [
+        0.12906546475113123,
+        0.10825805524886879,
+        0.10825805524886879,
+        0.12906546475113123
+      ],
+      "gravity_pitch_origin_nm": -0.0,
+      "rotor_pitch_origin_nm": -0.0014714999999999989,
+      "external_pitch_nm": 0.0014715,
+      "residual_pitch_origin_nm": 1.0842021724855044e-18,
+      "pitch_accel_rad_s2": 3.872771772543112e-14,
+      "contact_count": 0
+    },
+    {
+      "rebuilt_constants": false,
+      "case": "double_trim_with_extra",
+      "rotor_forces_n": [
+        0.13946916950226246,
+        0.09785435049773758,
+        0.09785435049773758,
+        0.13946916950226246
+      ],
+      "gravity_pitch_origin_nm": -0.0,
+      "rotor_pitch_origin_nm": -0.0029429999999999986,
+      "external_pitch_nm": 0.0014715,
+      "residual_pitch_origin_nm": -0.0014714999999999986,
+      "pitch_accel_rad_s2": -52.56200188414006,
+      "contact_count": 0
+    },
+    {
+      "rebuilt_constants": true,
+      "case": "equal_no_extra",
+      "rotor_forces_n": [
+        0.11866176000000002,
+        0.11866176000000002,
+        0.11866176000000002,
+        0.11866176000000002
+      ],
+      "gravity_pitch_origin_nm": 0.0014715,
+      "rotor_pitch_origin_nm": 0.0,
+      "external_pitch_nm": 0,
+      "residual_pitch_origin_nm": 0.0014715,
+      "pitch_accel_rad_s2": 52.5619296973367,
+      "contact_count": 0
+    },
+    {
+      "rebuilt_constants": true,
+      "case": "equal_with_extra",
+      "rotor_forces_n": [
+        0.11866176000000002,
+        0.11866176000000002,
+        0.11866176000000002,
+        0.11866176000000002
+      ],
+      "gravity_pitch_origin_nm": 0.0014715,
+      "rotor_pitch_origin_nm": 0.0,
+      "external_pitch_nm": 0.0014715,
+      "residual_pitch_origin_nm": 0.002943,
+      "pitch_accel_rad_s2": 105.1238593946734,
+      "contact_count": 0
+    },
+    {
+      "rebuilt_constants": true,
+      "case": "physical_trim_no_extra",
+      "rotor_forces_n": [
+        0.12906546475113123,
+        0.10825805524886879,
+        0.10825805524886879,
+        0.12906546475113123
+      ],
+      "gravity_pitch_origin_nm": 0.0014715,
+      "rotor_pitch_origin_nm": -0.0014714999999999989,
+      "external_pitch_nm": 0,
+      "residual_pitch_origin_nm": 1.0842021724855044e-18,
+      "pitch_accel_rad_s2": 3.872766453814666e-14,
+      "contact_count": 0
+    },
+    {
+      "rebuilt_constants": true,
+      "case": "physical_trim_with_extra",
+      "rotor_forces_n": [
+        0.12906546475113123,
+        0.10825805524886879,
+        0.10825805524886879,
+        0.12906546475113123
+      ],
+      "gravity_pitch_origin_nm": 0.0014715,
+      "rotor_pitch_origin_nm": -0.0014714999999999989,
+      "external_pitch_nm": 0.0014715,
+      "residual_pitch_origin_nm": 0.001471500000000001,
+      "pitch_accel_rad_s2": 52.56192969733674,
+      "contact_count": 0
+    },
+    {
+      "rebuilt_constants": true,
+      "case": "double_trim_with_extra",
+      "rotor_forces_n": [
+        0.13946916950226246,
+        0.09785435049773758,
+        0.09785435049773758,
+        0.13946916950226246
+      ],
+      "gravity_pitch_origin_nm": 0.0014715,
+      "rotor_pitch_origin_nm": -0.0029429999999999986,
+      "external_pitch_nm": 0.0014715,
+      "residual_pitch_origin_nm": 1.3010426069826053e-18,
+      "pitch_accel_rad_s2": 5.2620445785164344e-14,
+      "contact_count": 0
+    }
+  ],
+  "new_3cm_log_comparison": {
+    "run": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-142844",
+    "sample_filter": "speed<.02m/s, angular speed<.1rad/s, |roll,pitch|<2deg, all effectiveness=1",
+    "selected_samples": 54,
+    "time_extent_s": [
+      0.72,
+      2.0
+    ],
+    "expected_physical_pitch_moment_origin_nm": -0.0014715000000000002,
+    "mean_rotor_forces_n": [
+      0.12923263620336925,
+      0.10853220522067232,
+      0.10833804922288699,
+      0.12950253897749237
+    ],
+    "mean_pitch_moment_xml_origin_nm": -0.0014803435972710122,
+    "mean_pitch_moment_logged_allocator_origin_nm": -0.0014801342726673255,
+    "mean_total_thrust_n": 0.47560542962442093,
+    "mean_rpy_deg": [
+      -0.046531842085566766,
+      0.12123181441815291,
+      -1.7968402410991116
+    ],
+    "limitation": "CSV thrust is last substep, attitude is post-step; filter is near-static only; xfrc is absent in original CSV"
+  },
+  "new_3cm_outcome": {
+    "terminated": false,
+    "truncated": true,
+    "end_reason": "duration",
+    "error": null,
+    "actual_duration_sec": 2.0,
+    "requested_duration_sec": 2.0,
+    "control_steps": 200,
+    "checkpoint_hash_unchanged": true
+  },
+  "protected_hashes": {
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-141021/rollout.csv": "5de9a38d5beee456e585ef4c2a49d7ca39429eb71829a46eadf21f291f1eab66",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-141021/trace.npz": "636921b6507c6ed4d4aceb06e25f34ad47f34a60c187c72edd9850da0d10fcac",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-141021/events.csv": "175a8e30d847131b9ec307015d0301a39ad203800cfce8fdee98f4a5582c5709",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-141021/metrics/ppo_e2e_hover_interactive-motor-effectiveness_seed42_wrench_authority_20261001-141021.json": "c9d5fab8b950e2f89105320d725835515f64a3c47de21e1ddcf723e801ae17ab",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-141021/metrics/ppo_e2e_hover_interactive-motor-effectiveness_seed42_evaluation_20261001-141021.json": "4620ac2a106c3691dfaba74067c6ec64b77fdb4a12cb21e60efb342e91f6d694",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-141021/metrics/ppo_e2e_hover_interactive-motor-effectiveness_seed42_reward_balance_20261001-141021.json": "a6b54a5bb6802d4e7b77491a219ed248005a325b11702552925699c3de080f3f",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-141021/metrics/ppo_e2e_hover_interactive-motor-effectiveness_seed42_yaw_authority_20261001-141021.json": "6095dd7f59d0e0fa31040795dc4cc740b3eca8664e3c44bccc9af3bfc00d3283",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-141021/manifests/ppo_e2e_hover_interactive-motor-effectiveness_seed42_manifest_20261001-141021.json": "b70382d76e15127b4ec8495a6746b666da9765f384d77589d65dbbe46a5b3977",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-141021/config/ppo_e2e_hover_interactive-motor-effectiveness_seed42_runtime-resolved_20261001-141021.yaml": "14ce2d4637b2494275ae64a11ba0689cde875244bac560b2e6d092f57558e104",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-141021/config/ppo_e2e_hover_interactive-motor-effectiveness_seed42_resolved-config_20261001-141021.yaml": "d3c8ee70b94569d100450b36a3cabb5b5f704e35757c7514e669b1e6d826cad1",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-141021/plots/ppo_e2e_hover_interactive-motor-effectiveness_seed42_wrench_authority_20261001-141021.png": "4f7c906ac929e6575139bdb16671116d02791f3f950c90152a8c838faf94ba58",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-141021/plots/ppo.png": "dd27e145116af03a363134acf50b24575056ba9cdff076efc73bb3ee45e84d51",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-141021/plots/ppo_e2e_hover_interactive-motor-effectiveness_seed42_yaw_authority_20261001-141021.png": "d0d11dfc5c1247ede518cd0b5568eed90dc679fd4a3d5b3df533b883a171b5d7",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-141021/plots/motor_effectiveness.png": "0148bd79d536008a1c6b100ff7fc7f1137206a37650b371999d3f1ee3fe22cf7",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_nominal_seedunset_20260928-120033/models/ppo_e2e_hover_nominal_seedunset_best_20260928-120033-13.zip": "c054ba76c7813256a84e038040b905d23c7962c1063de3f464cc27365169108b",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/eval_e2e_interactive_payload.yaml": "48d4d553878610e3b37e653f45a7417203fd1bfb918ba7845313a99e1cfe6b9f",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/environment.py": "9556b05b6dc5984eea0f09cfec90acd31ee3b816b11ca2da082f7b9b46e1e63b"
+  },
+  "protected_files_unchanged": true,
+  "conclusions": [
+    "Current constants leave xipos at body origin despite nonzero body_ipos.",
+    "Current runtime explicit m*g*offset torque acts once; not twice in this checkout/model.",
+    "Rebuilding constants AND retaining explicit torque doubles the static gravity moment.",
+    "No production dynamics changes made; physical correction must refresh constants and remove duplicate explicit payload gravity torque together."
+  ]
+}

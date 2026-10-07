@@ -1,0 +1,5 @@
+{
+  "kind": "best",
+  "path": "models/ppo_e2e_hover_nominal_seedunset_best_20260928-203542-02.zip",
+  "timestep": 640000
+}

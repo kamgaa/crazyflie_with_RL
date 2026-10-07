@@ -1,0 +1,5 @@
+{
+  "kind": "final",
+  "path": "models/ppo_e2e_hover_position-velocity-error-smoke_seed42_final_20261001-205901.zip",
+  "timestep": 2048
+}

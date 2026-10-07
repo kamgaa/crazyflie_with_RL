@@ -1,0 +1,17 @@
+{
+  "hover": {
+    "samples": 268,
+    "common_columns_equal_except_label": true,
+    "compared_columns": 147
+  },
+  "step-005": {
+    "samples": 265,
+    "common_columns_equal_except_label": true,
+    "compared_columns": 147
+  },
+  "step-050": {
+    "samples": 14,
+    "common_columns_equal_except_label": true,
+    "compared_columns": 147
+  }
+}

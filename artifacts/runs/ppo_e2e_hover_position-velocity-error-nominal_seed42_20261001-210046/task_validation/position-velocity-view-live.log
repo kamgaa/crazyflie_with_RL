@@ -1,0 +1,80 @@
+/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/plotting.py:675: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  fig.tight_layout(rect=(0.0, 0.025, 1.0, 0.955))
+[config] position_xy_weight=10 position_z_weight=6 action_scale=(0.0075, 0.0075, 0.001, 0.5)
+
+Mode              : Hover
+Floor controller  : RESIDUAL (PID)
+PPO controller    : E2E
+Motor actuator    : CF2.1 first-order (unverified)
+Path preset       : hover
+Target            : (0.0, 0.0, 1.0) m
+Yaw               : 0 deg
+Duration          : 0.1 s
+Force floor request: False
+Policy            : both
+Model             : /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_position-velocity-error-smoke_seed42_20261001-205901/models/ppo_e2e_hover_position-velocity-error-smoke_seed42_final_20261001-205901.zip
+Seed              : 42
+Position perturb. : 0 m
+Attitude perturb. : 0 deg
+Display           : headless
+Realtime          : enabled
+Camera tracking   : enabled
+
+>>> floor (PID)
+    t=  0.00s phase -> HOVER
+    saved: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_h-T0p1_seed42_20261001-210447/plots/floor.png
+
+>>> E2E PPO
+    t=  0.00s phase -> HOVER
+    saved: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_h-T0p1_seed42_20261001-210447/plots/ppo.png
+Reward Balance: overall position RMS [m]
+  PID: 2.2359e-06
+    xy (horizontal distance): 1.0011e-17, z: 2.2359e-06
+  PPO: 1.3801e-05
+    xy (horizontal distance): 1.1683e-05, z: 7.3467e-06
+reward balance: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_h-T0p1_seed42_20261001-210447/metrics/ppo_e2e_hover_h-T0p1_seed42_reward_balance_20261001-210447.json
+=== Yaw Authority Diagnostic: overall ===
+Metric                                  PID           PPO
+Yaw RMS [deg]                    1.0476e-15      0.002605
+Yaw peak [deg]                   1.9544e-15     0.0055306
+Cmd RMS [Nm]                     3.5177e-19    1.4608e-06
+Cmd P95 abs [Nm]                 5.1252e-19    1.4628e-06
+Cmd P99 abs [Nm]                 5.2503e-19    1.4629e-06
+Actual RMS [Nm]                  2.9692e-19    9.4619e-07
+Actual P95 abs [Nm]              6.6136e-19    1.2433e-06
+Tracking error RMS [Nm]          5.0893e-19    6.5208e-07
+PPO yaw action RMS                      N/A     0.0014608
+PPO yaw action P95 abs                  N/A     0.0014628
+PPO yaw action P99 abs                  N/A     0.0014629
+P(abs(action) > 0.9)                    N/A             0
+P(abs(action) > 0.95)                   N/A             0
+Configured E2E tau-z scale: 0.001 Nm
+PID P99 / E2E scale: 5.2503e-16
+yaw authority: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_h-T0p1_seed42_20261001-210447/metrics/ppo_e2e_hover_h-T0p1_seed42_yaw_authority_20261001-210447.json
+=== Wrench / Action Scale Diagnostic: overall ===
+Axis/unit           PID P95       PID P99         Scale     P99/Scale
+tau_x/Nm           9.4187e-17    9.8274e-17        0.0075    1.3103e-14
+tau_y/Nm           5.3168e-18    5.4743e-18        0.0075     7.299e-16
+tau_z/Nm           5.1252e-19    5.2503e-19         0.001    5.2503e-16
+delta_fz/N         1.6314e-05    1.6962e-05           0.5    3.3924e-05
+PPO normalized action (evaluation config deterministic=True)
+Axis                     RMS           P95           P99           Max
+tau_x               0.0049339     0.0049548      0.004955     0.0049551
+tau_y               0.0051788     0.0052557     0.0052655     0.0052679
+tau_z               0.0014608     0.0014628     0.0014629     0.0014629
+delta_fz           0.00038333    0.00042213    0.00042264    0.00042277
+Boundary usage
+Axis                   >0.25          >0.5         >0.75          >0.9
+tau_x                       0             0             0             0
+tau_y                       0             0             0             0
+tau_z                       0             0             0             0
+delta_fz                    0             0             0             0
+Scale if PID P99 maps to normalized usage (diagnostic candidate only):
+Axis                     10%           20%           30%
+tau_x              9.8274e-16    4.9137e-16    3.2758e-16
+tau_y              5.4743e-17    2.7371e-17    1.8248e-17
+tau_z              5.2503e-18    2.6251e-18    1.7501e-18
+delta_fz           0.00016962    8.4809e-05    5.6539e-05
+wrench authority: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_h-T0p1_seed42_20261001-210447/metrics/ppo_e2e_hover_h-T0p1_seed42_wrench_authority_20261001-210447.json
+metrics: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_h-T0p1_seed42_20261001-210447/metrics/ppo_e2e_hover_h-T0p1_seed42_evaluation_20261001-210447.json
+run: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_h-T0p1_seed42_20261001-210447

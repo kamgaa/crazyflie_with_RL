@@ -1,0 +1,37 @@
+{
+  "training_sources_unchanged": true,
+  "original_baseline_checkpoint_unchanged": true,
+  "rollouts": [
+    {
+      "rollout": "hover-final.csv",
+      "samples": 268,
+      "first_raw_velocity": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "raw_input_post_reward_and_time_consistent": true
+    },
+    {
+      "rollout": "step-005-final.csv",
+      "samples": 265,
+      "first_raw_velocity": [
+        -0.20000000298023224,
+        0.0,
+        0.0
+      ],
+      "raw_input_post_reward_and_time_consistent": true
+    },
+    {
+      "rollout": "step-050-final.csv",
+      "samples": 14,
+      "first_raw_velocity": [
+        -1.5,
+        0.0,
+        0.0
+      ],
+      "raw_input_post_reward_and_time_consistent": true
+    }
+  ],
+  "summary_partial_null_contract": true
+}

@@ -1,0 +1,26 @@
+{
+  "initial_protected_files": 1239,
+  "changed_files": [],
+  "existing_tracked_diff_unchanged": true,
+  "new_source_sha256": {
+    "compare_oracle_recovery.py": "cf84bd0543f30383ad9e7956b9cbbd6b242e33f99d347f8f1c438f12099f9ffc",
+    "crazyflie_rl/oracle_recovery.py": "474f20e8b9a675d810183af586974094107b2e027a364fe63fd6d4aabe074e17",
+    "crazyflie_rl/oracle_recovery_artifacts.py": "439fe28beabcccc9258aa05986bb7f4def7aa9261f94c0c926e107a9b7181068",
+    "tests/test_oracle_recovery.py": "5dc739b81c71fa580b8d317b97b8b31025a4da7738adcf80e17ec17521b75802"
+  },
+  "focused_tests": 45,
+  "whole_repository_tests_run": false,
+  "training_run": false,
+  "optimizer_updates": false,
+  "commit_push": false,
+  "plot_only_postprocessing": {
+    "reason": "plot layout only: include 100% N/A inside x axis and wrap title",
+    "source": "crazyflie_rl/oracle_recovery_artifacts.py",
+    "execution_sha256": "640b0e2dd3a5a103ded2085dd1303732e25dc869e4a7ef14f0a525abb39e4cbe",
+    "final_sha256": "439fe28beabcccc9258aa05986bb7f4def7aa9261f94c0c926e107a9b7181068",
+    "numeric_artifacts_unchanged": true,
+    "additional_rollouts": 0,
+    "plots": 16
+  },
+  "final_postprocessing_preservation_rechecked": true
+}

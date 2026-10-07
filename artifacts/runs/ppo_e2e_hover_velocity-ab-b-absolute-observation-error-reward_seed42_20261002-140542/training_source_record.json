@@ -1,0 +1,19 @@
+{
+  "source_sha256": {
+    "crazyflie_rl/training.py": "71267db570e6ba3e4338c77ee55e6bc114f6ab2d9c06622ff292da81b94a1c9d",
+    "crazyflie_rl/training_observers.py": "fedd4a6e8abc818f42761888fd5e956725190d98c03979f69b63c6c4843a7e6d",
+    "crazyflie_rl/environment.py": "791833669c668023db96d0f57eb022f20bb13168c0f7f06b24f42c87b10e0239",
+    "crazyflie_rl/config.py": "f1b2007b412872730e56e8ae7124feb31d27c49f3c5a3c96a08b895b149aa438",
+    "crazyflie_rl/velocity_reference.py": "7034c9860e1e12735807d7c795564c8fff6a07947e08a334a1f1a8fccd483afe",
+    "crazyflie_rl/artifacts.py": "08f353cde4aa768d16974fdb84713c2cdb92611fdd1b8db2ca85d0156780c7d3",
+    "crazyflie_rl/factories.py": "72465229a631a593842e0b2cca96b9f19702d4c43f559ccb1b5434c96678af99",
+    "configs/e2e_train_velocity_ab_a.yaml": "5a714f2fbbe0fa4ec20e30033775800f31ac25d828a66b7fee63e076e515f379",
+    "configs/e2e_train_velocity_ab_b.yaml": "02164c1ba7280a73cc170d1f25e436ff36485e9ec64d5494058cdd412a142a15",
+    "configs/e2e_train_position_velocity_error.yaml": "eb3afc43b9811f58e4acb9f271c7f7db9a4df34daa160928d89f0f64d059bf53"
+  },
+  "initialization": "fresh PPO; no resume or checkpoint load",
+  "threads": {
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  }
+}

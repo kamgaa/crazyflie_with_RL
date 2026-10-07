@@ -1,0 +1,215 @@
+version: 1
+paths:
+  mujoco_xml: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml
+  project_root: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2
+  artifact_root: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/view_live
+  legacy_model_root: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/model
+  legacy_tensorboard_root: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/tb
+vehicle:
+  mass: 0.04338
+  gravity: 9.81
+  arm_length: 0.035355
+  motor_direction:
+  - 1.0
+  - -1.0
+  - 1.0
+  - -1.0
+  thrust_min: 0.0
+  thrust_max: 0.2
+  torque_coefficient: 0.00594
+  inertia_diagonal:
+  - 2.3951e-05
+  - 2.3951e-05
+  - 3.2347e-05
+  physics_hz: 500.0
+actuator:
+  enabled: true
+  model: cf21b_first_order
+  time_constant_s: 0.05
+  steady_state_gain_rad_s: 2900.0
+  thrust_polynomial_coefficients:
+  - -0.23
+  - 0.562
+  - -0.043
+  thrust_polynomial_omega_reference_rad_s: 2900.0
+  thrust_polynomial_positive_branch_min_ratio: 0.0791
+  thrust_polynomial_max_ratio: 1.0
+  parameter_source: paper_candidate
+  verification_status: unverified
+  reaction_torque:
+    model: legacy_ratio
+    legacy_ratio_m: 0.00594
+    polynomial_coefficients:
+    - -3.4
+    - 8.7
+    - 2.9
+    polynomial_scale: 0.0001
+    rotor_inertia_kg_m2: 5.0e-08
+    include_rotor_acceleration_torque: false
+  reset_rpm_mode: auto
+  randomization:
+    enabled: false
+    time_constant_s:
+      min: 0.04
+      max: 0.06
+    steady_state_gain_rad_s:
+      min: 2320.0
+      max: 3480.0
+controller:
+  pid:
+    kp_position: 4.0
+    velocity_limit: 1.5
+    kp_velocity: 4.0
+    ki_velocity: 1.0
+    kd_velocity: 0.0
+    kp_attitude: 12.0
+    kp_rate:
+    - 0.0008
+    - 0.0008
+    - 0.0006
+    ki_rate:
+    - 0.0
+    - 0.0
+    - 0.0
+    kd_rate:
+    - 0.0
+    - 0.0
+    - 0.0
+    max_tilt_deg: 35.0
+    max_torque: 0.02
+    max_force: 1.0
+    integrator_limit: 2.0
+environment:
+  control_mode: e2e
+  policy_hz: 100.0
+  episode_sec: 8.0
+  residual_scale:
+  - 0.007
+  - 0.007
+  - 0.0001
+  - 0.25
+  position_target:
+  - 0.0
+  - 0.0
+  - 1.0
+  yaw_target: 0.0
+  position_perturbation: 0.0
+  attitude_perturbation_deg: 0.0
+  payload:
+    randomize: false
+    mass: 0.0
+    offset:
+    - 0.0
+    - 0.0
+    randomization_limits:
+      radius_min: 0.02
+      radius_max: 0.1
+      torque_fraction: 0.5
+      mass_max: 0.015
+  reward:
+    position_weight: 3.0
+    velocity_weight: 0.005
+    tilt_weight: 3.0
+    angular_velocity_weight: 0.001
+    yaw_weight: 1.0
+    action_weight: 0.0
+    action_rate_weight: 0.0
+    crash_penalty: 10.0
+  termination:
+    min_altitude: 0.2
+    max_altitude: 2.5
+    max_tilt_deg: 60.0
+    max_position_error: 1.5
+  initial_pose_randomization: null
+training:
+  seed: null
+  total_timesteps: 1000000
+  ppo:
+    policy: MlpPolicy
+    n_steps: 2048
+    batch_size: 256
+    learning_rate: 0.0003
+    gamma: 0.99
+    gae_lambda: 0.95
+    n_epochs: 10
+    ent_coef: 0.003
+    vf_coef: 0.5
+    max_grad_norm: 0.5
+    clip_range: 0.1
+    target_kl: 0.03
+    log_std_init: -1.5
+    net_arch:
+    - 64
+    - 64
+    device: cpu
+    verbose: 0
+evaluation:
+  episode_count: 1
+  seed_start: 42
+  deterministic: true
+  tail_fraction: 0.3
+  tilt_limit_deg: 30.0
+  evaluation_interval: 0
+mission:
+  type: hover
+  hover_altitude: 1.0
+  goto_xy:
+  - 1.0
+  - 0.0
+  takeoff_sec: 4.0
+  settle_sec: 2.0
+  goto_sec: 4.0
+  circle_ramp_sec: 2.0
+  number_of_laps: 2.0
+  post_hold_sec: 2.0
+  force_floor_start: false
+  circle_presets:
+  - key: '1'
+    description: radius 0.5m, period 10s (slow/safe)
+    radius: 0.5
+    period: 10.0
+  - key: '2'
+    description: radius 1.0m, period 8s (medium)
+    radius: 1.0
+    period: 8.0
+  - key: '3'
+    description: radius 0.5m, period 5s (fast/aggressive)
+    radius: 0.5
+    period: 5.0
+  hover:
+    target:
+    - 0.0
+    - 0.0
+    - 1.0
+    yaw_deg: 0.0
+    duration: 8.0
+  circle:
+    center_xy:
+    - 0.5
+    - 0.0
+    radius: 0.5
+    period: 10.0
+    laps: 2.0
+    start_angle_deg: 0.0
+    direction: ccw
+    ramp_sec: 2.0
+  lissajous:
+    center_xy:
+    - 0.0
+    - 0.0
+    amplitude_xy:
+    - 0.5
+    - 0.5
+    frequency_ratio:
+    - 1
+    - 2
+    phase_deg: 90.0
+    base_period: 10.0
+    cycles: 2.0
+    ramp_sec: 2.0
+experiment:
+  name: crazyflie-ppo
+  condition: x0-y0-z1-dur8
+  description: Unified PID-floor versus E2E-PPO hover defaults
+  timezone: Asia/Seoul
+source_path: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/view_live_hover_eval.yaml

@@ -1,0 +1,351 @@
+{
+  "actual_torque_definition": "Signed sum of motor reaction torques; excludes external body torques.",
+  "comparisons": {
+    "overall": {},
+    "phases": {}
+  },
+  "config": {
+    "actuator": {
+      "enabled": true,
+      "model": "cf21b_first_order",
+      "parameter_source": "paper_candidate",
+      "randomization": {
+        "enabled": false,
+        "steady_state_gain_rad_s": {
+          "max": 3480.0,
+          "min": 2320.0
+        },
+        "time_constant_s": {
+          "max": 0.06,
+          "min": 0.04
+        }
+      },
+      "reaction_torque": {
+        "include_rotor_acceleration_torque": false,
+        "legacy_ratio_m": 0.00594,
+        "model": "legacy_ratio",
+        "polynomial_coefficients": [
+          -3.4,
+          8.7,
+          2.9
+        ],
+        "polynomial_scale": 0.0001,
+        "rotor_inertia_kg_m2": 5e-08
+      },
+      "reset_rpm_mode": "auto",
+      "steady_state_gain_rad_s": 2900.0,
+      "thrust_polynomial_coefficients": [
+        -0.23,
+        0.562,
+        -0.043
+      ],
+      "thrust_polynomial_max_ratio": 1.0,
+      "thrust_polynomial_omega_reference_rad_s": 2900.0,
+      "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+      "time_constant_s": 0.05,
+      "verification_status": "unverified"
+    },
+    "controller": {
+      "pid": {
+        "integrator_limit": 2.0,
+        "kd_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd_velocity": 0.0,
+        "ki_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "ki_velocity": 1.0,
+        "kp_attitude": 12.0,
+        "kp_position": 4.0,
+        "kp_rate": [
+          0.0008,
+          0.0008,
+          0.0006
+        ],
+        "kp_velocity": 4.0,
+        "max_force": 1.0,
+        "max_tilt_deg": 35.0,
+        "max_torque": 0.02,
+        "velocity_limit": 1.5
+      }
+    },
+    "environment": {
+      "attitude_perturbation_deg": 0.0,
+      "control_mode": "e2e",
+      "episode_sec": 8.0,
+      "initial_pose_randomization": null,
+      "payload": {
+        "mass": 0.005,
+        "offset": [
+          0.02,
+          0.0
+        ],
+        "randomization_limits": {
+          "mass_max": 0.015,
+          "radius_max": 0.1,
+          "radius_min": 0.02,
+          "torque_fraction": 0.5
+        },
+        "randomize": false
+      },
+      "policy_hz": 100.0,
+      "position_perturbation": 0.0,
+      "position_target": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "residual_scale": [
+        0.0075,
+        0.0075,
+        0.001,
+        0.5
+      ],
+      "reward": {
+        "action_rate_weight": 0.0,
+        "action_weight": 0.0,
+        "angular_velocity_weight": 0.001,
+        "crash_penalty": 10.0,
+        "position_weight": 4.0,
+        "position_xy_weight": 10.0,
+        "position_z_weight": 6.0,
+        "tilt_weight": 3.0,
+        "velocity_weight": 0.005,
+        "yaw_weight": 1.0
+      },
+      "termination": {
+        "max_altitude": 2.5,
+        "max_position_error": 1.5,
+        "max_tilt_deg": 60.0,
+        "min_altitude": 0.2
+      },
+      "yaw_target": 0.0
+    },
+    "evaluation": {
+      "deterministic": true,
+      "episode_count": 30,
+      "evaluation_interval": 20000,
+      "seed_start": 42,
+      "tail_fraction": 0.3,
+      "tilt_limit_deg": 30.0
+    },
+    "experiment": {
+      "condition": "dr-transfer-evaluation",
+      "description": "Interactive E2E motor degradation with a fixed off-centre payload",
+      "name": "crazyflie-ppo",
+      "timezone": "Asia/Seoul"
+    },
+    "mission": {
+      "circle": {
+        "center_xy": [
+          0.5,
+          0.0
+        ],
+        "direction": "ccw",
+        "laps": 2.0,
+        "period": 5.0,
+        "radius": 0.5,
+        "ramp_sec": 2.0,
+        "start_angle_deg": 0.0
+      },
+      "circle_presets": [
+        {
+          "description": "radius 0.5m, period 10s (slow/safe)",
+          "key": "1",
+          "period": 10.0,
+          "radius": 0.5
+        },
+        {
+          "description": "radius 1.0m, period 8s (medium)",
+          "key": "2",
+          "period": 8.0,
+          "radius": 1.0
+        },
+        {
+          "description": "radius 0.5m, period 5s (fast/aggressive)",
+          "key": "3",
+          "period": 5.0,
+          "radius": 0.5
+        }
+      ],
+      "circle_ramp_sec": 2.0,
+      "force_floor_start": false,
+      "goto_sec": 4.0,
+      "goto_xy": [
+        1.0,
+        0.0
+      ],
+      "hover": {
+        "duration": 8.0,
+        "target": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "yaw_deg": 0.0
+      },
+      "hover_altitude": 1.0,
+      "lissajous": {
+        "amplitude_xy": [
+          0.5,
+          0.5
+        ],
+        "base_period": 10.0,
+        "center_xy": [
+          0.0,
+          0.0
+        ],
+        "cycles": 2.0,
+        "frequency_ratio": [
+          1,
+          2
+        ],
+        "phase_deg": 90.0,
+        "ramp_sec": 2.0
+      },
+      "number_of_laps": 2.0,
+      "post_hold_sec": 2.0,
+      "settle_sec": 2.0,
+      "takeoff_sec": 4.0,
+      "type": "hover"
+    },
+    "paths": {
+      "artifact_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts",
+      "legacy_model_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/model",
+      "legacy_tensorboard_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/tb",
+      "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+      "project_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2"
+    },
+    "source_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/eval_e2e_interactive_payload.yaml",
+    "training": {
+      "ppo": {
+        "batch_size": 256,
+        "clip_range": 0.1,
+        "device": "cpu",
+        "ent_coef": 0.003,
+        "gae_lambda": 0.95,
+        "gamma": 0.99,
+        "learning_rate": 0.0003,
+        "log_std_init": -1.5,
+        "max_grad_norm": 0.5,
+        "n_epochs": 10,
+        "n_steps": 2048,
+        "net_arch": [
+          64,
+          64
+        ],
+        "policy": "MlpPolicy",
+        "target_kl": 0.03,
+        "verbose": 0,
+        "vf_coef": 0.5
+      },
+      "seed": null,
+      "total_timesteps": 1000000
+    },
+    "vehicle": {
+      "arm_length": 0.035355,
+      "gravity": 9.81,
+      "inertia_diagonal": [
+        2.3951e-05,
+        2.3951e-05,
+        3.2347e-05
+      ],
+      "mass": 0.04338,
+      "motor_direction": [
+        1.0,
+        -1.0,
+        1.0,
+        -1.0
+      ],
+      "physics_hz": 500.0,
+      "thrust_max": 0.2,
+      "thrust_min": 0.0,
+      "torque_coefficient": 0.00594
+    },
+    "version": 1
+  },
+  "configured_tau_z_action_scale_nm": 0.001,
+  "correlation_std_epsilon": 1e-12,
+  "floor": null,
+  "model": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_nominal_seedunset_20260928-120033/models/ppo_e2e_hover_nominal_seedunset_best_20260928-120033-13.zip",
+  "plot": "plots/ppo_e2e_hover_interactive-motor-effectiveness_seed42_yaw_authority_20261001-140246.png",
+  "policy_tau_z_max_abs_nm": 0.001,
+  "ppo": {
+    "control_mode": "e2e",
+    "label": "E2E interactive",
+    "normalized_yaw_action_applicable": true,
+    "overall": {
+      "sample_count": 50,
+      "tau_z_actual_abs_max_nm": 3.283588916334424e-05,
+      "tau_z_actual_abs_mean_nm": 1.016094272324604e-05,
+      "tau_z_actual_abs_p95_nm": 2.9642695038715365e-05,
+      "tau_z_actual_abs_p99_nm": 3.2136061128017916e-05,
+      "tau_z_actual_rms_nm": 1.300923131732136e-05,
+      "tau_z_actual_vs_cmd_correlation": 0.7264376180828384,
+      "tau_z_cmd_abs_max_nm": 5.2681811153888706e-05,
+      "tau_z_cmd_abs_mean_nm": 1.7683870866894724e-05,
+      "tau_z_cmd_abs_p95_nm": 4.8181589692831036e-05,
+      "tau_z_cmd_abs_p99_nm": 5.247162088751793e-05,
+      "tau_z_cmd_rms_nm": 2.178839750447525e-05,
+      "tau_z_tracking_error_abs_max_nm": 3.233620284735009e-05,
+      "tau_z_tracking_error_abs_p95_nm": 3.0963923464387216e-05,
+      "tau_z_tracking_error_rms_nm": 1.532046163814155e-05,
+      "u_tau_z_abs_max": 0.0526818111538887,
+      "u_tau_z_abs_mean": 0.017683870866894724,
+      "u_tau_z_abs_p95": 0.04818158969283104,
+      "u_tau_z_abs_p99": 0.05247162088751793,
+      "u_tau_z_fraction_gt_0p8": 0.0,
+      "u_tau_z_fraction_gt_0p9": 0.0,
+      "u_tau_z_fraction_gt_0p95": 0.0,
+      "u_tau_z_fraction_gt_0p99": 0.0,
+      "u_tau_z_rms": 0.02178839750447525,
+      "u_tau_z_vs_tau_z_actual_correlation": 0.7264376180828382,
+      "yaw_mean_abs_deg": 0.5159528400163171,
+      "yaw_peak_abs_deg": 1.3505763908815132,
+      "yaw_rms_deg": 0.6945562745336087
+    },
+    "phases": {
+      "HOVER": {
+        "sample_count": 50,
+        "tau_z_actual_abs_max_nm": 3.283588916334424e-05,
+        "tau_z_actual_abs_mean_nm": 1.016094272324604e-05,
+        "tau_z_actual_abs_p95_nm": 2.9642695038715365e-05,
+        "tau_z_actual_abs_p99_nm": 3.2136061128017916e-05,
+        "tau_z_actual_rms_nm": 1.300923131732136e-05,
+        "tau_z_actual_vs_cmd_correlation": 0.7264376180828384,
+        "tau_z_cmd_abs_max_nm": 5.2681811153888706e-05,
+        "tau_z_cmd_abs_mean_nm": 1.7683870866894724e-05,
+        "tau_z_cmd_abs_p95_nm": 4.8181589692831036e-05,
+        "tau_z_cmd_abs_p99_nm": 5.247162088751793e-05,
+        "tau_z_cmd_rms_nm": 2.178839750447525e-05,
+        "tau_z_tracking_error_abs_max_nm": 3.233620284735009e-05,
+        "tau_z_tracking_error_abs_p95_nm": 3.0963923464387216e-05,
+        "tau_z_tracking_error_rms_nm": 1.532046163814155e-05,
+        "u_tau_z_abs_max": 0.0526818111538887,
+        "u_tau_z_abs_mean": 0.017683870866894724,
+        "u_tau_z_abs_p95": 0.04818158969283104,
+        "u_tau_z_abs_p99": 0.05247162088751793,
+        "u_tau_z_fraction_gt_0p8": 0.0,
+        "u_tau_z_fraction_gt_0p9": 0.0,
+        "u_tau_z_fraction_gt_0p95": 0.0,
+        "u_tau_z_fraction_gt_0p99": 0.0,
+        "u_tau_z_rms": 0.02178839750447525,
+        "u_tau_z_vs_tau_z_actual_correlation": 0.7264376180828382,
+        "yaw_mean_abs_deg": 0.5159528400163171,
+        "yaw_peak_abs_deg": 1.3505763908815132,
+        "yaw_rms_deg": 0.6945562745336087
+      }
+    },
+    "terminated_at": null,
+    "tracking_error_source": "allocation_error[:,2]",
+    "truncated_at": 0.49
+  },
+  "ratio_denominator_epsilon_nm": 1e-12,
+  "sampling": "Final physics substep per policy step; correlations have zero sample lag.",
+  "yaw_target_rad": 0.0
+}

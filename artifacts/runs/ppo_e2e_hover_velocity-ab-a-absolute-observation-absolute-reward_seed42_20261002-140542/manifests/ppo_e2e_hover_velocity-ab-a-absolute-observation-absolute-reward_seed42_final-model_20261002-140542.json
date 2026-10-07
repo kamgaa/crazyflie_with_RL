@@ -1,0 +1,9 @@
+{
+  "kind": "final",
+  "normalization": {
+    "enabled": false
+  },
+  "path": "models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_final_20261002-140542.zip",
+  "sha256": "63da5cfb06d080384036c5072c4c63cdc6dfced4cc2d12404c75e335ab62c978",
+  "timestep": 1001472
+}

@@ -1,0 +1,9 @@
+{
+  "reason": "plot layout only: include 100% N/A inside x axis and wrap title",
+  "source": "crazyflie_rl/oracle_recovery_artifacts.py",
+  "execution_sha256": "640b0e2dd3a5a103ded2085dd1303732e25dc869e4a7ef14f0a525abb39e4cbe",
+  "final_sha256": "439fe28beabcccc9258aa05986bb7f4def7aa9261f94c0c926e107a9b7181068",
+  "numeric_artifacts_unchanged": true,
+  "additional_rollouts": 0,
+  "plots": 16
+}

@@ -1,0 +1,8 @@
+{
+  "checkpoint_interval": 100000,
+  "checkpoint_timing": "rollout start after previous optimizer update; final after last update",
+  "fresh_initialization": true,
+  "initial_policy_sha256": "c1b5166c1350eb7ceb7b6bdfb8f07cc5f4b7d6ab559fbd71d528de475a3eb97c",
+  "normalization_enabled": false,
+  "seed": 42
+}

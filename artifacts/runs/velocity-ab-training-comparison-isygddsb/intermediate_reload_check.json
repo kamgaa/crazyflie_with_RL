@@ -1,0 +1,46 @@
+{
+  "a": {
+    "checkpoint": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_20261002-140542/models/ppo_e2e_hover_velocity-ab-a-absolute-observation-absolute-reward_seed42_intermediate-step0100352_20261002-140542.zip",
+    "timestep": 100352,
+    "optimizer_update_counter": 490,
+    "normalization": {
+      "enabled": false
+    },
+    "first_action": [
+      -0.033597350120544434,
+      0.021596603095531464,
+      0.012391665019094944,
+      0.07295706123113632
+    ],
+    "observation_shape": [
+      15
+    ],
+    "action_shape": [
+      4
+    ],
+    "hash_unchanged": true,
+    "scope": "one-step load/inference smoke only; not a performance result"
+  },
+  "b": {
+    "checkpoint": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_20261002-140542/models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_intermediate-step0100352_20261002-140542.zip",
+    "timestep": 100352,
+    "optimizer_update_counter": 490,
+    "normalization": {
+      "enabled": false
+    },
+    "first_action": [
+      0.0036621931940317154,
+      -0.005806657485663891,
+      0.036077529191970825,
+      0.06095317751169205
+    ],
+    "observation_shape": [
+      15
+    ],
+    "action_shape": [
+      4
+    ],
+    "hash_unchanged": true,
+    "scope": "one-step load/inference smoke only; not a performance result"
+  }
+}

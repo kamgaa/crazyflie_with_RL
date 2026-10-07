@@ -1,0 +1,4 @@
+hover final / position velocity error (native): completed=False duration=2.68s reason=max_tilt
+step-005 final / position velocity error (native): completed=False duration=2.65s reason=max_tilt
+step-050 final / position velocity error (native): completed=False duration=0.14s reason=max_tilt
+results: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-39rkr7zg

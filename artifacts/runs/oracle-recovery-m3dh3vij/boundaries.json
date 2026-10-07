@@ -1,0 +1,76 @@
+{
+  "A_best-combined_motor2_70": {
+    "recovered_percent": [
+      71,
+      72,
+      73,
+      74,
+      75,
+      80,
+      85,
+      90,
+      95
+    ],
+    "physical_termination_percent": [
+      70
+    ],
+    "completed_unrecovered_percent": [],
+    "position_only_percent": [],
+    "transition_intervals": [
+      {
+        "lower_percent": 70,
+        "upper_percent": 71,
+        "lower_category": "physical_termination",
+        "upper_category": "position_attitude_recovered"
+      }
+    ],
+    "nonmonotonic_pairs": [],
+    "lower_bound_note": null
+  },
+  "B_best-combined_motor3_70": {
+    "recovered_percent": [
+      73,
+      74,
+      75,
+      80,
+      85,
+      90,
+      95
+    ],
+    "physical_termination_percent": [
+      70,
+      71,
+      72
+    ],
+    "completed_unrecovered_percent": [],
+    "position_only_percent": [],
+    "transition_intervals": [
+      {
+        "lower_percent": 72,
+        "upper_percent": 73,
+        "lower_category": "physical_termination",
+        "upper_category": "position_attitude_recovered"
+      }
+    ],
+    "nonmonotonic_pairs": [],
+    "lower_bound_note": null
+  },
+  "A_best-combined_motor3_70": {
+    "recovered_percent": [
+      66,
+      68,
+      70,
+      75,
+      80,
+      85,
+      90,
+      95
+    ],
+    "physical_termination_percent": [],
+    "completed_unrecovered_percent": [],
+    "position_only_percent": [],
+    "transition_intervals": [],
+    "nonmonotonic_pairs": [],
+    "lower_bound_note": "recovered at evaluated lower bound 66%; actual boundary unknown"
+  }
+}

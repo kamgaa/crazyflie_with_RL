@@ -1,0 +1,6 @@
+{
+  "label": "b",
+  "run_dir": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_20261002-140542",
+  "config": "configs/e2e_train_velocity_ab_b.yaml",
+  "fresh_initialization": true
+}

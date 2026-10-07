@@ -1,0 +1,10 @@
+{
+  "gui_test": "XSendEvent key events delivered through actual MuJoCo/GLFW window; repeated keydown without release",
+  "held_key_seconds": 1.5,
+  "held_plus_14_distinct_presses": 15,
+  "after_10": 0.8,
+  "after_15": 0.7,
+  "pause_time_unchanged": true,
+  "quit_event_observed": true,
+  "output_directory": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-101956"
+}

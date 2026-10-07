@@ -1,0 +1,14 @@
+{
+  "evaluation_dir": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-39rkr7zg",
+  "prior_evaluation_preserved": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-l3pneew4",
+  "change": "plot/console label clarifies native position velocity error",
+  "rollout_and_summary_bytes_equal": true,
+  "sha256": {
+    "hover-final.csv": "d770215bf23311dd849fcc563165af787dff90f02f241a4a7368edbe012bd06d",
+    "step-005-final.csv": "05aef119d63f3e9eeba1651ea0dfd4d53483e2ef593d6bb391035b11b64d76cc",
+    "step-050-final.csv": "36b05bee1a5241e74cc923d8e7d9d6089de4b8fcfabdf229b7295e06bd4e9a6e",
+    "summary.json": "f8a96ee09e0d7490282a469814e319fcf3dab2dccc189bc7bb4640dfdd74ed71",
+    "summary.csv": "db1a1acdda17d126f6a565e6a52106b2f461fc6a6b8d8998148e259bea52059e"
+  },
+  "checkpoint_unchanged": true
+}

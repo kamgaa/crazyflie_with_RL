@@ -1,0 +1,510 @@
+{
+  "action_shape": [
+    4
+  ],
+  "actuator": {
+    "enabled": true,
+    "model": "cf21b_first_order",
+    "parameter_source": "paper_candidate",
+    "randomization": {
+      "enabled": false,
+      "steady_state_gain_rad_s": {
+        "max": 3480.0,
+        "min": 2320.0
+      },
+      "time_constant_s": {
+        "max": 0.06,
+        "min": 0.04
+      }
+    },
+    "reaction_torque": {
+      "include_rotor_acceleration_torque": false,
+      "legacy_ratio_m": 0.00594,
+      "model": "legacy_ratio",
+      "polynomial_coefficients": [
+        -3.4,
+        8.7,
+        2.9
+      ],
+      "polynomial_scale": 0.0001,
+      "rotor_inertia_kg_m2": 5e-08
+    },
+    "reset_rpm_mode": "auto",
+    "steady_state_gain_rad_s": 2900.0,
+    "thrust_polynomial_coefficients": [
+      -0.23,
+      0.562,
+      -0.043
+    ],
+    "thrust_polynomial_max_ratio": 1.0,
+    "thrust_polynomial_omega_reference_rad_s": 2900.0,
+    "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+    "time_constant_s": 0.05,
+    "verification_status": "unverified"
+  },
+  "command": [
+    "train_ppo_02.py",
+    "--config",
+    "configs/e2e_train.yaml",
+    "--total-timesteps",
+    "1000000"
+  ],
+  "condition": "nominal",
+  "config_profile": "e2e_train",
+  "control_mode": "e2e",
+  "created_at": "2026-09-21T16:43:12.891527+09:00",
+  "description": "E2E PPO training profile matching active train_ppo_02.py",
+  "experiment_name": "crazyflie-ppo",
+  "finished_at": "2026-09-21T18:41:14.791755+09:00",
+  "git": {
+    "branch": "refactor-experiment-pipeline-v2",
+    "commit_sha": "9a5419e5a3dc73921121bdc8f08ea8241354bebd",
+    "dirty": true
+  },
+  "metrics": {
+    "evaluation-floor-step0000000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-floor-step0000000_20260921-164312.json",
+    "evaluation-step0020000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0020000_20260921-164312.json",
+    "evaluation-step0040000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0040000_20260921-164312.json",
+    "evaluation-step0060000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0060000_20260921-164312.json",
+    "evaluation-step0080000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0080000_20260921-164312.json",
+    "evaluation-step0100000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0100000_20260921-164312.json",
+    "evaluation-step0120000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0120000_20260921-164312.json",
+    "evaluation-step0140000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0140000_20260921-164312.json",
+    "evaluation-step0160000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0160000_20260921-164312.json",
+    "evaluation-step0180000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0180000_20260921-164312.json",
+    "evaluation-step0200000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0200000_20260921-164312.json",
+    "evaluation-step0220000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0220000_20260921-164312.json",
+    "evaluation-step0240000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0240000_20260921-164312.json",
+    "evaluation-step0260000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0260000_20260921-164312.json",
+    "evaluation-step0280000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0280000_20260921-164312.json",
+    "evaluation-step0300000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0300000_20260921-164312.json",
+    "evaluation-step0320000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0320000_20260921-164312.json",
+    "evaluation-step0340000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0340000_20260921-164312.json",
+    "evaluation-step0360000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0360000_20260921-164312.json",
+    "evaluation-step0380000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0380000_20260921-164312.json",
+    "evaluation-step0400000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0400000_20260921-164312.json",
+    "evaluation-step0420000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0420000_20260921-164312.json",
+    "evaluation-step0440000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0440000_20260921-164312.json",
+    "evaluation-step0460000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0460000_20260921-164312.json",
+    "evaluation-step0480000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0480000_20260921-164312.json",
+    "evaluation-step0500000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0500000_20260921-164312.json",
+    "evaluation-step0520000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0520000_20260921-164312.json",
+    "evaluation-step0540000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0540000_20260921-164312.json",
+    "evaluation-step0560000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0560000_20260921-164312.json",
+    "evaluation-step0580000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0580000_20260921-164312.json",
+    "evaluation-step0600000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0600000_20260921-164312.json",
+    "evaluation-step0620000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0620000_20260921-164312.json",
+    "evaluation-step0640000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0640000_20260921-164312.json",
+    "evaluation-step0660000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0660000_20260921-164312.json",
+    "evaluation-step0680000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0680000_20260921-164312.json",
+    "evaluation-step0700000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0700000_20260921-164312.json",
+    "evaluation-step0720000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0720000_20260921-164312.json",
+    "evaluation-step0740000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0740000_20260921-164312.json",
+    "evaluation-step0760000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0760000_20260921-164312.json",
+    "evaluation-step0780000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0780000_20260921-164312.json",
+    "evaluation-step0800000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0800000_20260921-164312.json",
+    "evaluation-step0820000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0820000_20260921-164312.json",
+    "evaluation-step0840000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0840000_20260921-164312.json",
+    "evaluation-step0860000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0860000_20260921-164312.json",
+    "evaluation-step0880000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0880000_20260921-164312.json",
+    "evaluation-step0900000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0900000_20260921-164312.json",
+    "evaluation-step0920000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0920000_20260921-164312.json",
+    "evaluation-step0940000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0940000_20260921-164312.json",
+    "evaluation-step0960000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0960000_20260921-164312.json",
+    "evaluation-step0980000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step0980000_20260921-164312.json",
+    "evaluation-step1000000": "metrics/ppo_e2e_hover_nominal_seedunset_evaluation-step1000000_20260921-164312.json"
+  },
+  "mission": "hover",
+  "model_history": [
+    {
+      "kind": "best",
+      "path": "models/ppo_e2e_hover_nominal_seedunset_best_20260921-164312.zip",
+      "timestep": 360000
+    },
+    {
+      "kind": "best",
+      "path": "models/ppo_e2e_hover_nominal_seedunset_best_20260921-164312-01.zip",
+      "timestep": 400000
+    },
+    {
+      "kind": "best",
+      "path": "models/ppo_e2e_hover_nominal_seedunset_best_20260921-164312-02.zip",
+      "timestep": 460000
+    },
+    {
+      "kind": "best",
+      "path": "models/ppo_e2e_hover_nominal_seedunset_best_20260921-164312-03.zip",
+      "timestep": 500000
+    },
+    {
+      "kind": "best",
+      "path": "models/ppo_e2e_hover_nominal_seedunset_best_20260921-164312-04.zip",
+      "timestep": 520000
+    },
+    {
+      "kind": "best",
+      "path": "models/ppo_e2e_hover_nominal_seedunset_best_20260921-164312-05.zip",
+      "timestep": 580000
+    },
+    {
+      "kind": "best",
+      "path": "models/ppo_e2e_hover_nominal_seedunset_best_20260921-164312-06.zip",
+      "timestep": 620000
+    },
+    {
+      "kind": "best",
+      "path": "models/ppo_e2e_hover_nominal_seedunset_best_20260921-164312-07.zip",
+      "timestep": 640000
+    },
+    {
+      "kind": "best",
+      "path": "models/ppo_e2e_hover_nominal_seedunset_best_20260921-164312-08.zip",
+      "timestep": 660000
+    },
+    {
+      "kind": "final",
+      "path": "models/ppo_e2e_hover_nominal_seedunset_final_20260921-164312.zip",
+      "timestep": 1001472
+    }
+  ],
+  "models": {
+    "best": {
+      "kind": "best",
+      "path": "models/ppo_e2e_hover_nominal_seedunset_best_20260921-164312-08.zip",
+      "timestep": 660000
+    },
+    "final": {
+      "kind": "final",
+      "path": "models/ppo_e2e_hover_nominal_seedunset_final_20260921-164312.zip",
+      "timestep": 1001472
+    }
+  },
+  "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+  "observation_shape": [
+    15
+  ],
+  "payload": {
+    "mass": 0.0,
+    "offset": [
+      0.0,
+      0.0
+    ],
+    "randomization_limits": {
+      "mass_max": 0.015,
+      "radius_max": 0.1,
+      "radius_min": 0.02,
+      "torque_fraction": 0.5
+    },
+    "randomize": false
+  },
+  "ppo": {
+    "batch_size": 256,
+    "clip_range": 0.1,
+    "device": "cpu",
+    "ent_coef": 0.003,
+    "gae_lambda": 0.95,
+    "gamma": 0.99,
+    "learning_rate": 0.0003,
+    "log_std_init": -1.5,
+    "max_grad_norm": 0.5,
+    "n_epochs": 10,
+    "n_steps": 2048,
+    "net_arch": [
+      64,
+      64
+    ],
+    "policy": "MlpPolicy",
+    "target_kl": 0.03,
+    "verbose": 0,
+    "vf_coef": 0.5
+  },
+  "residual_scale": [
+    0.001,
+    0.001,
+    0.0001,
+    0.3
+  ],
+  "resolved_config": {
+    "actuator": {
+      "enabled": true,
+      "model": "cf21b_first_order",
+      "parameter_source": "paper_candidate",
+      "randomization": {
+        "enabled": false,
+        "steady_state_gain_rad_s": {
+          "max": 3480.0,
+          "min": 2320.0
+        },
+        "time_constant_s": {
+          "max": 0.06,
+          "min": 0.04
+        }
+      },
+      "reaction_torque": {
+        "include_rotor_acceleration_torque": false,
+        "legacy_ratio_m": 0.00594,
+        "model": "legacy_ratio",
+        "polynomial_coefficients": [
+          -3.4,
+          8.7,
+          2.9
+        ],
+        "polynomial_scale": 0.0001,
+        "rotor_inertia_kg_m2": 5e-08
+      },
+      "reset_rpm_mode": "auto",
+      "steady_state_gain_rad_s": 2900.0,
+      "thrust_polynomial_coefficients": [
+        -0.23,
+        0.562,
+        -0.043
+      ],
+      "thrust_polynomial_max_ratio": 1.0,
+      "thrust_polynomial_omega_reference_rad_s": 2900.0,
+      "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+      "time_constant_s": 0.05,
+      "verification_status": "unverified"
+    },
+    "controller": {
+      "pid": {
+        "integrator_limit": 2.0,
+        "kd_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd_velocity": 0.0,
+        "ki_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "ki_velocity": 1.0,
+        "kp_attitude": 12.0,
+        "kp_position": 4.0,
+        "kp_rate": [
+          0.0008,
+          0.0008,
+          0.0006
+        ],
+        "kp_velocity": 4.0,
+        "max_force": 1.0,
+        "max_tilt_deg": 35.0,
+        "max_torque": 0.02,
+        "velocity_limit": 1.5
+      }
+    },
+    "environment": {
+      "attitude_perturbation_deg": 0.0,
+      "control_mode": "e2e",
+      "episode_sec": 8.0,
+      "payload": {
+        "mass": 0.0,
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "randomization_limits": {
+          "mass_max": 0.015,
+          "radius_max": 0.1,
+          "radius_min": 0.02,
+          "torque_fraction": 0.5
+        },
+        "randomize": false
+      },
+      "policy_hz": 100.0,
+      "position_perturbation": 0.05,
+      "position_target": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "residual_scale": [
+        0.001,
+        0.001,
+        0.0001,
+        0.3
+      ],
+      "reward": {
+        "action_rate_weight": 0.0,
+        "action_weight": 0.0,
+        "angular_velocity_weight": 0.001,
+        "crash_penalty": 10.0,
+        "position_weight": 3.0,
+        "tilt_weight": 3.0,
+        "velocity_weight": 0.005,
+        "yaw_weight": 1.0
+      },
+      "termination": {
+        "max_altitude": 2.5,
+        "max_position_error": 1.5,
+        "max_tilt_deg": 60.0,
+        "min_altitude": 0.2
+      },
+      "yaw_target": 0.0
+    },
+    "evaluation": {
+      "deterministic": true,
+      "episode_count": 30,
+      "evaluation_interval": 20000,
+      "seed_start": 1000,
+      "tail_fraction": 0.3,
+      "tilt_limit_deg": 30.0
+    },
+    "experiment": {
+      "condition": "nominal",
+      "description": "E2E PPO training profile matching active train_ppo_02.py",
+      "name": "crazyflie-ppo",
+      "timezone": "Asia/Seoul"
+    },
+    "mission": {
+      "circle": {
+        "center_xy": [
+          0.5,
+          0.0
+        ],
+        "direction": "ccw",
+        "laps": 2.0,
+        "period": 10.0,
+        "radius": 0.5,
+        "ramp_sec": 2.0,
+        "start_angle_deg": 0.0
+      },
+      "circle_presets": [
+        {
+          "description": "radius 0.5m, period 10s (slow/safe)",
+          "key": "1",
+          "period": 10.0,
+          "radius": 0.5
+        },
+        {
+          "description": "radius 1.0m, period 8s (medium)",
+          "key": "2",
+          "period": 8.0,
+          "radius": 1.0
+        },
+        {
+          "description": "radius 0.5m, period 5s (fast/aggressive)",
+          "key": "3",
+          "period": 5.0,
+          "radius": 0.5
+        }
+      ],
+      "circle_ramp_sec": 2.0,
+      "force_floor_start": false,
+      "goto_sec": 4.0,
+      "goto_xy": [
+        1.0,
+        0.0
+      ],
+      "hover": {
+        "duration": 8.0,
+        "target": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "yaw_deg": 0.0
+      },
+      "hover_altitude": 1.0,
+      "lissajous": {
+        "amplitude_xy": [
+          0.5,
+          0.5
+        ],
+        "base_period": 10.0,
+        "center_xy": [
+          0.0,
+          0.0
+        ],
+        "cycles": 2.0,
+        "frequency_ratio": [
+          1,
+          2
+        ],
+        "phase_deg": 90.0,
+        "ramp_sec": 2.0
+      },
+      "number_of_laps": 2.0,
+      "post_hold_sec": 2.0,
+      "settle_sec": 2.0,
+      "takeoff_sec": 4.0,
+      "type": "hover"
+    },
+    "paths": {
+      "artifact_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts",
+      "legacy_model_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/model",
+      "legacy_tensorboard_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/tb",
+      "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+      "project_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2"
+    },
+    "source_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/e2e_train.yaml",
+    "training": {
+      "ppo": {
+        "batch_size": 256,
+        "clip_range": 0.1,
+        "device": "cpu",
+        "ent_coef": 0.003,
+        "gae_lambda": 0.95,
+        "gamma": 0.99,
+        "learning_rate": 0.0003,
+        "log_std_init": -1.5,
+        "max_grad_norm": 0.5,
+        "n_epochs": 10,
+        "n_steps": 2048,
+        "net_arch": [
+          64,
+          64
+        ],
+        "policy": "MlpPolicy",
+        "target_kl": 0.03,
+        "verbose": 0,
+        "vf_coef": 0.5
+      },
+      "seed": null,
+      "total_timesteps": 1000000
+    },
+    "vehicle": {
+      "arm_length": 0.035355,
+      "gravity": 9.81,
+      "inertia_diagonal": [
+        2.3951e-05,
+        2.3951e-05,
+        3.2347e-05
+      ],
+      "mass": 0.04338,
+      "motor_direction": [
+        1.0,
+        -1.0,
+        1.0,
+        -1.0
+      ],
+      "physics_hz": 500.0,
+      "thrust_max": 0.2,
+      "thrust_min": 0.0,
+      "torque_coefficient": 0.00594
+    },
+    "version": 1
+  },
+  "resolved_config_path": "config/ppo_e2e_hover_nominal_seedunset_resolved-config_20260921-164312.yaml",
+  "result": {
+    "actual_total_timesteps": 1001472,
+    "best_model": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_nominal_seedunset_20260921-164312/models/ppo_e2e_hover_nominal_seedunset_best_20260921-164312-08.zip",
+    "final_model": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_nominal_seedunset_20260921-164312/models/ppo_e2e_hover_nominal_seedunset_final_20260921-164312.zip",
+    "requested_total_timesteps": 1000000
+  },
+  "run_id": "ppo_e2e_hover_nominal_seedunset_20260921-164312",
+  "schema_version": 1,
+  "seed": null,
+  "status": "completed",
+  "timestamp": "20260921-164312",
+  "timezone": "Asia/Seoul",
+  "versions": {
+    "gymnasium": "1.3.0",
+    "mujoco": "3.12.0",
+    "numpy": "2.2.6",
+    "python": "3.10.21",
+    "stable_baselines3": "2.9.0",
+    "torch": "2.13.0"
+  }
+}

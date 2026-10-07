@@ -1,0 +1,9 @@
+Payload: 0 g at body xy=[0.0, 0.0] m; total mass=0.04338 kg
+Motor 1 = motor0_force / motor0: body_xyz=[0.03536, -0.03536, 0.0] motor_direction=+1
+Motor 2 = motor1_force / motor1: body_xyz=[-0.03536, -0.03536, 0.0] motor_direction=-1
+Motor 3 = motor2_force / motor2: body_xyz=[-0.03536, 0.03536, 0.0] motor_direction=+1
+Motor 4 = motor3_force / motor3: body_xyz=[0.03536, 0.03536, 0.0] motor_direction=-1
+W/S: X +/- | D/A: Y +/- | R/F: Z +/- | 1-4: motor -2pp | 0: restore | Space: pause | Q: save & quit
+/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/plotting.py:675: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  fig.tight_layout(rect=(0.0, 0.025, 1.0, 0.955))
+results: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_interactive-motor-effectiveness_seed42_20261001-210449

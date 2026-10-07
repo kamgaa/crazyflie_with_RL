@@ -1,0 +1,4 @@
+hover baseline (legacy position reset) / absolute: completed=True duration=8.00s reason=horizon
+step-005 baseline (legacy position reset) / absolute: completed=True duration=8.00s reason=horizon
+step-050 baseline (legacy position reset) / absolute: completed=False duration=0.40s reason=max_tilt
+results: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/dr-transfer-u9kp4hvv

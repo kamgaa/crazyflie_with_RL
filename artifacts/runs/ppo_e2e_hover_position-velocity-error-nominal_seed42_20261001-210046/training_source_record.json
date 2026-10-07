@@ -1,0 +1,16 @@
+{
+  "source_sha256": {
+    "crazyflie_rl/environment.py": "0963e457a27d9a4fab1ae0a26a8fabb365b776cf3ce003d865cd44ef9188c7b7",
+    "crazyflie_rl/config.py": "1ed701717e93b1e1ea8e26ba466df003bd238729a4adfa9f61d56572c849ad53",
+    "crazyflie_rl/training.py": "0d3123f71a88664a578017573a2b9ca20103ad7db3007a79f6b8ece49053b312",
+    "crazyflie_rl/velocity_reference.py": "57d014a54e700e3ce28537feb0fb67cfa1e3cdf32d1376e1fbe52f33deb50ddd",
+    "configs/e2e_train_position_velocity_error.yaml": "eb3afc43b9811f58e4acb9f271c7f7db9a4df34daa160928d89f0f64d059bf53"
+  },
+  "requested_total_timesteps": 1000000,
+  "seed": 42,
+  "threads_environment": {
+    "OMP_NUM_THREADS": 1,
+    "MKL_NUM_THREADS": 1
+  },
+  "initial_distribution_decision": "nominal e2e_train legacy independent xyz Uniform(-0.05,0.05); current split_equal has unrelated POS DR drift; no answer to optional clarification before start"
+}

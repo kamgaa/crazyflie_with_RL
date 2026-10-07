@@ -1,0 +1,1067 @@
+{
+  "reproduction70": {
+    "A_best-combined_motor2_70-eta070": {
+      "control": {
+        "samples": 584,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2920,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      },
+      "termination_and_recovery_match": true
+    },
+    "B_best-combined_motor3_70-eta070": {
+      "control": {
+        "samples": 539,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2695,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      },
+      "termination_and_recovery_match": true
+    },
+    "A_best-combined_motor3_70-eta070": {
+      "control": {
+        "samples": 6000,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 30000,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      },
+      "termination_and_recovery_match": true
+    }
+  },
+  "prefixes": {
+    "A_best-combined_motor2_70-eta100": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "A_best-combined_motor2_70-eta095": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "A_best-combined_motor2_70-eta090": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "A_best-combined_motor2_70-eta085": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "A_best-combined_motor2_70-eta080": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "A_best-combined_motor2_70-eta075": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "B_best-combined_motor3_70-eta100": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "B_best-combined_motor3_70-eta095": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "B_best-combined_motor3_70-eta090": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "B_best-combined_motor3_70-eta085": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "B_best-combined_motor3_70-eta080": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "B_best-combined_motor3_70-eta075": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "A_best-combined_motor3_70-eta100": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "A_best-combined_motor3_70-eta095": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "A_best-combined_motor3_70-eta090": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "A_best-combined_motor3_70-eta085": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "A_best-combined_motor3_70-eta080": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "A_best-combined_motor3_70-eta075": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "A_best-combined_motor3_70-eta068": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "A_best-combined_motor3_70-eta066": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "A_best-combined_motor2_70-eta074": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "A_best-combined_motor2_70-eta073": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "A_best-combined_motor2_70-eta072": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "A_best-combined_motor2_70-eta071": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "B_best-combined_motor3_70-eta074": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "B_best-combined_motor3_70-eta073": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "B_best-combined_motor3_70-eta072": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    },
+    "B_best-combined_motor3_70-eta071": {
+      "control": {
+        "samples": 500,
+        "numeric_columns": 377,
+        "max_abs_error": 0.0
+      },
+      "physics": {
+        "samples": 2500,
+        "numeric_columns": 162,
+        "max_abs_error": 0.0
+      }
+    }
+  },
+  "direct_signals": {
+    "A_best-combined_motor2_70-eta070": {
+      "control_samples": 584,
+      "physics_samples": 2920,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "B_best-combined_motor3_70-eta070": {
+      "control_samples": 539,
+      "physics_samples": 2695,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor3_70-eta070": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor2_70-eta100": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor2_70-eta095": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor2_70-eta090": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor2_70-eta085": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor2_70-eta080": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor2_70-eta075": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "B_best-combined_motor3_70-eta100": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "B_best-combined_motor3_70-eta095": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "B_best-combined_motor3_70-eta090": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "B_best-combined_motor3_70-eta085": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "B_best-combined_motor3_70-eta080": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "B_best-combined_motor3_70-eta075": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor3_70-eta100": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor3_70-eta095": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor3_70-eta090": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor3_70-eta085": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor3_70-eta080": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor3_70-eta075": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor3_70-eta068": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor3_70-eta066": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor2_70-eta074": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor2_70-eta073": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor2_70-eta072": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "A_best-combined_motor2_70-eta071": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "B_best-combined_motor3_70-eta074": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "B_best-combined_motor3_70-eta073": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "B_best-combined_motor3_70-eta072": {
+      "control_samples": 566,
+      "physics_samples": 2830,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    },
+    "B_best-combined_motor3_70-eta071": {
+      "control_samples": 547,
+      "physics_samples": 2735,
+      "current_eta_and_single_application": true,
+      "event_state_continuity": true,
+      "integral_recurrence": true
+    }
+  },
+  "independent_csv": {
+    "A_best-combined_motor2_70-eta070": {
+      "control_samples": 584,
+      "physics_samples": 2920,
+      "recovery_recomputed_s": {
+        "xy": null,
+        "z": null,
+        "3d": null,
+        "joint": null
+      },
+      "bias_variance_max_residual_m2": 0.0,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "B_best-combined_motor3_70-eta070": {
+      "control_samples": 539,
+      "physics_samples": 2695,
+      "recovery_recomputed_s": {
+        "xy": null,
+        "z": null,
+        "3d": null,
+        "joint": null
+      },
+      "bias_variance_max_residual_m2": 0.0,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor3_70-eta070": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 7.030000000000001,
+        "z": 2.84,
+        "3d": 7.050000000000001,
+        "joint": 7.050000000000001
+      },
+      "bias_variance_max_residual_m2": 1.4544622940012405e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor2_70-eta100": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 7.33,
+        "z": 0.0,
+        "3d": 7.34,
+        "joint": 7.34
+      },
+      "bias_variance_max_residual_m2": 5.1522477872247334e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor2_70-eta095": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 7.33,
+        "z": 0.0,
+        "3d": 7.34,
+        "joint": 7.34
+      },
+      "bias_variance_max_residual_m2": 1.6566079009641248e-29,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor2_70-eta090": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 7.33,
+        "z": 0.0,
+        "3d": 7.33,
+        "joint": 7.33
+      },
+      "bias_variance_max_residual_m2": 8.233735698244311e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor2_70-eta085": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 7.32,
+        "z": 0.0,
+        "3d": 7.33,
+        "joint": 7.33
+      },
+      "bias_variance_max_residual_m2": 7.346267179870672e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor2_70-eta080": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 7.34,
+        "z": 0.46999999999999975,
+        "3d": 7.34,
+        "joint": 7.34
+      },
+      "bias_variance_max_residual_m2": 1.8119148916795115e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor2_70-eta075": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 7.359999999999999,
+        "z": 0.71,
+        "3d": 7.359999999999999,
+        "joint": 7.359999999999999
+      },
+      "bias_variance_max_residual_m2": 8.38164711797325e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "B_best-combined_motor3_70-eta100": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 7.4399999999999995,
+        "z": 0.4299999999999997,
+        "3d": 7.460000000000001,
+        "joint": 7.460000000000001
+      },
+      "bias_variance_max_residual_m2": 1.4667882456453188e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "B_best-combined_motor3_70-eta095": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 7.42,
+        "z": 0.16000000000000014,
+        "3d": 7.4399999999999995,
+        "joint": 7.4399999999999995
+      },
+      "bias_variance_max_residual_m2": 1.9228484564762163e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "B_best-combined_motor3_70-eta090": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 7.380000000000001,
+        "z": 0.9400000000000004,
+        "3d": 7.4,
+        "joint": 7.4
+      },
+      "bias_variance_max_residual_m2": 7.087422195345028e-31,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "B_best-combined_motor3_70-eta085": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 7.35,
+        "z": 1.0200000000000005,
+        "3d": 7.370000000000001,
+        "joint": 7.370000000000001
+      },
+      "bias_variance_max_residual_m2": 1.5407439555097887e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "B_best-combined_motor3_70-eta080": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 7.34,
+        "z": 1.0899999999999999,
+        "3d": 7.359999999999999,
+        "joint": 7.359999999999999
+      },
+      "bias_variance_max_residual_m2": 6.0766941605306066e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "B_best-combined_motor3_70-eta075": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 6.99,
+        "z": 2.0300000000000002,
+        "3d": 7.01,
+        "joint": 7.01
+      },
+      "bias_variance_max_residual_m2": 8.997944700177166e-31,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor3_70-eta100": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 6.720000000000001,
+        "z": 3.130000000000001,
+        "3d": 7.1,
+        "joint": 7.1
+      },
+      "bias_variance_max_residual_m2": 8.60351424756666e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor3_70-eta095": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 6.720000000000001,
+        "z": 3.08,
+        "3d": 7.07,
+        "joint": 7.07
+      },
+      "bias_variance_max_residual_m2": 4.979684464207637e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor3_70-eta090": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 6.720000000000001,
+        "z": 3.01,
+        "3d": 7.040000000000001,
+        "joint": 7.040000000000001
+      },
+      "bias_variance_max_residual_m2": 5.0782920773602635e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor3_70-eta085": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 6.73,
+        "z": 2.9400000000000004,
+        "3d": 7.02,
+        "joint": 7.02
+      },
+      "bias_variance_max_residual_m2": 1.698516136553991e-29,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor3_70-eta080": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 6.75,
+        "z": 2.88,
+        "3d": 7.0,
+        "joint": 7.0
+      },
+      "bias_variance_max_residual_m2": 9.540286572516612e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor3_70-eta075": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 6.85,
+        "z": 2.8500000000000005,
+        "3d": 7.02,
+        "joint": 7.02
+      },
+      "bias_variance_max_residual_m2": 2.391234618951192e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor3_70-eta068": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 8.05,
+        "z": 3.76,
+        "3d": 8.05,
+        "joint": 8.05
+      },
+      "bias_variance_max_residual_m2": 2.2926270057985656e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor3_70-eta066": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 9.370000000000001,
+        "z": 4.27,
+        "3d": 9.38,
+        "joint": 9.38
+      },
+      "bias_variance_max_residual_m2": 3.870348816240589e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor2_70-eta074": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 7.370000000000001,
+        "z": 0.79,
+        "3d": 7.370000000000001,
+        "joint": 7.370000000000001
+      },
+      "bias_variance_max_residual_m2": 5.768545369428649e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor2_70-eta073": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 8.200000000000001,
+        "z": 0.8600000000000003,
+        "3d": 8.200000000000001,
+        "joint": 8.200000000000001
+      },
+      "bias_variance_max_residual_m2": 7.444874793023299e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor2_70-eta072": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 8.24,
+        "z": 1.2700000000000005,
+        "3d": 8.25,
+        "joint": 8.25
+      },
+      "bias_variance_max_residual_m2": 8.430950924549564e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "A_best-combined_motor2_70-eta071": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 9.11,
+        "z": 2.2,
+        "3d": 9.13,
+        "joint": 9.13
+      },
+      "bias_variance_max_residual_m2": 1.779867417404908e-29,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "B_best-combined_motor3_70-eta074": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 6.92,
+        "z": 2.8100000000000005,
+        "3d": 6.93,
+        "joint": 6.93
+      },
+      "bias_variance_max_residual_m2": 2.4898422321038185e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "B_best-combined_motor3_70-eta073": {
+      "control_samples": 6000,
+      "physics_samples": 30000,
+      "recovery_recomputed_s": {
+        "xy": 6.9,
+        "z": 2.9699999999999998,
+        "3d": 6.9,
+        "joint": 6.9
+      },
+      "bias_variance_max_residual_m2": 3.0814879110195774e-30,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "B_best-combined_motor3_70-eta072": {
+      "control_samples": 566,
+      "physics_samples": 2830,
+      "recovery_recomputed_s": {
+        "xy": null,
+        "z": null,
+        "3d": null,
+        "joint": null
+      },
+      "bias_variance_max_residual_m2": 0.0,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    },
+    "B_best-combined_motor3_70-eta071": {
+      "control_samples": 547,
+      "physics_samples": 2735,
+      "recovery_recomputed_s": {
+        "xy": null,
+        "z": null,
+        "3d": null,
+        "joint": null
+      },
+      "bias_variance_max_residual_m2": 0.0,
+      "tail_null_correct": true,
+      "efficiency_single_application": true,
+      "union_dwell_and_integral_recomputed": true,
+      "policy_absolute_velocity_preserved": true
+    }
+  }
+}

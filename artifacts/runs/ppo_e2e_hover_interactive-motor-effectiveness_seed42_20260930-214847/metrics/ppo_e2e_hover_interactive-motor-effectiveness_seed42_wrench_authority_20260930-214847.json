@@ -1,0 +1,747 @@
+{
+  "action_contribution_definition": "scale * normalized action; E2E Fz bias uses configured vehicle.mass*g, not episode mass*g",
+  "config": {
+    "actuator": {
+      "enabled": true,
+      "model": "cf21b_first_order",
+      "parameter_source": "paper_candidate",
+      "randomization": {
+        "enabled": false,
+        "steady_state_gain_rad_s": {
+          "max": 3480.0,
+          "min": 2320.0
+        },
+        "time_constant_s": {
+          "max": 0.06,
+          "min": 0.04
+        }
+      },
+      "reaction_torque": {
+        "include_rotor_acceleration_torque": false,
+        "legacy_ratio_m": 0.00594,
+        "model": "legacy_ratio",
+        "polynomial_coefficients": [
+          -3.4,
+          8.7,
+          2.9
+        ],
+        "polynomial_scale": 0.0001,
+        "rotor_inertia_kg_m2": 5e-08
+      },
+      "reset_rpm_mode": "auto",
+      "steady_state_gain_rad_s": 2900.0,
+      "thrust_polynomial_coefficients": [
+        -0.23,
+        0.562,
+        -0.043
+      ],
+      "thrust_polynomial_max_ratio": 1.0,
+      "thrust_polynomial_omega_reference_rad_s": 2900.0,
+      "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+      "time_constant_s": 0.05,
+      "verification_status": "unverified"
+    },
+    "controller": {
+      "pid": {
+        "integrator_limit": 2.0,
+        "kd_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kd_velocity": 0.0,
+        "ki_rate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "ki_velocity": 1.0,
+        "kp_attitude": 12.0,
+        "kp_position": 4.0,
+        "kp_rate": [
+          0.0008,
+          0.0008,
+          0.0006
+        ],
+        "kp_velocity": 4.0,
+        "max_force": 1.0,
+        "max_tilt_deg": 35.0,
+        "max_torque": 0.02,
+        "velocity_limit": 1.5
+      }
+    },
+    "environment": {
+      "attitude_perturbation_deg": 0.0,
+      "control_mode": "e2e",
+      "episode_sec": 8.0,
+      "initial_pose_randomization": null,
+      "payload": {
+        "mass": 0.0,
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "randomization_limits": {
+          "mass_max": 0.015,
+          "radius_max": 0.1,
+          "radius_min": 0.02,
+          "torque_fraction": 0.5
+        },
+        "randomize": false
+      },
+      "policy_hz": 100.0,
+      "position_perturbation": 0.0,
+      "position_target": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "residual_scale": [
+        0.0075,
+        0.0075,
+        0.001,
+        0.5
+      ],
+      "reward": {
+        "action_rate_weight": 0.0,
+        "action_weight": 0.0,
+        "angular_velocity_weight": 0.001,
+        "crash_penalty": 10.0,
+        "position_weight": 4.0,
+        "position_xy_weight": 10.0,
+        "position_z_weight": 6.0,
+        "tilt_weight": 3.0,
+        "velocity_weight": 0.005,
+        "yaw_weight": 1.0
+      },
+      "termination": {
+        "max_altitude": 2.5,
+        "max_position_error": 1.5,
+        "max_tilt_deg": 60.0,
+        "min_altitude": 0.2
+      },
+      "yaw_target": 0.0
+    },
+    "evaluation": {
+      "deterministic": true,
+      "episode_count": 30,
+      "evaluation_interval": 20000,
+      "seed_start": 42,
+      "tail_fraction": 0.3,
+      "tilt_limit_deg": 30.0
+    },
+    "experiment": {
+      "condition": "dr-transfer-evaluation",
+      "description": "Common deterministic evaluation for explicit PPO checkpoints",
+      "name": "crazyflie-ppo",
+      "timezone": "Asia/Seoul"
+    },
+    "mission": {
+      "circle": {
+        "center_xy": [
+          0.5,
+          0.0
+        ],
+        "direction": "ccw",
+        "laps": 2.0,
+        "period": 5.0,
+        "radius": 0.5,
+        "ramp_sec": 2.0,
+        "start_angle_deg": 0.0
+      },
+      "circle_presets": [
+        {
+          "description": "radius 0.5m, period 10s (slow/safe)",
+          "key": "1",
+          "period": 10.0,
+          "radius": 0.5
+        },
+        {
+          "description": "radius 1.0m, period 8s (medium)",
+          "key": "2",
+          "period": 8.0,
+          "radius": 1.0
+        },
+        {
+          "description": "radius 0.5m, period 5s (fast/aggressive)",
+          "key": "3",
+          "period": 5.0,
+          "radius": 0.5
+        }
+      ],
+      "circle_ramp_sec": 2.0,
+      "force_floor_start": false,
+      "goto_sec": 4.0,
+      "goto_xy": [
+        1.0,
+        0.0
+      ],
+      "hover": {
+        "duration": 8.0,
+        "target": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "yaw_deg": 0.0
+      },
+      "hover_altitude": 1.0,
+      "lissajous": {
+        "amplitude_xy": [
+          0.5,
+          0.5
+        ],
+        "base_period": 10.0,
+        "center_xy": [
+          0.0,
+          0.0
+        ],
+        "cycles": 2.0,
+        "frequency_ratio": [
+          1,
+          2
+        ],
+        "phase_deg": 90.0,
+        "ramp_sec": 2.0
+      },
+      "number_of_laps": 2.0,
+      "post_hold_sec": 2.0,
+      "settle_sec": 2.0,
+      "takeoff_sec": 4.0,
+      "type": "hover"
+    },
+    "paths": {
+      "artifact_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts",
+      "legacy_model_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/model",
+      "legacy_tensorboard_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/tb",
+      "mujoco_xml": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/resources/mujoco/cf21B_500.xml",
+      "project_root": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2"
+    },
+    "source_path": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/eval_dr_transfer.yaml",
+    "training": {
+      "ppo": {
+        "batch_size": 256,
+        "clip_range": 0.1,
+        "device": "cpu",
+        "ent_coef": 0.003,
+        "gae_lambda": 0.95,
+        "gamma": 0.99,
+        "learning_rate": 0.0003,
+        "log_std_init": -1.5,
+        "max_grad_norm": 0.5,
+        "n_epochs": 10,
+        "n_steps": 2048,
+        "net_arch": [
+          64,
+          64
+        ],
+        "policy": "MlpPolicy",
+        "target_kl": 0.03,
+        "verbose": 0,
+        "vf_coef": 0.5
+      },
+      "seed": null,
+      "total_timesteps": 1000000
+    },
+    "vehicle": {
+      "arm_length": 0.035355,
+      "gravity": 9.81,
+      "inertia_diagonal": [
+        2.3951e-05,
+        2.3951e-05,
+        3.2347e-05
+      ],
+      "mass": 0.04338,
+      "motor_direction": [
+        1.0,
+        -1.0,
+        1.0,
+        -1.0
+      ],
+      "physics_hz": 500.0,
+      "thrust_max": 0.2,
+      "thrust_min": 0.0,
+      "torque_coefficient": 0.00594
+    },
+    "version": 1
+  },
+  "configured_action_scale": {
+    "delta_fz_n": 0.5,
+    "tau_x_nm": 0.0075,
+    "tau_y_nm": 0.0075,
+    "tau_z_nm": 0.001
+  },
+  "effort_definition": "Torque command; Fz command minus episode mass*g. Absolute thrust is separate.",
+  "exploration_source": "config.training.ppo.log_std_init; initial pre-clipping Gaussian, not checkpoint learned std",
+  "floor": null,
+  "hover_force_n": {
+    "floor": null,
+    "ppo": 0.42555780000000004
+  },
+  "hover_force_source": {
+    "floor": null,
+    "ppo": "trace.episode_mass_kg (_m0 + sampled _com_mw) * config.vehicle.gravity"
+  },
+  "initial_exploration_sigma_normalized": 0.22313016014842982,
+  "initial_exploration_sigma_physical": {
+    "delta_fz": 0.11156508007421491,
+    "tau_x": 0.0016734762011132236,
+    "tau_y": 0.0016734762011132236,
+    "tau_z": 0.00022313016014842982
+  },
+  "model": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/ppo_e2e_hover_nominal_seedunset_20260928-120033/models/ppo_e2e_hover_nominal_seedunset_best_20260928-120033-13.zip",
+  "plot": "plots/ppo_e2e_hover_interactive-motor-effectiveness_seed42_wrench_authority_20260930-214847.png",
+  "ppo": {
+    "control_mode": "e2e",
+    "e2e_command_bias_force_n": 0.42555780000000004,
+    "episode_mass_kg": 0.04338,
+    "hover_force_n": 0.42555780000000004,
+    "hover_force_source": "trace.episode_mass_kg (_m0 + sampled _com_mw) * config.vehicle.gravity",
+    "label": "E2E interactive",
+    "normalized_action_applicable": true,
+    "overall": {
+      "axes": {
+        "delta_fz": {
+          "absolute_wrench_tracking": {
+            "actual_abs_p95": 0.42541092997500324,
+            "actual_abs_p99": 0.4254415852100214,
+            "actual_rms": 0.4252651950375629,
+            "command_abs_p95": 0.4255248514836908,
+            "command_abs_p99": 0.4255918584293008,
+            "command_actual_correlation": -0.2346704504091703,
+            "command_rms": 0.4251500671013856,
+            "tracking_error_rms": 0.00026650285955115633
+          },
+          "actual_effort": {
+            "abs_max": 0.00038112567634679406,
+            "abs_mean": 0.00029261327277259607,
+            "abs_p50": 0.00031786582635479066,
+            "abs_p90": 0.0003756487008918785,
+            "abs_p95": 0.0003783871886193363,
+            "abs_p99": 0.0003805779788013025,
+            "rms": 0.0003044515070629822
+          },
+          "command_effort": {
+            "abs_max": 0.000597979873418808,
+            "abs_mean": 0.0004179449751973152,
+            "abs_p50": 0.000504625029861927,
+            "abs_p90": 0.0005798196420073509,
+            "abs_p95": 0.0005888997577130794,
+            "abs_p99": 0.0005961638502776623,
+            "rms": 0.0004569889177446647
+          },
+          "e2e_command_mapping_error_abs_max": 0.0,
+          "normalized_action": {
+            "fraction_abs_gt_0p25": 0.0,
+            "fraction_abs_gt_0p5": 0.0,
+            "fraction_abs_gt_0p75": 0.0,
+            "fraction_abs_gt_0p9": 0.0,
+            "fraction_abs_gt_0p95": 0.0,
+            "fraction_abs_gt_0p99": 0.0,
+            "u_abs_max": 0.001195959746837616,
+            "u_abs_mean": 0.0008358899503946304,
+            "u_abs_p50": 0.001009250059723854,
+            "u_abs_p90": 0.0011596392840147018,
+            "u_abs_p95": 0.0011777995154261588,
+            "u_abs_p99": 0.0011923277005553247,
+            "u_rms": 0.0009139778354893294
+          },
+          "physical_action_contribution": {
+            "physical_abs_max": 0.000597979873418808,
+            "physical_abs_mean": 0.0004179449751973152,
+            "physical_abs_p95": 0.0005888997577130794,
+            "physical_abs_p99": 0.0005961638502776623
+          },
+          "unit": "N"
+        },
+        "tau_x": {
+          "absolute_wrench_tracking": {
+            "actual_abs_p95": 2.510060175065073e-06,
+            "actual_abs_p99": 2.5985795212040817e-06,
+            "actual_rms": 1.798032238349422e-06,
+            "command_abs_p95": 6.166466977447271e-06,
+            "command_abs_p99": 6.203169655054808e-06,
+            "command_actual_correlation": 0.7809123717215831,
+            "command_rms": 4.672897140608515e-06,
+            "tracking_error_rms": 3.5625538943202926e-06
+          },
+          "actual_effort": {
+            "abs_max": 2.620709357738834e-06,
+            "abs_mean": 1.657000020567189e-06,
+            "abs_p50": 1.8010823998871033e-06,
+            "abs_p90": 2.3994109923913126e-06,
+            "abs_p95": 2.510060175065073e-06,
+            "abs_p99": 2.5985795212040817e-06,
+            "rms": 1.798032238349422e-06
+          },
+          "command_effort": {
+            "abs_max": 6.212345324456692e-06,
+            "abs_mean": 4.347438924014568e-06,
+            "abs_p50": 4.7740666195750234e-06,
+            "abs_p90": 6.120588630437851e-06,
+            "abs_p95": 6.166466977447271e-06,
+            "abs_p99": 6.203169655054808e-06,
+            "rms": 4.672897140608515e-06
+          },
+          "e2e_command_mapping_error_abs_max": 0.0,
+          "normalized_action": {
+            "fraction_abs_gt_0p25": 0.0,
+            "fraction_abs_gt_0p5": 0.0,
+            "fraction_abs_gt_0p75": 0.0,
+            "fraction_abs_gt_0p9": 0.0,
+            "fraction_abs_gt_0p95": 0.0,
+            "fraction_abs_gt_0p99": 0.0,
+            "u_abs_max": 0.0008283127099275589,
+            "u_abs_mean": 0.0005796585232019424,
+            "u_abs_p50": 0.0006365422159433365,
+            "u_abs_p90": 0.0008160784840583801,
+            "u_abs_p95": 0.0008221955969929694,
+            "u_abs_p99": 0.000827089287340641,
+            "u_rms": 0.0006230529520811354
+          },
+          "physical_action_contribution": {
+            "physical_abs_max": 6.212345324456692e-06,
+            "physical_abs_mean": 4.347438924014568e-06,
+            "physical_abs_p95": 6.166466977447271e-06,
+            "physical_abs_p99": 6.203169655054808e-06
+          },
+          "unit": "Nm"
+        },
+        "tau_y": {
+          "absolute_wrench_tracking": {
+            "actual_abs_p95": 6.101739347273878e-06,
+            "actual_abs_p99": 6.257258733020181e-06,
+            "actual_rms": 4.48178793603492e-06,
+            "command_abs_p95": 1.5496806590817868e-05,
+            "command_abs_p99": 1.5627928893081842e-05,
+            "command_actual_correlation": 0.7685046230641488,
+            "command_rms": 1.1637224653647677e-05,
+            "tracking_error_rms": 8.93147517938346e-06
+          },
+          "actual_effort": {
+            "abs_max": 6.296138579456757e-06,
+            "abs_mean": 4.1395187849501205e-06,
+            "abs_p50": 4.583922449464964e-06,
+            "abs_p90": 5.907340115090999e-06,
+            "abs_p95": 6.101739347273878e-06,
+            "abs_p99": 6.257258733020181e-06,
+            "rms": 4.48178793603492e-06
+          },
+          "command_effort": {
+            "abs_max": 1.5660709468647838e-05,
+            "abs_mean": 1.0807170008774848e-05,
+            "abs_p50": 1.1779267515521496e-05,
+            "abs_p90": 1.5332903712987898e-05,
+            "abs_p95": 1.5496806590817868e-05,
+            "abs_p99": 1.5627928893081842e-05,
+            "rms": 1.1637224653647677e-05
+          },
+          "e2e_command_mapping_error_abs_max": 0.0,
+          "normalized_action": {
+            "fraction_abs_gt_0p25": 0.0,
+            "fraction_abs_gt_0p5": 0.0,
+            "fraction_abs_gt_0p75": 0.0,
+            "fraction_abs_gt_0p9": 0.0,
+            "fraction_abs_gt_0p95": 0.0,
+            "fraction_abs_gt_0p99": 0.0,
+            "u_abs_max": 0.0020880945958197117,
+            "u_abs_mean": 0.0014409560011699797,
+            "u_abs_p50": 0.0015705690020695329,
+            "u_abs_p90": 0.00204438716173172,
+            "u_abs_p95": 0.002066240878775716,
+            "u_abs_p99": 0.0020837238524109127,
+            "u_rms": 0.0015516299538196902
+          },
+          "physical_action_contribution": {
+            "physical_abs_max": 1.5660709468647838e-05,
+            "physical_abs_mean": 1.0807170008774848e-05,
+            "physical_abs_p95": 1.5496806590817868e-05,
+            "physical_abs_p99": 1.5627928893081842e-05
+          },
+          "unit": "Nm"
+        },
+        "tau_z": {
+          "absolute_wrench_tracking": {
+            "actual_abs_p95": 4.0264777783352675e-06,
+            "actual_abs_p99": 4.087400927845769e-06,
+            "actual_rms": 2.7966033901790025e-06,
+            "command_abs_p95": 9.038725588470698e-06,
+            "command_abs_p99": 9.187512416392565e-06,
+            "command_actual_correlation": 0.6621706165287972,
+            "command_rms": 5.685172484989234e-06,
+            "tracking_error_rms": 4.458608025283042e-06
+          },
+          "actual_effort": {
+            "abs_max": 4.102631715223394e-06,
+            "abs_mean": 2.472418286751849e-06,
+            "abs_p50": 2.7193810086574978e-06,
+            "abs_p90": 3.950323841447141e-06,
+            "abs_p95": 4.0264777783352675e-06,
+            "abs_p99": 4.087400927845769e-06,
+            "rms": 2.7966033901790025e-06
+          },
+          "command_effort": {
+            "abs_max": 9.224709123373032e-06,
+            "abs_mean": 4.976880364120006e-06,
+            "abs_p50": 4.972395487129688e-06,
+            "abs_p90": 8.852742053568363e-06,
+            "abs_p95": 9.038725588470698e-06,
+            "abs_p99": 9.187512416392565e-06,
+            "rms": 5.685172484989234e-06
+          },
+          "e2e_command_mapping_error_abs_max": 0.0,
+          "normalized_action": {
+            "fraction_abs_gt_0p25": 0.0,
+            "fraction_abs_gt_0p5": 0.0,
+            "fraction_abs_gt_0p75": 0.0,
+            "fraction_abs_gt_0p9": 0.0,
+            "fraction_abs_gt_0p95": 0.0,
+            "fraction_abs_gt_0p99": 0.0,
+            "u_abs_max": 0.009224709123373032,
+            "u_abs_mean": 0.004976880364120006,
+            "u_abs_p50": 0.004972395487129688,
+            "u_abs_p90": 0.008852742053568364,
+            "u_abs_p95": 0.009038725588470697,
+            "u_abs_p99": 0.009187512416392565,
+            "u_rms": 0.005685172484989233
+          },
+          "physical_action_contribution": {
+            "physical_abs_max": 9.224709123373032e-06,
+            "physical_abs_mean": 4.976880364120006e-06,
+            "physical_abs_p95": 9.038725588470698e-06,
+            "physical_abs_p99": 9.187512416392565e-06
+          },
+          "unit": "Nm"
+        }
+      },
+      "sample_count": 10
+    },
+    "phases": {
+      "HOVER": {
+        "axes": {
+          "delta_fz": {
+            "absolute_wrench_tracking": {
+              "actual_abs_p95": 0.42541092997500324,
+              "actual_abs_p99": 0.4254415852100214,
+              "actual_rms": 0.4252651950375629,
+              "command_abs_p95": 0.4255248514836908,
+              "command_abs_p99": 0.4255918584293008,
+              "command_actual_correlation": -0.2346704504091703,
+              "command_rms": 0.4251500671013856,
+              "tracking_error_rms": 0.00026650285955115633
+            },
+            "actual_effort": {
+              "abs_max": 0.00038112567634679406,
+              "abs_mean": 0.00029261327277259607,
+              "abs_p50": 0.00031786582635479066,
+              "abs_p90": 0.0003756487008918785,
+              "abs_p95": 0.0003783871886193363,
+              "abs_p99": 0.0003805779788013025,
+              "rms": 0.0003044515070629822
+            },
+            "command_effort": {
+              "abs_max": 0.000597979873418808,
+              "abs_mean": 0.0004179449751973152,
+              "abs_p50": 0.000504625029861927,
+              "abs_p90": 0.0005798196420073509,
+              "abs_p95": 0.0005888997577130794,
+              "abs_p99": 0.0005961638502776623,
+              "rms": 0.0004569889177446647
+            },
+            "e2e_command_mapping_error_abs_max": 0.0,
+            "normalized_action": {
+              "fraction_abs_gt_0p25": 0.0,
+              "fraction_abs_gt_0p5": 0.0,
+              "fraction_abs_gt_0p75": 0.0,
+              "fraction_abs_gt_0p9": 0.0,
+              "fraction_abs_gt_0p95": 0.0,
+              "fraction_abs_gt_0p99": 0.0,
+              "u_abs_max": 0.001195959746837616,
+              "u_abs_mean": 0.0008358899503946304,
+              "u_abs_p50": 0.001009250059723854,
+              "u_abs_p90": 0.0011596392840147018,
+              "u_abs_p95": 0.0011777995154261588,
+              "u_abs_p99": 0.0011923277005553247,
+              "u_rms": 0.0009139778354893294
+            },
+            "physical_action_contribution": {
+              "physical_abs_max": 0.000597979873418808,
+              "physical_abs_mean": 0.0004179449751973152,
+              "physical_abs_p95": 0.0005888997577130794,
+              "physical_abs_p99": 0.0005961638502776623
+            },
+            "unit": "N"
+          },
+          "tau_x": {
+            "absolute_wrench_tracking": {
+              "actual_abs_p95": 2.510060175065073e-06,
+              "actual_abs_p99": 2.5985795212040817e-06,
+              "actual_rms": 1.798032238349422e-06,
+              "command_abs_p95": 6.166466977447271e-06,
+              "command_abs_p99": 6.203169655054808e-06,
+              "command_actual_correlation": 0.7809123717215831,
+              "command_rms": 4.672897140608515e-06,
+              "tracking_error_rms": 3.5625538943202926e-06
+            },
+            "actual_effort": {
+              "abs_max": 2.620709357738834e-06,
+              "abs_mean": 1.657000020567189e-06,
+              "abs_p50": 1.8010823998871033e-06,
+              "abs_p90": 2.3994109923913126e-06,
+              "abs_p95": 2.510060175065073e-06,
+              "abs_p99": 2.5985795212040817e-06,
+              "rms": 1.798032238349422e-06
+            },
+            "command_effort": {
+              "abs_max": 6.212345324456692e-06,
+              "abs_mean": 4.347438924014568e-06,
+              "abs_p50": 4.7740666195750234e-06,
+              "abs_p90": 6.120588630437851e-06,
+              "abs_p95": 6.166466977447271e-06,
+              "abs_p99": 6.203169655054808e-06,
+              "rms": 4.672897140608515e-06
+            },
+            "e2e_command_mapping_error_abs_max": 0.0,
+            "normalized_action": {
+              "fraction_abs_gt_0p25": 0.0,
+              "fraction_abs_gt_0p5": 0.0,
+              "fraction_abs_gt_0p75": 0.0,
+              "fraction_abs_gt_0p9": 0.0,
+              "fraction_abs_gt_0p95": 0.0,
+              "fraction_abs_gt_0p99": 0.0,
+              "u_abs_max": 0.0008283127099275589,
+              "u_abs_mean": 0.0005796585232019424,
+              "u_abs_p50": 0.0006365422159433365,
+              "u_abs_p90": 0.0008160784840583801,
+              "u_abs_p95": 0.0008221955969929694,
+              "u_abs_p99": 0.000827089287340641,
+              "u_rms": 0.0006230529520811354
+            },
+            "physical_action_contribution": {
+              "physical_abs_max": 6.212345324456692e-06,
+              "physical_abs_mean": 4.347438924014568e-06,
+              "physical_abs_p95": 6.166466977447271e-06,
+              "physical_abs_p99": 6.203169655054808e-06
+            },
+            "unit": "Nm"
+          },
+          "tau_y": {
+            "absolute_wrench_tracking": {
+              "actual_abs_p95": 6.101739347273878e-06,
+              "actual_abs_p99": 6.257258733020181e-06,
+              "actual_rms": 4.48178793603492e-06,
+              "command_abs_p95": 1.5496806590817868e-05,
+              "command_abs_p99": 1.5627928893081842e-05,
+              "command_actual_correlation": 0.7685046230641488,
+              "command_rms": 1.1637224653647677e-05,
+              "tracking_error_rms": 8.93147517938346e-06
+            },
+            "actual_effort": {
+              "abs_max": 6.296138579456757e-06,
+              "abs_mean": 4.1395187849501205e-06,
+              "abs_p50": 4.583922449464964e-06,
+              "abs_p90": 5.907340115090999e-06,
+              "abs_p95": 6.101739347273878e-06,
+              "abs_p99": 6.257258733020181e-06,
+              "rms": 4.48178793603492e-06
+            },
+            "command_effort": {
+              "abs_max": 1.5660709468647838e-05,
+              "abs_mean": 1.0807170008774848e-05,
+              "abs_p50": 1.1779267515521496e-05,
+              "abs_p90": 1.5332903712987898e-05,
+              "abs_p95": 1.5496806590817868e-05,
+              "abs_p99": 1.5627928893081842e-05,
+              "rms": 1.1637224653647677e-05
+            },
+            "e2e_command_mapping_error_abs_max": 0.0,
+            "normalized_action": {
+              "fraction_abs_gt_0p25": 0.0,
+              "fraction_abs_gt_0p5": 0.0,
+              "fraction_abs_gt_0p75": 0.0,
+              "fraction_abs_gt_0p9": 0.0,
+              "fraction_abs_gt_0p95": 0.0,
+              "fraction_abs_gt_0p99": 0.0,
+              "u_abs_max": 0.0020880945958197117,
+              "u_abs_mean": 0.0014409560011699797,
+              "u_abs_p50": 0.0015705690020695329,
+              "u_abs_p90": 0.00204438716173172,
+              "u_abs_p95": 0.002066240878775716,
+              "u_abs_p99": 0.0020837238524109127,
+              "u_rms": 0.0015516299538196902
+            },
+            "physical_action_contribution": {
+              "physical_abs_max": 1.5660709468647838e-05,
+              "physical_abs_mean": 1.0807170008774848e-05,
+              "physical_abs_p95": 1.5496806590817868e-05,
+              "physical_abs_p99": 1.5627928893081842e-05
+            },
+            "unit": "Nm"
+          },
+          "tau_z": {
+            "absolute_wrench_tracking": {
+              "actual_abs_p95": 4.0264777783352675e-06,
+              "actual_abs_p99": 4.087400927845769e-06,
+              "actual_rms": 2.7966033901790025e-06,
+              "command_abs_p95": 9.038725588470698e-06,
+              "command_abs_p99": 9.187512416392565e-06,
+              "command_actual_correlation": 0.6621706165287972,
+              "command_rms": 5.685172484989234e-06,
+              "tracking_error_rms": 4.458608025283042e-06
+            },
+            "actual_effort": {
+              "abs_max": 4.102631715223394e-06,
+              "abs_mean": 2.472418286751849e-06,
+              "abs_p50": 2.7193810086574978e-06,
+              "abs_p90": 3.950323841447141e-06,
+              "abs_p95": 4.0264777783352675e-06,
+              "abs_p99": 4.087400927845769e-06,
+              "rms": 2.7966033901790025e-06
+            },
+            "command_effort": {
+              "abs_max": 9.224709123373032e-06,
+              "abs_mean": 4.976880364120006e-06,
+              "abs_p50": 4.972395487129688e-06,
+              "abs_p90": 8.852742053568363e-06,
+              "abs_p95": 9.038725588470698e-06,
+              "abs_p99": 9.187512416392565e-06,
+              "rms": 5.685172484989234e-06
+            },
+            "e2e_command_mapping_error_abs_max": 0.0,
+            "normalized_action": {
+              "fraction_abs_gt_0p25": 0.0,
+              "fraction_abs_gt_0p5": 0.0,
+              "fraction_abs_gt_0p75": 0.0,
+              "fraction_abs_gt_0p9": 0.0,
+              "fraction_abs_gt_0p95": 0.0,
+              "fraction_abs_gt_0p99": 0.0,
+              "u_abs_max": 0.009224709123373032,
+              "u_abs_mean": 0.004976880364120006,
+              "u_abs_p50": 0.004972395487129688,
+              "u_abs_p90": 0.008852742053568364,
+              "u_abs_p95": 0.009038725588470697,
+              "u_abs_p99": 0.009187512416392565,
+              "u_rms": 0.005685172484989233
+            },
+            "physical_action_contribution": {
+              "physical_abs_max": 9.224709123373032e-06,
+              "physical_abs_mean": 4.976880364120006e-06,
+              "physical_abs_p95": 9.038725588470698e-06,
+              "physical_abs_p99": 9.187512416392565e-06
+            },
+            "unit": "Nm"
+          }
+        },
+        "sample_count": 10
+      }
+    },
+    "terminated_at": null,
+    "truncated_at": 0.09
+  },
+  "ratio_epsilon": 1e-12,
+  "sampling": "Last physics substep per policy step. Correlations have zero sample lag.",
+  "scale_analysis": {
+    "overall": {},
+    "phases": {}
+  }
+}

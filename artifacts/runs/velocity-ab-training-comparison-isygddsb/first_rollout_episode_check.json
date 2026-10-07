@@ -1,0 +1,28 @@
+{
+  "initial_rollout_steps": 2048,
+  "completed_episodes_compared": 45,
+  "all_fields_equal_except_velocity_reward_and_return": true,
+  "fields_compared": [
+    "duration_sec",
+    "end_reason",
+    "end_timestep",
+    "episode",
+    "episode_ended",
+    "final_position_error_m",
+    "final_tilt_deg",
+    "length_steps",
+    "physical_termination",
+    "reward_sum_action",
+    "reward_sum_action_rate",
+    "reward_sum_angular_velocity",
+    "reward_sum_crash",
+    "reward_sum_position",
+    "reward_sum_tilt",
+    "reward_sum_yaw",
+    "start_timestep",
+    "terminated",
+    "time_limit_reached",
+    "truncated"
+  ],
+  "scope": "completed episode physical end states and reward terms before the first optimizer update; not every state sample"
+}

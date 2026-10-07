@@ -1,0 +1,37 @@
+{
+  "learning_executed": false,
+  "optimizer_updates_executed": false,
+  "preserved_files_count": 86,
+  "preserved_hashes_unchanged": true,
+  "physics_methods_unchanged": {
+    "_set_com_bias": true,
+    "_apply_control": true,
+    "reset": true,
+    "reset_actuator_state": true
+  },
+  "historical_baseline_evaluation": "artifacts/runs/dr-transfer-ps3oquze",
+  "numerical_and_training_audit": "artifacts/runs/velocity-ab-nonlearning-fhgv0_t1",
+  "d_final_regression_evaluation": "artifacts/runs/dr-transfer-g08lsp1_",
+  "related_tests": {
+    "passed": 110,
+    "skipped": 1,
+    "scope": "104 passed suite plus 6 additional unique cases; 15-case AB module rechecked"
+  },
+  "commit": "31343f3ff5c0ad4bce218e7d7f4adc05faa05cff",
+  "dirty": true,
+  "source_sha256": {
+    "crazyflie_rl/config.py": "bbbe8bd7243acedaf7c2e5cf111557b8334d5d3f52d45502efb50b8a3b45a00e",
+    "crazyflie_rl/velocity_reference.py": "7034c9860e1e12735807d7c795564c8fff6a07947e08a334a1f1a8fccd483afe",
+    "crazyflie_rl/environment.py": "791833669c668023db96d0f57eb022f20bb13168c0f7f06b24f42c87b10e0239",
+    "crazyflie_rl/training.py": "7207ec03724cc97ca5802e05f6e3d0f258a9582124edc1dfcde02dc3c3d35b5e",
+    "crazyflie_rl/dr_policy.py": "f1e8226a35d213df52dd3c86340e32bbac2d5ed6b9d06dc108a240201af2fc89",
+    "crazyflie_rl/dr_transfer.py": "d52433ff95b4ca796e7c3acc1bec4e49bb21dec99929a7d48ae6aa24f151d76e",
+    "crazyflie_rl/eval_cli.py": "2cd683d7eac6a03f1284e38e5cbc03c49d5bc58e70f85283db948cb898b367f6",
+    "crazyflie_rl/interactive_eval.py": "90db1f23ef108530228c33ba0fac3836b9a66faed017a501f389d4c0ee9b1c4b",
+    "crazyflie_rl/artifacts.py": "caff435b6051bf87d2eadfe3fdd4652c2fd12248ef7195504eb07f5b542fff51",
+    "crazyflie_rl/reward_balance.py": "fdf6408a5966edfc99beb19c3ab2afe4e54b431765f2698ad049cae445bb6de2",
+    "diagnose_velocity_ab.py": "1aa1bac0ff2b4c8afaee6be89945fdc7a03e3ab406b0fc3cf9438184352ec3e2",
+    "configs/e2e_train_velocity_ab_a.yaml": "26c9823ffffea447aad84604caa575198299ff691df8754c87933089bde7235d",
+    "configs/e2e_train_velocity_ab_b.yaml": "02164c1ba7280a73cc170d1f25e436ff36485e9ec64d5494058cdd412a142a15"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "kind": "best",
+  "normalization": {
+    "enabled": false
+  },
+  "path": "models/ppo_e2e_hover_velocity-ab-b-absolute-observation-error-reward_seed42_best_20261002-140542.zip",
+  "sha256": "4599340067aae1854962478b95a236a40358c387f3e1335cc028cdbafe5be38a",
+  "timestep": 440000
+}

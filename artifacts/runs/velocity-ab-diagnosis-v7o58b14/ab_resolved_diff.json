@@ -1,0 +1,18 @@
+{
+  "environment.e2e_velocity.reward_mode": {
+    "A": "absolute",
+    "B": "position_error"
+  },
+  "experiment.condition": {
+    "A": "velocity-ab-a-absolute-observation-absolute-reward",
+    "B": "velocity-ab-b-absolute-observation-error-reward"
+  },
+  "source_path": {
+    "A": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/e2e_train_velocity_ab_a.yaml",
+    "B": "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/e2e_train_velocity_ab_b.yaml"
+  },
+  "experiment.description": {
+    "A": "A control, nominal seed42, corrected physics, fresh training only",
+    "B": "B reward-only intervention, nominal seed42, fresh training only"
+  }
+}
