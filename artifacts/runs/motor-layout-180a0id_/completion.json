@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "counts": {
+    "nominal": {
+      "evaluated": 20,
+      "completed": 20,
+      "physical_termination": 0,
+      "position_recovered": 20,
+      "joint_recovered": 20
+    },
+    "fault": {
+      "evaluated": 10,
+      "completed": 7,
+      "physical_termination": 3,
+      "position_recovered": 7,
+      "joint_recovered": 7
+    }
+  }
+}

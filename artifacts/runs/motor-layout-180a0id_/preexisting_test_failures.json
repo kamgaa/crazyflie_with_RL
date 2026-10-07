@@ -1,0 +1,22 @@
+{
+  "pre_task_loader_values": {
+    "e2e_train.yaml": [
+      0.0075,
+      0.0075,
+      0.001,
+      0.5
+    ],
+    "residual_train.yaml": [
+      0.0075,
+      0.0075,
+      0.001,
+      0.5
+    ]
+  },
+  "tests_with_stale_expected_scale": [
+    "test_base_and_profiles_merge_without_changing_master_contracts",
+    "test_loaded_config_has_no_shared_mutable_sequences"
+  ],
+  "expected_old_test_value": 0.022,
+  "actual_before_and_after": 0.0075
+}

@@ -1,0 +1,32 @@
+results: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/motor-layout-180a0id_
+1/30 A_best-hover-legacy: end=8.00s horizon; position=0.0, joint=0.0
+2/30 A_best-step_x_005-legacy: end=8.00s horizon; position=1.46, joint=2.25
+3/30 A_best-step_y_005-legacy: end=8.00s horizon; position=3.19, joint=3.81
+4/30 A_best-yaw_cw_5-legacy: end=8.00s horizon; position=0.0, joint=0.37
+5/30 A_best-yaw_ccw_5-legacy: end=8.00s horizon; position=0.85, joint=0.85
+6/30 B_best-hover-legacy: end=8.00s horizon; position=0.0, joint=0.0
+7/30 B_best-step_x_005-legacy: end=8.00s horizon; position=1.52, joint=2.3000000000000003
+8/30 B_best-step_y_005-legacy: end=8.00s horizon; position=2.5500000000000003, joint=2.5500000000000003
+9/30 B_best-yaw_cw_5-legacy: end=8.00s horizon; position=1.94, joint=1.94
+10/30 B_best-yaw_ccw_5-legacy: end=8.00s horizon; position=0.0, joint=0.15
+11/30 A_best-hover-user_frd: end=8.00s horizon; position=0.0, joint=0.0
+12/30 A_best-step_x_005-user_frd: end=8.00s horizon; position=1.47, joint=2.25
+13/30 A_best-step_y_005-user_frd: end=8.00s horizon; position=3.19, joint=3.81
+14/30 A_best-yaw_cw_5-user_frd: end=8.00s horizon; position=0.0, joint=0.37
+15/30 A_best-yaw_ccw_5-user_frd: end=8.00s horizon; position=0.85, joint=0.85
+16/30 B_best-hover-user_frd: end=8.00s horizon; position=0.0, joint=0.0
+17/30 B_best-step_x_005-user_frd: end=8.00s horizon; position=1.52, joint=2.3000000000000003
+18/30 B_best-step_y_005-user_frd: end=8.00s horizon; position=2.5500000000000003, joint=2.5500000000000003
+19/30 B_best-yaw_cw_5-user_frd: end=8.00s horizon; position=1.93, joint=1.93
+20/30 B_best-yaw_ccw_5-user_frd: end=8.00s horizon; position=0.0, joint=0.15
+21/30 A_best-combined_motor2_70-eta070-legacy: end=5.84s max_tilt; position=None, joint=None
+22/30 A_best-combined_motor2_70-eta070-user_frd: end=60.00s horizon; position=8.31, joint=8.31
+23/30 A_best-combined_motor2_70-eta071-legacy: end=60.00s horizon; position=9.13, joint=9.13
+24/30 A_best-combined_motor2_70-eta071-user_frd: end=60.00s horizon; position=8.25, joint=8.25
+25/30 B_best-combined_motor3_70-eta072-legacy: end=5.66s max_tilt; position=None, joint=None
+26/30 B_best-combined_motor3_70-eta072-user_frd: end=60.00s horizon; position=6.9, joint=6.9
+27/30 B_best-combined_motor3_70-eta073-legacy: end=60.00s horizon; position=6.9, joint=6.9
+28/30 B_best-combined_motor3_70-eta073-user_frd: end=60.00s horizon; position=6.93, joint=6.93
+29/30 A_best-combined_motor3_70-eta066-legacy: end=60.00s horizon; position=9.38, joint=9.38
+30/30 A_best-combined_motor3_70-eta066-user_frd: end=5.64s max_tilt; position=None, joint=None
+results: /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/motor-layout-180a0id_

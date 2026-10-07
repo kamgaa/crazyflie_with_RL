@@ -1,0 +1,15 @@
+{
+  "reproduction": {},
+  "signals": {
+    "A_best-hover-legacy": {
+      "current_eta": true,
+      "single_effectiveness_application": true,
+      "event_state_preserved": true,
+      "integral_rule": true,
+      "control_samples": 800,
+      "physics_samples": 4000
+    }
+  },
+  "independent_csv": {},
+  "static_validation_passed": true
+}

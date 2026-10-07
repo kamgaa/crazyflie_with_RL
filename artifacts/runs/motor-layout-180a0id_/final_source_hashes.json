@@ -1,0 +1,13 @@
+{
+  "crazyflie_rl/config.py": "795168730307d5517d90d142272afc71408943c73822833409b58bbe5844ac91",
+  "crazyflie_rl/dr_policy.py": "cddacd44fb5d1f936f730a4cd1bc45e76c9e44392a6fe2bcc23bd4b9420355f7",
+  "crazyflie_rl/environment.py": "304908c4ed2d676039246bdf73ab41413ef69d1695c0c1cfe033a9ca83c98492",
+  "crazyflie_rl/integral_validation.py": "e4aaa610811a16089e6ef8aebc4334f9a27674f0ef101b6383fca8218604a025",
+  "crazyflie_rl/interactive_eval.py": "ef11511c857c1d6df7454e28f2bbe5aadc744ad2a81c5c3b275a2e087f9141c9",
+  "crazyflie_rl/oracle_eval.py": "deaad85df55902d7df2dd0f9803cbfd5df62bc6a8936c83090c578de3783cbde",
+  "compare_motor_layouts.py": "c742c3cf45b2377246eba7858c9bf93a26abd0bdf992111f6627bea293e5e07a",
+  "crazyflie_rl/motor_layout.py": "a87e111dc058487aace09581ab785d9dcec436543bb03818c1145a13cdbc09ca",
+  "crazyflie_rl/layout_evaluation.py": "8bba229782a95f1eda19e0a544cc75ad1aaba0a8d03d933b42978823b3d3b4a1",
+  "configs/eval_velocity_ab_user_frd.yaml": "596c3de434346ab9fa2707454db6f2e641d2e91fa928882631b0a21f08e620df",
+  "tests/test_motor_layout.py": "0fc9e524879a08dafa50c51dea4c83aa8dde6b9cddf17d65d02266a6ba9f89a8"
+}

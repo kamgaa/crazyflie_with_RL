@@ -1,0 +1,1792 @@
+[
+  {
+    "case": "hover",
+    "sample_count": 800,
+    "expected_duration_sec": 8.0,
+    "internal_velocity_reference_mode": "position_error",
+    "actual_duration_sec": 8.0,
+    "completed": true,
+    "terminated": false,
+    "truncated": true,
+    "partial": false,
+    "metric_scope": "full",
+    "termination_reasons": [],
+    "error": null,
+    "end_reason": "horizon",
+    "position_rmse_xy": 0.0018409756191116804,
+    "position_rmse_z": 0.0012464530176868665,
+    "position_rmse_total": 0.002223249053854365,
+    "velocity_rmse": 0.0011389261900948942,
+    "horizontal_speed_rms_m_s": 0.0010538527028470957,
+    "roll_rms_deg": 0.0276618166255084,
+    "pitch_rms_deg": 0.018695196388757572,
+    "roll_max_abs_deg": 0.09216312795886852,
+    "pitch_max_abs_deg": 0.0687976782006852,
+    "tilt_max_deg": 0.11500938482955203,
+    "motor_saturation_sample_convention": "last physics substep of each control interval",
+    "motor_allocation_clip_tolerance_n": 1e-12,
+    "motor_command_bound_tolerance": 1e-09,
+    "motor_allocation_clipped_fraction_any_motor": 0.0,
+    "motor_allocation_clipped_fraction_per_motor": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "motor_command_at_lower_bound_fraction_any_motor": 0.0,
+    "motor_command_at_lower_bound_fraction_per_motor": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "motor_command_at_upper_bound_fraction_any_motor": 0.0,
+    "motor_command_at_upper_bound_fraction_per_motor": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "motor_actual_at_thrust_lower_bound_fraction_any_motor": 0.0,
+    "motor_actual_at_thrust_lower_bound_fraction_per_motor": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "motor_actual_at_thrust_upper_bound_fraction_any_motor": 0.0,
+    "motor_actual_at_thrust_upper_bound_fraction_per_motor": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "motor_thrust_min_n_per_motor": [
+      0.10630171372298824,
+      0.10610355323446787,
+      0.10633874080369143,
+      0.10624552379400361
+    ],
+    "motor_thrust_max_n_per_motor": [
+      0.10665157070962648,
+      0.10677209389583142,
+      0.10652864141336386,
+      0.10688959960434759
+    ],
+    "completed_count": 1,
+    "trial_count": 1,
+    "actual_speed_rms_m_s": 0.0011389261900948942,
+    "internal_velocity_error_rmse_m_s": 0.009117488453923229,
+    "last_2s_position_rmse_xy": 0.0019404114549807312,
+    "last_2s_position_rmse_z": 0.0013276900491571773,
+    "last_2s_position_rmse_total": 0.0023511608794915388,
+    "last_2s_speed_rms": 0.00014216283071189138,
+    "last_2s_internal_velocity_error_rms_m_s": 0.009416916220204984,
+    "last_2s_position_std_x": 9.948520757407848e-06,
+    "last_2s_position_std_y": 1.8794111890898524e-05,
+    "last_2s_position_std_z": 2.272330422907885e-06,
+    "first_position_entry_s": 0.0,
+    "settling_time_s": 0.0,
+    "settled": true,
+    "overshoot_m": 0.0,
+    "windows": {
+      "full": {
+        "mean_error_xy_m": [
+          -0.001319301413464796,
+          -0.0012200219541049103
+        ],
+        "offset_xy_m": 0.0017969445701156652,
+        "rmse_xy_m": 0.0018409756191116804,
+        "sway_xy_rms_m": 0.00040022673835647394,
+        "max_xy_error_m": 0.0020841589657270778,
+        "mean_error_z_m": 0.001218895768323848,
+        "offset_z_abs_m": 0.001218895768323848,
+        "rmse_z_m": 0.0012464530176868665,
+        "sway_z_rms_m": 0.00026064963315322506,
+        "max_abs_z_error_m": 0.0013359658275680086,
+        "rmse_3d_m": 0.002223249053854365,
+        "xy_bias_variance_residual_m2": 8.470329472543003e-22,
+        "z_bias_variance_residual_m2": 1.5617169965001163e-21,
+        "sample_count": 800,
+        "first_sample_s": 0.01,
+        "last_sample_s": 8.0,
+        "actual_velocity_xy_rms_m_s": 0.0010538527028470957,
+        "actual_velocity_z_rms_m_s": 0.00043191127235341054,
+        "velocity_error_xy_rms_m_s": 0.007563254360285169,
+        "velocity_error_z_rms_m_s": 0.005091736362877674,
+        "max_tilt_deg": 0.11500938482955203,
+        "max_angular_speed_rad_s": 0.025333598720451524,
+        "yaw_error_mean_rad": -0.0020411505682612833,
+        "yaw_error_max_abs_rad": 0.002304510250568024,
+        "yaw_error_mean_deg": -0.11694931291210119,
+        "yaw_error_max_abs_deg": 0.13203871120218358,
+        "integral": {
+          "integral_frozen": {
+            "duration_s_per_channel": [
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "interval_allocator_clipping": {
+            "duration_s_per_channel": [
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "interval_esc_boundary": {
+            "duration_s_per_channel": [
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "interval_action_boundary": {
+            "duration_s_per_channel": [
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "integral_xy_at_limit": {
+            "duration_s_per_channel": [
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "integral_z_at_limit": {
+            "duration_s_per_channel": [
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "integral_xy_projected": {
+            "duration_s_per_channel": [
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "integral_z_projected": {
+            "duration_s_per_channel": [
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "xi_final_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "xi_max_xy_norm_m": 0.0,
+          "xi_max_abs_z_m": 0.0
+        },
+        "motors": {
+          "sampling": "every physics interval; dwell = interval count * physics_dt",
+          "physics_dt": 0.002,
+          "allocator_clipped": {
+            "duration_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "allocator_lower": {
+            "duration_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "allocator_upper": {
+            "duration_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "esc_lower": {
+            "duration_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "esc_upper": {
+            "duration_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "actual_effective_upper": {
+            "duration_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "policy_action_at_bound": {
+            "duration_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "policy_action_clipped": {
+            "duration_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "allocator_lower_margin_n_minimum_per_motor": [
+            0.10608781943199337,
+            0.1056541063434537,
+            0.10626050377640389,
+            0.10586889641945596
+          ],
+          "allocator_upper_margin_n_minimum_per_motor": [
+            0.09317272527158255,
+            0.09290513386465199,
+            0.09334738131334983,
+            0.09241521406922501
+          ],
+          "esc_lower_margin_minimum_per_motor": [
+            0.5445250322635028,
+            0.5433342776748339,
+            0.5449987316720872,
+            0.5439241631748784
+          ],
+          "esc_upper_margin_minimum_per_motor": [
+            0.45344813304266796,
+            0.4527156952282009,
+            0.45392648582351136,
+            0.4513761109637442
+          ],
+          "effective_max_margin_n_minimum_per_motor": [
+            0.09334842929037353,
+            0.09322790610416859,
+            0.09347135858663615,
+            0.09311040039565242
+          ],
+          "nominal_max_thrust_n_minimum_per_motor": [
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "nominal_max_thrust_n_maximum_per_motor": [
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "effective_max_thrust_n_minimum_per_motor": [
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "effective_max_thrust_n_maximum_per_motor": [
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "thrust_lag_rms_n_per_motor": [
+            5.418227897384665e-05,
+            0.00013291372258328248,
+            1.8787657053038972e-05,
+            9.137387982925235e-05
+          ]
+        }
+      },
+      "tail": {
+        "mean_error_xy_m": [
+          -0.0014373194842702297,
+          -0.0013034021340517172
+        ],
+        "offset_xy_m": 0.0019402949319403504,
+        "rmse_xy_m": 0.0019404114549807312,
+        "sway_xy_rms_m": 2.1264799717565836e-05,
+        "max_xy_error_m": 0.0019743154562100814,
+        "mean_error_z_m": 0.0013276881046184897,
+        "offset_z_abs_m": 0.0013276881046184897,
+        "rmse_z_m": 0.0013276900491571773,
+        "sway_z_rms_m": 2.2723304229078853e-06,
+        "max_abs_z_error_m": 0.0013315499967923028,
+        "rmse_3d_m": 0.0023511608794915388,
+        "xy_bias_variance_residual_m2": 1.3710518653066434e-21,
+        "z_bias_variance_residual_m2": -6.825136704421789e-22,
+        "sample_count": 200,
+        "first_sample_s": 6.01,
+        "last_sample_s": 8.0,
+        "actual_velocity_xy_rms_m_s": 0.00014135049861741642,
+        "actual_velocity_z_rms_m_s": 1.5175868233008642e-05,
+        "velocity_error_xy_rms_m_s": 0.007775469387862391,
+        "velocity_error_z_rms_m_s": 0.0053122864095203485,
+        "max_tilt_deg": 0.010001050825019203,
+        "max_angular_speed_rad_s": 0.0016625620015352713,
+        "yaw_error_mean_rad": -0.002293859127237448,
+        "yaw_error_max_abs_rad": 0.0023006760939504253,
+        "yaw_error_mean_deg": -0.1314284467882683,
+        "yaw_error_max_abs_deg": 0.13181903021000305,
+        "integral": {
+          "integral_frozen": {
+            "duration_s_per_channel": [
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "interval_allocator_clipping": {
+            "duration_s_per_channel": [
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "interval_esc_boundary": {
+            "duration_s_per_channel": [
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "interval_action_boundary": {
+            "duration_s_per_channel": [
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "integral_xy_at_limit": {
+            "duration_s_per_channel": [
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "integral_z_at_limit": {
+            "duration_s_per_channel": [
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "integral_xy_projected": {
+            "duration_s_per_channel": [
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "integral_z_projected": {
+            "duration_s_per_channel": [
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "xi_final_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "xi_max_xy_norm_m": 0.0,
+          "xi_max_abs_z_m": 0.0
+        },
+        "motors": {
+          "sampling": "every physics interval; dwell = interval count * physics_dt",
+          "physics_dt": 0.002,
+          "allocator_clipped": {
+            "duration_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "allocator_lower": {
+            "duration_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "allocator_upper": {
+            "duration_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "esc_lower": {
+            "duration_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "esc_upper": {
+            "duration_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "actual_effective_upper": {
+            "duration_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "policy_action_at_bound": {
+            "duration_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "policy_action_clipped": {
+            "duration_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "longest_continuous_s_per_channel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "duration_any_s": 0.0
+          },
+          "allocator_lower_margin_n_minimum_per_motor": [
+            0.10638847823502763,
+            0.10637594273099475,
+            0.10639622580124884,
+            0.10638710444139415
+          ],
+          "allocator_upper_margin_n_minimum_per_motor": [
+            0.09358936441389307,
+            0.09357408342747502,
+            0.09359833289967626,
+            0.09358814844638248
+          ],
+          "esc_lower_margin_minimum_per_motor": [
+            0.5453496374452139,
+            0.545315270654084,
+            0.5453708772335283,
+            0.5453458711711834
+          ],
+          "esc_upper_margin_minimum_per_motor": [
+            0.45458961986870583,
+            0.4545477303995845,
+            0.4546142058351461,
+            0.4545862864953487
+          ],
+          "effective_max_margin_n_minimum_per_motor": [
+            0.09359497726696339,
+            0.09358898434535866,
+            0.09359868015711109,
+            0.09359596585847459
+          ],
+          "nominal_max_thrust_n_minimum_per_motor": [
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "nominal_max_thrust_n_maximum_per_motor": [
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "effective_max_thrust_n_minimum_per_motor": [
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "effective_max_thrust_n_maximum_per_motor": [
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "thrust_lag_rms_n_per_motor": [
+            4.063442543129841e-06,
+            1.044376103352859e-05,
+            7.154505439643127e-07,
+            5.403431170236067e-06
+          ]
+        }
+      }
+    },
+    "partial_observed_windows": {
+      "full": null,
+      "tail": null
+    },
+    "recovery_xy_s": 0.0,
+    "recovery_z_s": 0.0,
+    "recovery_3d_s": 0.0,
+    "recovery_position_attitude_s": 0.0,
+    "yaw_recovery_s": 0.0,
+    "dwell_full": {
+      "physics_interval_sum_s": 7.999999999999341,
+      "allocator_clipped": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "allocator_lower": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "allocator_upper": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "esc_lower": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "esc_upper": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "esc_boundary_union": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "control_interval_sum_s": 8.0,
+      "policy_action_at_bound": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "integral_frozen": {
+        "duration_s_per_channel": [
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "interval_allocator_clipping": {
+        "duration_s_per_channel": [
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "interval_esc_boundary": {
+        "duration_s_per_channel": [
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "interval_action_boundary": {
+        "duration_s_per_channel": [
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "integral_xy_at_limit": {
+        "duration_s_per_channel": [
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "integral_z_at_limit": {
+        "duration_s_per_channel": [
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      }
+    },
+    "integral_diagnostics": {
+      "integral_frozen": {
+        "duration_s_per_channel": [
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0
+        ],
+        "duration_any_s": 0.0
+      },
+      "interval_allocator_clipping": {
+        "duration_s_per_channel": [
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0
+        ],
+        "duration_any_s": 0.0
+      },
+      "interval_esc_boundary": {
+        "duration_s_per_channel": [
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0
+        ],
+        "duration_any_s": 0.0
+      },
+      "interval_action_boundary": {
+        "duration_s_per_channel": [
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0
+        ],
+        "duration_any_s": 0.0
+      },
+      "integral_xy_at_limit": {
+        "duration_s_per_channel": [
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0
+        ],
+        "duration_any_s": 0.0
+      },
+      "integral_z_at_limit": {
+        "duration_s_per_channel": [
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0
+        ],
+        "duration_any_s": 0.0
+      },
+      "integral_xy_projected": {
+        "duration_s_per_channel": [
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0
+        ],
+        "duration_any_s": 0.0
+      },
+      "integral_z_projected": {
+        "duration_s_per_channel": [
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0
+        ],
+        "duration_any_s": 0.0
+      },
+      "xi_final_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "xi_max_xy_norm_m": 0.0,
+      "xi_max_abs_z_m": 0.0
+    },
+    "motor_diagnostics": {
+      "sampling": "every physics interval; dwell = interval count * physics_dt",
+      "physics_dt": 0.002,
+      "allocator_clipped": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0
+      },
+      "allocator_lower": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0
+      },
+      "allocator_upper": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0
+      },
+      "esc_lower": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0
+      },
+      "esc_upper": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0
+      },
+      "actual_effective_upper": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0
+      },
+      "policy_action_at_bound": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0
+      },
+      "policy_action_clipped": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0
+      },
+      "allocator_lower_margin_n_minimum_per_motor": [
+        0.10608781943199337,
+        0.1056541063434537,
+        0.10626050377640389,
+        0.10586889641945596
+      ],
+      "allocator_upper_margin_n_minimum_per_motor": [
+        0.09317272527158255,
+        0.09290513386465199,
+        0.09334738131334983,
+        0.09241521406922501
+      ],
+      "esc_lower_margin_minimum_per_motor": [
+        0.5445250322635028,
+        0.5433342776748339,
+        0.5449987316720872,
+        0.5439241631748784
+      ],
+      "esc_upper_margin_minimum_per_motor": [
+        0.45344813304266796,
+        0.4527156952282009,
+        0.45392648582351136,
+        0.4513761109637442
+      ],
+      "effective_max_margin_n_minimum_per_motor": [
+        0.09334842929037353,
+        0.09322790610416859,
+        0.09347135858663615,
+        0.09311040039565242
+      ],
+      "nominal_max_thrust_n_minimum_per_motor": [
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "nominal_max_thrust_n_maximum_per_motor": [
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "effective_max_thrust_n_minimum_per_motor": [
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "effective_max_thrust_n_maximum_per_motor": [
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "thrust_lag_rms_n_per_motor": [
+        5.418227897384665e-05,
+        0.00013291372258328248,
+        1.8787657053038972e-05,
+        9.137387982925235e-05
+      ]
+    },
+    "wrench_diagnostics": {
+      "sample_count": 4000,
+      "moment_reference": "body origin, body frame; no gravity/external torque",
+      "allocation_residual_xml": {
+        "moment_rms_xyz_nm": [
+          1.380822653635072e-09,
+          7.504436540086952e-10,
+          1.9870536112166865e-19
+        ],
+        "moment_norm_rms_nm": 1.5715714678733907e-09,
+        "moment_norm_max_nm": 6.4720888160238626e-09,
+        "force_rms_n": 4.8313839555528287e-17,
+        "force_max_abs_n": 5.551115123125783e-17
+      },
+      "actuator_response_residual_xml": {
+        "moment_rms_xyz_nm": [
+          8.904347073905728e-06,
+          4.829799194758779e-06,
+          5.868037109390157e-07
+        ],
+        "moment_norm_rms_nm": 1.0146856442733294e-05,
+        "moment_norm_max_nm": 4.395796639114721e-05,
+        "force_rms_n": 0.00015933217503716227,
+        "force_max_abs_n": 0.0017622507157669665
+      },
+      "total_rotor_residual_xml": {
+        "moment_rms_xyz_nm": [
+          8.903062287326756e-06,
+          4.829102302649356e-06,
+          5.868037109390141e-07
+        ],
+        "moment_norm_rms_nm": 1.0145397268547205e-05,
+        "moment_norm_max_nm": 4.39515328660181e-05,
+        "force_rms_n": 0.00015933217503716275,
+        "force_max_abs_n": 0.0017622507157669665
+      },
+      "allocation_residual_b0": {
+        "moment_rms_xyz_nm": [
+          6.575664760666021e-17,
+          1.1678793344496822e-18,
+          2.1225444101481138e-19
+        ],
+        "moment_norm_rms_nm": 6.576736043474812e-17,
+        "moment_norm_max_nm": 6.781575284291438e-17,
+        "force_rms_n": 4.8313839555528287e-17,
+        "force_max_abs_n": 5.551115123125783e-17
+      },
+      "geometry_wrench_difference": {
+        "moment_rms_xyz_nm": [
+          1.3808226536287733e-09,
+          7.504436540158864e-10,
+          1.5294553795833184e-19
+        ],
+        "moment_norm_rms_nm": 1.5715714678712959e-09,
+        "moment_norm_max_nm": 6.472088874261098e-09,
+        "force_rms_n": 0.0,
+        "force_max_abs_n": 0.0
+      }
+    },
+    "tail": {
+      "mean_error_xy_m": [
+        -0.0014373194842702297,
+        -0.0013034021340517172
+      ],
+      "offset_xy_m": 0.0019402949319403504,
+      "rmse_xy_m": 0.0019404114549807312,
+      "sway_xy_rms_m": 2.1264799717565836e-05,
+      "max_xy_error_m": 0.0019743154562100814,
+      "mean_error_z_m": 0.0013276881046184897,
+      "offset_z_abs_m": 0.0013276881046184897,
+      "rmse_z_m": 0.0013276900491571773,
+      "sway_z_rms_m": 2.2723304229078853e-06,
+      "max_abs_z_error_m": 0.0013315499967923028,
+      "rmse_3d_m": 0.0023511608794915388,
+      "xy_bias_variance_residual_m2": 1.3710518653066434e-21,
+      "z_bias_variance_residual_m2": -6.825136704421789e-22,
+      "sample_count": 200,
+      "first_sample_s": 6.01,
+      "last_sample_s": 8.0,
+      "actual_velocity_xy_rms_m_s": 0.00014135049861741642,
+      "actual_velocity_z_rms_m_s": 1.5175868233008642e-05,
+      "velocity_error_xy_rms_m_s": 0.007775469387862391,
+      "velocity_error_z_rms_m_s": 0.0053122864095203485,
+      "max_tilt_deg": 0.010001050825019203,
+      "max_angular_speed_rad_s": 0.0016625620015352713,
+      "yaw_error_mean_rad": -0.002293859127237448,
+      "yaw_error_max_abs_rad": 0.0023006760939504253,
+      "yaw_error_mean_deg": -0.1314284467882683,
+      "yaw_error_max_abs_deg": 0.13181903021000305,
+      "integral": {
+        "integral_frozen": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "interval_allocator_clipping": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "interval_esc_boundary": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "interval_action_boundary": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "integral_xy_at_limit": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "integral_z_at_limit": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "integral_xy_projected": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "integral_z_projected": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "xi_final_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "xi_max_xy_norm_m": 0.0,
+        "xi_max_abs_z_m": 0.0
+      },
+      "motors": {
+        "sampling": "every physics interval; dwell = interval count * physics_dt",
+        "physics_dt": 0.002,
+        "allocator_clipped": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "allocator_lower": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "allocator_upper": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "esc_lower": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "esc_upper": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "actual_effective_upper": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "policy_action_at_bound": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "policy_action_clipped": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "allocator_lower_margin_n_minimum_per_motor": [
+          0.10638847823502763,
+          0.10637594273099475,
+          0.10639622580124884,
+          0.10638710444139415
+        ],
+        "allocator_upper_margin_n_minimum_per_motor": [
+          0.09358936441389307,
+          0.09357408342747502,
+          0.09359833289967626,
+          0.09358814844638248
+        ],
+        "esc_lower_margin_minimum_per_motor": [
+          0.5453496374452139,
+          0.545315270654084,
+          0.5453708772335283,
+          0.5453458711711834
+        ],
+        "esc_upper_margin_minimum_per_motor": [
+          0.45458961986870583,
+          0.4545477303995845,
+          0.4546142058351461,
+          0.4545862864953487
+        ],
+        "effective_max_margin_n_minimum_per_motor": [
+          0.09359497726696339,
+          0.09358898434535866,
+          0.09359868015711109,
+          0.09359596585847459
+        ],
+        "nominal_max_thrust_n_minimum_per_motor": [
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        "nominal_max_thrust_n_maximum_per_motor": [
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        "effective_max_thrust_n_minimum_per_motor": [
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        "effective_max_thrust_n_maximum_per_motor": [
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        "thrust_lag_rms_n_per_motor": [
+          4.063442543129841e-06,
+          1.044376103352859e-05,
+          7.154505439643127e-07,
+          5.403431170236067e-06
+        ]
+      }
+    },
+    "key": "A_best-hover-legacy",
+    "label": "A_best",
+    "layout": "legacy",
+    "group": "nominal",
+    "observed_metrics": {
+      "mean_error_xy_m": [
+        -0.001319301413464796,
+        -0.0012200219541049103
+      ],
+      "offset_xy_m": 0.0017969445701156652,
+      "rmse_xy_m": 0.0018409756191116804,
+      "sway_xy_rms_m": 0.00040022673835647394,
+      "max_xy_error_m": 0.0020841589657270778,
+      "mean_error_z_m": 0.001218895768323848,
+      "offset_z_abs_m": 0.001218895768323848,
+      "rmse_z_m": 0.0012464530176868665,
+      "sway_z_rms_m": 0.00026064963315322506,
+      "max_abs_z_error_m": 0.0013359658275680086,
+      "rmse_3d_m": 0.002223249053854365,
+      "xy_bias_variance_residual_m2": 8.470329472543003e-22,
+      "z_bias_variance_residual_m2": 1.5617169965001163e-21,
+      "sample_count": 800,
+      "first_sample_s": 0.01,
+      "last_sample_s": 8.0,
+      "actual_velocity_xy_rms_m_s": 0.0010538527028470957,
+      "actual_velocity_z_rms_m_s": 0.00043191127235341054,
+      "velocity_error_xy_rms_m_s": 0.007563254360285169,
+      "velocity_error_z_rms_m_s": 0.005091736362877674,
+      "max_tilt_deg": 0.11500938482955203,
+      "max_angular_speed_rad_s": 0.025333598720451524,
+      "yaw_error_mean_rad": -0.0020411505682612833,
+      "yaw_error_max_abs_rad": 0.002304510250568024,
+      "yaw_error_mean_deg": -0.11694931291210119,
+      "yaw_error_max_abs_deg": 0.13203871120218358,
+      "integral": {
+        "integral_frozen": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "interval_allocator_clipping": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "interval_esc_boundary": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "interval_action_boundary": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "integral_xy_at_limit": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "integral_z_at_limit": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "integral_xy_projected": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "integral_z_projected": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "xi_final_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "xi_max_xy_norm_m": 0.0,
+        "xi_max_abs_z_m": 0.0
+      },
+      "motors": {
+        "sampling": "every physics interval; dwell = interval count * physics_dt",
+        "physics_dt": 0.002,
+        "allocator_clipped": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "allocator_lower": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "allocator_upper": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "esc_lower": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "esc_upper": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "actual_effective_upper": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "policy_action_at_bound": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "policy_action_clipped": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0
+        },
+        "allocator_lower_margin_n_minimum_per_motor": [
+          0.10608781943199337,
+          0.1056541063434537,
+          0.10626050377640389,
+          0.10586889641945596
+        ],
+        "allocator_upper_margin_n_minimum_per_motor": [
+          0.09317272527158255,
+          0.09290513386465199,
+          0.09334738131334983,
+          0.09241521406922501
+        ],
+        "esc_lower_margin_minimum_per_motor": [
+          0.5445250322635028,
+          0.5433342776748339,
+          0.5449987316720872,
+          0.5439241631748784
+        ],
+        "esc_upper_margin_minimum_per_motor": [
+          0.45344813304266796,
+          0.4527156952282009,
+          0.45392648582351136,
+          0.4513761109637442
+        ],
+        "effective_max_margin_n_minimum_per_motor": [
+          0.09334842929037353,
+          0.09322790610416859,
+          0.09347135858663615,
+          0.09311040039565242
+        ],
+        "nominal_max_thrust_n_minimum_per_motor": [
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        "nominal_max_thrust_n_maximum_per_motor": [
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        "effective_max_thrust_n_minimum_per_motor": [
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        "effective_max_thrust_n_maximum_per_motor": [
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        "thrust_lag_rms_n_per_motor": [
+          5.418227897384665e-05,
+          0.00013291372258328248,
+          1.8787657053038972e-05,
+          9.137387982925235e-05
+        ]
+      }
+    }
+  }
+]

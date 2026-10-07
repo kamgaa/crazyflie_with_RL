@@ -1,0 +1,33 @@
+{
+  "scope": "After the 30 rollouts: legacy default serialization compatibility and graph timestamp/title only; no dynamics/inference change.",
+  "execution_source": "source_snapshot/",
+  "execution_hashes": "manifest.json/source_sha256",
+  "final_hashes": "final_source_hashes.json",
+  "training_checkpoint_xml_old_yaml_old_results_unchanged": true,
+  "pre_task_file_count": 1402,
+  "authorized_changed_sources": [
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/config.py",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/dr_policy.py",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/environment.py",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/integral_validation.py",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/interactive_eval.py",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/oracle_eval.py"
+  ],
+  "unchanged_pre_task_file_count": 1396,
+  "original_edits_preserved": "Only this_task_source_changes.patch was applied over the pre-task dirty files; unrelated files unchanged.",
+  "focused_tests_passed": 126,
+  "preexisting_tests_deselected": 2,
+  "full_repository_tests_run": false,
+  "legacy_oracle_dry_run_passed": true,
+  "legacy_recovery_dry_run_passed": true,
+  "new_comparison_dry_run_passed": true,
+  "legacy_reproduction_runs": 5,
+  "legacy_reproduction_max_numeric_error": 0.0,
+  "nominal_independent_csv_checks": 20,
+  "fault_independent_csv_checks": 10,
+  "learning": false,
+  "optimizer_updates": false,
+  "commit_push": false,
+  "gui_keyboard_physical_press_test": false,
+  "headless_user_keyboard_event_and_real_checkpoint_test": true
+}
