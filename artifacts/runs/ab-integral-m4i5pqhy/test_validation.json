@@ -1,0 +1,22 @@
+{
+  "focused_and_shared_regressions": {
+    "passed": 83,
+    "files": [
+      "tests/test_integral_eval.py",
+      "tests/test_payload_motor_eval.py",
+      "tests/test_dr_transfer.py",
+      "tests/test_interactive_eval.py",
+      "tests/test_position_velocity_error.py"
+    ],
+    "warnings": "10 existing tight_layout warnings in interactive plot tests"
+  },
+  "after_analysis_and_csv_fixes": {
+    "passed": 29,
+    "files": [
+      "tests/test_integral_eval.py",
+      "tests/test_payload_motor_eval.py"
+    ]
+  },
+  "plot_fixture": "saved 60s data used only to exercise plot schema under /tmp; not an additional policy result",
+  "full_repository_suite_run": false
+}
