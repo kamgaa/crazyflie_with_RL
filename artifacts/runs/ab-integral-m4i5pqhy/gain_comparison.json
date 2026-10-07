@@ -1,0 +1,179 @@
+{
+  "common_development_candidate": "integral_020",
+  "gains": [
+    {
+      "gain": "no_integral",
+      "trials": 14,
+      "completed": 14,
+      "recovered_fault_3d": 0,
+      "settled_3d": 2,
+      "freeze_total_s": 0.0,
+      "allocator_clip_total_s": 0.81,
+      "longest_freeze_s": 0.0,
+      "worst_recovery_3d_s": null,
+      "tail_18_20": {
+        "offset_xy_m": 0.27748559085380725,
+        "offset_z_abs_m": 0.05365207828269074,
+        "sway_xy_rms_m": 9.672504020998703e-05,
+        "sway_z_rms_m": 2.244359368347473e-05,
+        "max_xy_error_m": 0.2774857329148164,
+        "max_abs_z_error_m": 0.05365216489953639,
+        "max_tilt_deg": 0.04484698206453252
+      },
+      "tail_58_60": {
+        "offset_xy_m": 0.2774855909257868,
+        "offset_z_abs_m": 0.05365206209346394,
+        "sway_xy_rms_m": 1.0835043029122268e-08,
+        "sway_z_rms_m": 1.7489623262248366e-09,
+        "max_xy_error_m": 0.2774855921452441,
+        "max_abs_z_error_m": 0.05365206432589531,
+        "max_tilt_deg": 4.26886823125797e-06
+      },
+      "full_0_60": {
+        "offset_xy_m": 0.2561062701847914,
+        "offset_z_abs_m": 0.05275413186226848,
+        "sway_xy_rms_m": 0.06500931339829864,
+        "sway_z_rms_m": 0.00798449461843668,
+        "max_xy_error_m": 0.2775421318432247,
+        "max_abs_z_error_m": 0.10324001498628488,
+        "max_tilt_deg": 11.83426628356191
+      },
+      "nominal": {
+        "max_xy_error_m": 0.0024118694916394987,
+        "max_abs_z_error_m": 0.0021601197501028846,
+        "max_tilt_deg": 0.1777158238172187
+      }
+    },
+    {
+      "gain": "integral_005",
+      "trials": 14,
+      "completed": 14,
+      "recovered_fault_3d": 1,
+      "settled_3d": 7,
+      "freeze_total_s": 0.8,
+      "allocator_clip_total_s": 0.8,
+      "longest_freeze_s": 0.3,
+      "worst_recovery_3d_s": 48.81,
+      "tail_18_20": {
+        "offset_xy_m": 0.13958001795534522,
+        "offset_z_abs_m": 0.021652049469806527,
+        "sway_xy_rms_m": 0.004238974614306093,
+        "sway_z_rms_m": 0.0005901367740240162,
+        "max_xy_error_m": 0.1470124604948542,
+        "max_abs_z_error_m": 0.02268474196502479,
+        "max_tilt_deg": 0.047262334793756515
+      },
+      "tail_58_60": {
+        "offset_xy_m": 0.017020596979300508,
+        "offset_z_abs_m": 0.003224636376263737,
+        "sway_xy_rms_m": 0.0005169248214221493,
+        "sway_z_rms_m": 8.928239450803714e-05,
+        "max_xy_error_m": 0.017926978502426104,
+        "max_abs_z_error_m": 0.003380936460204098,
+        "max_tilt_deg": 0.00028964703495172904
+      },
+      "full_0_60": {
+        "offset_xy_m": 0.08802714418616928,
+        "offset_z_abs_m": 0.017152907807799395,
+        "sway_xy_rms_m": 0.06795393742700571,
+        "sway_z_rms_m": 0.01421180960398788,
+        "max_xy_error_m": 0.24414353578899228,
+        "max_abs_z_error_m": 0.09505088160009456,
+        "max_tilt_deg": 11.801865058885932
+      },
+      "nominal": {
+        "max_xy_error_m": 0.0024073530185225425,
+        "max_abs_z_error_m": 0.0021263596515066485,
+        "max_tilt_deg": 0.17859873994009295
+      }
+    },
+    {
+      "gain": "integral_010",
+      "trials": 14,
+      "completed": 14,
+      "recovered_fault_3d": 8,
+      "settled_3d": 14,
+      "freeze_total_s": 0.8,
+      "allocator_clip_total_s": 0.8,
+      "longest_freeze_s": 0.3,
+      "worst_recovery_3d_s": 37.37,
+      "tail_18_20": {
+        "offset_xy_m": 0.0662135590562458,
+        "offset_z_abs_m": 0.009242114324596692,
+        "sway_xy_rms_m": 0.004266870383681482,
+        "sway_z_rms_m": 0.00044614071843138874,
+        "max_xy_error_m": 0.07383914809527443,
+        "max_abs_z_error_m": 0.010030334407104102,
+        "max_tilt_deg": 0.04910513291706093
+      },
+      "tail_58_60": {
+        "offset_xy_m": 0.0007601462077200097,
+        "offset_z_abs_m": 0.00024080002108236076,
+        "sway_xy_rms_m": 4.902168580579896e-05,
+        "sway_z_rms_m": 1.3336872566448441e-05,
+        "max_xy_error_m": 0.0008477588693884452,
+        "max_abs_z_error_m": 0.0002645067684539093,
+        "max_tilt_deg": 6.20265231914579e-05
+      },
+      "full_0_60": {
+        "offset_xy_m": 0.04674379212624057,
+        "offset_z_abs_m": 0.009204316273068933,
+        "sway_xy_rms_m": 0.06182315263453826,
+        "sway_z_rms_m": 0.01310237785494506,
+        "max_xy_error_m": 0.22605889690403783,
+        "max_abs_z_error_m": 0.08850981410496916,
+        "max_tilt_deg": 11.78792847083873
+      },
+      "nominal": {
+        "max_xy_error_m": 0.0024028367464977276,
+        "max_abs_z_error_m": 0.002093321224868605,
+        "max_tilt_deg": 0.17947994465994702
+      }
+    },
+    {
+      "gain": "integral_020",
+      "trials": 14,
+      "completed": 14,
+      "recovered_fault_3d": 8,
+      "settled_3d": 14,
+      "freeze_total_s": 0.8,
+      "allocator_clip_total_s": 0.8,
+      "longest_freeze_s": 0.3,
+      "worst_recovery_3d_s": 17.2,
+      "tail_18_20": {
+        "offset_xy_m": 0.011078429379983067,
+        "offset_z_abs_m": 0.0026974945368639226,
+        "sway_xy_rms_m": 0.0016826374736943065,
+        "sway_z_rms_m": 0.00022321412121042305,
+        "max_xy_error_m": 0.014229993401591194,
+        "max_abs_z_error_m": 0.0030911244026275986,
+        "max_tilt_deg": 0.04992148954386257
+      },
+      "tail_58_60": {
+        "offset_xy_m": 6.597770190978559e-07,
+        "offset_z_abs_m": 8.58867763968707e-07,
+        "sway_xy_rms_m": 9.181226762701682e-08,
+        "sway_z_rms_m": 1.0946772709634496e-07,
+        "max_xy_error_m": 8.233053988280639e-07,
+        "max_abs_z_error_m": 1.0622608219712504e-06,
+        "max_tilt_deg": 3.6222548091772e-06
+      },
+      "full_0_60": {
+        "offset_xy_m": 0.023643721012691805,
+        "offset_z_abs_m": 0.004727559622755726,
+        "sway_xy_rms_m": 0.047749204593592234,
+        "sway_z_rms_m": 0.010688076683155103,
+        "max_xy_error_m": 0.2012438615057402,
+        "max_abs_z_error_m": 0.079337403210053,
+        "max_tilt_deg": 11.797378243438354
+      },
+      "nominal": {
+        "max_xy_error_m": 0.002393899750672729,
+        "max_abs_z_error_m": 0.002029363990850852,
+        "max_tilt_deg": 0.1812389158792786
+      }
+    }
+  ],
+  "selection_scope": "same development conditions used for comparison; not independent validation",
+  "selection_rule": "all 14 completed; then 3D settling/recovery count, worst tail residual, transient XY, freeze time"
+}

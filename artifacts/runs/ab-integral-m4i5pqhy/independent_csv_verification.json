@@ -1,0 +1,12 @@
+{
+  "rollouts": 56,
+  "control_samples": 336000,
+  "physics_samples": 1680000,
+  "max_recurrence_error_m": 0.0,
+  "max_bias_variance_identity_error_m2": 1.494200000274476e-16,
+  "true_target_metrics": true,
+  "raw_velocity_unchanged": true,
+  "interval_saturation_verified": true,
+  "force_and_reaction_efficiency_applied_once": true,
+  "fixed_windows_and_suffix_recovery_verified": true
+}

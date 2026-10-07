@@ -1,0 +1,68 @@
+verified nominal-A_best-no_integral
+verified nominal-B_best-no_integral
+verified centered_payload-A_best-no_integral
+verified centered_payload-B_best-no_integral
+verified offset_payload-A_best-no_integral
+verified offset_payload-B_best-no_integral
+verified motor_80-A_best-no_integral
+verified motor_80-B_best-no_integral
+verified motor_70-A_best-no_integral
+verified motor_70-B_best-no_integral
+verified combined_80-A_best-no_integral
+verified combined_80-B_best-no_integral
+verified combined_70-A_best-no_integral
+verified combined_70-B_best-no_integral
+verified nominal-A_best-integral_005
+verified nominal-B_best-integral_005
+verified centered_payload-A_best-integral_005
+verified centered_payload-B_best-integral_005
+verified offset_payload-A_best-integral_005
+verified offset_payload-B_best-integral_005
+verified motor_80-A_best-integral_005
+verified motor_80-B_best-integral_005
+verified motor_70-A_best-integral_005
+verified motor_70-B_best-integral_005
+verified combined_80-A_best-integral_005
+verified combined_80-B_best-integral_005
+verified combined_70-A_best-integral_005
+verified combined_70-B_best-integral_005
+verified nominal-A_best-integral_010
+verified nominal-B_best-integral_010
+verified centered_payload-A_best-integral_010
+verified centered_payload-B_best-integral_010
+verified offset_payload-A_best-integral_010
+verified offset_payload-B_best-integral_010
+verified motor_80-A_best-integral_010
+verified motor_80-B_best-integral_010
+verified motor_70-A_best-integral_010
+verified motor_70-B_best-integral_010
+verified combined_80-A_best-integral_010
+verified combined_80-B_best-integral_010
+verified combined_70-A_best-integral_010
+verified combined_70-B_best-integral_010
+verified nominal-A_best-integral_020
+verified nominal-B_best-integral_020
+verified centered_payload-A_best-integral_020
+verified centered_payload-B_best-integral_020
+verified offset_payload-A_best-integral_020
+verified offset_payload-B_best-integral_020
+verified motor_80-A_best-integral_020
+verified motor_80-B_best-integral_020
+verified motor_70-A_best-integral_020
+verified motor_70-B_best-integral_020
+verified combined_80-A_best-integral_020
+verified combined_80-B_best-integral_020
+verified combined_70-A_best-integral_020
+verified combined_70-B_best-integral_020
+{
+  "rollouts": 56,
+  "control_samples": 336000,
+  "physics_samples": 1680000,
+  "max_recurrence_error_m": 0.0,
+  "max_bias_variance_identity_error_m2": 1.494200000274476e-16,
+  "true_target_metrics": true,
+  "raw_velocity_unchanged": true,
+  "interval_saturation_verified": true,
+  "force_and_reaction_efficiency_applied_once": true,
+  "fixed_windows_and_suffix_recovery_verified": true
+}

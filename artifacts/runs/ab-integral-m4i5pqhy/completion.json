@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "expected_rollouts": 56,
+  "completed_rollouts": 56,
+  "flights_completed": 56,
+  "error": null,
+  "protected_files_unchanged": true,
+  "common_development_candidate": "integral_020",
+  "independent_csv_verification_passed": true,
+  "control_samples": 336000,
+  "physics_samples": 1680000,
+  "regression_tests_passed": 83,
+  "post_fix_focused_tests_passed": 29,
+  "plots": 21,
+  "preflight_output_failures_preserved": [
+    "artifacts/runs/ab-integral-njrdrtzg",
+    "artifacts/runs/ab-integral-304byc9a"
+  ]
+}

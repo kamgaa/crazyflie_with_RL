@@ -1,0 +1,198 @@
+{
+  "nominal-A_best": {
+    "control": {
+      "samples": 2000,
+      "numeric_columns": 268,
+      "max_abs_error": 0.0,
+      "excluded": "20s horizon truncated flag differs intentionally"
+    },
+    "physics": {
+      "samples": 10000,
+      "numeric_columns": 102,
+      "max_abs_error": 0.0,
+      "excluded": null
+    }
+  },
+  "nominal-B_best": {
+    "control": {
+      "samples": 2000,
+      "numeric_columns": 268,
+      "max_abs_error": 0.0,
+      "excluded": "20s horizon truncated flag differs intentionally"
+    },
+    "physics": {
+      "samples": 10000,
+      "numeric_columns": 102,
+      "max_abs_error": 0.0,
+      "excluded": null
+    }
+  },
+  "centered_payload-A_best": {
+    "control": {
+      "samples": 2000,
+      "numeric_columns": 268,
+      "max_abs_error": 0.0,
+      "excluded": "20s horizon truncated flag differs intentionally"
+    },
+    "physics": {
+      "samples": 10000,
+      "numeric_columns": 102,
+      "max_abs_error": 0.0,
+      "excluded": null
+    }
+  },
+  "centered_payload-B_best": {
+    "control": {
+      "samples": 2000,
+      "numeric_columns": 268,
+      "max_abs_error": 0.0,
+      "excluded": "20s horizon truncated flag differs intentionally"
+    },
+    "physics": {
+      "samples": 10000,
+      "numeric_columns": 102,
+      "max_abs_error": 0.0,
+      "excluded": null
+    }
+  },
+  "offset_payload-A_best": {
+    "control": {
+      "samples": 2000,
+      "numeric_columns": 268,
+      "max_abs_error": 0.0,
+      "excluded": "20s horizon truncated flag differs intentionally"
+    },
+    "physics": {
+      "samples": 10000,
+      "numeric_columns": 102,
+      "max_abs_error": 0.0,
+      "excluded": null
+    }
+  },
+  "offset_payload-B_best": {
+    "control": {
+      "samples": 2000,
+      "numeric_columns": 268,
+      "max_abs_error": 0.0,
+      "excluded": "20s horizon truncated flag differs intentionally"
+    },
+    "physics": {
+      "samples": 10000,
+      "numeric_columns": 102,
+      "max_abs_error": 0.0,
+      "excluded": null
+    }
+  },
+  "motor_80-A_best": {
+    "control": {
+      "samples": 2000,
+      "numeric_columns": 268,
+      "max_abs_error": 0.0,
+      "excluded": "20s horizon truncated flag differs intentionally"
+    },
+    "physics": {
+      "samples": 10000,
+      "numeric_columns": 102,
+      "max_abs_error": 0.0,
+      "excluded": null
+    }
+  },
+  "motor_80-B_best": {
+    "control": {
+      "samples": 2000,
+      "numeric_columns": 268,
+      "max_abs_error": 0.0,
+      "excluded": "20s horizon truncated flag differs intentionally"
+    },
+    "physics": {
+      "samples": 10000,
+      "numeric_columns": 102,
+      "max_abs_error": 0.0,
+      "excluded": null
+    }
+  },
+  "motor_70-A_best": {
+    "control": {
+      "samples": 2000,
+      "numeric_columns": 268,
+      "max_abs_error": 0.0,
+      "excluded": "20s horizon truncated flag differs intentionally"
+    },
+    "physics": {
+      "samples": 10000,
+      "numeric_columns": 102,
+      "max_abs_error": 0.0,
+      "excluded": null
+    }
+  },
+  "motor_70-B_best": {
+    "control": {
+      "samples": 2000,
+      "numeric_columns": 268,
+      "max_abs_error": 0.0,
+      "excluded": "20s horizon truncated flag differs intentionally"
+    },
+    "physics": {
+      "samples": 10000,
+      "numeric_columns": 102,
+      "max_abs_error": 0.0,
+      "excluded": null
+    }
+  },
+  "combined_80-A_best": {
+    "control": {
+      "samples": 2000,
+      "numeric_columns": 268,
+      "max_abs_error": 0.0,
+      "excluded": "20s horizon truncated flag differs intentionally"
+    },
+    "physics": {
+      "samples": 10000,
+      "numeric_columns": 102,
+      "max_abs_error": 0.0,
+      "excluded": null
+    }
+  },
+  "combined_80-B_best": {
+    "control": {
+      "samples": 2000,
+      "numeric_columns": 268,
+      "max_abs_error": 0.0,
+      "excluded": "20s horizon truncated flag differs intentionally"
+    },
+    "physics": {
+      "samples": 10000,
+      "numeric_columns": 102,
+      "max_abs_error": 0.0,
+      "excluded": null
+    }
+  },
+  "combined_70-A_best": {
+    "control": {
+      "samples": 2000,
+      "numeric_columns": 268,
+      "max_abs_error": 0.0,
+      "excluded": "20s horizon truncated flag differs intentionally"
+    },
+    "physics": {
+      "samples": 10000,
+      "numeric_columns": 102,
+      "max_abs_error": 0.0,
+      "excluded": null
+    }
+  },
+  "combined_70-B_best": {
+    "control": {
+      "samples": 2000,
+      "numeric_columns": 268,
+      "max_abs_error": 0.0,
+      "excluded": "20s horizon truncated flag differs intentionally"
+    },
+    "physics": {
+      "samples": 10000,
+      "numeric_columns": 102,
+      "max_abs_error": 0.0,
+      "excluded": null
+    }
+  }
+}
