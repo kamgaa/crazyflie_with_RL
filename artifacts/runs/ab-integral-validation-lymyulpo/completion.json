@@ -1,0 +1,12 @@
+{
+  "status": "completed",
+  "expected_rollouts": 52,
+  "completed_rollouts": 52,
+  "flights_completed": 46,
+  "error": null,
+  "protected_files_unchanged": true,
+  "policy_parameters_unchanged": true,
+  "focused_tests_passed": 72,
+  "independent_csv_audit_passed": true,
+  "verification_file": "verification.json"
+}
