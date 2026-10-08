@@ -1,0 +1,13 @@
+extends: eval_velocity_ab_user_frd.yaml
+
+# Independent evaluation profile: existing training/0.20 N results stay intact.
+# One cap feeds allocator clipping and the plant/estimator forward+inverse maps.
+vehicle:
+  thrust_max: 0.289
+
+actuator:
+  time_constant_s: 0.050
+
+experiment:
+  condition: circle-fault-0289-fixed-controllers
+  description: PID and frozen PPO plus integral, blind/oracle/estimated allocation

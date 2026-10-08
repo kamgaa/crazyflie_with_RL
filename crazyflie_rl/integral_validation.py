@@ -157,7 +157,10 @@ class ScenarioObserver(IntegralObserver):
 
     def after_step(self, env, row):
         super().after_step(env, row)
-        np.testing.assert_array_equal(row['reference_post'], env.pos_des)
+        # Fixed/event setpoints use the interval's held reference. Continuous
+        # missions may evaluate the post-state against reference(t + dt).
+        if getattr(self, 'fixed_reference', True):
+            np.testing.assert_array_equal(row['reference_post'], env.pos_des)
         yaw = np.radians(row['attitude_deg'][2]) - env.yaw_des
         row['yaw_error_rad'] = float(np.arctan2(np.sin(yaw), np.cos(yaw)))
         row['p_target_post'] = row['reference_post'].copy()
