@@ -1,0 +1,134 @@
+[
+  {
+    "key": "A_best-hover",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 20.0
+  },
+  {
+    "key": "A_best-step_x",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 20.0
+  },
+  {
+    "key": "A_best-step_y",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 20.0
+  },
+  {
+    "key": "A_best-motor1_80",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 5.0
+  },
+  {
+    "key": "A_best-motor1_70",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 5.0
+  },
+  {
+    "key": "A_best-motor2_80",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 5.0
+  },
+  {
+    "key": "A_best-motor2_70",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 5.0
+  },
+  {
+    "key": "A_best-motor3_80",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 5.0
+  },
+  {
+    "key": "A_best-motor3_70",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 5.0
+  },
+  {
+    "key": "A_best-motor4_80",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 5.0
+  },
+  {
+    "key": "A_best-motor4_70",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 5.0
+  },
+  {
+    "key": "B_best-hover",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 20.0
+  },
+  {
+    "key": "B_best-step_x",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 20.0
+  },
+  {
+    "key": "B_best-step_y",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 20.0
+  },
+  {
+    "key": "B_best-motor1_80",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 5.0
+  },
+  {
+    "key": "B_best-motor1_70",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 5.0
+  },
+  {
+    "key": "B_best-motor2_80",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 5.0
+  },
+  {
+    "key": "B_best-motor2_70",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 5.0
+  },
+  {
+    "key": "B_best-motor3_80",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 5.0
+  },
+  {
+    "key": "B_best-motor3_70",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 5.0
+  },
+  {
+    "key": "B_best-motor4_80",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 5.0
+  },
+  {
+    "key": "B_best-motor4_70",
+    "false_positive_episodes": 0,
+    "false_positive_seconds": 0.0,
+    "healthy_observed_seconds": 5.0
+  }
+]

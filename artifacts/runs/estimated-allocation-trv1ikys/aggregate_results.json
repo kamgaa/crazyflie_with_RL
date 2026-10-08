@@ -1,0 +1,158 @@
+[
+  {
+    "label": "A_best",
+    "mode": "blind",
+    "completed": 8,
+    "position_recovered": 6,
+    "joint_recovered": 4,
+    "recovery_range_s": [
+      11.490000000000002,
+      13.98
+    ],
+    "max_xy_m": 0.10751976391825589,
+    "max_z_m": 0.05203489107526671,
+    "mean_xy_rmse_m": 0.03198246475331078,
+    "mean_z_rmse_m": 0.010427101198423668,
+    "worst_tail_xy_m": 0.0058057134720757375,
+    "worst_tail_z_abs_m": 0.0027027548925905825,
+    "detection_range_s": [
+      0.07000000000000028,
+      0.08000000000000007
+    ],
+    "mae_range": [
+      0.0010210863849277186,
+      0.001527930708699735
+    ],
+    "clip_union_total_s": 0.05999999999999963
+  },
+  {
+    "label": "A_best",
+    "mode": "oracle",
+    "completed": 8,
+    "position_recovered": 8,
+    "joint_recovered": 8,
+    "recovery_range_s": [
+      0.6100000000000003,
+      2.16
+    ],
+    "max_xy_m": 0.012330972995854785,
+    "max_z_m": 0.004015578047411594,
+    "mean_xy_rmse_m": 0.0013588514627164323,
+    "mean_z_rmse_m": 0.0004729663406462693,
+    "worst_tail_xy_m": 0.00014580458553839146,
+    "worst_tail_z_abs_m": 8.660602719746003e-05,
+    "detection_range_s": [
+      0.07000000000000028,
+      0.07000000000000028
+    ],
+    "mae_range": [
+      0.0010093243615133438,
+      0.0014661114894748374
+    ],
+    "clip_union_total_s": 0.20999999999999913
+  },
+  {
+    "label": "A_best",
+    "mode": "estimated",
+    "completed": 8,
+    "position_recovered": 8,
+    "joint_recovered": 8,
+    "recovery_range_s": [
+      1.5300000000000002,
+      5.1
+    ],
+    "max_xy_m": 0.04343797349850725,
+    "max_z_m": 0.013111120513952579,
+    "mean_xy_rmse_m": 0.004624017474094895,
+    "mean_z_rmse_m": 0.0014139506903030092,
+    "worst_tail_xy_m": 0.0003314054239555349,
+    "worst_tail_z_abs_m": 0.000189100963811325,
+    "detection_range_s": [
+      0.07000000000000028,
+      0.08000000000000007
+    ],
+    "mae_range": [
+      0.0010148002802536033,
+      0.0015143356915929657
+    ],
+    "clip_union_total_s": 0.3099999999999987
+  },
+  {
+    "label": "B_best",
+    "mode": "blind",
+    "completed": 8,
+    "position_recovered": 4,
+    "joint_recovered": 3,
+    "recovery_range_s": [
+      13.120000000000001,
+      13.830000000000002
+    ],
+    "max_xy_m": 0.14066636915857583,
+    "max_z_m": 0.07159202495656558,
+    "mean_xy_rmse_m": 0.05047839368924367,
+    "mean_z_rmse_m": 0.00956935109531806,
+    "worst_tail_xy_m": 0.007838606409058344,
+    "worst_tail_z_abs_m": 0.003822161122327966,
+    "detection_range_s": [
+      0.07000000000000028,
+      0.08000000000000007
+    ],
+    "mae_range": [
+      0.0010267743559235383,
+      0.0016726484216309752
+    ],
+    "clip_union_total_s": 0.059999999999999595
+  },
+  {
+    "label": "B_best",
+    "mode": "oracle",
+    "completed": 8,
+    "position_recovered": 8,
+    "joint_recovered": 8,
+    "recovery_range_s": [
+      0.7000000000000002,
+      2.04
+    ],
+    "max_xy_m": 0.016322248964562473,
+    "max_z_m": 0.004612345863749812,
+    "mean_xy_rmse_m": 0.0015909016954786148,
+    "mean_z_rmse_m": 0.0004584144323601312,
+    "worst_tail_xy_m": 0.00014074570878344907,
+    "worst_tail_z_abs_m": 6.393386362697262e-05,
+    "detection_range_s": [
+      0.07000000000000028,
+      0.07000000000000028
+    ],
+    "mae_range": [
+      0.001012369537281013,
+      0.0014675905717096537
+    ],
+    "clip_union_total_s": 0.19999999999999934
+  },
+  {
+    "label": "B_best",
+    "mode": "estimated",
+    "completed": 8,
+    "position_recovered": 8,
+    "joint_recovered": 8,
+    "recovery_range_s": [
+      1.9299999999999997,
+      4.450000000000001
+    ],
+    "max_xy_m": 0.059698895458415044,
+    "max_z_m": 0.019780743354953945,
+    "mean_xy_rmse_m": 0.0059863024578894935,
+    "mean_z_rmse_m": 0.0014646809302022632,
+    "worst_tail_xy_m": 0.0004337431800245436,
+    "worst_tail_z_abs_m": 0.00013568271558414113,
+    "detection_range_s": [
+      0.07000000000000028,
+      0.08000000000000007
+    ],
+    "mae_range": [
+      0.0010207460727632014,
+      0.001659354029507504
+    ],
+    "clip_union_total_s": 0.26999999999999874
+  }
+]

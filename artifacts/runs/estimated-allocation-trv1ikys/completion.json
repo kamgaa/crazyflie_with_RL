@@ -1,0 +1,18 @@
+{
+  "status": "complete",
+  "rollouts": 66,
+  "fresh_rollouts": 66,
+  "reused_rollouts": 0,
+  "completed": 66,
+  "terminated": 0,
+  "independent_verification_passed": true,
+  "protected_files": 4076,
+  "no_training_or_tuning": true,
+  "focused_tests_passed": 92,
+  "full_repository_tests": false,
+  "plots_visually_checked": true,
+  "simulation_source_snapshot": "source_at_evaluation",
+  "final_source_snapshot": "final_source_snapshot",
+  "post_evaluation_changes": "Only plot layout and preservation inventory for self-contained reruns; no controller, estimator, physics or trajectory changes",
+  "checkpoints_settings_old_artifacts_unchanged": true
+}

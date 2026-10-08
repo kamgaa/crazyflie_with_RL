@@ -1,0 +1,165 @@
+{
+  "changed_existing_sources": [
+    "crazyflie_rl/integral_validation.py"
+  ],
+  "new_sources": [
+    "compare_circle_faults.py",
+    "configs/eval_circle_fault_0289.yaml",
+    "crazyflie_rl/circle_fault_eval.py",
+    "crazyflie_rl/circle_fault_plots.py",
+    "tests/test_circle_faults.py",
+    "verify_circle_faults.py"
+  ],
+  "source_hashes": {
+    "compare_circle_faults.py": "42cc3e89cad2b14baa686b8ed35cc0a8794603444fe3d19a40c304b52e70de3e",
+    "configs/eval_circle_fault_0289.yaml": "b87a84fee2bc955163553b5cd128bc9139361ad71fbedf1c5b48434da3d9702a",
+    "crazyflie_rl/circle_fault_eval.py": "986577e6d3ec56b272a270316dc0152cf3330afd4f53cbe00018349741f06b53",
+    "crazyflie_rl/circle_fault_plots.py": "18468cfe5f89170168903562443479c29cdd5ba6831a1ec4f97c608afcbf0adb",
+    "tests/test_circle_faults.py": "afc12b34bd81ade62753217daa64e21d09fc80d2c9246b488f2afdea83fded9d",
+    "verify_circle_faults.py": "df0430676fadb15efce88fc91504990d2165c44360eda6a7e9bef2dcd1a71060",
+    "crazyflie_rl/integral_validation.py": "15f64c79d770bfd42ae7425af34acba7e7a79a3414b4daf2559ac850b1d44563"
+  },
+  "focused_tests": {
+    "passed": 56,
+    "full_repository_suite_run": false,
+    "command": "PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python -m pytest -q tests/test_circle_faults.py tests/test_estimated_allocation.py tests/test_fault_estimator.py tests/test_integral_validation.py",
+    "plugin_note": "disabled unrelated ROS pytest auto-loading; installed ROS launch plugin requires absent lark"
+  },
+  "smoke_runs": 3,
+  "main_runs": 20,
+  "control_samples": 87000,
+  "post_scope": "T10 (26,56], T5 (16,31]; healthy uses same clock",
+  "all_completed": true,
+  "total_false_positive_seconds": 0.0,
+  "total_misidentification_seconds": 0.0,
+  "all_observed_clipping_seconds": 0.0,
+  "all_observed_esc_boundary_seconds": 0.0,
+  "all_observed_action_boundary_seconds": 0.0,
+  "all_observed_integral_freeze_seconds": 0.0,
+  "visual_inspection": [
+    "A_best-xy.png",
+    "A_best-wrench-transient.png",
+    "T5-A_best-wrench-components.png"
+  ],
+  "interpretation_limits": [
+    "fixed deterministic runs; no success probability or stability guarantee",
+    "ideal simulator states; no hardware/noise validation",
+    "normal tracking error already large for frozen hover PPO, particularly T5",
+    "no clipping observed in these 20 runs; motor response residual retained with 50ms lag",
+    "no causal ablation of motor delay or policy limitations; no tuning or training"
+  ],
+  "paired_post_differences": [
+    {
+      "period_s": 10.0,
+      "label": "A_best",
+      "blind_fault_minus_healthy": {
+        "position_rmse_xy": 0.007877126590095318,
+        "position_rmse_z": -0.004977744342508,
+        "tilt_max_deg": 6.056182779914124,
+        "yaw_max_abs_deg": 6.474085929269848
+      },
+      "oracle_fault_minus_blind_fault": {
+        "position_rmse_xy": -0.007903031301862817,
+        "position_rmse_z": 0.004895306705809066,
+        "tilt_max_deg": -4.5305759796363425,
+        "yaw_max_abs_deg": -6.473288513252074
+      },
+      "estimated_fault_minus_oracle_fault": {
+        "position_rmse_xy": -0.0001697064163325157,
+        "position_rmse_z": -0.00017670742351666435,
+        "tilt_max_deg": 3.3767041243692812,
+        "yaw_max_abs_deg": 0.004202750515101883
+      },
+      "estimated_fault_minus_healthy": {
+        "position_rmse_xy": -0.00019561112810001502,
+        "position_rmse_z": -0.0002591450602155987,
+        "tilt_max_deg": 4.902310924647063,
+        "yaw_max_abs_deg": 0.005000166532876271
+      }
+    },
+    {
+      "period_s": 10.0,
+      "label": "B_best",
+      "blind_fault_minus_healthy": {
+        "position_rmse_xy": 0.0018344431325575394,
+        "position_rmse_z": -0.002149650522084101,
+        "tilt_max_deg": 6.776274979963169,
+        "yaw_max_abs_deg": 5.252849179804164
+      },
+      "oracle_fault_minus_blind_fault": {
+        "position_rmse_xy": -0.001954238255360785,
+        "position_rmse_z": 0.0021041273105951164,
+        "tilt_max_deg": -5.3174282530184875,
+        "yaw_max_abs_deg": -5.242741681755173
+      },
+      "estimated_fault_minus_oracle_fault": {
+        "position_rmse_xy": -0.0003185508431520212,
+        "position_rmse_z": -0.00011130597566096079,
+        "tilt_max_deg": 4.413440023900824,
+        "yaw_max_abs_deg": 0.036089832899113716
+      },
+      "estimated_fault_minus_healthy": {
+        "position_rmse_xy": -0.00043834596595526687,
+        "position_rmse_z": -0.00015682918714994554,
+        "tilt_max_deg": 5.872286750845506,
+        "yaw_max_abs_deg": 0.04619733094810474
+      }
+    },
+    {
+      "period_s": 5.0,
+      "label": "A_best",
+      "blind_fault_minus_healthy": {
+        "position_rmse_xy": 0.002190006608003503,
+        "position_rmse_z": -0.0032816579054057993,
+        "tilt_max_deg": 5.279378123056466,
+        "yaw_max_abs_deg": 6.016851226957783
+      },
+      "oracle_fault_minus_blind_fault": {
+        "position_rmse_xy": -0.002246860232425263,
+        "position_rmse_z": 0.003247017318305234,
+        "tilt_max_deg": -4.683666741824229,
+        "yaw_max_abs_deg": -6.025361825728548
+      },
+      "estimated_fault_minus_oracle_fault": {
+        "position_rmse_xy": -0.00020323561520330102,
+        "position_rmse_z": -5.1120392936532255e-05,
+        "tilt_max_deg": 1.8784383781961012,
+        "yaw_max_abs_deg": -0.0007743732934484271
+      },
+      "estimated_fault_minus_healthy": {
+        "position_rmse_xy": -0.0002600892396250609,
+        "position_rmse_z": -8.576098003709731e-05,
+        "tilt_max_deg": 2.4741497594283377,
+        "yaw_max_abs_deg": -0.009284972064213193
+      }
+    },
+    {
+      "period_s": 5.0,
+      "label": "B_best",
+      "blind_fault_minus_healthy": {
+        "position_rmse_xy": -0.0011181541845047827,
+        "position_rmse_z": -0.0024771143190099876,
+        "tilt_max_deg": 7.463919562794807,
+        "yaw_max_abs_deg": 5.628212296030152
+      },
+      "oracle_fault_minus_blind_fault": {
+        "position_rmse_xy": 0.0009418936652384469,
+        "position_rmse_z": 0.002425402286566153,
+        "tilt_max_deg": -6.300615871337396,
+        "yaw_max_abs_deg": -5.6283274066872755
+      },
+      "estimated_fault_minus_oracle_fault": {
+        "position_rmse_xy": -0.00033769115698667473,
+        "position_rmse_z": -0.00020916388171801636,
+        "tilt_max_deg": 3.6124755688152046,
+        "yaw_max_abs_deg": -0.00020160046854122982
+      },
+      "estimated_fault_minus_healthy": {
+        "position_rmse_xy": -0.0005139516762530105,
+        "position_rmse_z": -0.0002608759141618511,
+        "tilt_max_deg": 4.775779260272616,
+        "yaw_max_abs_deg": -0.00031671112566478143
+      }
+    }
+  ]
+}

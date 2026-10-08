@@ -1,0 +1,88 @@
+{
+  "run": "A_best-motor1_70",
+  "video": "motor1_fault_estimation.mp4",
+  "sha256": "9675da01e1a973676d874f6b54e536233977fcea446b98d4f27fbd362d4fbd49",
+  "width": 1280,
+  "height": 720,
+  "fps": 30,
+  "frames": 300,
+  "duration_s": 10.0,
+  "requested_simulation_interval": [
+    2.0,
+    12.0
+  ],
+  "observed_end": 12.0,
+  "playback_speed": 1.0,
+  "audio": false,
+  "codec": "H.264",
+  "pixel_format": "yuv420p",
+  "full_decode_success": true,
+  "camera": {
+    "lookat": [
+      0.04181912049453851,
+      0.03318327212608191,
+      0.9745097532021567
+    ],
+    "distance": 0.5919423800655381,
+    "azimuth": 225.0,
+    "elevation": -40.0,
+    "fixed": true
+  },
+  "timeline": "causal zero-order hold of 100 Hz saved states/estimates onto 30 fps; no future interpolation; ground truth uses event right limit at 5 s",
+  "max_state_age_s": 0.006666666666667709,
+  "estimator_recomputed": false,
+  "physics_steps": 0,
+  "display_smoothing": false,
+  "source_trace_sha256": "03e388fbc624cf75bb5ef90960cffef4fe014c03a99e0f56a01bb56b4c35b6d5",
+  "source_replay_sha256": "1cf1a9cefc1ec98850cc2af496022b46c98e16de0bf159187ddc31bbe2699990",
+  "event_sha256": "8170cf3a911580d0b43c414becaae71d75b3f7edbca585054cdfcb31c354e06e",
+  "frame_checks": [
+    {
+      "frame": 0,
+      "name": "start",
+      "mean": 115.66331199363425,
+      "std": 85.83035377900592
+    },
+    {
+      "frame": 91,
+      "name": "after_fault",
+      "mean": 115.72834056712964,
+      "std": 85.84538003074155
+    },
+    {
+      "frame": 299,
+      "name": "end",
+      "mean": 115.93919089988425,
+      "std": 85.85608986838216
+    }
+  ],
+  "ffmpeg_version": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+  "encode_command": [
+    "/tmp/crazyflie-video-deps/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v7.0.2",
+    "-y",
+    "-loglevel",
+    "warning",
+    "-f",
+    "rawvideo",
+    "-pix_fmt",
+    "rgb24",
+    "-s",
+    "1280x720",
+    "-r",
+    "30",
+    "-i",
+    "-",
+    "-an",
+    "-c:v",
+    "libx264",
+    "-preset",
+    "medium",
+    "-crf",
+    "19",
+    "-pix_fmt",
+    "yuv420p",
+    "-movflags",
+    "+faststart",
+    "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/motor-estimation-g43e4hbx/motor1_fault_estimation.mp4"
+  ]
+}

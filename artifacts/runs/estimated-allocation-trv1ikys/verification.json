@@ -1,0 +1,667 @@
+{
+  "offline_replay": {
+    "A_best-hover-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-hover-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-hover-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-step_x-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-step_x-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-step_x-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-step_y-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-step_y-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-step_y-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor1_80-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor1_80-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor1_80-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor1_70-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor1_70-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor1_70-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor2_80-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor2_80-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor2_80-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor2_70-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor2_70-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor2_70-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor3_80-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor3_80-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor3_80-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor3_70-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor3_70-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor3_70-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor4_80-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor4_80-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor4_80-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor4_70-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor4_70-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor4_70-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-hover-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-hover-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-hover-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-step_x-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-step_x-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-step_x-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-step_y-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-step_y-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-step_y-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor1_80-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor1_80-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor1_80-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor1_70-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor1_70-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor1_70-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor2_80-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor2_80-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor2_80-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor2_70-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor2_70-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor2_70-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor3_80-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor3_80-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor3_80-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor3_70-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor3_70-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor3_70-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor4_80-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor4_80-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor4_80-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor4_70-blind": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor4_70-oracle": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor4_70-estimated": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    }
+  },
+  "blind_reproduction": {
+    "A_best-hover-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "A_best-step_x-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "A_best-step_y-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor1_80-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor1_70-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor2_80-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor2_70-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor3_80-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor3_70-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor4_80-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor4_70-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "B_best-hover-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "B_best-step_x-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "B_best-step_y-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor1_80-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor1_70-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor2_80-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor2_70-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor3_80-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor3_70-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor4_80-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor4_70-blind": {
+      "samples": 2000,
+      "columns": 75,
+      "max_abs_error": 0.0
+    }
+  },
+  "prefault_equal": {
+    "A_best-hover-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-hover-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-step_x-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-step_x-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-step_y-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-step_y-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor1_80-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor1_80-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor1_70-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor1_70-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor2_80-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor2_80-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor2_70-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor2_70-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor3_80-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor3_80-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor3_70-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor3_70-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor4_80-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor4_80-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor4_70-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor4_70-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-hover-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-hover-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-step_x-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-step_x-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-step_y-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-step_y-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor1_80-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor1_80-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor1_70-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor1_70-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor2_80-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor2_80-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor2_70-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor2_70-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor3_80-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor3_80-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor3_70-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor3_70-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor4_80-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor4_80-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor4_70-oracle": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor4_70-estimated": {
+      "samples": 500,
+      "columns": 87,
+      "max_abs_error": 0.0
+    }
+  },
+  "nominal_equal": {
+    "A_best-hover-oracle": {
+      "samples": 2000,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-hover-estimated": {
+      "samples": 2000,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-step_x-oracle": {
+      "samples": 2000,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-step_x-estimated": {
+      "samples": 2000,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-step_y-oracle": {
+      "samples": 2000,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "A_best-step_y-estimated": {
+      "samples": 2000,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-hover-oracle": {
+      "samples": 2000,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-hover-estimated": {
+      "samples": 2000,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-step_x-oracle": {
+      "samples": 2000,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-step_x-estimated": {
+      "samples": 2000,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-step_y-oracle": {
+      "samples": 2000,
+      "columns": 87,
+      "max_abs_error": 0.0
+    },
+    "B_best-step_y-estimated": {
+      "samples": 2000,
+      "columns": 87,
+      "max_abs_error": 0.0
+    }
+  },
+  "no_learning_or_optimizer_updates": true,
+  "parameters_unchanged": true,
+  "single_efficiency_application_checked_every_substep": true
+}

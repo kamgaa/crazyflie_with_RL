@@ -1,0 +1,54 @@
+{
+  "runs": {
+    "esc_boundary": {
+      "samples": 2000,
+      "csv_metrics_recomputed": true,
+      "events_state_preserved": true
+    }
+  },
+  "application_rule": {
+    "esc_boundary": {
+      "max_allocation_error": 0.0,
+      "first_applied": 5.08,
+      "causal_hold_rule_passed": true
+    }
+  },
+  "causality": {
+    "truth_metadata_mutation_max_error": 0.0,
+    "future_mutation_prefix_max_error": 0.0,
+    "prefix_samples": 600,
+    "includes_estimates_held_efficiencies_and_allocated_commands": true
+  },
+  "preservation": {
+    "files": 4076,
+    "all_sha256_unchanged": true
+  },
+  "pooled_runtime_ms": {
+    "blind": {
+      "samples": 44000,
+      "median": 0.5013765,
+      "p95": 0.71042105,
+      "max": 3.518221,
+      "over_10ms_count": 0,
+      "over_10ms_fraction": 0.0
+    },
+    "oracle": {
+      "samples": 44000,
+      "median": 0.499947,
+      "p95": 0.6992595499999996,
+      "max": 2.327734,
+      "over_10ms_count": 0,
+      "over_10ms_fraction": 0.0
+    },
+    "estimated": {
+      "samples": 44000,
+      "median": 0.5015419999999999,
+      "p95": 0.7104904499999999,
+      "max": 2.846404,
+      "over_10ms_count": 0,
+      "over_10ms_fraction": 0.0
+    }
+  },
+  "common_initial_snapshots_match_all_modes_and_previous": true,
+  "runtime_interpretation": "Wall execution cost measured; no compute-delay model injected into simulation, no real-time guarantee."
+}

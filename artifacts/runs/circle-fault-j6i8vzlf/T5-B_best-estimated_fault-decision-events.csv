@@ -1,0 +1,7 @@
+kind,available_time,state,confirmed_user_motor,estimated_efficiency_user,first_possible_command_time,efficiency_used_user,estimate_source_time,allocation_mode
+decision_transition,0.01,insufficient_data,0,"[1.0, 1.0, 1.0, 1.0]",0.01,,,
+decision_transition,0.2,uncertain,0,"[1.0, 1.0, 1.0, 1.0]",0.2,,,
+decision_transition,0.24,healthy,0,"[1.0, 1.0, 1.0, 1.0]",0.24,,,
+decision_transition,16.01,uncertain,0,"[1.0, 1.0, 1.0, 1.0]",16.01,,,
+decision_transition,16.07,fault,1,"[0.8046031238923391, 1.0, 1.0, 1.0]",16.07,,,
+first_allocator_compensation,16.07,,,,,"[0.8046031238923391, 1.0, 1.0, 1.0]",16.07,estimated

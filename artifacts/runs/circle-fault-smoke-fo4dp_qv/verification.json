@@ -1,0 +1,18 @@
+{
+  "offline_replay": {
+    "T5-PID-healthy": {
+      "samples": 800,
+      "max_abs_error": 0.0
+    },
+    "T5-A_best-healthy": {
+      "samples": 800,
+      "max_abs_error": 0.0
+    },
+    "T5-B_best-healthy": {
+      "samples": 800,
+      "max_abs_error": 0.0
+    }
+  },
+  "prefault": {},
+  "single_efficiency_application_every_substep": true
+}

@@ -1,0 +1,9 @@
+{
+  "status": "complete",
+  "runs": 3,
+  "completed": 3,
+  "terminated": 0,
+  "no_training_or_tuning": true,
+  "verification_passed": true,
+  "preserved_existing_files": 4326
+}

@@ -1,0 +1,136 @@
+{
+  "offline_replay": {
+    "A_best-hover": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-step_x": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-step_y": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor1_80": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor1_70": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor2_80": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor2_70": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor3_80": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor3_70": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor4_80": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "A_best-motor4_70": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-hover": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-step_x": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-step_y": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor1_80": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor1_70": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor2_80": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor2_70": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor3_80": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor3_70": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor4_80": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    },
+    "B_best-motor4_70": {
+      "samples": 2000,
+      "max_abs_error": 0.0
+    }
+  },
+  "shadow_equivalence": {
+    "A_best-motor1_70": {
+      "samples": 2000,
+      "fields": [
+        "position",
+        "quaternion",
+        "velocity",
+        "omega",
+        "action",
+        "wrench_command",
+        "motor_thrust_actual",
+        "motor_thrust_command",
+        "motor_omega",
+        "delivered_esc_native",
+        "xi_t",
+        "xi_next"
+      ],
+      "max_abs_error": 0.0,
+      "extra_disabled_rollout": true
+    },
+    "B_best-step_y": {
+      "samples": 2000,
+      "fields": [
+        "position",
+        "quaternion",
+        "velocity",
+        "omega",
+        "action",
+        "wrench_command",
+        "motor_thrust_actual",
+        "motor_thrust_command",
+        "motor_omega",
+        "delivered_esc_native",
+        "xi_t",
+        "xi_next"
+      ],
+      "max_abs_error": 0.0,
+      "extra_disabled_rollout": true
+    }
+  },
+  "input_isolation": {},
+  "policy_parameters_unchanged": true,
+  "no_optimizer_updates": true,
+  "allocator_unchanged_every_step": true
+}

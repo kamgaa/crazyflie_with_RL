@@ -1,0 +1,115 @@
+{
+  "status": "complete",
+  "main_rollouts": 22,
+  "development_rollouts": 1,
+  "disabled_comparison_rollouts": 2,
+  "estimator_parameters_frozen_before_main": true,
+  "focused_tests": {
+    "passed": 61,
+    "failed": 0,
+    "warning": "existing plotting tight_layout warning",
+    "whole_repository_tests_run": false,
+    "causality_subset_rechecked": 3,
+    "estimator_final_subset_passed": 18
+  },
+  "independent_csv_verified_runs": 22,
+  "protected_files": {
+    "count": 3937,
+    "all_sha256_unchanged": true
+  },
+  "shadow_equivalence": {
+    "A_best-motor1_70": {
+      "samples": 2000,
+      "fields": [
+        "position",
+        "quaternion",
+        "velocity",
+        "omega",
+        "action",
+        "wrench_command",
+        "motor_thrust_actual",
+        "motor_thrust_command",
+        "motor_omega",
+        "delivered_esc_native",
+        "xi_t",
+        "xi_next"
+      ],
+      "max_abs_error": 0.0,
+      "extra_disabled_rollout": true
+    },
+    "B_best-step_y": {
+      "samples": 2000,
+      "fields": [
+        "position",
+        "quaternion",
+        "velocity",
+        "omega",
+        "action",
+        "wrench_command",
+        "motor_thrust_actual",
+        "motor_thrust_command",
+        "motor_omega",
+        "delivered_esc_native",
+        "xi_t",
+        "xi_next"
+      ],
+      "max_abs_error": 0.0,
+      "extra_disabled_rollout": true
+    }
+  },
+  "truth_independence": {
+    "max_abs_error": 0.0,
+    "samples": 2000
+  },
+  "future_independence": {
+    "max_abs_error": 0.0,
+    "unchanged_prefix_samples": 600
+  },
+  "video_alignment": {
+    "frames": 300,
+    "passed": true,
+    "max_age_s": 0.006666666666667709,
+    "decode_passed": true
+  },
+  "video": {
+    "file": "motor1_fault_estimation.mp4",
+    "codec": "H.264/yuv420p",
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "decoded_frames": 300,
+    "duration_s": 10,
+    "visual_inspection": [
+      "decoded start: body, labels and panel visible",
+      "decoded just after fault: truth 0.70, estimator still Uncertain at 5.03 s",
+      "decoded end: correctly identified M1, estimate 0.70, confirmation at 5.07 s"
+    ]
+  },
+  "actual_changes": [
+    "compare_motor_estimation.py",
+    "render_motor_estimation.py",
+    "verify_motor_estimation.py",
+    "crazyflie_rl/fault_estimator.py",
+    "crazyflie_rl/fault_estimation_eval.py",
+    "crazyflie_rl/fault_estimation_video.py",
+    "tests/test_fault_estimator.py"
+  ],
+  "base_commit": "dd10b0a2a44efc41fe88d2dfe52ee33e307f54a7",
+  "training": false,
+  "ppo_optimizer_updates": false,
+  "commit_or_push": false,
+  "oracle": false,
+  "estimator_controls_allocator": false,
+  "numerical_method": "analytic bounded scalar weighted least squares for 4 loss hypotheses plus selectable H0",
+  "scope": "known nominal no-payload model, ideal simulator observations, single partial motor fault, deterministic seed 42; no sensor-noise or hardware claim",
+  "final_source_sha256": {
+    "compare_motor_estimation.py": "1f98d65e4067d4b98bc7fa97b38085ada6ba0059224d511601c7f7b63e0ac573",
+    "render_motor_estimation.py": "86d3031a22e3f3b279748d5e4c6520d9c0f94ba782306133b59f53f6f3932fb5",
+    "verify_motor_estimation.py": "52dff814c363bd396385131e3f8237589662c151e06ae6bf897a30a30ff0a42d",
+    "crazyflie_rl/fault_estimator.py": "d6478796d8b2550bace4a7fba10a3fd159300a26249a1fc5317bd1e5011d9920",
+    "crazyflie_rl/fault_estimation_eval.py": "86b6e45d011789e407127db72961518d11d5b3f38551dde6b4d2705660850626",
+    "crazyflie_rl/fault_estimation_video.py": "48fcc54e7c4f2c13c7ad8a1ef9b0006fef01c71fa5c34f3544cccc12a6850bd3",
+    "tests/test_fault_estimator.py": "a36c4d6ed29797f5fa7745cc1ef619b23bf5bdf5961387938bd1271a0cb8f29a"
+  },
+  "independent_verification_sha256": "9374471adb858ecee965448a5035e4bf089e9f1e57c7ca9dbb612e0b4f2ee5d0"
+}

@@ -1,0 +1,261 @@
+{
+  "manufacturer_sources": [
+    {
+      "url": "https://www.bitcraze.io/products/crazyflie-2-1-brushless/",
+      "claim": "up to 30 grams thrust each"
+    },
+    {
+      "url": "https://www.bitcraze.io/2024/08/the-optimized-crazyflie-2-1-brushless-motors/",
+      "claim": "30 gram-force at 4 V with 55-35 propeller; peak current 1.8 A, power 7.2 W"
+    }
+  ],
+  "fetched_date": "2026-10-07",
+  "manufacturer_30gf_n": 0.2943,
+  "loaded_vehicle": {
+    "mass": 0.04338,
+    "gravity": 9.81,
+    "arm_length": 0.035355,
+    "motor_direction": [
+      -1.0,
+      1.0,
+      -1.0,
+      1.0
+    ],
+    "thrust_min": 0.0,
+    "thrust_max": 0.2,
+    "torque_coefficient": 0.00594,
+    "inertia_diagonal": [
+      2.3951e-05,
+      2.3951e-05,
+      3.2347e-05
+    ],
+    "physics_hz": 500.0,
+    "reaction_torque_layout": "user_frd"
+  },
+  "loaded_actuator": {
+    "enabled": true,
+    "model": "cf21b_first_order",
+    "time_constant_s": 0.05,
+    "steady_state_gain_rad_s": 2900.0,
+    "thrust_polynomial_coefficients": [
+      -0.23,
+      0.562,
+      -0.043
+    ],
+    "thrust_polynomial_omega_reference_rad_s": 2900.0,
+    "thrust_polynomial_positive_branch_min_ratio": 0.0791,
+    "thrust_polynomial_max_ratio": 1.0,
+    "parameter_source": "paper_candidate",
+    "verification_status": "unverified",
+    "reaction_torque": {
+      "model": "legacy_ratio",
+      "legacy_ratio_m": 0.00594,
+      "polynomial_coefficients": [
+        -3.4,
+        8.7,
+        2.9
+      ],
+      "polynomial_scale": 0.0001,
+      "rotor_inertia_kg_m2": 5e-08,
+      "include_rotor_acceleration_torque": false
+    },
+    "reset_rpm_mode": "auto",
+    "randomization": {
+      "enabled": false,
+      "time_constant_s": {
+        "min": 0.04,
+        "max": 0.06
+      },
+      "steady_state_gain_rad_s": {
+        "min": 2320.0,
+        "max": 3480.0
+      }
+    }
+  },
+  "source_functions": [
+    "environment.CrazyflieResidualEnv._apply_control",
+    "actuators.Cf21bFirstOrderActuatorModel.apply/inverse_thrust/thrust_from_omega/_advance/_reaction_torque",
+    "interactive_eval.InteractiveEnv._apply_control",
+    "oracle_allocation.OracleAllocationEnv.sync_allocator"
+  ],
+  "path": [
+    "wrench=[tau_x,tau_y,tau_z,T], native FLU body origin",
+    "pinv(B0 @ diag(eta_used)) @ wrench",
+    "clip per-rotor command to [0,0.20] N",
+    "48-iteration inverse cubic on [0.0791,1] -> omega target",
+    "u=clip(omega_target/2900,0,1)",
+    "omega_next=exp(-0.002/0.05)*omega+(1-exp(-0.002/0.05))*2900*u",
+    "f_nom=clip(-0.23*r^3+0.562*r^2-0.043*r,0,min(thrust_max,P(1))); r=clip(omega/2900,0,1); zero for r<=0.0791",
+    "q_nom=direction*0.00594*f_nom, no rotor-acceleration torque",
+    "f_actual=eta_true*f_nom; q_actual=eta_true*q_nom, once, at plant only"
+  ],
+  "hover_bias_n": 0.42555780000000004,
+  "action_scale": [
+    0.0075,
+    0.0075,
+    0.001,
+    0.5
+  ],
+  "allocator_bounds_n": [
+    0.0,
+    0.2
+  ],
+  "esc_bounds": [
+    0.0,
+    1.0
+  ],
+  "nominal_max_omega_at_esc1_rad_s": 2900.0,
+  "nominal_max_rpm_at_esc1": 27692.960097989788,
+  "tau_s": 0.05,
+  "polynomial_coefficients_n": [
+    -0.23,
+    0.562,
+    -0.043
+  ],
+  "polynomial_raw_at_r1_n": 0.2890000000000001,
+  "forward_inverse_cap_n": 0.2,
+  "currently_reachable_steady_upper_n": 0.2,
+  "command_020_operating_point": {
+    "command_n": 0.2,
+    "esc": 0.7818507743798316,
+    "steady_omega_rad_s": 2267.367245701512,
+    "rpm": 21651.762297483096,
+    "steady_nominal_thrust_n": 0.2,
+    "reaction_magnitude_nm": 0.001188
+  },
+  "cap_meaning": "Configured operational limit used BOTH by allocator clipping and forward/inverse motor maps; not a manufacturer-calibrated motor limit.",
+  "inverse_unchanged_below_old_cap_max_omega_error_rad_s": 0.0,
+  "same_esc_below_old_cap_unchanged": true,
+  "raised_cap_only_upper_n": 0.2890000000000001,
+  "hypothetical_30gf_extrapolation": {
+    "ratio": 1.013617175100162,
+    "omega_rad_s": 2939.4898077904695,
+    "rpm": 28070.05998468591,
+    "required_esc_at_current_gain": 1.013617175100162,
+    "outside_configured_range": true,
+    "used_in_flight": false
+  },
+  "interpretation": "Raising cap alone leaves inverse commands <=0.20 N unchanged, but changes clipping and forward map above the old plateau. No ESC normalization by thrust_max. With cap 0.2943, r<=1 and u<=1 still limit output to 0.289 N.",
+  "other_limits": "No battery voltage/current/thermal model; RPM gain is the fixed nominal value. XML actuator limits inspected separately in plant_geometry.",
+  "estimator_match": "Exactly same actuator class, coefficients, bounds, dt and nominal initialization; independent state driven by delivered ESC history. No actual motor state copied.",
+  "future_work": "Measure RPM/thrust/reaction torque/ESC curves across voltage and load, validate gain/time constant and valid speed range, separate allocator operating cap from calibrated forward curve if desired, retest inverse/lag/estimator/model contracts. One 30gf point is insufficient to refit the curve.",
+  "isolated_response_probes": [
+    {
+      "command_n": 0.0,
+      "duration_s": 2.0,
+      "steady_thrust_n": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "omega_rad_s": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "esc": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_force_error_n": 0.0
+    },
+    {
+      "command_n": 0.05,
+      "duration_s": 2.0,
+      "steady_thrust_n": [
+        0.049999999999999545,
+        0.049999999999999545,
+        0.049999999999999545,
+        0.049999999999999545
+      ],
+      "omega_rad_s": [
+        1079.4669273627242,
+        1079.4669273627242,
+        1079.4669273627242,
+        1079.4669273627242
+      ],
+      "esc": [
+        0.372229974952665,
+        0.372229974952665,
+        0.372229974952665,
+        0.372229974952665
+      ],
+      "max_force_error_n": 4.579669976578771e-16
+    },
+    {
+      "command_n": 0.10638945,
+      "duration_s": 2.0,
+      "steady_thrust_n": [
+        0.10638944999999954,
+        0.10638944999999954,
+        0.10638944999999954,
+        0.10638944999999954
+      ],
+      "omega_rad_s": [
+        1581.5216744759953,
+        1581.5216744759953,
+        1581.5216744759953,
+        1581.5216744759953
+      ],
+      "esc": [
+        0.5453523015434483,
+        0.5453523015434483,
+        0.5453523015434483,
+        0.5453523015434483
+      ],
+      "max_force_error_n": 4.579669976578771e-16
+    },
+    {
+      "command_n": 0.15,
+      "duration_s": 2.0,
+      "steady_thrust_n": [
+        0.14999999999999966,
+        0.14999999999999966,
+        0.14999999999999966,
+        0.14999999999999966
+      ],
+      "omega_rad_s": [
+        1911.7924167296826,
+        1911.7924167296826,
+        1911.7924167296826,
+        1911.7924167296826
+      ],
+      "esc": [
+        0.659238764389546,
+        0.659238764389546,
+        0.659238764389546,
+        0.659238764389546
+      ],
+      "max_force_error_n": 3.3306690738754696e-16
+    },
+    {
+      "command_n": 0.2,
+      "duration_s": 2.0,
+      "steady_thrust_n": [
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "omega_rad_s": [
+        2267.3672457015095,
+        2267.3672457015095,
+        2267.3672457015095,
+        2267.3672457015095
+      ],
+      "esc": [
+        0.7818507743798316,
+        0.7818507743798316,
+        0.7818507743798316,
+        0.7818507743798316
+      ],
+      "max_force_error_n": 0.0
+    }
+  ],
+  "full_curve_refit_performed": false,
+  "flight_model_unchanged": true
+}

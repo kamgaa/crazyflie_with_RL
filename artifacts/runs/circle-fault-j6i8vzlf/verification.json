@@ -1,0 +1,199 @@
+{
+  "offline_replay": {
+    "T10-PID-healthy": {
+      "samples": 5600,
+      "max_abs_error": 0.0
+    },
+    "T10-PID-blind_fault": {
+      "samples": 5600,
+      "max_abs_error": 0.0
+    },
+    "T10-A_best-healthy": {
+      "samples": 5600,
+      "max_abs_error": 0.0
+    },
+    "T10-A_best-blind_fault": {
+      "samples": 5600,
+      "max_abs_error": 0.0
+    },
+    "T10-A_best-oracle_fault": {
+      "samples": 5600,
+      "max_abs_error": 0.0
+    },
+    "T10-A_best-estimated_fault": {
+      "samples": 5600,
+      "max_abs_error": 0.0
+    },
+    "T10-B_best-healthy": {
+      "samples": 5600,
+      "max_abs_error": 0.0
+    },
+    "T10-B_best-blind_fault": {
+      "samples": 5600,
+      "max_abs_error": 0.0
+    },
+    "T10-B_best-oracle_fault": {
+      "samples": 5600,
+      "max_abs_error": 0.0
+    },
+    "T10-B_best-estimated_fault": {
+      "samples": 5600,
+      "max_abs_error": 0.0
+    },
+    "T5-PID-healthy": {
+      "samples": 3100,
+      "max_abs_error": 0.0
+    },
+    "T5-PID-blind_fault": {
+      "samples": 3100,
+      "max_abs_error": 0.0
+    },
+    "T5-A_best-healthy": {
+      "samples": 3100,
+      "max_abs_error": 0.0
+    },
+    "T5-A_best-blind_fault": {
+      "samples": 3100,
+      "max_abs_error": 0.0
+    },
+    "T5-A_best-oracle_fault": {
+      "samples": 3100,
+      "max_abs_error": 0.0
+    },
+    "T5-A_best-estimated_fault": {
+      "samples": 3100,
+      "max_abs_error": 0.0
+    },
+    "T5-B_best-healthy": {
+      "samples": 3100,
+      "max_abs_error": 0.0
+    },
+    "T5-B_best-blind_fault": {
+      "samples": 3100,
+      "max_abs_error": 0.0
+    },
+    "T5-B_best-oracle_fault": {
+      "samples": 3100,
+      "max_abs_error": 0.0
+    },
+    "T5-B_best-estimated_fault": {
+      "samples": 3100,
+      "max_abs_error": 0.0
+    }
+  },
+  "prefault": {
+    "T10-PID-blind_fault": {
+      "equal": true,
+      "max_abs_error": 0.0,
+      "worst_column": null,
+      "columns": 96,
+      "samples": 2600,
+      "interval": "commands [0,boundary), resulting states through boundary before event"
+    },
+    "T10-A_best-blind_fault": {
+      "equal": true,
+      "max_abs_error": 0.0,
+      "worst_column": null,
+      "columns": 96,
+      "samples": 2600,
+      "interval": "commands [0,boundary), resulting states through boundary before event"
+    },
+    "T10-A_best-oracle_fault": {
+      "equal": true,
+      "max_abs_error": 0.0,
+      "worst_column": null,
+      "columns": 96,
+      "samples": 2600,
+      "interval": "commands [0,boundary), resulting states through boundary before event"
+    },
+    "T10-A_best-estimated_fault": {
+      "equal": true,
+      "max_abs_error": 0.0,
+      "worst_column": null,
+      "columns": 96,
+      "samples": 2600,
+      "interval": "commands [0,boundary), resulting states through boundary before event"
+    },
+    "T10-B_best-blind_fault": {
+      "equal": true,
+      "max_abs_error": 0.0,
+      "worst_column": null,
+      "columns": 96,
+      "samples": 2600,
+      "interval": "commands [0,boundary), resulting states through boundary before event"
+    },
+    "T10-B_best-oracle_fault": {
+      "equal": true,
+      "max_abs_error": 0.0,
+      "worst_column": null,
+      "columns": 96,
+      "samples": 2600,
+      "interval": "commands [0,boundary), resulting states through boundary before event"
+    },
+    "T10-B_best-estimated_fault": {
+      "equal": true,
+      "max_abs_error": 0.0,
+      "worst_column": null,
+      "columns": 96,
+      "samples": 2600,
+      "interval": "commands [0,boundary), resulting states through boundary before event"
+    },
+    "T5-PID-blind_fault": {
+      "equal": true,
+      "max_abs_error": 0.0,
+      "worst_column": null,
+      "columns": 96,
+      "samples": 1600,
+      "interval": "commands [0,boundary), resulting states through boundary before event"
+    },
+    "T5-A_best-blind_fault": {
+      "equal": true,
+      "max_abs_error": 0.0,
+      "worst_column": null,
+      "columns": 96,
+      "samples": 1600,
+      "interval": "commands [0,boundary), resulting states through boundary before event"
+    },
+    "T5-A_best-oracle_fault": {
+      "equal": true,
+      "max_abs_error": 0.0,
+      "worst_column": null,
+      "columns": 96,
+      "samples": 1600,
+      "interval": "commands [0,boundary), resulting states through boundary before event"
+    },
+    "T5-A_best-estimated_fault": {
+      "equal": true,
+      "max_abs_error": 0.0,
+      "worst_column": null,
+      "columns": 96,
+      "samples": 1600,
+      "interval": "commands [0,boundary), resulting states through boundary before event"
+    },
+    "T5-B_best-blind_fault": {
+      "equal": true,
+      "max_abs_error": 0.0,
+      "worst_column": null,
+      "columns": 96,
+      "samples": 1600,
+      "interval": "commands [0,boundary), resulting states through boundary before event"
+    },
+    "T5-B_best-oracle_fault": {
+      "equal": true,
+      "max_abs_error": 0.0,
+      "worst_column": null,
+      "columns": 96,
+      "samples": 1600,
+      "interval": "commands [0,boundary), resulting states through boundary before event"
+    },
+    "T5-B_best-estimated_fault": {
+      "equal": true,
+      "max_abs_error": 0.0,
+      "worst_column": null,
+      "columns": 96,
+      "samples": 1600,
+      "interval": "commands [0,boundary), resulting states through boundary before event"
+    }
+  },
+  "single_efficiency_application_every_substep": true
+}

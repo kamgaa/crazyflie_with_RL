@@ -1,0 +1,12 @@
+{
+  "command": "PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 MPLCONFIGDIR=/tmp/crazyflie-dr-mpl python -m pytest -q tests/test_estimated_allocation.py tests/test_fault_estimator.py tests/test_oracle_allocation.py tests/test_motor_layout.py tests/test_actuators.py tests/test_integral_eval.py",
+  "passed": 92,
+  "warnings": [
+    "existing matplotlib tight_layout warning"
+  ],
+  "full_repository_suite": false,
+  "primary_suite_passed": 90,
+  "additional_test": "tests/test_estimated_allocation.py::test_physical_termination_keeps_unobserved_metrics_null",
+  "additional_passed": 1,
+  "additional_preservation_test_passed": 1
+}

@@ -1,0 +1,1052 @@
+[
+  {
+    "completed": true,
+    "terminated": false,
+    "truncated": true,
+    "duration_s": 8.0,
+    "expected_duration_s": 8.0,
+    "termination_reasons": [],
+    "windows": {
+      "hover": {
+        "samples": 500,
+        "observed_start_time": 0.0,
+        "observed_end_time": 5.0,
+        "position_rmse_xy": 2.6001185138114213e-15,
+        "position_rmse_z": 3.447312266962504e-05,
+        "position_rmse_3d": 3.447312266962504e-05,
+        "max_xy_error_m": 5.2640453142521694e-15,
+        "max_abs_z_error_m": 6.444915482717306e-05,
+        "velocity_reference_error_rms_xy": 3.7739762742809254e-15,
+        "velocity_reference_error_rms_z": 4.1278406874625734e-05,
+        "mean_error_xyz_m": [
+          0.0,
+          -2.335101345432973e-15,
+          -3.163829370502103e-05
+        ],
+        "mean_xy_offset_m": 2.335101345432973e-15,
+        "mean_z_error_m": -3.163829370502103e-05,
+        "roll_rms_deg": 9.884590095991682e-14,
+        "pitch_rms_deg": 6.675736217504866e-14,
+        "tilt_max_deg": 0.0,
+        "yaw_max_abs_deg": 1.1230285339963205e-14,
+        "omega_max_rad_s": 7.898465832803913e-14,
+        "radial_error_mean_m": 0.0,
+        "radial_error_rms_m": 0.0,
+        "tangential_error_mean_m": -2.335101345432973e-15,
+        "tangential_error_rms_m": 2.6001185138114213e-15,
+        "clipping": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "esc_boundary": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "action_boundary": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "integral_freeze": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "physics_allocation_residual_xml_rms": [
+          6.574117219190228e-17,
+          1.1473427100606202e-18,
+          2.081863839928542e-19,
+          3.898448201162666e-17
+        ],
+        "physics_actuator_response_residual_xml_rms": [
+          8.767292991587444e-18,
+          1.748720986109652e-17,
+          7.584829195487814e-19,
+          2.009213304933977e-06
+        ]
+      },
+      "entry_warmup": null,
+      "prefault_lap": null,
+      "post_first_2s": null,
+      "post_lap_1": null,
+      "post_lap_2": null,
+      "post_lap_3": null,
+      "post_all": null,
+      "last_lap": null
+    },
+    "partial_observed_windows": {
+      "hover": null,
+      "entry_warmup": {
+        "samples": 300,
+        "observed_start_time": 5.0,
+        "observed_end_time": 8.0,
+        "position_rmse_xy": 0.24947302653155634,
+        "position_rmse_z": 0.00012731089186273362,
+        "position_rmse_3d": 0.24947305901615466,
+        "max_xy_error_m": 0.3420617220951429,
+        "max_abs_z_error_m": 0.0003734931596367508,
+        "velocity_reference_error_rms_xy": 0.35127741017657677,
+        "velocity_reference_error_rms_z": 0.0004229192222543382,
+        "mean_error_xyz_m": [
+          0.15060010235212085,
+          -0.049699615656191284,
+          1.8490507605010512e-06
+        ],
+        "mean_xy_offset_m": 0.15858891078774207,
+        "mean_z_error_m": 1.8490507605010512e-06,
+        "roll_rms_deg": 6.267238411751506,
+        "pitch_rms_deg": 4.441922902513471,
+        "tilt_max_deg": 11.09622894168273,
+        "yaw_max_abs_deg": 0.9624714942003911,
+        "omega_max_rad_s": 0.4106123089730436,
+        "radial_error_mean_m": -0.008137022946789686,
+        "radial_error_rms_m": 0.01470854481145673,
+        "tangential_error_mean_m": -0.21387132047437088,
+        "tangential_error_rms_m": 0.24903905251254063,
+        "clipping": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "esc_boundary": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "action_boundary": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "integral_freeze": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "physics_allocation_residual_xml_rms": [
+          3.814044938960045e-09,
+          5.053878244511155e-09,
+          1.8583892568353422e-19,
+          3.6849816907586414e-17
+        ],
+        "physics_actuator_response_residual_xml_rms": [
+          2.3763541987366675e-05,
+          3.331149234319763e-05,
+          1.6921461428808702e-06,
+          0.0002512119339014375
+        ]
+      },
+      "prefault_lap": null,
+      "post_first_2s": null,
+      "post_lap_1": null,
+      "post_lap_2": null,
+      "post_lap_3": null,
+      "post_all": null,
+      "last_lap": null
+    },
+    "observed_all": {
+      "samples": 800,
+      "observed_start_time": 0.0,
+      "observed_end_time": 8.0,
+      "position_rmse_xy": 0.15277040489753071,
+      "position_rmse_z": 8.258796105791467e-05,
+      "position_rmse_3d": 0.15277042722113068,
+      "max_xy_error_m": 0.3420617220951429,
+      "max_abs_z_error_m": 0.0003734931596367508,
+      "velocity_reference_error_rms_xy": 0.21511260327474102,
+      "velocity_reference_error_rms_z": 0.00026103197601711045,
+      "mean_error_xyz_m": [
+        0.05647503838204532,
+        -0.01863735587107319,
+        -1.9080539530450248e-05
+      ],
+      "mean_xy_offset_m": 0.059470841545403726,
+      "mean_z_error_m": -1.9080539530450248e-05,
+      "roll_rms_deg": 3.837884051290512,
+      "pitch_rms_deg": 2.720111146985108,
+      "tilt_max_deg": 11.09622894168273,
+      "yaw_max_abs_deg": 0.9624714942003911,
+      "omega_max_rad_s": 0.4106123089730436,
+      "radial_error_mean_m": -0.0030513836050461334,
+      "radial_error_rms_m": 0.009007107411732499,
+      "tangential_error_mean_m": -0.08020174517789053,
+      "tangential_error_rms_m": 0.1525046511704774,
+      "clipping": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "esc_boundary": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "action_boundary": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "integral_freeze": {
+        "duration_s_per_channel": [
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "physics_allocation_residual_xml_rms": [
+        2.3356159891241815e-09,
+        3.094855730301282e-09,
+        2.0009877913724586e-19,
+        3.8197964944061257e-17
+      ],
+      "physics_actuator_response_residual_xml_rms": [
+        1.4552138087563013e-05,
+        2.0399039702865743e-05,
+        1.0362236550692025e-06,
+        0.0001538434642315137
+      ]
+    },
+    "fault_applied": false,
+    "estimation": {
+      "confirmed_detection_time": null,
+      "detection_delay_s": null,
+      "first_compensation_time": null,
+      "first_compensation_delay_s": null,
+      "false_positive_episodes": 0,
+      "false_positive_seconds": 0.0,
+      "misidentification_seconds": 0.0,
+      "uncertain_seconds": 0.04000000000000001,
+      "insufficient_data_seconds": 0.19000000000000003,
+      "efficiency_windows": {},
+      "detection_null_reason": "not_applicable",
+      "compensation_null_reason": "blind_by_design",
+      "runtime_ms": {
+        "median": 0.5263249999999999,
+        "p95": 0.7309103499999999,
+        "max": 1.395844,
+        "over_10ms_count": 0
+      }
+    },
+    "counterfactual_inverse_max_error_n": 0.0,
+    "key": "T5-PID-healthy",
+    "period_s": 5.0,
+    "label": "PID",
+    "variant": "healthy",
+    "controller": "PID",
+    "allocation_mode": "blind"
+  },
+  {
+    "completed": true,
+    "terminated": false,
+    "truncated": true,
+    "duration_s": 8.0,
+    "expected_duration_s": 8.0,
+    "termination_reasons": [],
+    "windows": {
+      "hover": {
+        "samples": 500,
+        "observed_start_time": 0.0,
+        "observed_end_time": 5.0,
+        "position_rmse_xy": 0.0012976891830366098,
+        "position_rmse_z": 0.0008629220781272558,
+        "position_rmse_3d": 0.0015584067917875886,
+        "max_xy_error_m": 0.0018676853820880999,
+        "max_abs_z_error_m": 0.0011296484452798516,
+        "velocity_reference_error_rms_xy": 0.0013432961027830743,
+        "velocity_reference_error_rms_z": 0.0005438946694887596,
+        "mean_error_xyz_m": [
+          -0.0009142051921129551,
+          -0.0008261562407595956,
+          0.0008292558693715723
+        ],
+        "mean_xy_offset_m": 0.0012321953040944087,
+        "mean_z_error_m": 0.0008292558693715723,
+        "roll_rms_deg": 0.03517200974003587,
+        "pitch_rms_deg": 0.023772455626335877,
+        "tilt_max_deg": 0.11736386950085255,
+        "yaw_max_abs_deg": 0.13532120187245888,
+        "omega_max_rad_s": 0.025341594124533934,
+        "radial_error_mean_m": -0.0009142051921129551,
+        "radial_error_rms_m": 0.0009589430110675738,
+        "tangential_error_mean_m": -0.0008261562407595964,
+        "tangential_error_rms_m": 0.0008743143126444166,
+        "clipping": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "esc_boundary": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "action_boundary": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "integral_freeze": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "physics_allocation_residual_xml_rms": [
+          1.742782888556358e-09,
+          9.47154951259264e-10,
+          1.9793490109479793e-19,
+          4.7687923820737055e-17
+        ],
+        "physics_actuator_response_residual_xml_rms": [
+          1.1238297733353034e-05,
+          6.095868732615068e-06,
+          7.425427877381325e-07,
+          0.00020136968283304048
+        ]
+      },
+      "entry_warmup": null,
+      "prefault_lap": null,
+      "post_first_2s": null,
+      "post_lap_1": null,
+      "post_lap_2": null,
+      "post_lap_3": null,
+      "post_all": null,
+      "last_lap": null
+    },
+    "partial_observed_windows": {
+      "hover": null,
+      "entry_warmup": {
+        "samples": 300,
+        "observed_start_time": 5.0,
+        "observed_end_time": 8.0,
+        "position_rmse_xy": 0.4034493363853989,
+        "position_rmse_z": 0.13713646735432566,
+        "position_rmse_3d": 0.4261194406598259,
+        "max_xy_error_m": 0.6063829459399045,
+        "max_abs_z_error_m": 0.2374827010443772,
+        "velocity_reference_error_rms_xy": 0.525105568728389,
+        "velocity_reference_error_rms_z": 0.11381075767174577,
+        "mean_error_xyz_m": [
+          0.24241009860848062,
+          -0.13093349190592132,
+          0.10157562262397021
+        ],
+        "mean_xy_offset_m": 0.2755108622360492,
+        "mean_z_error_m": 0.1015756226239702,
+        "roll_rms_deg": 4.348870367155228,
+        "pitch_rms_deg": 3.2105160104002555,
+        "tilt_max_deg": 8.505588658171206,
+        "yaw_max_abs_deg": 7.4626626366060105,
+        "omega_max_rad_s": 0.2750882398834804,
+        "radial_error_mean_m": -0.10309649722050922,
+        "radial_error_rms_m": 0.13767213657982608,
+        "tangential_error_mean_m": -0.3161385513100427,
+        "tangential_error_rms_m": 0.37923310752011685,
+        "clipping": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "esc_boundary": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "action_boundary": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "integral_freeze": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "physics_allocation_residual_xml_rms": [
+          1.0969666164428562e-09,
+          9.464983183656139e-10,
+          1.9478071796650894e-19,
+          4.7211682053324343e-17
+        ],
+        "physics_actuator_response_residual_xml_rms": [
+          1.9099954138870715e-06,
+          1.560251454318727e-06,
+          2.7852418276500475e-07,
+          0.0008572061940707598
+        ]
+      },
+      "prefault_lap": null,
+      "post_first_2s": null,
+      "post_lap_1": null,
+      "post_lap_2": null,
+      "post_lap_3": null,
+      "post_all": null,
+      "last_lap": null
+    },
+    "observed_all": {
+      "samples": 800,
+      "observed_start_time": 0.0,
+      "observed_end_time": 8.0,
+      "position_rmse_xy": 0.2470633828280547,
+      "position_rmse_z": 0.08398136341462661,
+      "position_rmse_3d": 0.2609467082287521,
+      "max_xy_error_m": 0.6063829459399045,
+      "max_abs_z_error_m": 0.2374827010443772,
+      "velocity_reference_error_rms_xy": 0.32156192971782144,
+      "velocity_reference_error_rms_z": 0.06969589729003782,
+      "mean_error_xyz_m": [
+        0.09033240873310965,
+        -0.04961640711519524,
+        0.038609143402346065
+      ],
+      "mean_xy_offset_m": 0.10306178691710317,
+      "mean_z_error_m": 0.03860914340234606,
+      "roll_rms_deg": 2.6632734970874727,
+      "pitch_rms_deg": 1.966121334230852,
+      "tilt_max_deg": 8.505588658171206,
+      "yaw_max_abs_deg": 7.4626626366060105,
+      "omega_max_rad_s": 0.2750882398834804,
+      "radial_error_mean_m": -0.039232564702761555,
+      "radial_error_rms_m": 0.08431003011938677,
+      "tangential_error_mean_m": -0.11906830439174078,
+      "tangential_error_rms_m": 0.2322329303860889,
+      "clipping": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "esc_boundary": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "action_boundary": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "integral_freeze": {
+        "duration_s_per_channel": [
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "physics_allocation_residual_xml_rms": [
+        1.5328269739273625e-09,
+        9.46908767284467e-10,
+        1.9675800797924438e-19,
+        4.7509892599560133e-17
+      ],
+      "physics_actuator_response_residual_xml_rms": [
+        8.961312174848125e-06,
+        4.91300864832947e-06,
+        6.113076270651638e-07,
+        0.0005485385268239175
+      ]
+    },
+    "fault_applied": false,
+    "estimation": {
+      "confirmed_detection_time": null,
+      "detection_delay_s": null,
+      "first_compensation_time": null,
+      "first_compensation_delay_s": null,
+      "false_positive_episodes": 0,
+      "false_positive_seconds": 0.0,
+      "misidentification_seconds": 0.0,
+      "uncertain_seconds": 0.04000000000000001,
+      "insufficient_data_seconds": 0.19000000000000003,
+      "efficiency_windows": {},
+      "detection_null_reason": "not_applicable",
+      "compensation_null_reason": "blind_by_design",
+      "runtime_ms": {
+        "median": 0.5297274999999999,
+        "p95": 0.8094236999999997,
+        "max": 1.443872,
+        "over_10ms_count": 0
+      }
+    },
+    "counterfactual_inverse_max_error_n": 0.0,
+    "key": "T5-A_best-healthy",
+    "period_s": 5.0,
+    "label": "A_best",
+    "variant": "healthy",
+    "controller": "PPO + I",
+    "allocation_mode": "blind"
+  },
+  {
+    "completed": true,
+    "terminated": false,
+    "truncated": true,
+    "duration_s": 8.0,
+    "expected_duration_s": 8.0,
+    "termination_reasons": [],
+    "windows": {
+      "hover": {
+        "samples": 500,
+        "observed_start_time": 0.0,
+        "observed_end_time": 5.0,
+        "position_rmse_xy": 0.0013211050728680136,
+        "position_rmse_z": 0.0012999002940392733,
+        "position_rmse_3d": 0.001853391320795743,
+        "max_xy_error_m": 0.002393829080652363,
+        "max_abs_z_error_m": 0.002029536658774589,
+        "velocity_reference_error_rms_xy": 0.0017899632306934692,
+        "velocity_reference_error_rms_z": 0.001424650027607721,
+        "mean_error_xyz_m": [
+          0.0011048136466595894,
+          -0.00043479968184939984,
+          0.00123080960309682
+        ],
+        "mean_xy_offset_m": 0.0011872927007194139,
+        "mean_z_error_m": 0.00123080960309682,
+        "roll_rms_deg": 0.0053197312601196015,
+        "pitch_rms_deg": 0.05723092571154538,
+        "tilt_max_deg": 0.18121041310142516,
+        "yaw_max_abs_deg": 0.9796232071065533,
+        "omega_max_rad_s": 0.05286666959248214,
+        "radial_error_mean_m": 0.0011048136466595894,
+        "radial_error_rms_m": 0.0012350828574290808,
+        "tangential_error_mean_m": -0.0004347996818493998,
+        "tangential_error_rms_m": 0.000468923180107805,
+        "clipping": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "esc_boundary": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "action_boundary": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "integral_freeze": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "physics_allocation_residual_xml_rms": [
+          1.4148324049954347e-10,
+          2.705424732623034e-09,
+          1.9920470620920136e-19,
+          4.858415111783857e-17
+        ],
+        "physics_actuator_response_residual_xml_rms": [
+          8.889742434824457e-07,
+          1.7386809663504857e-05,
+          4.1324279303987364e-06,
+          0.0010025783881845007
+        ]
+      },
+      "entry_warmup": null,
+      "prefault_lap": null,
+      "post_first_2s": null,
+      "post_lap_1": null,
+      "post_lap_2": null,
+      "post_lap_3": null,
+      "post_all": null,
+      "last_lap": null
+    },
+    "partial_observed_windows": {
+      "hover": null,
+      "entry_warmup": {
+        "samples": 300,
+        "observed_start_time": 5.0,
+        "observed_end_time": 8.0,
+        "position_rmse_xy": 0.49022531186881896,
+        "position_rmse_z": 0.08385833580339447,
+        "position_rmse_3d": 0.4973460333415716,
+        "max_xy_error_m": 0.7297388929753198,
+        "max_abs_z_error_m": 0.1454211339477247,
+        "velocity_reference_error_rms_xy": 0.5605117875447241,
+        "velocity_reference_error_rms_z": 0.06957598034813674,
+        "mean_error_xyz_m": [
+          0.27528560568644656,
+          -0.23468409986174152,
+          0.06170701939730262
+        ],
+        "mean_xy_offset_m": 0.3617440966015473,
+        "mean_z_error_m": 0.061707019397302644,
+        "roll_rms_deg": 2.990776013453073,
+        "pitch_rms_deg": 3.1595181607566536,
+        "tilt_max_deg": 6.146561919254419,
+        "yaw_max_abs_deg": 6.477733841531698,
+        "omega_max_rad_s": 0.2004269493331984,
+        "radial_error_mean_m": -0.19691053258707508,
+        "radial_error_rms_m": 0.2744850559833464,
+        "tangential_error_mean_m": -0.34018385545143476,
+        "tangential_error_rms_m": 0.40617583684741765,
+        "clipping": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "esc_boundary": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "action_boundary": {
+          "duration_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "integral_freeze": {
+          "duration_s_per_channel": [
+            0.0
+          ],
+          "longest_continuous_s_per_channel": [
+            0.0
+          ],
+          "duration_any_s": 0.0,
+          "longest_continuous_any_s": 0.0
+        },
+        "physics_allocation_residual_xml_rms": [
+          6.561079130228994e-10,
+          7.146337529919043e-10,
+          1.8024426754836147e-19,
+          4.275920361596606e-17
+        ],
+        "physics_actuator_response_residual_xml_rms": [
+          7.953288299138674e-07,
+          1.3498776734762616e-06,
+          3.1083738142928024e-07,
+          0.0005011976553327139
+        ]
+      },
+      "prefault_lap": null,
+      "post_first_2s": null,
+      "post_lap_1": null,
+      "post_lap_2": null,
+      "post_lap_3": null,
+      "post_all": null,
+      "last_lap": null
+    },
+    "observed_all": {
+      "samples": 800,
+      "observed_start_time": 0.0,
+      "observed_end_time": 8.0,
+      "position_rmse_xy": 0.3002022850895106,
+      "position_rmse_z": 0.05136281504529423,
+      "position_rmse_3d": 0.3045645264017805,
+      "max_xy_error_m": 0.7297388929753198,
+      "max_abs_z_error_m": 0.1454211339477247,
+      "velocity_reference_error_rms_xy": 0.34324488557216365,
+      "velocity_reference_error_rms_z": 0.04262129641200326,
+      "mean_error_xyz_m": [
+        0.1039226106615797,
+        -0.08827828724930892,
+        0.023909388275924003
+      ],
+      "mean_xy_offset_m": 0.13635602299271485,
+      "mean_z_error_m": 0.023909388275924003,
+      "roll_rms_deg": 1.8314736206686877,
+      "pitch_rms_deg": 1.9353307830556488,
+      "tilt_max_deg": 6.146561919254419,
+      "yaw_max_abs_deg": 6.477733841531698,
+      "omega_max_rad_s": 0.2004269493331984,
+      "radial_error_mean_m": -0.07315094119099091,
+      "radial_error_rms_m": 0.1680899182814313,
+      "tangential_error_mean_m": -0.1278406955954439,
+      "tangential_error_rms_m": 0.248731162794503,
+      "clipping": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "esc_boundary": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "action_boundary": {
+        "duration_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "integral_freeze": {
+        "duration_s_per_channel": [
+          0.0
+        ],
+        "longest_continuous_s_per_channel": [
+          0.0
+        ],
+        "duration_any_s": 0.0,
+        "longest_continuous_any_s": 0.0
+      },
+      "physics_allocation_residual_xml_rms": [
+        4.170611941467722e-10,
+        2.183137625133486e-09,
+        1.9231372897936993e-19,
+        4.6485410588725506e-17
+      ],
+      "physics_actuator_response_residual_xml_rms": [
+        8.550599299868127e-07,
+        1.3770313452200243e-05,
+        3.2725117003759387e-06,
+        0.000849956939453861
+      ]
+    },
+    "fault_applied": false,
+    "estimation": {
+      "confirmed_detection_time": null,
+      "detection_delay_s": null,
+      "first_compensation_time": null,
+      "first_compensation_delay_s": null,
+      "false_positive_episodes": 0,
+      "false_positive_seconds": 0.0,
+      "misidentification_seconds": 0.0,
+      "uncertain_seconds": 0.04000000000000001,
+      "insufficient_data_seconds": 0.19000000000000003,
+      "efficiency_windows": {},
+      "detection_null_reason": "not_applicable",
+      "compensation_null_reason": "blind_by_design",
+      "runtime_ms": {
+        "median": 0.5291465,
+        "p95": 0.8042207499999999,
+        "max": 1.790636,
+        "over_10ms_count": 0
+      }
+    },
+    "counterfactual_inverse_max_error_n": 0.0,
+    "key": "T5-B_best-healthy",
+    "period_s": 5.0,
+    "label": "B_best",
+    "variant": "healthy",
+    "controller": "PPO + I",
+    "allocation_mode": "blind"
+  }
+]

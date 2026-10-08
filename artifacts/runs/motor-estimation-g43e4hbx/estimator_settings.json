@@ -1,0 +1,20 @@
+{
+  "window_samples": 20,
+  "recent_weight_ratio": 0.9,
+  "residual_scales": [
+    0.0002,
+    0.0002,
+    0.0002,
+    0.002,
+    0.002,
+    0.002
+  ],
+  "ridge": 0.001,
+  "h0_score_threshold": 9.0,
+  "minimum_relative_improvement": 0.5,
+  "minimum_relative_margin": 0.15,
+  "minimum_loss": 0.03,
+  "minimum_information": 4.0,
+  "confirmation_samples": 3,
+  "healthy_confirmation_samples": 5
+}

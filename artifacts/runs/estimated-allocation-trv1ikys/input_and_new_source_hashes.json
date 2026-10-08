@@ -1,0 +1,13 @@
+{
+  "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/eval_velocity_ab_user_frd.yaml": "596c3de434346ab9fa2707454db6f2e641d2e91fa928882631b0a21f08e620df",
+  "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/configs/eval_velocity_ab.yaml": "e0b482ac3bd76a6c4eecc42f2f0c29f4235ebefb4f451852f88742b346489f66",
+  "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/velocity-ab-training-comparison-isygddsb/completion.json": "f7a76711a050d442c2592e64edd8a6e6042fb7250fa60f7a748f98b070101fd4",
+  "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/motor-estimation-g43e4hbx/estimator_settings.json": "a28129debe0f233b33c715fd8dc3bb48d013ec8d46ebaa41cc4f76edf50ee1ba",
+  "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/motor-layout-180a0id_/manifest.json": "581218ce2417be62ac55dfa328afe335048f1e29443acef2db5584576d46d5ad",
+  "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/estimated_allocation.py": "31b6556fd47be099e8e09f3a89b143415955d2c6b0ac51f25ded2393c0d0a201",
+  "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/estimated_allocation_eval.py": "2e1cb85c7bdc4615006c293b3b8f2852585625d74d48b982ffbf5be2bcdd6e3a",
+  "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/crazyflie_rl/motor_limit_audit.py": "7181aece0e825cca26f30da6cbf6b1a642973f17fcd0539932adc4b397596c14",
+  "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/compare_estimated_allocation.py": "b8587b17674e641ba220c3667c05cae68afadde6059050b6308e13e28d3e05bd",
+  "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/verify_estimated_allocation.py": "279ca40ed10302b164bf230670f85925b589f4082d05d01aa6043312089aa4ea",
+  "/home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/tests/test_estimated_allocation.py": "90d7a4eadad69e03a11c2995903fa5c1bb6df74bdf3808bcb512732db7d1e44e"
+}

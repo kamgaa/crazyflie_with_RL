@@ -1,0 +1,15 @@
+{
+  "state": "position, quaternion, velocity, omega and same-time tracking reference at time_post; cached gyro actually at time_post-0.002",
+  "policy": "raw observation, true/control target, xi_t, action and eta_used at time; xi_next and estimate available at time_post",
+  "held_reference": "reference is command held over [time,time_post]; reference_post is analytic evaluation target at time_post",
+  "pid": "zero residual action; existing CascadePID executes at 500Hz. Per-substep commands are physics_wrench_command. Single wrench_command and motor_* signals are LAST physics substep, timestamp motor_sample_time, output timestamp motor_sample_time_post.",
+  "ppo": "deterministic policy at 100Hz; same wrench held for five physics substeps; external integral advances once per control interval",
+  "motor_arrays": "native index order in existing fields; user efficiency arrays explicit. User ids 1,2,3,4 correspond to native indices 3,2,1,0.",
+  "wrench": "all diagnostics native FLU body origin [tau_x,tau_y,tau_z,T]; T positive thrust magnitude, no gravity or external torque included",
+  "physics_arrays": "five chronological substeps, flattened row-major (substep then native motor or wrench component); dt=0.002",
+  "residuals": "allocation: requested minus true-efficiency/clipped-command static XML wrench; response: that static wrench minus lagged actual rotor wrench; geometry difference kept separate from B0",
+  "internal_desired_velocity": "environment reward diagnostic against interval-held position; analytic reference_velocity_post is a separate tracking metric only",
+  "segments": "post-state samples (start,end]; endpoint at fault belongs to pre-fault physics interval; changed eta first applied at fault before next step",
+  "partial": "fixed windows unavailable after early termination are null, observed partial windows named separately",
+  "no_hover_recovery_metric": true
+}

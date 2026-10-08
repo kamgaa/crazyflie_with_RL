@@ -1,0 +1,12 @@
+{
+  "runs": 22,
+  "protected": 3937,
+  "truth_error": 0.0,
+  "future_error": 0.0,
+  "video": {
+    "frames": 300,
+    "passed": true,
+    "max_age_s": 0.006666666666667709,
+    "decode_passed": true
+  }
+}

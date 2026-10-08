@@ -1,0 +1,134 @@
+RESULT_DIR /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/estimated-allocation-trv1ikys
+RUN A_best-hover-blind
+DONE 1 A_best-hover-blind 20.0 None
+RUN A_best-hover-oracle
+DONE 2 A_best-hover-oracle 20.0 None
+RUN A_best-hover-estimated
+DONE 3 A_best-hover-estimated 20.0 None
+RUN A_best-step_x-blind
+DONE 4 A_best-step_x-blind 20.0 2.63
+RUN A_best-step_x-oracle
+DONE 5 A_best-step_x-oracle 20.0 2.63
+RUN A_best-step_x-estimated
+DONE 6 A_best-step_x-estimated 20.0 2.63
+RUN A_best-step_y-blind
+DONE 7 A_best-step_y-blind 20.0 3.76
+RUN A_best-step_y-oracle
+DONE 8 A_best-step_y-oracle 20.0 3.76
+RUN A_best-step_y-estimated
+DONE 9 A_best-step_y-estimated 20.0 3.76
+RUN A_best-motor1_80-blind
+DONE 10 A_best-motor1_80-blind 20.0 12.690000000000001
+RUN A_best-motor1_80-oracle
+DONE 11 A_best-motor1_80-oracle 20.0 0.7000000000000002
+RUN A_best-motor1_80-estimated
+DONE 12 A_best-motor1_80-estimated 20.0 3.1899999999999995
+RUN A_best-motor1_70-blind
+DONE 13 A_best-motor1_70-blind 20.0 None
+RUN A_best-motor1_70-oracle
+DONE 14 A_best-motor1_70-oracle 20.0 1.7000000000000002
+RUN A_best-motor1_70-estimated
+DONE 15 A_best-motor1_70-estimated 20.0 5.0600000000000005
+RUN A_best-motor2_80-blind
+DONE 16 A_best-motor2_80-blind 20.0 11.670000000000002
+RUN A_best-motor2_80-oracle
+DONE 17 A_best-motor2_80-oracle 20.0 0.6200000000000001
+RUN A_best-motor2_80-estimated
+DONE 18 A_best-motor2_80-estimated 20.0 2.25
+RUN A_best-motor2_70-blind
+DONE 19 A_best-motor2_70-blind 20.0 13.98
+RUN A_best-motor2_70-oracle
+DONE 20 A_best-motor2_70-oracle 20.0 0.8300000000000001
+RUN A_best-motor2_70-estimated
+DONE 21 A_best-motor2_70-estimated 20.0 4.210000000000001
+RUN A_best-motor3_80-blind
+DONE 22 A_best-motor3_80-blind 20.0 11.490000000000002
+RUN A_best-motor3_80-oracle
+DONE 23 A_best-motor3_80-oracle 20.0 0.71
+RUN A_best-motor3_80-estimated
+DONE 24 A_best-motor3_80-estimated 20.0 3.17
+RUN A_best-motor3_70-blind
+DONE 25 A_best-motor3_70-blind 20.0 13.920000000000002
+RUN A_best-motor3_70-oracle
+DONE 26 A_best-motor3_70-oracle 20.0 2.16
+RUN A_best-motor3_70-estimated
+DONE 27 A_best-motor3_70-estimated 20.0 5.1
+RUN A_best-motor4_80-blind
+DONE 28 A_best-motor4_80-blind 20.0 11.71
+RUN A_best-motor4_80-oracle
+DONE 29 A_best-motor4_80-oracle 20.0 0.6100000000000003
+RUN A_best-motor4_80-estimated
+DONE 30 A_best-motor4_80-estimated 20.0 1.5300000000000002
+RUN A_best-motor4_70-blind
+DONE 31 A_best-motor4_70-blind 20.0 None
+RUN A_best-motor4_70-oracle
+DONE 32 A_best-motor4_70-oracle 20.0 1.13
+RUN A_best-motor4_70-estimated
+DONE 33 A_best-motor4_70-estimated 20.0 4.210000000000001
+RUN B_best-hover-blind
+DONE 34 B_best-hover-blind 20.0 None
+RUN B_best-hover-oracle
+DONE 35 B_best-hover-oracle 20.0 None
+RUN B_best-hover-estimated
+DONE 36 B_best-hover-estimated 20.0 None
+RUN B_best-step_x-blind
+DONE 37 B_best-step_x-blind 20.0 4.380000000000001
+RUN B_best-step_x-oracle
+DONE 38 B_best-step_x-oracle 20.0 4.380000000000001
+RUN B_best-step_x-estimated
+DONE 39 B_best-step_x-estimated 20.0 4.380000000000001
+RUN B_best-step_y-blind
+DONE 40 B_best-step_y-blind 20.0 5.17
+RUN B_best-step_y-oracle
+DONE 41 B_best-step_y-oracle 20.0 5.17
+RUN B_best-step_y-estimated
+DONE 42 B_best-step_y-estimated 20.0 5.17
+RUN B_best-motor1_80-blind
+DONE 43 B_best-motor1_80-blind 20.0 13.420000000000002
+RUN B_best-motor1_80-oracle
+DONE 44 B_best-motor1_80-oracle 20.0 0.8300000000000001
+RUN B_best-motor1_80-estimated
+DONE 45 B_best-motor1_80-estimated 20.0 1.9699999999999998
+RUN B_best-motor1_70-blind
+DONE 46 B_best-motor1_70-blind 20.0 None
+RUN B_best-motor1_70-oracle
+DONE 47 B_best-motor1_70-oracle 20.0 1.8600000000000003
+RUN B_best-motor1_70-estimated
+DONE 48 B_best-motor1_70-estimated 20.0 4.380000000000001
+RUN B_best-motor2_80-blind
+DONE 49 B_best-motor2_80-blind 20.0 13.670000000000002
+RUN B_best-motor2_80-oracle
+DONE 50 B_best-motor2_80-oracle 20.0 0.7400000000000002
+RUN B_best-motor2_80-estimated
+DONE 51 B_best-motor2_80-estimated 20.0 2.51
+RUN B_best-motor2_70-blind
+DONE 52 B_best-motor2_70-blind 20.0 None
+RUN B_best-motor2_70-oracle
+DONE 53 B_best-motor2_70-oracle 20.0 2.04
+RUN B_best-motor2_70-estimated
+DONE 54 B_best-motor2_70-estimated 20.0 4.450000000000001
+RUN B_best-motor3_80-blind
+DONE 55 B_best-motor3_80-blind 20.0 13.120000000000001
+RUN B_best-motor3_80-oracle
+DONE 56 B_best-motor3_80-oracle 20.0 0.7199999999999998
+RUN B_best-motor3_80-estimated
+DONE 57 B_best-motor3_80-estimated 20.0 1.9299999999999997
+RUN B_best-motor3_70-blind
+DONE 58 B_best-motor3_70-blind 20.0 None
+RUN B_best-motor3_70-oracle
+DONE 59 B_best-motor3_70-oracle 20.0 1.2800000000000002
+RUN B_best-motor3_70-estimated
+DONE 60 B_best-motor3_70-estimated 20.0 4.43
+RUN B_best-motor4_80-blind
+DONE 61 B_best-motor4_80-blind 20.0 13.830000000000002
+RUN B_best-motor4_80-oracle
+DONE 62 B_best-motor4_80-oracle 20.0 0.7000000000000002
+RUN B_best-motor4_80-estimated
+DONE 63 B_best-motor4_80-estimated 20.0 2.51
+RUN B_best-motor4_70-blind
+DONE 64 B_best-motor4_70-blind 20.0 None
+RUN B_best-motor4_70-oracle
+DONE 65 B_best-motor4_70-oracle 20.0 0.7700000000000005
+RUN B_best-motor4_70-estimated
+DONE 66 B_best-motor4_70-estimated 20.0 3.0700000000000003
+COMPLETE /home/kenneth/RL_src/crazyflie_with_RL_refactor_v2/artifacts/runs/estimated-allocation-trv1ikys

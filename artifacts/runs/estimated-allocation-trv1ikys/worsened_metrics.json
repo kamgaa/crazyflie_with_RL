@@ -1,0 +1,58 @@
+[
+  {
+    "label": "A_best",
+    "scenario": "motor4_70",
+    "window": "post_5_20",
+    "metric": "max_tilt_deg",
+    "blind": 9.858629105011223,
+    "estimated": 9.859471307590002
+  },
+  {
+    "label": "A_best",
+    "scenario": "motor4_70",
+    "window": "post_5_20",
+    "metric": "roll_rms_deg",
+    "blind": 0.9737010041871759,
+    "estimated": 1.0135995026466051
+  },
+  {
+    "label": "A_best",
+    "scenario": "motor4_70",
+    "window": "post_5_20",
+    "metric": "pitch_rms_deg",
+    "blind": 1.0222095812268372,
+    "estimated": 1.4162284860652268
+  },
+  {
+    "label": "B_best",
+    "scenario": "motor1_70",
+    "window": "post_5_20",
+    "metric": "pitch_rms_deg",
+    "blind": 0.6744437451485817,
+    "estimated": 0.7416159304367399
+  },
+  {
+    "label": "B_best",
+    "scenario": "motor3_70",
+    "window": "post_5_20",
+    "metric": "max_tilt_deg",
+    "blind": 7.722517224089148,
+    "estimated": 7.937206455166548
+  },
+  {
+    "label": "B_best",
+    "scenario": "motor3_70",
+    "window": "post_5_20",
+    "metric": "roll_rms_deg",
+    "blind": 1.0774467008810678,
+    "estimated": 1.1800897542995594
+  },
+  {
+    "label": "B_best",
+    "scenario": "motor3_70",
+    "window": "post_5_20",
+    "metric": "pitch_rms_deg",
+    "blind": 0.8088336921863436,
+    "estimated": 0.9784307003267524
+  }
+]

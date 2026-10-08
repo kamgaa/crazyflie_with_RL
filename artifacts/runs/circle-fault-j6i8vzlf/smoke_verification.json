@@ -1,0 +1,44 @@
+{
+  "run_directory": "artifacts/runs/circle-fault-smoke-fo4dp_qv",
+  "checks": {
+    "runs": {
+      "T5-PID-healthy": {
+        "samples": 800,
+        "max_allocation_recomputation_error_n": 0.0,
+        "csv_metrics_recomputed": true,
+        "events_preserve_state": true,
+        "raw_velocity_unchanged": true
+      },
+      "T5-A_best-healthy": {
+        "samples": 800,
+        "max_allocation_recomputation_error_n": 0.0,
+        "csv_metrics_recomputed": true,
+        "events_preserve_state": true,
+        "raw_velocity_unchanged": true
+      },
+      "T5-B_best-healthy": {
+        "samples": 800,
+        "max_allocation_recomputation_error_n": 0.0,
+        "csv_metrics_recomputed": true,
+        "events_preserve_state": true,
+        "raw_velocity_unchanged": true
+      }
+    },
+    "prefault_comparisons": {},
+    "causality": {
+      "truth_metadata_mutation_max_error": 0.0,
+      "future_mutation_prefix_max_error": 0.0,
+      "prefix_samples": 400,
+      "includes_estimates_and_allocated_commands": true,
+      "source_trace": "T5-A_best-healthy"
+    },
+    "preservation": {
+      "checked_files": 4326,
+      "intentional_common_source_change": [],
+      "all_other_preexisting_files_unchanged": true,
+      "checkpoints_and_settings_unchanged": true
+    },
+    "reference_checks": {},
+    "scope": "Focused tests plus all-run CSV checks; not a full-repository test run. Ideal simulator states; no compute-delay model."
+  }
+}

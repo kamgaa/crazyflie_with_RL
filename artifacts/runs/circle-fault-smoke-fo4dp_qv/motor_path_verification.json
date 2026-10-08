@@ -1,0 +1,90 @@
+{
+  "nominal_limit_n": 0.289,
+  "allocator_limit_n": 0.289,
+  "plant_forward_inverse_cap_n": 0.289,
+  "estimator_forward_inverse_cap_n": 0.289,
+  "plant_tau_s": [
+    0.05,
+    0.05,
+    0.05,
+    0.05
+  ],
+  "estimator_tau_s": [
+    0.05,
+    0.05,
+    0.05,
+    0.05
+  ],
+  "max_forward_inverse_error_n": 7.216449660063518e-16,
+  "oracle_inverse_component_error_n": 4.440892098500626e-16,
+  "oracle_wrench_error": [
+    -2.5153490401663703e-17,
+    -2.0816681711721685e-17,
+    2.8189256484623115e-18,
+    -1.1102230246251565e-16
+  ],
+  "unity_inverse_bitwise_equal": true,
+  "nominal_max_probe_n": [
+    0.2889999999999987,
+    0.2889999999999987,
+    0.2889999999999987,
+    0.2889999999999987
+  ],
+  "xml_geometry_matrix": [
+    [
+      -0.03536,
+      -0.03536,
+      0.03536,
+      0.03536
+    ],
+    [
+      -0.03536,
+      0.03536,
+      0.03536,
+      -0.03536
+    ],
+    [
+      -0.00594,
+      0.00594,
+      -0.00594,
+      0.00594
+    ],
+    [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  ],
+  "B0": [
+    [
+      -0.035355,
+      -0.035355,
+      0.035355,
+      0.035355
+    ],
+    [
+      -0.035355,
+      0.035355,
+      0.035355,
+      -0.035355
+    ],
+    [
+      -0.00594,
+      0.00594,
+      -0.00594,
+      0.00594
+    ],
+    [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  ],
+  "mapping": "user motor 1 -> native index 3",
+  "plant_single_application": true,
+  "old_020_configs_unchanged": true,
+  "manufacturer_curve_refit": false,
+  "cap_semantics": "shared operational cap and forward/inverse map bound; cubic and ESC gain unchanged"
+}

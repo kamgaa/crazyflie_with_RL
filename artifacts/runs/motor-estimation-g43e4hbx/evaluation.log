@@ -1,0 +1,45 @@
+RUN A_best-hover
+A_best-hover 20.0 healthy None
+RUN A_best-step_x
+A_best-step_x 20.0 healthy None
+RUN A_best-step_y
+A_best-step_y 20.0 healthy None
+RUN A_best-motor1_80
+A_best-motor1_80 20.0 fault 0.08000000000000007
+RUN A_best-motor1_70
+A_best-motor1_70 20.0 fault 0.07000000000000028
+RUN A_best-motor2_80
+A_best-motor2_80 20.0 fault 0.08000000000000007
+RUN A_best-motor2_70
+A_best-motor2_70 20.0 fault 0.07000000000000028
+RUN A_best-motor3_80
+A_best-motor3_80 20.0 fault 0.07000000000000028
+RUN A_best-motor3_70
+A_best-motor3_70 20.0 fault 0.07000000000000028
+RUN A_best-motor4_80
+A_best-motor4_80 20.0 fault 0.07000000000000028
+RUN A_best-motor4_70
+A_best-motor4_70 20.0 fault 0.07000000000000028
+RUN B_best-hover
+B_best-hover 20.0 healthy None
+RUN B_best-step_x
+B_best-step_x 20.0 healthy None
+RUN B_best-step_y
+B_best-step_y 20.0 healthy None
+RUN B_best-motor1_80
+B_best-motor1_80 20.0 fault 0.07000000000000028
+RUN B_best-motor1_70
+B_best-motor1_70 20.0 fault 0.07000000000000028
+RUN B_best-motor2_80
+B_best-motor2_80 20.0 fault 0.07000000000000028
+RUN B_best-motor2_70
+B_best-motor2_70 20.0 fault 0.07000000000000028
+RUN B_best-motor3_80
+B_best-motor3_80 20.0 fault 0.08000000000000007
+RUN B_best-motor3_70
+B_best-motor3_70 20.0 fault 0.07000000000000028
+RUN B_best-motor4_80
+B_best-motor4_80 20.0 fault 0.08000000000000007
+RUN B_best-motor4_70
+B_best-motor4_70 20.0 fault 0.08000000000000007
+RESULTS artifacts/runs/motor-estimation-g43e4hbx
