@@ -1,0 +1,12 @@
+{
+  "checkpoint": "best.pt",
+  "sha256": "eb4d897b8d2f0f3c67be568ffba3ba5d40842b9cf824eaa803eff40a3aa0ca43",
+  "selected_iteration": 448,
+  "source_run": "phase14_vz_weight3_fresh_20261019_120809",
+  "source_checkpoint": "best.pt",
+  "task": "MRL-Crazyflie-Hover-E2E-v0",
+  "physics": "isaacsim_physx",
+  "observation_dimension": 15,
+  "action_dimension": 4,
+  "notes": "Exact original RSL-RL checkpoint, including actor, critic, distribution, Adam and stored RNG. Only this trained checkpoint is distributed."
+}

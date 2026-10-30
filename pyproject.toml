@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "crazyflie-isaaclab"
+version = "0.1.0"
+description = "CF2.1 Brushless E2E Isaac Sim PhysX task"
+requires-python = ">=3.12,<3.13"
+dependencies = ["isaaclab==17.0.2"]
+
+[project.entry-points."isaaclab.tasks"]
+crazyflie_isaaclab = "crazyflie_isaaclab.tasks"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+crazyflie_isaaclab = ["assets/*.usda"]

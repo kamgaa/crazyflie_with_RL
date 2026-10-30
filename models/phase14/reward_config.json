@@ -1,0 +1,53 @@
+{
+  "reward_id": "phase14z_axis_vz_squared",
+  "position_mode": "axis_exponential",
+  "velocity_mode": "return",
+  "dt_multiplier": false,
+  "return_gain_s_inv": 4.0,
+  "return_speed_limit_m_s": 1.5,
+  "position": {
+    "x": {
+      "weight": 0.1,
+      "sigma_m": 0.1
+    },
+    "y": {
+      "weight": 0.1,
+      "sigma_m": 0.1
+    },
+    "z": {
+      "weight": 0.015,
+      "sigma_m": 0.05
+    }
+  },
+  "axis_weights": {
+    "velocity": [
+      0.005,
+      0.005,
+      0.015
+    ],
+    "attitude": [
+      0.075,
+      0.075,
+      1.0
+    ],
+    "angular_velocity": [
+      0.001,
+      0.001,
+      0.001
+    ]
+  },
+  "failure_weight": 10.0,
+  "sigma_xy_m": 0.1,
+  "sigma_z_m": 0.05,
+  "exponential_weight_xy": 0.1,
+  "exponential_weight_z": 0.015,
+  "weights": {
+    "velocity": 0.005,
+    "tilt": 6.0,
+    "angular_velocity": 0.001,
+    "yaw": 1.0,
+    "termination": 10.0
+  },
+  "legacy_fields_note": "weights/sigma_xy/exponential_weight_xy only used for read-only common phase9 reward and legacy physical telemetry; actual 13 terms use position/axis_weights/failure_weight",
+  "vertical_velocity_mode": "absolute_squared"
+}
